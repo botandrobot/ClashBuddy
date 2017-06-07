@@ -5,13 +5,13 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<OutputPath>..\..\bin\Debug\</OutputPath>
+		<OutputPath>..\..\..\..\bin\Debug\</OutputPath>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<DefineConstants>TRACE;DEBUG;NETCOREAPP1_1;MEMPTR_ARCH_X86</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<OutputPath>..\..\bin\Release\</OutputPath>
+		<OutputPath>..\..\..\..\bin\Release\</OutputPath>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<DefineConstants>TRACE;RELEASE;NETCOREAPP1_1;MEMPTR_ARCH_X86</DefineConstants>
 	</PropertyGroup>
@@ -21,9 +21,9 @@
 	</ItemGroup>
 	
   <ItemGroup>
-    <ProjectReference Include="..\Buddy.Clash.Engine\Buddy.Clash.Engine.csproj" />
-    <ProjectReference Include="..\Buddy.Common\Buddy.Common.csproj" />
-    <ProjectReference Include="..\Buddy.Engine\Buddy.Engine.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Buddy.Clash.Engine\Buddy.Clash.Engine.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Buddy.Common\Buddy.Common.csproj" />
+    <ProjectReference Include="..\..\..\..\src\Buddy.Engine\Buddy.Engine.csproj" />
   </ItemGroup>
 
 </Project>
