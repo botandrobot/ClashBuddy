@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netcoreapp1.1</TargetFramework>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<OutputPath>..\..\bin\Debug\</OutputPath>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<DefineConstants>TRACE;DEBUG;NETCOREAPP1_1;MEMPTR_ARCH_X86</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<OutputPath>..\..\bin\Release\</OutputPath>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<DefineConstants>TRACE;RELEASE;NETCOREAPP1_1;MEMPTR_ARCH_X86</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Serilog" Version="2.4.0" />
+	</ItemGroup>
+	
+  <ItemGroup>
+    <ProjectReference Include="..\Buddy.Clash.Engine\Buddy.Clash.Engine.csproj" />
+    <ProjectReference Include="..\Buddy.Common\Buddy.Common.csproj" />
+    <ProjectReference Include="..\Buddy.Engine\Buddy.Engine.csproj" />
+  </ItemGroup>
+
+</Project>
