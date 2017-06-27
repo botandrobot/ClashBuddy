@@ -51,6 +51,12 @@
 
 			var spells = ClashEngine.Instance.AvailableSpells;
 
+			foreach (var spell in spells)
+			{
+				if(spell != null && spell.IsValid)
+					Logger.Verbose("Available Spell {Name}, {ManaCost}", spell.Name, spell.ManaCost);
+			}
+			
 			var cycleSpells = spells.Where(s => s != null && s.IsValid && s.ManaCost <= 3).OrderBy(s => s.ManaCost);
 			var powerSpells = spells.Where(s => s != null && s.IsValid && s.ManaCost > 3).OrderByDescending(s => s.ManaCost);
 
