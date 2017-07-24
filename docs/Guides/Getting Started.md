@@ -25,7 +25,7 @@ You need an android device that allows you to run the game. The easiest way to g
 Once your device is ready you have multiple options to install the target game. Either you get the [APK from a mirror](http://www.apkmirror.com/apk/supercell/clash-royale-supercell/) or you install the game from the [Google Play Store](https://play.google.com/store/apps/details?id=com.supercell.clashroyale). Once the game is installed you're ready to run the bot.
 ### Bot Setup
 Go to the [ClashBuddy Home](http://www.clashbuddy.io/) and download the latest version of the bot. It will come in a zip file. To use the bot extract the files to a folder for example C:\BOTS\ClashBuddy. Inside this folder you will find a Buddy.Launcher executeable. This is the main assembly of the bot. Start the launcher and you will see a console window open.
-![Image of the Buddy.Launcher Console Window on Windows 10](../imgages/buddy.launcher.png)
+![Image of the Buddy.Launcher Console Window on Windows 10](../images/buddy.launcher.png)
 The Launcher will open a browser window with that contains the ui of the bot.
 First thing you will have to do is authenticating with your key. If you don't have a key go to the [ClashBuddy Shop](http://www.clashbuddy.io/) and order one there.
 ![Authentication window of ClashBuddy](../images/auth.png)
