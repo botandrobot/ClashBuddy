@@ -35,6 +35,6 @@ When you click on the Add button you will be able to enter host and port of a no
 When only one device is connected this step is skipped and the bot will connect to the device and start the game when required.
 ![ClashBuddy ready for interaction](../images/ready.png)
 Before starting the Bot you need to setup an action selector. This handles what action to cast where. You can find the action selector selection in the settings area.
-![Setting up an action selector in BuddyClash](../image/action.selector.png)
+![Setting up an action selector in BuddyClash](../images/action.selector.png)
 During the tutorial use the Sequence Action selector up to the point where you enter your new name. From then it depends on your deck. What action selecor you want to use. The Early Cycle Selector is working okisch for a deck similar to this.
-![A deck used with the Early Cycle Selector](../image/deck.png)
+![A deck used with the Early Cycle Selector](../images/deck.png)
