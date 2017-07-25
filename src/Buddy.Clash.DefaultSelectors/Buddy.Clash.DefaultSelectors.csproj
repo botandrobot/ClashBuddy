@@ -29,7 +29,9 @@
 	<ItemGroup>
 		<PackageReference Include="Serilog" Version="2.4.0" />
 		<PackageReference Include="Buddy.Common" Version="*" />
-		<PackageReference Include="Buddy.Engine" Version="*" />
+		<PackageReference Include="Buddy.Engine" Version="*">
+			<ExcludeAssets>contentFiles</ExcludeAssets>
+		</PackageReference>
 		<PackageReference Include="Buddy.Clash.Engine" Version="*" />
 	</ItemGroup>
 
