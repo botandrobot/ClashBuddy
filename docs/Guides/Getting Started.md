@@ -64,4 +64,11 @@ Before starting the Bot you need to setup an action selector. This handles what 
 
 During the tutorial use the Sequence Action selector up to the point where you enter your new name. From then it depends on your deck. What action selecor you want to use. The Early Cycle Selector is working okisch for a deck similar to this.
 
-![A deck used with the Early Cycle Selector](../images/deck.png)
+* Knight
+* Archer
+* Bomber
+* Baby Dragon
+* Mini P.E.K.K.A
+* Giant
+* Musketeer
+* Skeleton Army
