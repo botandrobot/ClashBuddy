@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>netstandard1.6</TargetFramework>
+		<TargetFramework>netcoreapp1.1</TargetFramework>
 		<PackageId>Buddy.Clash.DefaultSelectors</PackageId>
 		<Title>Buddy.Clash.DefaultSelecors</Title>
 		<Description>The Default Action Selectors shiped with ClashBuddy.</Description>
