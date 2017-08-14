@@ -35,13 +35,37 @@
 				var data = @char.LogicGameObjectData;
 				if (data != null && data.IsValid)
 				{
-					var charName = data.Name.Value;
-					var isFlying = data.FlyFromGround != 0;
-					var attacksAir = data.AttacksAir != 0;
-					var attacksGround = data.AttacksGround != 0;
-					var collisionRadius = data.CollisionRadius;
-					Logger.Verbose("Found Character with name {OwnerIndex} {charName} {StartPosition} {collisionRadius} {isFlying} {attacksAir} {attacksGround}",
-						@char.OwnerIndex, charName, @char.StartPosition, collisionRadius, isFlying, attacksAir, attacksGround);
+					var log = new
+					{
+						OwnerIndex = @char.OwnerIndex,
+						Position = @char.StartPosition.ToString(),
+					};
+					var summonCharacter = data;
+					var charLog = new
+					{
+						GameObject = log,
+						Name = summonCharacter.Name.Value.ToString(),
+						AttacksAir = summonCharacter.AttacksAir,
+						AttacksGround = summonCharacter.AttacksGround,
+						CollisionRadius = summonCharacter.CollisionRadius,
+						FlyDirectPaths = summonCharacter.FlyDirectPaths,
+						FlyFromGround = summonCharacter.FlyFromGround,
+						AbilityIsValid = summonCharacter.Ability != null && summonCharacter.Ability.IsValid,
+						ActivationTime = summonCharacter.ActivationTime,
+						AllTargetsHit = summonCharacter.AllTargetsHit,
+						AppearEffectIsValid = summonCharacter.AppearEffect != null && summonCharacter.AppearEffect.IsValid,
+						AppearPushback = summonCharacter.AppearPushback,
+						AppearPushbackRadius = summonCharacter.AppearPushbackRadius,
+						AreaBuffIsValid = summonCharacter.AreaBuff != null && summonCharacter.AreaBuff.IsValid,
+						AreaBuffRadius = summonCharacter.AreaBuffRadius,
+						AreaDamageRadius = summonCharacter.AreaDamageRadius,
+						AreaEffectOnDashIsValid = summonCharacter.AreaEffectOnDash != null && summonCharacter.AreaEffectOnDash.IsValid,
+						AreaEffectOnMorphIsValid =
+						summonCharacter.AreaEffectOnMorph != null && summonCharacter.AreaEffectOnMorph.IsValid,
+						AttachedCharacterHeight = summonCharacter.AttachedCharacterHeight,
+						MultipleTargets = summonCharacter.MultipleTargets
+					};
+					Logger.Debug("{@charLog}", charLog);
 				}
 			}
 
@@ -53,10 +77,84 @@
 
 			foreach (var spell in spells)
 			{
-				if(spell != null && spell.IsValid)
-					Logger.Verbose("Available Spell {Name}, {ManaCost}", spell.Name, spell.ManaCost);
+				if (spell != null && spell.IsValid)
+				{
+					var log = new
+					{
+						Name = spell.Name.Value.ToString(),
+						ManaCost = spell.ManaCost,
+						MultipleProjectiles = spell.MultipleProjectiles,
+						SummonCharacterLevelIndex = spell.SummonCharacterLevelIndex,
+						SummonNumber = spell.SummonNumber,
+						SummonCharacterSecondCount = spell.SummonCharacterSecondCount,
+						BuffNumber = spell.BuffNumber,
+						CanDeployOnEnemySide = spell.CanDeployOnEnemySide,
+						CanPlaceOnBuildings = spell.CanPlaceOnBuildings,
+						CustomDeployTime = spell.CustomDeployTime,
+						OnlyEnemies = spell.OnlyEnemies,
+						OnlyOwnTroops = spell.OnlyOwnTroops,
+						Height = spell.Height,
+						HideRadiusIndicator = spell.HideRadiusIndicator,
+						Mirror = spell.Mirror,
+						Pushback = spell.Pushback,
+						Radius = spell.Radius,
+						SpellAsDeploy = spell.SpellAsDeploy,
+						ProjectileIsValid = spell.Projectile != null && spell.Projectile.IsValid,
+						SummonCharacterIsValid = spell.SummonCharacter != null && spell.SummonCharacter.IsValid,
+						AreaEffectIsValid = spell.AreaEffect != null && spell.AreaEffect.IsValid,
+						BuffOnDamageIsValid = spell.BuffOnDamage != null && spell.BuffOnDamage.IsValid,
+						BuffTypeIsValid = spell.BuffType != null && spell.BuffType.IsValid,
+						EffectIsValid = spell.Effect != null && spell.Effect.IsValid,
+						StatsUnderInfo = spell.StatsUnderInfo,
+					};
+					if (spell.SummonCharacter != null && spell.SummonCharacter.IsValid)
+					{
+						var summonCharacter = spell.SummonCharacter;
+						var charLog = new
+						{
+							Spell = log,
+							Name = summonCharacter.Name.Value.ToString(),
+							AttacksAir = summonCharacter.AttacksAir,
+							AttacksGround = summonCharacter.AttacksGround,
+							CollisionRadius = summonCharacter.CollisionRadius,
+							FlyDirectPaths = summonCharacter.FlyDirectPaths,
+							FlyFromGround = summonCharacter.FlyFromGround,
+							AbilityIsValid = summonCharacter.Ability != null && summonCharacter.Ability.IsValid,
+							ActivationTime = summonCharacter.ActivationTime,
+							AllTargetsHit = summonCharacter.AllTargetsHit,
+							AppearEffectIsValid = summonCharacter.AppearEffect != null && summonCharacter.AppearEffect.IsValid,
+							AppearPushback = summonCharacter.AppearPushback,
+							AppearPushbackRadius = summonCharacter.AppearPushbackRadius,
+							AreaBuffIsValid = summonCharacter.AreaBuff != null && summonCharacter.AreaBuff.IsValid,
+							AreaBuffRadius = summonCharacter.AreaBuffRadius,
+							AreaDamageRadius = summonCharacter.AreaDamageRadius,
+							AreaEffectOnDashIsValid = summonCharacter.AreaEffectOnDash != null && summonCharacter.AreaEffectOnDash.IsValid,
+							AreaEffectOnMorphIsValid = summonCharacter.AreaEffectOnMorph != null && summonCharacter.AreaEffectOnMorph.IsValid,
+							AttachedCharacterHeight = summonCharacter.AttachedCharacterHeight,
+							MultipleTargets = summonCharacter.MultipleTargets
+						};
+						Logger.Debug("{@charLog}", charLog);
+					}
+					else if (spell.Projectile != null && spell.Projectile.IsValid)
+					{
+						var projectile = spell.Projectile;
+						var projectileLog = new
+						{
+							Spell = log,
+							Name = projectile.Name.Value.ToString(),
+							AoeToAir = projectile.AoeToAir,
+							AoeToGround = projectile.AoeToGround,
+							SpawnCharacterLevelIndex = projectile.SpawnCharacterLevelIndex,
+						};
+						Logger.Debug("{@projectileLog}", projectileLog);
+					}
+					else
+					{
+						Logger.Debug("{@log}", log);
+					}
+				}
 			}
-			
+
 			var cycleSpells = spells.Where(s => s != null && s.IsValid && s.ManaCost <= 3).OrderBy(s => s.ManaCost);
 			var powerSpells = spells.Where(s => s != null && s.IsValid && s.ManaCost > 3).OrderByDescending(s => s.ManaCost);
 
