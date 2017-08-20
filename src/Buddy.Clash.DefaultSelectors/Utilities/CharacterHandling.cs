@@ -64,13 +64,13 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             }
         }
 
-        public static Character EnemieWithTheMostEnemiesAround(out int count)
+        public static Character enemyWithTheMostEnemiesAround(out int count)
         {
             int boarderX = 1000;
             int boarderY = 1000;
             IEnumerable<Character> enemies = Enemies;
             IEnumerable<Character> enemiesAroundTemp;
-            Character enemie = null;
+            Character enemy = null;
             count = 0;
 
             foreach (var item in enemies)
@@ -83,11 +83,11 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 if(enemiesAroundTemp.Count() > count)
                 {
                     count = enemiesAroundTemp.Count();
-                    enemie = item;
+                    enemy = item;
                 }
             }
 
-            return enemie;
+            return enemy;
         }
 
         public static IEnumerable<Character> PrincessTower
@@ -125,7 +125,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             }
         }
 
-        public static IEnumerable<Character> EnemiePrincessTower
+        public static IEnumerable<Character> enemyPrincessTower
         {
             get
             {
@@ -153,7 +153,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             }
         }
 
-        public static Character EnemieKingTower
+        public static Character enemyKingTower
         {
             get
             {
@@ -210,6 +210,13 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                     return true;
             }
             return false;
+        }
+
+        public static void AddCardsToEnemieDeck()
+        {
+            var om = ClashEngine.Instance.ObjectManager;
+            var chars = om.OfType<Character>().Where(n => n.OwnerIndex != ClashEngine.Instance.LocalPlayer.OwnerIndex);
+            EnemyCardHandling.AddCardToDeck(chars);
         }
 
         public void LogCharInformations()

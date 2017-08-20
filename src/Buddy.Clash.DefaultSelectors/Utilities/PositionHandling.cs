@@ -51,7 +51,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             {
                 if (middleLineY == 0)
                     middleLineY = (CharacterHandling.KingTower.StartPosition.GetY() + 
-                                    CharacterHandling.EnemieKingTower.StartPosition.GetY()) / 2;
+                                    CharacterHandling.enemyKingTower.StartPosition.GetY()) / 2;
 
                 return middleLineY;
             }
@@ -133,7 +133,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
             IEnumerable<Character> enemyPrincessTowers;
 
-            enemyPrincessTowers = CharacterHandling.EnemiePrincessTower;
+            enemyPrincessTowers = CharacterHandling.enemyPrincessTower;
 
             var pT2 = enemyPrincessTowers.FirstOrDefault();
             Vector2f enemyTowerPos = pT2.StartPosition;
@@ -154,7 +154,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
             IEnumerable<Character> enemyPrincessTowers;
 
-            enemyPrincessTowers = CharacterHandling.EnemiePrincessTower;
+            enemyPrincessTowers = CharacterHandling.enemyPrincessTower;
 
             var pT2 = enemyPrincessTowers.LastOrDefault();
             Vector2f enemyTowerPos = pT2.StartPosition;

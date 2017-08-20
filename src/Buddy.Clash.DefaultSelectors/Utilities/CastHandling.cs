@@ -59,13 +59,13 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             }
         }
 
-        public static bool DamagingSpellDecision(out Engine.NativeObjects.Logic.GameObjects.Character enemie)
+        public static bool DamagingSpellDecision(out Engine.NativeObjects.Logic.GameObjects.Character enemy)
         {
             int count = 0;
-            enemie = CharacterHandling.EnemieWithTheMostEnemiesAround(out count);
+            enemy = CharacterHandling.enemyWithTheMostEnemiesAround(out count);
 
-            Logger.Debug("EnemieWhithTheMostEnemiesAround-Count: {count} Enemie-Name {name}", count
-                         , enemie.LogicGameObjectData.Name.Value);
+            Logger.Debug("enemyWhithTheMostEnemiesAround-Count: {count} enemy-Name {name}", count
+                         , enemy.LogicGameObjectData.Name.Value);
 
             if (count > 5)
                 return true;
@@ -79,10 +79,10 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             IOrderedEnumerable<Spell> troopPowerSpells = OwnCardHandling.TroopPowerCards;
             IOrderedEnumerable<Spell> damagingSpells = OwnCardHandling.Damaging;
 
-            Engine.NativeObjects.Logic.GameObjects.Character enemie;
+            Engine.NativeObjects.Logic.GameObjects.Character enemy;
 
-            if (DamagingSpellDecision(out enemie))
-                return new CastRequest(damagingSpells.FirstOrDefault().Name.Value, enemie.StartPosition);
+            if (DamagingSpellDecision(out enemy))
+                return new CastRequest(damagingSpells.FirstOrDefault().Name.Value, enemy.StartPosition);
 
             if (troopCycleSpells.Count() > 1)
             {
