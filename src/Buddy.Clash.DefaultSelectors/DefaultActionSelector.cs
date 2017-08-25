@@ -5,18 +5,18 @@ namespace Buddy.Clash.DefaultSelectors
 
     // Test
 
-	public class DefaultActionSelector : IActionSelector
+	public class DefaultActionSelector : ActionSelectorBase
 	{
-		public string Name => "Default Action Selector";
+		public override string Name => "Default Action Selector";
 
-		public string Description => "Plays the first spell of the spell buttons.";
+		public override string Description => "Plays the first spell of the spell buttons.";
 
-		public string Author => "Token";
+		public override string Author => "Token";
 
-		public Version Version => new Version(1, 0, 0, 0);
-		public Guid Identifier => new Guid("{53FB4573-C7F7-43CA-9052-C05E88925795}");
+		public override Version Version => new Version(1, 0, 0, 0);
+		public override Guid Identifier => new Guid("{53FB4573-C7F7-43CA-9052-C05E88925795}");
 
-		public CastRequest GetNextCast()
+		public override CastRequest GetNextCast()
 		{
 			var battle = ClashEngine.Instance.Battle;
 			if (battle == null || !battle.IsValid) return null;

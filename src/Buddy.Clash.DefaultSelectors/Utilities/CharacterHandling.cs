@@ -49,7 +49,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 var nearestChar = chars.Where(n => n.LogicGameObjectData.Name.Value != "PrincessTower" &&
                                                 n.OwnerIndex != ownerIndex);
 
-                var orderedChar = nearestChar.OrderBy(n => n.StartPosition.GetY());
+                var orderedChar = nearestChar.OrderBy(n => n.StartPosition.Y);
 
                 if (ownerIndex == 0)
                 {
@@ -75,10 +75,10 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
             foreach (var item in enemies)
             {
-                enemiesAroundTemp = enemies.Where(n => n.StartPosition.GetX() > item.StartPosition.GetX() - boarderX
-                                                && n.StartPosition.GetX() < item.StartPosition.GetX() + boarderX &&
-                                                n.StartPosition.GetY() > item.StartPosition.GetY() - boarderY &&
-                                                n.StartPosition.GetY() < item.StartPosition.GetY() + boarderY);
+                enemiesAroundTemp = enemies.Where(n => n.StartPosition.X > item.StartPosition.X - boarderX
+                                                && n.StartPosition.X < item.StartPosition.X + boarderX &&
+                                                n.StartPosition.Y > item.StartPosition.Y - boarderY &&
+                                                n.StartPosition.Y < item.StartPosition.Y + boarderY);
 
                 if(enemiesAroundTemp.Count() > count)
                 {
@@ -98,7 +98,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 var om = ClashEngine.Instance.ObjectManager;
                 var chars = om.OfType<Character>();
                 var princessTower = chars.Where(n => n.LogicGameObjectData.Name.Value == "PrincessTower" &&
-                                                n.OwnerIndex == player.OwnerIndex).OrderBy(n => n.StartPosition.GetX());
+                                                n.OwnerIndex == player.OwnerIndex).OrderBy(n => n.StartPosition.X);
 
                 foreach (var s in princessTower)
                 {
@@ -133,7 +133,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 var om = ClashEngine.Instance.ObjectManager;
                 var chars = om.OfType<Character>();
                 var princessTower = chars.Where(n => n.LogicGameObjectData.Name.Value == "PrincessTower" &&
-                                                n.OwnerIndex != player.OwnerIndex).OrderBy(n => n.StartPosition.GetX());
+                                                n.OwnerIndex != player.OwnerIndex).OrderBy(n => n.StartPosition.X);
 
                 foreach (var s in princessTower)
                 {
@@ -170,10 +170,10 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             var chars = om.OfType<Character>();
             var princessTower = chars.Where(n => n.LogicGameObjectData.Name.Value == "PrincessTower" &&
                                             n.OwnerIndex == ownerIndex).OrderBy
-                                            (n => n.LogicGameObjectData.HealthBar.Value).FirstOrDefault();
+                                            (n => n.HealthComponent.Health).FirstOrDefault();
             
                 Log.Debug("PrincessTower: Owner - {0}; Position: {1}",
-                            princessTower.OwnerIndex, princessTower.LogicGameObjectData.HealthBar.Value);
+                            princessTower.OwnerIndex, princessTower.HealthComponent.Health);
 
             return princessTower;
         }
@@ -232,7 +232,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                                     "HealthBar {HealthNumber} Health {Health} Range {Range} FlyFromGround {FlyFromGround} FlyingHeight {FlyingHeight}" +
                                     " GameObjects-Count {LogicGameObjectManager}",
                         @char.OwnerIndex, charName, attacksAir, @char.StartPosition, @char.Mana, data.AreaBuffRadius, 
-                        collisionRadius, @char.LogicGameObjectData.ShowHealthNumber, @char.LogicGameObjectData.HealthBar.Value,
+                        collisionRadius, @char.LogicGameObjectData.ShowHealthNumber, @char.HealthComponent.Health,
                         data.Range, data.FlyFromGround, data.FlyingHeight, @char.LogicGameObjectManager.GameObjects.Count);
 
                 }

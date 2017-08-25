@@ -7,21 +7,22 @@
 	using Common;
 	using Serilog;
 
-	public class EarlyCycleSelector : IActionSelector
+	public class EarlyCycleSelector : ActionSelectorBase
 	{
 		private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
 		private readonly ConcurrentQueue<string> _spellQueue = new ConcurrentQueue<string>();
 
-		public string Name => "Early Cycle Selector";
-
-		public string Description => "This selector implements a simple attack logic that cycles throu cards till it has 3 cards that require more than 3 mana. Then plays two cards at almost the same time.";
-
-		public string Author => "Token";
-
-		public Version Version => new Version(1, 0, 0, 0);
-		public Guid Identifier => new Guid("{9996B2EB-8002-4684-BACB-4321FF7D359E}");
-
-		public CastRequest GetNextCast()
+		public override string Name => "Early Cycle Selector";
+		
+		public override string Description => "This selector implements a simple attack logic that cycles throu cards till it has 3 cards that require more than 3 mana. Then plays two cards at almost the same time.";
+		
+		public override string Author => "Token";
+		
+		public override Version Version => new Version(1, 0, 0, 0);
+		
+		public override Guid Identifier => new Guid("{9996B2EB-8002-4684-BACB-4321FF7D359E}");
+		
+		public override CastRequest GetNextCast()
 		{
 			var om = ClashEngine.Instance.ObjectManager;
 

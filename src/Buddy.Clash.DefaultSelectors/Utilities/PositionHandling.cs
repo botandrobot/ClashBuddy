@@ -50,8 +50,8 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             get
             {
                 if (middleLineY == 0)
-                    middleLineY = (CharacterHandling.KingTower.StartPosition.GetY() + 
-                                    CharacterHandling.EnemieKingTower.StartPosition.GetY()) / 2;
+                    middleLineY = (CharacterHandling.KingTower.StartPosition.Y + 
+                                    CharacterHandling.EnemieKingTower.StartPosition.Y) / 2;
 
                 return middleLineY;
             }
@@ -61,12 +61,12 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
         public static bool IsPositionOnOurSide(Vector2 position)
         {
-            Logger.Debug("PositionY: " + position.GetY() + " MiddleLinePositionY: " + MiddleLineY);
+            Logger.Debug("PositionY: " + position.Y + " MiddleLinePositionY: " + MiddleLineY);
 
             if (ClashEngine.Instance.LocalPlayer.OwnerIndex == 0)
-                return (position.GetY() < MiddleLineY);
+                return (position.Y < MiddleLineY);
             else
-                return (position.GetY() > MiddleLineY);
+                return (position.Y > MiddleLineY);
         }
 
         public Vector2f GetNextSpellPosition(GameState gameState)
@@ -85,7 +85,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
                     if (CharacterHandling.PrincessTower.Count() > 1)
                     {
-                            if (CharacterHandling.NearestEnemy.StartPosition.GetX() > CharacterHandling.KingTower.StartPosition.GetX())
+                            if (CharacterHandling.NearestEnemy.StartPosition.X > CharacterHandling.KingTower.StartPosition.X)
                                 choosedPosition = CharacterHandling.PrincessTower
                                                                     .LastOrDefault().StartPosition;
                             else

@@ -12,25 +12,25 @@
     using Utilities;
 
     // Just 1v1
-    public class ApolloCR : IActionSelector
-    {
+    public class ApolloCR : ActionSelectorBase
+	{
         #region
         private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
 
-        public string Name => "Apollo";
+        public override string Name => "Apollo";
 
-        public string Description => "Arena 1-4; 1vs1; Please lean back and let me Apollo do the work...";
+        public override string Description => "Arena 1-4; 1vs1; Please lean back and let me Apollo do the work...";
 
-        public string Author => "Token";
+        public override string Author => "Peros_";
 
-        public Version Version => new Version(1, 0, 0, 0);
-        public Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
+        public override Version Version => new Version(1, 0, 0, 0);
+        public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
         #endregion
         private static PositionHandling positionHandling = new PositionHandling();
         private static CharacterHandling characterHandling = new CharacterHandling();
         private static OwnCardHandling cardHandling = new OwnCardHandling();
 
-        public CastRequest GetNextCast()
+        public override CastRequest GetNextCast()
         {
             #region battle valid check
             var battle = ClashEngine.Instance.Battle;
