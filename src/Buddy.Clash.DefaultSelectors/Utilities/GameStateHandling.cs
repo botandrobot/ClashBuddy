@@ -46,7 +46,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                     {
                         GameBeginning = false;
 
-                        if (CharacterHandling.NearestEnemy.StartPosition.GetX() > CharacterHandling.KingTower.StartPosition.GetX())
+                        if (CharacterHandling.NearestEnemy.StartPosition.X > CharacterHandling.KingTower.StartPosition.X)
                             return GameState.DLPT;
                         else
                             return GameState.DRPT;
@@ -57,7 +57,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 {
                     if (CharacterHandling.PrincessTower.Count() > 1)
                     {
-                        if (CharacterHandling.NearestEnemy.StartPosition.GetX() > CharacterHandling.KingTower.StartPosition.GetX())
+                        if (CharacterHandling.NearestEnemy.StartPosition.X > CharacterHandling.KingTower.StartPosition.X)
                             return GameState.UALPT;
                         else
                             return GameState.UARPT;

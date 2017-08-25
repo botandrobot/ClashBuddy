@@ -13,15 +13,29 @@
 		<Copyright Condition="'$(Copyright)' == ''">Copyright 2017 (c) Bossland GmbH. All rights reserved.</Copyright>
 
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+
+		<Configurations>Debug;Release;DebugIntegrated;ReleaseIntegrated</Configurations>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<OutputPath>..\..\bin\Debug\</OutputPath>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<DefineConstants>TRACE;DEBUG;NETCOREAPP1_1;MEMPTR_ARCH_X86</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugIntegrated|AnyCPU'">
 		<OutputPath>..\..\..\..\bin\Debug\</OutputPath>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<DefineConstants>TRACE;DEBUG;NETCOREAPP1_1;MEMPTR_ARCH_X86</DefineConstants>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<OutputPath>..\..\bin\Release\</OutputPath>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<DefineConstants>TRACE;RELEASE;NETCOREAPP1_1;MEMPTR_ARCH_X86</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseIntegrated|AnyCPU'">
 		<OutputPath>..\..\..\..\bin\Release\</OutputPath>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
 		<DefineConstants>TRACE;RELEASE;NETCOREAPP1_1;MEMPTR_ARCH_X86</DefineConstants>
@@ -29,9 +43,20 @@
 
 	<ItemGroup>
 		<PackageReference Include="Serilog" Version="2.5.0" />
-		<PackageReference Include="Buddy.Common" Version="*" />
-		<PackageReference Include="Buddy.Engine" Version="*" />
-		<PackageReference Include="Buddy.Clash.Engine" Version="*" />
+		<PackageReference Include="Buddy.Common" Version="*" Condition="'$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Buddy.Engine" Version="*" Condition="'$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Buddy.Clash.Engine" Version="*" Condition="'$(BuildingInsideVisualStudio)' != 'true'" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\src\Buddy.Engine\Buddy.Engine.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' ">
+			<Private>true</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\..\..\..\src\Buddy.Clash.Engine\Buddy.Clash.Engine.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' ">
+			<Private>true</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\..\..\..\src\Buddy.Common\Buddy.Common.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' ">
+			<Private>true</Private>
+		</ProjectReference>
 	</ItemGroup>
 
 </Project>

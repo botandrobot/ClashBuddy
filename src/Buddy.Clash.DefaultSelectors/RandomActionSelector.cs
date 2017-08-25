@@ -7,20 +7,20 @@ namespace Buddy.Clash.DefaultSelectors
 	using System;
 	using Engine;
 
-	class RandomActionSelector : IActionSelector
-    {
-	    public string Name => "Random Selector";
+	class RandomActionSelector : ActionSelectorBase
+	{
+	    public override string Name => "Random Selector";
 
-	    public string Description => "Will try to cast a random spell every tick.";
+	    public override string Description => "Will try to cast a random spell every tick.";
 
-	    public string Author => "Token";
+	    public override string Author => "Token";
 
-	    public Version Version => new Version(1, 0, 0, 0);
-	    public Guid Identifier => new Guid("{41989DD3-6F76-4794-8870-4A1E860A0EF5}");
+	    public override Version Version => new Version(1, 0, 0, 0);
+	    public override Guid Identifier => new Guid("{41989DD3-6F76-4794-8870-4A1E860A0EF5}");
 
 	    private static readonly Random _generator = new Random();
 
-	    public CastRequest GetNextCast()
+	    public override CastRequest GetNextCast()
 	    {
 		    var battle = ClashEngine.Instance.Battle;
 		    if (battle == null || !battle.IsValid) return null;
