@@ -36,6 +36,7 @@
             var battle = ClashEngine.Instance.Battle;
             if (battle == null || !battle.IsValid)
             {
+                Logger.Debug("Set game beginning = true");
                 GameStateHandling.GameBeginning = true;
                 return null;
             }
@@ -44,8 +45,7 @@
             if (ClashEngine.Instance.LocalPlayer.Mana < 2)
                 return null;
 
-
-            #region Just for logging
+            
             /*
             Log.Debug("Avatar-Count: " + ClashEngine.Instance.Battle.AvatarCount);
             Log.Debug("Avatar1-StartPos: " + ClashEngine.Instance.Battle.AvatarLocations1.StartPosition);
@@ -54,18 +54,14 @@
             Logger.Debug("IsEnemyCharOnOurSide: " + CharacterHandling.IsEnemyOnOurSide());
             characterHandling.LogCharInformations();
             */
-            CharacterHandling.AddCardsToEnemieDeck();
-
-            foreach (var @char in EnemyCardHandling.enemiesDeck)
-            {
-                Log.Debug("Enemy-Deck Name: {0}", @char.Key);
-            }
-            #endregion Just for logging
+            EnemieHandling.CreateEnemies();
+            //EnemieHandling.BuildEnemieDecks();
+            //characterHandling.LogCharInformations();
+            EnemieHandling.BuildEnemiesNextCardsAndHand();
             
 
             #region GameState and next position
             GameState gameState = GameStateHandling.CurrentGameState;
-
             Vector2f nextPosition = positionHandling.GetNextSpellPosition(gameState);
             #endregion
 

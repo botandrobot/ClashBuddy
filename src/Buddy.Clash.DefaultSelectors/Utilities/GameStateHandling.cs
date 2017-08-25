@@ -1,4 +1,6 @@
 ﻿using Buddy.Clash.Engine;
+using Buddy.Common;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +24,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
     class GameStateHandling
     {
+        private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
         public static bool GameBeginning = true;
 
         public static GameState CurrentGameState
@@ -32,8 +35,13 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
                 if (GameBeginning == true)
                 {
-                    if(ClashEngine.Instance.LocalPlayer.Mana < 9)
+                    if (ClashEngine.Instance.LocalPlayer.Mana < 9)
+                    {
+                        if (CharacterHandling.IsEnemyOnOurSide())
+                            GameBeginning = false;
+
                         return GameState.START;
+                    }
                     else
                     {
                         GameBeginning = false;
@@ -64,6 +72,27 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                     // ToDo: Implement logic for Defense and Attack-Mode
                     return GameState.ALPT;
                 }
+            }
+        }
+
+        public static void GamePhase()
+        {
+
+        }
+
+        private static int playerCount;
+        public static int PlayerCount
+        {
+            set
+            {
+                playerCount = value;
+            }
+            get
+            {
+                if (playerCount == 0)
+                    playerCount = ClashEngine.Instance.Battle.SummonerTowers.Where(n => n.StartPosition.GetX() != 0).Count();
+
+                return playerCount;
             }
         }
     }

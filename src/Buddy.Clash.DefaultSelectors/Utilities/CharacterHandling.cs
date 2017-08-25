@@ -13,6 +13,8 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
     {
         private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
 
+        public static IEnumerable<Character> TempLastEnemieCharacters = new List<Character>();
+
         public static IEnumerable<Character> EnemiesOnOurSide
         {
             get
@@ -39,6 +41,23 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             }
         }
 
+        public static IEnumerable<Character> EnemiesWithoutTower
+        {
+            get
+            {
+                var om = ClashEngine.Instance.ObjectManager;
+                var chars = om.OfType<Character>();
+                uint ownerIndex = ClashEngine.Instance.LocalPlayer.OwnerIndex;
+
+                IEnumerable<Character> enemies = chars.Where(
+                                                            n => n.OwnerIndex != ownerIndex 
+                                                            && n.LogicGameObjectData.Name.Value != "PrincessTower"
+                                                            && n.LogicGameObjectData.Name.Value != "KingTower");
+
+                return enemies;
+            }
+        }
+
         public static Character NearestEnemy
         {
             get
@@ -53,18 +72,18 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
                 if (ownerIndex == 0)
                 {
-                    Log.Debug("Nearest enemy-char: " + orderedChar.FirstOrDefault().LogicGameObjectData.Name);
+                    //Log.Debug("Nearest enemy-char: " + orderedChar.FirstOrDefault().LogicGameObjectData.Name);
                     return orderedChar.FirstOrDefault();
                 }
                 else
                 {
-                    Log.Debug("Nearest enemy-char: " + orderedChar.LastOrDefault().LogicGameObjectData.Name);
+                    //Log.Debug("Nearest enemy-char: " + orderedChar.LastOrDefault().LogicGameObjectData.Name);
                     return orderedChar.LastOrDefault();
                 }
             }
         }
 
-        public static Character enemyWithTheMostEnemiesAround(out int count)
+        public static Character EnemyWithTheMostEnemiesAround(out int count)
         {
             int boarderX = 1000;
             int boarderY = 1000;
@@ -90,6 +109,32 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             return enemy;
         }
 
+        public static Character EnemyWithTheMostGroundEnemiesAround(out int count)
+        {
+            int boarderX = 1000;
+            int boarderY = 1000;
+            IEnumerable<Character> enemies = Enemies;
+            IEnumerable<Character> enemiesAroundTemp;
+            Character enemy = null;
+            count = 0;
+
+            foreach (var item in enemies)
+            {
+                enemiesAroundTemp = enemies.Where(n => n.StartPosition.GetX() > item.StartPosition.GetX() - boarderX
+                                                && n.StartPosition.GetX() < item.StartPosition.GetX() + boarderX &&
+                                                n.StartPosition.GetY() > item.StartPosition.GetY() - boarderY &&
+                                                n.StartPosition.GetY() < item.StartPosition.GetY() + boarderY).Where(n => n.LogicGameObjectData.FlyingHeight == 0);
+
+                if (enemiesAroundTemp.Count() > count)
+                {
+                    count = enemiesAroundTemp.Count();
+                    enemy = item;
+                }
+            }
+
+            return enemy;
+        }
+
         public static IEnumerable<Character> PrincessTower
         {
             get
@@ -102,8 +147,8 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
                 foreach (var s in princessTower)
                 {
-                    Log.Debug("PrincessTower: Owner - {0}; Position: {1}",
-                                s.OwnerIndex, s.StartPosition);
+                   // Log.Debug("PrincessTower: Owner - {0}; Position: {1}",
+                   //             s.OwnerIndex, s.StartPosition);
                 }
                 return princessTower;
             }
@@ -125,7 +170,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             }
         }
 
-        public static IEnumerable<Character> enemyPrincessTower
+        public static IEnumerable<Character> EnemyPrincessTower
         {
             get
             {
@@ -133,15 +178,32 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 var om = ClashEngine.Instance.ObjectManager;
                 var chars = om.OfType<Character>();
                 var princessTower = chars.Where(n => n.LogicGameObjectData.Name.Value == "PrincessTower" &&
-                                                n.OwnerIndex != player.OwnerIndex).OrderBy(n => n.StartPosition.GetX());
+                                                n.OwnerIndex != ClashEngine.Instance.LocalPlayer.OwnerIndex).OrderBy(n => n.OwnerIndex).OrderBy(n => n.StartPosition.GetX());
 
-                foreach (var s in princessTower)
-                {
-                    Log.Debug("PrincessTower: Owner - {0}; Position: {1}",
-                                s.OwnerIndex, s.StartPosition);
-                }
+                //foreach (var s in princessTower)
+                //{
+                //    Log.Debug("PrincessTower: Owner - {0}; Position: {1}",
+                //                s.OwnerIndex, s.StartPosition);
+                //}
                 return princessTower;
             }
+        }
+
+        public static IEnumerable<Character> PrincessTowerOfOwner(uint ownerIndex)
+        {
+
+                var player = ClashEngine.Instance.LocalPlayer;
+                var om = ClashEngine.Instance.ObjectManager;
+                var chars = om.OfType<Character>();
+                var princessTower = chars.Where(n => n.LogicGameObjectData.Name.Value == "PrincessTower" &&
+                                                n.OwnerIndex == ownerIndex).OrderBy(n => n.OwnerIndex).OrderBy(n => n.StartPosition.GetX());
+
+                //foreach (var s in princessTower)
+                //{
+                //    Log.Debug("PrincessTower: Owner - {0}; Position: {1}",
+                //                s.OwnerIndex, s.StartPosition);
+                //}
+                return princessTower;
         }
 
         public static Character KingTower
@@ -153,12 +215,49 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             }
         }
 
-        public static Character enemyKingTower
+        public static Character EnemyKingTower
         {
             get
             {
                 return ClashEngine.Instance.Battle.SummonerTowers.Where(n =>
                                             n.OwnerIndex != ClashEngine.Instance.LocalPlayer.OwnerIndex).FirstOrDefault();
+            }
+        }
+
+        public static Character KingTowerOfOwner(uint ownerIndex)
+        {
+                return ClashEngine.Instance.Battle.SummonerTowers.Where(n =>
+                                            n.OwnerIndex == ownerIndex).FirstOrDefault();
+        }
+
+        public static Character EnemieSpawnedCharacter
+        {
+            get
+            {
+                var enemiesWithoutTower = EnemiesWithoutTower;
+
+                foreach (var @char in enemiesWithoutTower)
+                {
+                    bool isNewCharacter = true;
+
+                    foreach (var pastChar in TempLastEnemieCharacters)
+                    {
+                        //Logger.Debug("Char = {0} ; PastChar = {1}", @char.LogicGameObjectData.Name.Value, pastChar.LogicGameObjectData.Name.Value);
+
+                        if (@char.LogicGameObjectData.Name.Value == pastChar.LogicGameObjectData.Name.Value
+                            && @char.OwnerIndex == pastChar.OwnerIndex)
+                            isNewCharacter = false;
+                    }
+
+                    if (isNewCharacter)
+                    {
+                        
+                        TempLastEnemieCharacters = enemiesWithoutTower.ToList();
+                        return @char;
+                    }
+                }
+                //TempLastEnemieCharacters = enemiesWithoutTower;
+                return null;
             }
         }
 
@@ -172,8 +271,8 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                                             n.OwnerIndex == ownerIndex).OrderBy
                                             (n => n.LogicGameObjectData.HealthBar.Value).FirstOrDefault();
             
-                Log.Debug("PrincessTower: Owner - {0}; Position: {1}",
-                            princessTower.OwnerIndex, princessTower.LogicGameObjectData.HealthBar.Value);
+                //Log.Debug("PrincessTower: Owner - {0}; Position: {1}",
+                //            princessTower.OwnerIndex, princessTower.LogicGameObjectData.HealthBar.Value);
 
             return princessTower;
         }
@@ -190,7 +289,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 var data = @char.LogicGameObjectData;
                 if (data != null && data.IsValid)
                 {
-                    Logger.Debug("IsPositionOnOurSide: " + PositionHandling.IsPositionOnOurSide(@char.StartPosition));
+                    //Logger.Debug("IsPositionOnOurSide: " + PositionHandling.IsPositionOnOurSide(@char.StartPosition));
 
                     if (@char.OwnerIndex != ClashEngine.Instance.LocalPlayer.OwnerIndex && PositionHandling.IsPositionOnOurSide(@char.StartPosition))
                         return true;
@@ -212,12 +311,14 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             return false;
         }
 
+        /*
         public static void AddCardsToEnemieDeck()
         {
             var om = ClashEngine.Instance.ObjectManager;
             var chars = om.OfType<Character>().Where(n => n.OwnerIndex != ClashEngine.Instance.LocalPlayer.OwnerIndex);
-            EnemyCardHandling.AddCardToDeck(chars);
+            Enemie.AddCardToDeck(chars);
         }
+        */
 
         public void LogCharInformations()
         {

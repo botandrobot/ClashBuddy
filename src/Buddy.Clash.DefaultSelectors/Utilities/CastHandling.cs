@@ -1,4 +1,5 @@
 ﻿using Buddy.Clash.Engine;
+using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
 using Buddy.Clash.Engine.NativeObjects.LogicData;
 using Buddy.Clash.Engine.NativeObjects.Native;
 using Buddy.Common;
@@ -28,6 +29,8 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             {
                 case CardType.All:
                     return EarlyCycle(nextPosition);
+                case CardType.Defense:
+                    return Defense(nextPosition);
                 case CardType.Troop:
                     return DefenseTroop(nextPosition);
                 case CardType.NONE:
@@ -43,7 +46,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 case GameState.UAKT:
                 case GameState.UALPT:
                 case GameState.UARPT:
-                    return CardType.Troop;
+                    return CardType.Defense;
                 case GameState.AKT:
                 case GameState.ALPT:
                 case GameState.ARPT:
@@ -62,11 +65,12 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
         public static bool DamagingSpellDecision(out Engine.NativeObjects.Logic.GameObjects.Character enemy)
         {
             int count = 0;
-            enemy = CharacterHandling.enemyWithTheMostEnemiesAround(out count);
+            enemy = CharacterHandling.EnemyWithTheMostEnemiesAround(out count);
 
+            /*
             Logger.Debug("enemyWhithTheMostEnemiesAround-Count: {count} enemy-Name {name}", count
                          , enemy.LogicGameObjectData.Name.Value);
-
+                         */
             if (count > 5)
                 return true;
 
@@ -82,7 +86,29 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             Engine.NativeObjects.Logic.GameObjects.Character enemy;
 
             if (DamagingSpellDecision(out enemy))
-                return new CastRequest(damagingSpells.FirstOrDefault().Name.Value, enemy.StartPosition);
+            {
+                var damagingSpell = damagingSpells.FirstOrDefault();
+
+                if(damagingSpell != null)
+                    return new CastRequest(damagingSpell.Name.Value, enemy.StartPosition);
+            }
+
+            if (IsAOEAttackNeeded())
+            {
+                var spell = OwnCardHandling.TroopAOEAttack.FirstOrDefault();
+                if (spell == null)
+                    spell = OwnCardHandling.TroopGroundAttack.FirstOrDefault();
+
+                if (spell != null)
+                    return new CastRequest(spell.Name.Value, nextPosition);
+            }
+
+            if(IsFlyingAttackNeeded())
+            {
+                var spell = OwnCardHandling.TroopAirAttack.FirstOrDefault();
+                if (spell != null)
+                    return new CastRequest(spell.Name.Value, nextPosition);
+            }
 
             if (troopCycleSpells.Count() > 1)
             {
@@ -107,8 +133,86 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
         public static CastRequest DefenseTroop(Vector2f nextPosition)
         {
+            if (IsAOEAttackNeeded())
+            {
+                var spell = OwnCardHandling.TroopAOEAttack.FirstOrDefault();
+                if (spell == null)
+                    spell = OwnCardHandling.TroopGroundAttack.FirstOrDefault();
+
+                if(spell != null)
+                    return new CastRequest(spell.Name.Value, nextPosition);
+            }
+
+            if (IsFlyingAttackNeeded())
+            {
+                var spell = OwnCardHandling.TroopAirAttack.FirstOrDefault();
+
+                if (spell != null)
+                    return new CastRequest(spell.Name.Value, nextPosition);
+            }
+
             return new CastRequest(OwnCardHandling.Troop
                                     .FirstOrDefault().Name.Value, nextPosition);
+        }
+
+        public static CastRequest Defense(Vector2f nextPosition)
+        {
+            IOrderedEnumerable<Spell> damagingSpells = OwnCardHandling.Damaging;
+            Engine.NativeObjects.Logic.GameObjects.Character enemy;
+
+            if (DamagingSpellDecision(out enemy))
+            {
+                var damagingSpell = damagingSpells.FirstOrDefault();
+
+                if (damagingSpell != null)
+                    return new CastRequest(damagingSpell.Name.Value, enemy.StartPosition);
+            }
+
+            if (IsAOEAttackNeeded())
+            {
+                var spell = OwnCardHandling.TroopAOEAttack.FirstOrDefault();
+                if (spell == null)
+                    spell = OwnCardHandling.TroopGroundAttack.FirstOrDefault();
+
+                if (spell != null)
+                    return new CastRequest(spell.Name.Value, nextPosition);
+            }
+
+            if (IsFlyingAttackNeeded())
+            {
+                var spell = OwnCardHandling.TroopAirAttack.FirstOrDefault();
+
+                if (spell != null)
+                    return new CastRequest(spell.Name.Value, nextPosition);
+            }
+
+            {
+                var spell = OwnCardHandling.TroopCycleCards.FirstOrDefault();
+
+                if (spell != null)
+                    return new CastRequest(spell.Name.Value, nextPosition);
+
+                return new CastRequest(OwnCardHandling.Troop
+                                        .FirstOrDefault().Name.Value, nextPosition);
+            }
+        }
+
+
+        public static bool IsAOEAttackNeeded()
+        {
+            int biggestEnemieGroupCount;
+            Engine.NativeObjects.Logic.GameObjects.Character @char = 
+                CharacterHandling.EnemyWithTheMostEnemiesAround(out biggestEnemieGroupCount);
+
+            if (biggestEnemieGroupCount > 3)
+                return true;
+
+            return false;
+        }
+
+        public static bool IsFlyingAttackNeeded()
+        {
+            return CharacterHandling.IsFlyingEnemyOnTheField();
         }
     }
 }

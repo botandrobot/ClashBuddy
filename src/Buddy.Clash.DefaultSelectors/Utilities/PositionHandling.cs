@@ -51,7 +51,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             {
                 if (middleLineY == 0)
                     middleLineY = (CharacterHandling.KingTower.StartPosition.GetY() + 
-                                    CharacterHandling.enemyKingTower.StartPosition.GetY()) / 2;
+                                    CharacterHandling.EnemyKingTower.StartPosition.GetY()) / 2;
 
                 return middleLineY;
             }
@@ -61,12 +61,13 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
         public static bool IsPositionOnOurSide(Vector2 position)
         {
-            Logger.Debug("PositionY: " + position.GetY() + " MiddleLinePositionY: " + MiddleLineY);
+            //Logger.Debug("PositionY: " + position.GetY() + " MiddleLinePositionY: " + MiddleLineY);
 
             if (ClashEngine.Instance.LocalPlayer.OwnerIndex == 0)
                 return (position.GetY() < MiddleLineY);
             else
                 return (position.GetY() > MiddleLineY);
+
         }
 
         public Vector2f GetNextSpellPosition(GameState gameState)
@@ -81,7 +82,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 case GameState.UAKT:
                 case GameState.UALPT:
                 case GameState.UARPT:
-                    Log.Debug("GameState: {GameState}", gameState.ToString());
+                    //Log.Debug("GameState: {GameState}", gameState.ToString());
 
                     if (CharacterHandling.PrincessTower.Count() > 1)
                     {
@@ -116,9 +117,9 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                     Log.Debug("GameState unknown");
                     break;
             }
-            Log.Debug("GameState: {GameState}", gameState.ToString());
+            //Log.Debug("GameState: {GameState}", gameState.ToString());
             nextPosition = (choosedPosition + rndAddVector);
-            Logger.Debug("nextPosition: " + nextPosition);
+            //Logger.Debug("nextPosition: " + nextPosition);
 
             return nextPosition;
         }
@@ -133,13 +134,13 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
             IEnumerable<Character> enemyPrincessTowers;
 
-            enemyPrincessTowers = CharacterHandling.enemyPrincessTower;
+            enemyPrincessTowers = CharacterHandling.EnemyPrincessTower;
 
             var pT2 = enemyPrincessTowers.FirstOrDefault();
             Vector2f enemyTowerPos = pT2.StartPosition;
 
             Vector2f brPosition = ((ownTowerPos + enemyTowerPos) / 2);
-            Log.Debug("Bridge-Postion: " + brPosition);
+            //Log.Debug("Bridge-Postion: " + brPosition);
                 
             return brPosition;
         }
@@ -154,13 +155,13 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
             IEnumerable<Character> enemyPrincessTowers;
 
-            enemyPrincessTowers = CharacterHandling.enemyPrincessTower;
+            enemyPrincessTowers = CharacterHandling.EnemyPrincessTower;
 
             var pT2 = enemyPrincessTowers.LastOrDefault();
             Vector2f enemyTowerPos = pT2.StartPosition;
 
             Vector2f brPosition = ((ownTowerPos + enemyTowerPos) / 2);
-            Log.Debug("Bridge-Postion: " + brPosition);
+            //Log.Debug("Bridge-Postion: " + brPosition);
 
             return brPosition;
         }

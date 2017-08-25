@@ -47,20 +47,20 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 var spells = ClashEngine.Instance.AvailableSpells;
                 var TroopSpell = spells.Where(s => s != null && s.IsValid && !String.IsNullOrEmpty(s.SummonCharacter.Name.Value)).OrderBy(s => s.ManaCost);
                 
-                foreach(var s in TroopSpell)
-                {
-                    Log.Debug("TroopSpell: Name {0} EffektName {1} PushBack {2} ProjectileAOEtoAir {3} " +
-                        "ProjectileAOEtoGround {4} Projectile {5} AttacksAir {6} AttacksGround {7} LifeTime {8} SummonCharacterType {9} SummonCharacter {10}",
-                                s.Name.Value, s.Effect.Name.Value, s.Pushback, 
-                                s.Projectile.AoeToAir, s.Projectile.AoeToGround, s.Projectile.Name.Value
-                                , s.SummonCharacter.AttacksAir, s.SummonCharacter.AttacksGround, s.SummonCharacter.LifeTime, s.SummonCharacter.GetType(), s.SummonCharacter.Name.Value);
-                }
+                //foreach(var s in TroopSpell)
+                //{
+                //    Log.Debug("TroopSpell: Name {0} EffektName {1} PushBack {2} ProjectileAOEtoAir {3} " +
+                //        "ProjectileAOEtoGround {4} Projectile {5} AttacksAir {6} AttacksGround {7} LifeTime {8} SummonCharacterType {9} SummonCharacter {10}",
+                //                s.Name.Value, s.Effect.Name.Value, s.Pushback, 
+                //                s.Projectile.AoeToAir, s.Projectile.AoeToGround, s.Projectile.Name.Value
+                //                , s.SummonCharacter.AttacksAir, s.SummonCharacter.AttacksGround, s.SummonCharacter.LifeTime, s.SummonCharacter.GetType(), s.SummonCharacter.Name.Value);
+                //}
 
                 return TroopSpell;
             }
         }
 
-        public static IEnumerable<Spell> AirAttack
+        public static IEnumerable<Spell> TroopAirAttack
         {
             get
             {
@@ -68,7 +68,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             }
         }
 
-        public static IEnumerable<Spell> GroundAttack
+        public static IEnumerable<Spell> TroopGroundAttack
         {
             get
             {
@@ -76,7 +76,15 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             }
         }
 
-        public static IEnumerable<Spell> Flying
+        public static IEnumerable<Spell> TroopAOEAttack
+        {
+            get
+            {
+                return Troop.Where(n => n.SummonCharacter.AreaDamageRadius > 0);
+            }
+        }
+
+        public static IEnumerable<Spell> TroopFlying
         {
             get
             {

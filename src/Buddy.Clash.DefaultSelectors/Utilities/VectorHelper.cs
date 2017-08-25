@@ -15,14 +15,14 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
         {
             try
             {
-                Logger.Debug("GetCoordinates-Vector-Param: " + v);
+                //Logger.Debug("GetCoordinates-Vector-Param: " + v);
                 String[] vectorString = v.ToString().Split('/');
                 x = int.Parse(vectorString[0].Replace("{",""));
                 y = int.Parse(vectorString[1].Replace("}",""));
             }
             catch (Exception e)
             {
-                Logger.Debug("GetCoordinates--Exception: " + e.Message);
+                //Logger.Debug("GetCoordinates--Exception: " + e.Message);
                 x = 0;
                 y = 0;
             }
