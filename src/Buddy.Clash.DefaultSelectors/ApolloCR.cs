@@ -56,7 +56,7 @@
             */
             EnemieHandling.CreateEnemies();
             //EnemieHandling.BuildEnemieDecks();
-            //characterHandling.LogCharInformations();
+            characterHandling.LogCharInformations();
             EnemieHandling.BuildEnemiesNextCardsAndHand();
             
 

@@ -16,6 +16,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 if (isDoubleElixirActive)
                     return true;
                 
+               
                 //isDoubleElixirActive = Clash.Engine.ClashEngine.Instance.Battle.IsDoubleElixirActive;
                 return isDoubleElixirActive;
             }
