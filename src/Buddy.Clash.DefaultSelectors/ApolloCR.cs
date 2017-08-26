@@ -39,13 +39,13 @@
                 GameStateHandling.GameBeginning = true;
                 return null;
             }
-            #endregion
+			#endregion
 
-            #region Just for logging
-            Log.Debug("Avatar-Count: " + ClashEngine.Instance.Battle.AvatarCount);
-            Log.Debug("Avatar1-StartPos: " + ClashEngine.Instance.Battle.AvatarLocations1.StartPosition);
+			#region Just for logging
+	        Logger.Debug("Avatar-Count: " + ClashEngine.Instance.Battle.AvatarCount);
+	        Logger.Debug("Avatar1-StartPos: " + ClashEngine.Instance.Battle.AvatarLocations1.StartPosition);
 
-            Log.Debug("OwnerIndex: " + ClashEngine.Instance.LocalPlayer.OwnerIndex);
+	        Logger.Debug("OwnerIndex: " + ClashEngine.Instance.LocalPlayer.OwnerIndex);
             Logger.Debug("IsEnemyCharOnOurSide: " + CharacterHandling.IsEnemyOnOurSide());
             characterHandling.LogCharInformations();
             #endregion Just for logging
