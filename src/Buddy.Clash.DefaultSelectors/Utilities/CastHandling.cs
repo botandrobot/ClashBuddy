@@ -13,7 +13,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 {
     class CastHandling
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<CastHandling>();
         private static readonly ConcurrentQueue<string> _spellQueue = new ConcurrentQueue<string>();
         private static IOrderedEnumerable<Spell> Spells;
 

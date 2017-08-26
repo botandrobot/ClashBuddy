@@ -28,7 +28,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
     class OwnCardHandling
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<OwnCardHandling>();
 
         public static IOrderedEnumerable<Spell> Damaging
         {
@@ -49,7 +49,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 
                 foreach(var s in TroopSpell)
                 {
-                    Log.Debug("TroopSpell: Name {0} EffektName {1} PushBack {2} ProjectileAOEtoAir {3} " +
+	                Logger.Debug("TroopSpell: Name {0} EffektName {1} PushBack {2} ProjectileAOEtoAir {3} " +
                         "ProjectileAOEtoGround {4} Projectile {5} AttacksAir {6} AttacksGround {7} LifeTime {8}",
                                 s.Name.Value, s.Effect.Name.Value, s.Pushback, 
                                 s.Projectile.AoeToAir, s.Projectile.AoeToGround, s.Projectile.Name.Value

@@ -12,7 +12,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 {
     class PositionHandling
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<PositionHandling>();
         private static Random rnd = new Random();
 
         #region Left and Right Bridge
@@ -81,7 +81,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 case GameState.UAKT:
                 case GameState.UALPT:
                 case GameState.UARPT:
-                    Log.Debug("GameState: {GameState}", gameState.ToString());
+                    Logger.Debug("GameState: {GameState}", gameState.ToString());
 
                     if (CharacterHandling.PrincessTower.Count() > 1)
                     {
@@ -113,10 +113,10 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                     choosedPosition = CharacterHandling.RightPrincessTower.StartPosition;
                     break;
                 default:
-                    Log.Debug("GameState unknown");
+	                Logger.Debug("GameState unknown");
                     break;
             }
-            Log.Debug("GameState: {GameState}", gameState.ToString());
+	        Logger.Debug("GameState: {GameState}", gameState.ToString());
             nextPosition = (choosedPosition + rndAddVector);
             Logger.Debug("nextPosition: " + nextPosition);
 
@@ -139,7 +139,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             Vector2f enemyTowerPos = pT2.StartPosition;
 
             Vector2f brPosition = ((ownTowerPos + enemyTowerPos) / 2);
-            Log.Debug("Bridge-Postion: " + brPosition);
+	        Logger.Debug("Bridge-Postion: " + brPosition);
                 
             return brPosition;
         }
@@ -160,7 +160,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             Vector2f enemyTowerPos = pT2.StartPosition;
 
             Vector2f brPosition = ((ownTowerPos + enemyTowerPos) / 2);
-            Log.Debug("Bridge-Postion: " + brPosition);
+	        Logger.Debug("Bridge-Postion: " + brPosition);
 
             return brPosition;
         }

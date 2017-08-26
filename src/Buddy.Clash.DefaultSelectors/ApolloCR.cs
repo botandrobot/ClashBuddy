@@ -15,7 +15,7 @@
     public class ApolloCR : ActionSelectorBase
 	{
         #region
-        private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<ApolloCR>();
 
         public override string Name => "Apollo";
 
