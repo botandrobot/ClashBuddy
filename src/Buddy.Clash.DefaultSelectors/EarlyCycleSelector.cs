@@ -6,8 +6,9 @@
 	using Engine;
 	using Common;
 	using Serilog;
+    using Buddy.Clash.DefaultSelectors.Utilities;
 
-	public class EarlyCycleSelector : ActionSelectorBase
+    public class EarlyCycleSelector : ActionSelectorBase
 	{
 		private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
 		private readonly ConcurrentQueue<string> _spellQueue = new ConcurrentQueue<string>();
@@ -165,9 +166,7 @@
 				return new CastRequest(spell.Name.Value, towerPos);
 			}
 
-			var player = ClashEngine.Instance.LocalPlayer;
-
-			if (player == null || player.Mana < 9) return null;
+			if (StaticValues.Player == null || StaticValues.Player.Mana < 9) return null;
 
 			foreach (var s in powerSpells)
 			{
