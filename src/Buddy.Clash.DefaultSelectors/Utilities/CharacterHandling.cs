@@ -53,7 +53,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
                 foreach (var s in princessTower)
                 {
-                    // Log.Debug("PrincessTower: Owner - {0}; Position: {1}",
+                    // Logger.Debug("PrincessTower: Owner - {0}; Position: {1}",
                     //             s.OwnerIndex, s.StartPosition);
                 }
                 return princessTower;
@@ -140,12 +140,12 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
                 if (ownerIndex == 0)
                 {
-                    //Log.Debug("Nearest enemy-char: " + orderedChar.FirstOrDefault().LogicGameObjectData.Name);
+                    //Logger.Debug("Nearest enemy-char: " + orderedChar.FirstOrDefault().LogicGameObjectData.Name);
                     return orderedChar.FirstOrDefault();
                 }
                 else
                 {
-                    //Log.Debug("Nearest enemy-char: " + orderedChar.LastOrDefault().LogicGameObjectData.Name);
+                    //Logger.Debug("Nearest enemy-char: " + orderedChar.LastOrDefault().LogicGameObjectData.Name);
                     return orderedChar.LastOrDefault();
                 }
             }
@@ -275,7 +275,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
                 //foreach (var s in princessTower)
                 //{
-                //    Log.Debug("PrincessTower: Owner - {0}; Position: {1}",
+                //    Logger.Debug("PrincessTower: Owner - {0}; Position: {1}",
                 //                s.OwnerIndex, s.StartPosition);
                 //}
                 return princessTower;
@@ -306,7 +306,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                                             n.OwnerIndex == ownerIndex).OrderBy
                                             (n => n.HealthComponent.Field8).FirstOrDefault();
 
-            //Log.Debug("PrincessTower: Owner - {0}; Position: {1}",
+            //Logger.Debug("PrincessTower: Owner - {0}; Position: {1}",
             //            princessTower.OwnerIndex, princessTower.LogicGameObjectData.HealthBar.Value);
 
             return princessTower;

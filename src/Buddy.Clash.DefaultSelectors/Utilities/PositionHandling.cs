@@ -1,6 +1,4 @@
-﻿using Buddy.Clash.DefaultSelectors.Utilities;
-using Buddy.Clash.Engine;
-using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
+﻿using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
 using Buddy.Clash.Engine.NativeObjects.Native;
 using Buddy.Common;
 using Serilog;
@@ -108,10 +106,10 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                     choosedPosition = DRPT();
                     break;
                 default:
-                    Log.Debug("GameState unknown");
+                    Logger.Debug("GameState unknown");
                     break;
             }
-            //Log.Debug("GameState: {GameState}", gameState.ToString());
+            //Logger.Debug("GameState: {GameState}", gameState.ToString());
             nextPosition = (choosedPosition + rndAddVector);
             //Logger.Debug("nextPosition: " + nextPosition);
 
@@ -134,7 +132,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             Vector2f enemyTowerPos = pT2.StartPosition;
 
             Vector2f brPosition = ((ownTowerPos + enemyTowerPos) / 2);
-            //Log.Debug("Bridge-Postion: " + brPosition);
+            //Logger.Debug("Bridge-Postion: " + brPosition);
                 
             return brPosition;
         }
@@ -155,7 +153,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             Vector2f enemyTowerPos = pT2.StartPosition;
 
             Vector2f brPosition = ((ownTowerPos + enemyTowerPos) / 2);
-            //Log.Debug("Bridge-Postion: " + brPosition);
+            //Logger.Debug("Bridge-Postion: " + brPosition);
 
             return brPosition;
         }
