@@ -236,17 +236,17 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
         #endregion
 
         #region integer value as return
-        public static uint HealthOfEnemiesOnOurSide
+        public static int HealthOfEnemiesOnOurSide
         {
             get
             {
-                uint healthAmount = 0;
+                int healthAmount = 0;
                 IEnumerable<Character> enemiesOnOurSide = Enemies.Where(
                                                             n => PositionHandling.IsPositionOnOurSide(n.StartPosition));
 
                 foreach (var @char in enemiesOnOurSide)
                 {
-                    healthAmount += @char.HealthComponent.Field8;
+                    healthAmount += @char.HealthComponent.CurrentHealth;
                 }
 
                 return healthAmount;
@@ -304,7 +304,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             var chars = om.OfType<Character>();
             var princessTower = chars.Where(n => n.LogicGameObjectData.Name.Value == "PrincessTower" &&
                                             n.OwnerIndex == ownerIndex).OrderBy
-                                            (n => n.HealthComponent.Field8).FirstOrDefault();
+                                            (n => n.HealthComponent.CurrentHealth).FirstOrDefault();
 
             //Logger.Debug("PrincessTower: Owner - {0}; Position: {1}",
             //            princessTower.OwnerIndex, princessTower.LogicGameObjectData.HealthBar.Value);
@@ -375,11 +375,10 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                     var collisionRadius = data.CollisionRadius;
                     Logger.Debug("Found Character with owner {OwnerIndex} name {charName} AttacksAir {attacksAir} startposition {StartPosition} " +
                                     "mana {Mana} areabuff {AreaBuffRadius} collisionRadius {collisionRadius} " +
-                                    "Health {Health} Shield {Shield} Field14 {Field14} Field1C {Field1C} Field8 {Field8} Range {Range} FlyFromGround {FlyFromGround} FlyingHeight {FlyingHeight}" +
+                                    "Health {Health} Shield {Shield} CurrentHealth {CurrentHealth} Range {Range} FlyFromGround {FlyFromGround} FlyingHeight {FlyingHeight}" +
                                     " GameObjects-Count {LogicGameObjectManager}",
                         @char.OwnerIndex, charName, attacksAir, @char.StartPosition, @char.Mana, data.AreaBuffRadius, 
-                        collisionRadius, @char.HealthComponent.Health, @char.HealthComponent.ShieldHealth, @char.HealthComponent.Field14,
-                        @char.HealthComponent.Field1C, @char.HealthComponent.Field8,
+                        collisionRadius, @char.HealthComponent.Health, @char.HealthComponent.ShieldHealth, @char.HealthComponent.CurrentHealth,
                         data.Range, data.FlyFromGround, data.FlyingHeight, @char.LogicGameObjectManager.GameObjects.Count);
 
                 }
