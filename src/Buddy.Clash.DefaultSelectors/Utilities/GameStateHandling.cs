@@ -1,4 +1,5 @@
 ﻿using Buddy.Clash.Engine;
+using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
 using Buddy.Common;
 using Serilog;
 using System;
@@ -31,47 +32,13 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
         {
             get
             {
-                uint ownerIndex = ClashEngine.Instance.LocalPlayer.OwnerIndex;
+                if (GameBeginning)
+                    return GameBeginningDecision();
 
-                if (GameBeginning == true)
-                {
-                    if (ClashEngine.Instance.LocalPlayer.Mana < 9)
-                    {
-                        if (CharacterHandling.IsEnemyOnOurSide())
-                            GameBeginning = false;
-
-                        return GameState.START;
-                    }
-                    else
-                    {
-                        GameBeginning = false;
-
-                        if (CharacterHandling.NearestEnemy.StartPosition.X > CharacterHandling.KingTower.StartPosition.X)
-                            return GameState.DLPT;
-                        else
-                            return GameState.DRPT;
-                    }
-                }
-
-                if (CharacterHandling.IsEnemyOnOurSide())
-                {
-                    if (CharacterHandling.PrincessTower.Count() > 1)
-                    {
-                        if (CharacterHandling.NearestEnemy.StartPosition.X > CharacterHandling.KingTower.StartPosition.X)
-                            return GameState.UALPT;
-                        else
-                            return GameState.UARPT;
-                    }
-                    else
-                    {
-                        return GameState.UAKT;
-                    }
-                }
+                if (CharacterHandling.IsAnEnemyOnOurSide())
+                    return EnemyIsOnOurSideDecision();
                 else
-                {
-                    // ToDo: Implement logic for Defense and Attack-Mode
-                    return GameState.ALPT;
-                }
+                    return AttackDecision();
             }
         }
 
@@ -90,9 +57,54 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             get
             {
                 if (playerCount == 0)
-                    playerCount = ClashEngine.Instance.Battle.SummonerTowers.Where(n => n.StartPosition.GetX() != 0).Count();
+                    playerCount = ClashEngine.Instance.Battle.SummonerTowers.Where(n => n.StartPosition.X != 0).Count();
 
                 return playerCount;
+            }
+        }
+
+        private static GameState AttackDecision()
+        {
+            Character princessTower = CharacterHandling.GetEnemyPrincessTowerWithLowestHealth(StaticValues.Player.OwnerIndex);
+
+            if (PositionHandling.IsPositionOnTheRightSide(princessTower.StartPosition))
+                return GameState.ARPT;
+            else
+                return GameState.ALPT;
+        }
+
+        private static GameState GameBeginningDecision()
+        {
+            if (StaticValues.Player.Mana < 9)
+            {
+                if (CharacterHandling.IsAnEnemyOnOurSide())
+                    GameBeginning = false;
+
+                return GameState.START;
+            }
+            else
+            {
+                GameBeginning = false;
+
+                if (PositionHandling.IsPositionOnTheRightSide(CharacterHandling.NearestEnemy.StartPosition))
+                    return GameState.DRPT;
+                else
+                    return GameState.DLPT;
+            }
+        }
+
+        private static GameState EnemyIsOnOurSideDecision()
+        {
+            if (CharacterHandling.PrincessTower.Count() > 1)
+            {
+                if (PositionHandling.IsPositionOnTheRightSide(CharacterHandling.NearestEnemy.StartPosition))
+                    return GameState.UARPT;
+                else
+                    return GameState.UALPT;
+            }
+            else
+            {
+                return GameState.UAKT;
             }
         }
     }

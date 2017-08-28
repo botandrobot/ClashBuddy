@@ -50,8 +50,8 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             get
             {
                 if (middleLineY == 0)
-                    middleLineY = (CharacterHandling.KingTower.StartPosition.GetY() + 
-                                    CharacterHandling.EnemyKingTower.StartPosition.GetY()) / 2;
+                    middleLineY = (CharacterHandling.KingTower.StartPosition.Y + 
+                                    CharacterHandling.EnemyKingTower.StartPosition.Y) / 2;
 
                 return middleLineY;
             }
@@ -61,57 +61,51 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
         public static bool IsPositionOnOurSide(Vector2 position)
         {
-            //Logger.Debug("PositionY: " + position.GetY() + " MiddleLinePositionY: " + MiddleLineY);
+            //Logger.Debug("PositionY: " + position.Y + " MiddleLinePositionY: " + MiddleLineY);
+            // ToDo: Is not rdy for 2v2
 
-            if (ClashEngine.Instance.LocalPlayer.OwnerIndex == 0)
-                return (position.GetY() < MiddleLineY);
+
+            if (StaticValues.Player.OwnerIndex == 0)
+                return (position.Y < MiddleLineY);
             else
-                return (position.GetY() > MiddleLineY);
+                return (position.Y > MiddleLineY);
 
         }
 
         public Vector2f GetNextSpellPosition(GameState gameState)
         {
-            Vector2f rndAddVector = new Vector2(rnd.Next(-500, 500), rnd.Next(-1000, 1000));
+            Vector2f rndAddVector = new Vector2(rnd.Next(-200, 200), rnd.Next(-500, 500));
             Vector2f choosedPosition = Vector2f.Zero, nextPosition;
-            uint ownerIndex = ClashEngine.Instance.LocalPlayer.OwnerIndex;
 
             // ToDo: Handle Defense Gamestates
             switch(gameState)
             {
                 case GameState.UAKT:
-                case GameState.UALPT:
-                case GameState.UARPT:
-                    //Log.Debug("GameState: {GameState}", gameState.ToString());
-
-                    if (CharacterHandling.PrincessTower.Count() > 1)
-                    {
-                            if (CharacterHandling.NearestEnemy.StartPosition.GetX() > CharacterHandling.KingTower.StartPosition.GetX())
-                                choosedPosition = CharacterHandling.PrincessTower
-                                                                    .LastOrDefault().StartPosition;
-                            else
-                                choosedPosition = CharacterHandling.PrincessTower
-                                                                    .FirstOrDefault().StartPosition;
-                    }
-                    else
-                    {
-                        choosedPosition = CharacterHandling.KingTower.StartPosition;
-                    }
+                    choosedPosition = UAKT();
                     break;
-
-                case GameState.AKT: // ToDo
+                case GameState.UALPT:
+                    choosedPosition = UALPT();
+                    break;
+                case GameState.UARPT:
+                    choosedPosition = UARPT();
+                    break;
+                case GameState.AKT:
+                    choosedPosition = AKT();
+                    break;
                 case GameState.ALPT:
-                    choosedPosition = LeftBridge;
+                    choosedPosition = ALPT();
                     break;
                 case GameState.ARPT:
-                    choosedPosition = RightBridge;
+                    choosedPosition = ARPT();
                     break;
                 case GameState.DKT:
+                    choosedPosition = DKT();
+                    break;
                 case GameState.DLPT:
-                    choosedPosition = CharacterHandling.LeftPrincessTower.StartPosition;
+                    choosedPosition = DLPT();
                     break;
                 case GameState.DRPT:
-                    choosedPosition = CharacterHandling.RightPrincessTower.StartPosition;
+                    choosedPosition = DRPT();
                     break;
                 default:
                     Log.Debug("GameState unknown");
@@ -177,6 +171,53 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             // Prio1: Fireball if one of the towers health is really low
             // Prio2: Every damaging spell if there is a big group of enemies
             return Vector2f.Zero;
+        }
+
+        public static bool IsPositionOnTheRightSide(Vector2f position)
+        {
+            if (position.X > CharacterHandling.KingTower.StartPosition.X)
+                return true;
+            else
+                return false;
+        }
+
+        private Vector2f UAKT()
+        {
+            return CharacterHandling.KingTower.StartPosition;
+        }
+
+        private Vector2f UALPT()
+        {
+            return CharacterHandling.PrincessTower.FirstOrDefault().StartPosition;
+        }
+        private Vector2f UARPT()
+        {
+                return CharacterHandling.PrincessTower.LastOrDefault().StartPosition;
+        }
+        private Vector2f DKT()
+        {
+            return CharacterHandling.KingTower.StartPosition;
+        }
+        private Vector2f DLPT()
+        {
+            return CharacterHandling.LeftPrincessTower.StartPosition;
+        }
+        private Vector2f DRPT()
+        {
+            return CharacterHandling.RightPrincessTower.StartPosition;
+        }
+
+        private Vector2f AKT()
+        {
+            return CharacterHandling.EnemyKingTower.StartPosition;
+        }
+        private Vector2f ALPT()
+        {
+            return CharacterHandling.EnemyLeftPrincessTower.StartPosition;
+        }
+        private Vector2f ARPT()
+        {
+            return CharacterHandling.EnemyRightPrincessTower.StartPosition;
         }
     }
 }

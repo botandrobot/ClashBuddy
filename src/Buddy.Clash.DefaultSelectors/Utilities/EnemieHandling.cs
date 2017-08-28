@@ -24,7 +24,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
             if (GameStateHandling.PlayerCount == 2)
             {
-                switch (ClashEngine.Instance.LocalPlayer.OwnerIndex)
+                switch (StaticValues.Player.OwnerIndex)
                 {
 
                     case 0:
@@ -39,7 +39,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             }
             else if (GameStateHandling.PlayerCount == 4)
             {
-                switch (ClashEngine.Instance.LocalPlayer.OwnerIndex)
+                switch (StaticValues.Player.OwnerIndex)
                 {
 
                     case 0:
@@ -68,6 +68,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             return Enemies;
         }
 
+        /*
         public static void BuildEnemieDecks()
         {
             var om = ClashEngine.Instance.ObjectManager;
@@ -75,7 +76,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
             foreach (var @char in chars)
             {
-                //Logger.Debug("OwnerIndex {0}", ClashEngine.Instance.LocalPlayer.OwnerIndex);
+                //Logger.Debug("OwnerIndex {0}", StaticValues.Player.OwnerIndex);
                 //Logger.Debug("Char-OwnerIndex {0}", @char.OwnerIndex);
                 Enemies[@char.OwnerIndex].AddCardToDeck(@char);
 
@@ -85,10 +86,11 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 //}
             }
         }
+        */
 
         public static void BuildEnemiesNextCardsAndHand()
         {
-            Character spawnedCharacter = CharacterHandling.EnemieSpawnedCharacter;
+            Character spawnedCharacter = CharacterHandling.EnemyNewSpawnedCharacter;
             
 
             if (spawnedCharacter != null)
@@ -97,6 +99,10 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 Logger.Debug("Build-Next-Cards: spawnedCharacter = {0}", spawnedCharacter.LogicGameObjectData.Name.Value);
                 Enemie enemie = Enemies[spawnedCharacter.OwnerIndex];
                 enemie.Mana = enemie.Mana - Convert.ToUInt32(spawnedCharacter.Mana);
+
+                if (enemie.NextCards.Contains(new KeyValuePair<string, Character>(spawnedCharacterName, spawnedCharacter))
+                                                || spawnedCharacterName.Contains("Bomb"))
+                    return;
 
                 if(!enemie.Hand.Remove(spawnedCharacterName))
                 {

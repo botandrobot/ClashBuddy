@@ -65,7 +65,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
         public static bool DamagingSpellDecision(out Engine.NativeObjects.Logic.GameObjects.Character enemy)
         {
             int count = 0;
-            enemy = CharacterHandling.EnemyWithTheMostEnemiesAround(out count);
+            enemy = CharacterHandling.EnemyCharacterWithTheMostEnemiesAround(out count);
 
             /*
             Logger.Debug("enemyWhithTheMostEnemiesAround-Count: {count} enemy-Name {name}", count
@@ -202,7 +202,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
         {
             int biggestEnemieGroupCount;
             Engine.NativeObjects.Logic.GameObjects.Character @char = 
-                CharacterHandling.EnemyWithTheMostEnemiesAround(out biggestEnemieGroupCount);
+                CharacterHandling.EnemyCharacterWithTheMostEnemiesAround(out biggestEnemieGroupCount);
 
             if (biggestEnemieGroupCount > 3)
                 return true;

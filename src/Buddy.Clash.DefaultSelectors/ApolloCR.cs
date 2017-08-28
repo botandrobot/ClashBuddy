@@ -42,7 +42,7 @@
             }
             #endregion
 
-            if (ClashEngine.Instance.LocalPlayer.Mana < 2)
+            if (StaticValues.Player.Mana < 2)
                 return null;
 
             
@@ -50,13 +50,13 @@
             Log.Debug("Avatar-Count: " + ClashEngine.Instance.Battle.AvatarCount);
             Log.Debug("Avatar1-StartPos: " + ClashEngine.Instance.Battle.AvatarLocations1.StartPosition);
 
-            Log.Debug("OwnerIndex: " + ClashEngine.Instance.LocalPlayer.OwnerIndex);
+            Log.Debug("OwnerIndex: " + StaticValues.Player.OwnerIndex);
             Logger.Debug("IsEnemyCharOnOurSide: " + CharacterHandling.IsEnemyOnOurSide());
             characterHandling.LogCharInformations();
             */
             EnemieHandling.CreateEnemies();
             //EnemieHandling.BuildEnemieDecks();
-            characterHandling.LogCharInformations();
+            //characterHandling.LogCharInformations();
             EnemieHandling.BuildEnemiesNextCardsAndHand();
             
 

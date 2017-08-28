@@ -127,5 +127,21 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 return spells.Where(s => s != null && s.IsValid && s.ManaCost > 3).OrderByDescending(s => s.ManaCost);
             }
         }
+
+        //public static IOrderedEnumerable<Spell> TroopTanks
+        //{
+        //    get
+        //    {
+        //        return Troop.Where(n => n.SummonCharacter. == 1);
+        //    }
+        //}
+
+        //public static IOrderedEnumerable<Spell> TroopDamageDealer
+        //{
+        //    get
+        //    {
+        //        return Troop.Where(n => n.SummonCharacter. == 1);
+        //    }
+        //}
     }
 }

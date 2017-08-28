@@ -78,7 +78,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             }
             else if (GameStateHandling.PlayerCount == 4)
             {
-                switch (ClashEngine.Instance.LocalPlayer.OwnerIndex)
+                switch (StaticValues.Player.OwnerIndex)
                 {
 
                     case 0:
@@ -98,7 +98,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             #endregion
 
             KingTower = CharacterHandling.KingTowerOfOwner(ownerIndex);
-            Mana = ClashEngine.Instance.LocalPlayer.Mana;
+            Mana = StaticValues.Player.Mana;
         }
 
         public void AddCardsToDeck(IEnumerable<Character> characters)
