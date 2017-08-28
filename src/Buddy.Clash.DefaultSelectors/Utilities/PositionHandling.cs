@@ -10,7 +10,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 {
     class PositionHandling
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<PositionHandling>();
         private static Random rnd = new Random();
 
         #region Left and Right Bridge

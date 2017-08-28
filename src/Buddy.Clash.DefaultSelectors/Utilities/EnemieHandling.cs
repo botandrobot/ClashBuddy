@@ -10,7 +10,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 {
     class EnemieHandling
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<EnemieHandling>();
         private static Dictionary<uint,Enemie> Enemies = new Dictionary<uint, Enemie>();
 
         public static void CreateEnemies()

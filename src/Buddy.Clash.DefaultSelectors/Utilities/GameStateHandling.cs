@@ -25,7 +25,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
     class GameStateHandling
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<GameStateHandling>();
         public static bool GameBeginning = true;
 
         public static GameState CurrentGameState

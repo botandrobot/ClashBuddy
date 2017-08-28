@@ -28,7 +28,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
     class OwnCardHandling
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<OwnCardHandling>();
 
         public static IOrderedEnumerable<Spell> Damaging
         {

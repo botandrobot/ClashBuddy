@@ -11,7 +11,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 {
     class CharacterHandling
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<CharacterHandling>();
 
         public static IEnumerable<Character> TempLastEnemieCharacters = new List<Character>();
 

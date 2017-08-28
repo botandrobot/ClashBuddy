@@ -14,7 +14,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
         private bool LogDeck = true;
         public int firstPlayedCards = 8;
 
-        private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<Enemie>();
         public uint Mana { get; set; }
         public uint ManaAsCharactersOnTheField { get; set; }
         public uint OwnerIndex { get; set; }
