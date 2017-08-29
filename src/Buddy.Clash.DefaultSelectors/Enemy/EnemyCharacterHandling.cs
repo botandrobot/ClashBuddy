@@ -232,6 +232,9 @@ namespace Buddy.Clash.DefaultSelectors.Enemy
                 if (enemyLeftPrincessTower == null)
                     enemyLeftPrincessTower = firstPrincessTower;
 
+                if (firstPrincessTower == null)
+                    return null;
+
                 // If the position is not equals, it means the LeftPrincessTower is already destroyed
                 if (!firstPrincessTower.StartPosition.Equals(enemyLeftPrincessTower.StartPosition))
                     return null;
@@ -250,6 +253,8 @@ namespace Buddy.Clash.DefaultSelectors.Enemy
                 if (enemyRightPrincessTower == null)
                     enemyRightPrincessTower = lastPrincessTower;
 
+                if (lastPrincessTower == null)
+                    return null;
                 // If the position is not equals, it means the LeftPrincessTower is already destroyed
                 if (!lastPrincessTower.StartPosition.Equals(enemyRightPrincessTower.StartPosition))
                     return null;
@@ -263,7 +268,7 @@ namespace Buddy.Clash.DefaultSelectors.Enemy
             var om = ClashEngine.Instance.ObjectManager;
             var chars = om.OfType<Character>();
             var princessTower = chars.Where(n => n.LogicGameObjectData.Name.Value == "PrincessTower" &&
-                                            n.OwnerIndex == ownerIndex).OrderBy
+                                            n.OwnerIndex != ownerIndex).OrderBy
                                             (n => n.HealthComponent.CurrentHealth).FirstOrDefault();
 
             //Logger.Debug("PrincessTower: Owner - {0}; Position: {1}",
@@ -305,6 +310,8 @@ namespace Buddy.Clash.DefaultSelectors.Enemy
             }
             return false;
         }
+
+
         #endregion
     }
 }

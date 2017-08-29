@@ -78,5 +78,34 @@ namespace Buddy.Clash.DefaultSelectors.Player
                 return lastPrincessTower;
             }
         }
+
+        public static int HowManyCharactersAroundCharacter(Character @char)
+        {
+            int boarderX = 1000;
+            int boarderY = 1000;
+            IEnumerable<Character> playerCharacter = PlayerCharacterHandling.Troop;
+            IEnumerable<Character> characterAround;
+
+            characterAround = playerCharacter.Where(n => n.StartPosition.X > @char.StartPosition.X - boarderX
+                                            && n.StartPosition.X < @char.StartPosition.X + boarderX &&
+                                            n.StartPosition.Y > @char.StartPosition.Y - boarderY &&
+                                            n.StartPosition.Y < @char.StartPosition.Y + boarderY);
+
+            return characterAround.Count();
+        }
+
+        public static IEnumerable<Character> Troop
+        {
+            get
+            {
+                var om = ClashEngine.Instance.ObjectManager;
+                var chars = om.OfType<Character>();
+                var troop = chars.Where(n => n.LogicGameObjectData.Name.Value != "PrincessTower" &&
+                                                n.LogicGameObjectData.Name.Value != "KingTower" &&
+                                                n.OwnerIndex == StaticValues.Player.OwnerIndex);
+                return troop;
+
+            }
+        }
     }
 }

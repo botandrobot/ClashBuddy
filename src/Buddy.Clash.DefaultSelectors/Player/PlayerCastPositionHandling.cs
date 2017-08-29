@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
 
 namespace Buddy.Clash.DefaultSelectors.Player
 {
@@ -19,7 +20,7 @@ namespace Buddy.Clash.DefaultSelectors.Player
         {
             Random rnd = StaticValues.rnd;
 
-            Vector2f rndAddVector = new Vector2(rnd.Next(-200, 200), rnd.Next(-500, 500));
+            Vector2f rndAddVector = new Vector2(rnd.Next(-100, 100), rnd.Next(-200, 200));
             Vector2f choosedPosition = Vector2f.Zero, nextPosition;
 
             // ToDo: Handle Defense Gamestates
@@ -53,7 +54,7 @@ namespace Buddy.Clash.DefaultSelectors.Player
                     choosedPosition = DRPT();
                     break;
                 default:
-                    Logger.Debug("GameState unknown");
+                    //Logger.Debug("GameState unknown");
                     break;
             }
             //Logger.Debug("GameState: {GameState}", gameState.ToString());
@@ -78,15 +79,25 @@ namespace Buddy.Clash.DefaultSelectors.Player
         }
         private Vector2f DKT()
         {
-            return PlayerCharacterHandling.KingTower.StartPosition;
+            uint ownerIndex = StaticValues.Player.OwnerIndex;
+
+            if (PlaygroundPositionHandling.IsPositionOnTheRightSide(EnemyCharacterHandling.NearestEnemy.StartPosition))
+                return PlayerCharacterHandling.KingTower.StartPosition + new Vector2f(1000,0);
+            else
+                return PlayerCharacterHandling.KingTower.StartPosition - new Vector2f(1000, 0);
+
         }
         private Vector2f DLPT()
         {
-            return PlayerCharacterHandling.LeftPrincessTower.StartPosition;
+            Vector2f lPT = PlayerCharacterHandling.LeftPrincessTower.StartPosition;
+            Vector2f positionBehindTower = PositionHelper.AddYInIndexDirection(lPT, StaticValues.Player.OwnerIndex);
+            return positionBehindTower;
         }
         private Vector2f DRPT()
         {
-            return PlayerCharacterHandling.RightPrincessTower.StartPosition;
+            Vector2f rPT = PlayerCharacterHandling.RightPrincessTower.StartPosition;
+            Vector2f positionBehindTower = PositionHelper.AddYInIndexDirection(rPT, StaticValues.Player.OwnerIndex);
+            return positionBehindTower;
         }
 
         private Vector2f AKT()
@@ -108,17 +119,39 @@ namespace Buddy.Clash.DefaultSelectors.Player
         }
         private Vector2f ALPT()
         {
-            return EnemyCharacterHandling.EnemyLeftPrincessTower.StartPosition;
+            Vector2f lPT = EnemyCharacterPositionHandling.EnemyLeftPrincessTower;
+            return lPT;
         }
         private Vector2f ARPT()
         {
-            return EnemyCharacterHandling.EnemyRightPrincessTower.StartPosition;
+            Vector2f rPT = EnemyCharacterPositionHandling.EnemyRightPrincessTower;
+            return rPT;
         }
 
-        public Vector2f GetPositionOfTheBestDamagingSpellDeploy()
+        public static Vector2f GetPositionOfTheBestDamagingSpellDeploy()
         {
-            // Prio1: Fireball if one of the towers health is really low
+            // Prio1: Hit Enemy King Tower if health is low
             // Prio2: Every damaging spell if there is a big group of enemies
+
+            if (EnemyCharacterHandling.EnemyKingTower.HealthComponent.CurrentHealth < 400)
+                return EnemyCharacterHandling.EnemyKingTower.StartPosition;
+            else
+            {
+                Character enemy;
+
+                if (PlayerCastHandling.DamagingSpellDecision(out enemy))
+                {
+                    
+                    if (PlayerCharacterHandling.HowManyCharactersAroundCharacter(enemy) > 1)
+                        return enemy.StartPosition;
+                    else
+                    {
+                        // Position Correction
+                        return PositionHelper.AddYInIndexDirection(enemy.StartPosition, StaticValues.Player.OwnerIndex,4000);
+                    }
+                }
+            }
+
             return Vector2f.Zero;
         }
     }

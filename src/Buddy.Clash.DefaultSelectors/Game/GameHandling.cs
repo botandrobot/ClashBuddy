@@ -7,8 +7,9 @@ using Buddy.Clash.DefaultSelectors.Enemy;
 using Buddy.Clash.DefaultSelectors.Game;
 using Serilog;
 using Buddy.Common;
+using Buddy.Clash.DefaultSelectors.Utilities;
 
-namespace Buddy.Clash.DefaultSelectors.Utilities
+namespace Buddy.Clash.DefaultSelectors.Game
 {
     class GameHandling
     {
@@ -21,28 +22,25 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
         public GameHandling()
         {
-            IniGame();
         }
 
-        public void IniGame()
+        public void IniGame(FightStyle fightStyle = FightStyle.Balanced)
         {
-            if (Clash.Engine.ClashEngine.Instance.Battle.BattleTime.Seconds < 1)
-            {
-                Logger.Debug("Set game beginning = true");
+                //Logger.Debug("Set game beginning = true");
                 GameStateHandling.GameBeginning = true;
+                PlayerProperties.FightStyle = fightStyle;
 
                 PlayerCharacterHandling.Reset();
                 EnemyCharacterHandling.Reset();
                 EnemyCharacterPositionHandling.Reset();
 
 
-                EnemyHandling.CreateEnemies();
-            }
+                //EnemyHandling.CreateEnemies();
         }
 
         public void IniRound()
         {
-                EnemyHandling.BuildEnemiesNextCardsAndHand();
+                //EnemyHandling.BuildEnemiesNextCardsAndHand();
                 FightState = GameStateHandling.CurrentFightState;
         }
 

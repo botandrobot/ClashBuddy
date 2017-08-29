@@ -88,12 +88,13 @@ namespace Buddy.Clash.DefaultSelectors.Player
 
             Engine.NativeObjects.Logic.GameObjects.Character enemy;
 
-            if (DamagingSpellDecision(out enemy))
+            Vector2f spellPosition = PlayerCastPositionHandling.GetPositionOfTheBestDamagingSpellDeploy();
+            if (!spellPosition.Equals(Vector2f.Zero))
             {
                 var damagingSpell = damagingSpells.FirstOrDefault();
 
-                if(damagingSpell != null)
-                    return new CastRequest(damagingSpell.Name.Value, enemy.StartPosition);
+                if (damagingSpell != null)
+                    return new CastRequest(damagingSpell.Name.Value, spellPosition);
             }
 
             if (IsAOEAttackNeeded())
@@ -163,12 +164,13 @@ namespace Buddy.Clash.DefaultSelectors.Player
             IOrderedEnumerable<Spell> damagingSpells = PlayerCardHandling.Damaging;
             Engine.NativeObjects.Logic.GameObjects.Character enemy;
 
-            if (DamagingSpellDecision(out enemy))
+            Vector2f spellPosition = PlayerCastPositionHandling.GetPositionOfTheBestDamagingSpellDeploy();
+            if (!spellPosition.Equals(Vector2f.Zero))
             {
                 var damagingSpell = damagingSpells.FirstOrDefault();
 
                 if (damagingSpell != null)
-                    return new CastRequest(damagingSpell.Name.Value, enemy.StartPosition);
+                    return new CastRequest(damagingSpell.Name.Value, spellPosition);
             }
 
             if (IsAOEAttackNeeded())

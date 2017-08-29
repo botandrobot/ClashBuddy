@@ -14,19 +14,19 @@
     using Buddy.Clash.DefaultSelectors.Game;
 
     // Just 1v1
-    public class ApolloCR : ActionSelectorBase
-	{
+    public class AngerCR : ActionSelectorBase
+    {
         #region
         private static readonly ILogger Logger = LogProvider.CreateLogger<ApolloCR>();
 
-        public override string Name => "Apollo";
+        public override string Name => "Anger";
 
-        public override string Description => "1vs1; Please lean back and let me Apollo do the work...";
+        public override string Description => "Arena 1-x; 1vs1; Let me destroy them fast!";
 
         public override string Author => "Peros_";
 
-        public override Version Version => new Version(1, 1, 0, 0);
-        public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
+        public override Version Version => new Version(1, 0, 0, 0);
+        public override Guid Identifier => new Guid("{cc525fda-c4a9-4f1e-b0ea-098b5350ece7}");
         #endregion
 
         private static GameHandling gameHandling = new GameHandling();
@@ -41,11 +41,11 @@
             }
             #endregion
 
-            if (StaticValues.Player.Mana < 2)
+            if (StaticValues.Player.Mana < 1)
                 return null;
 
             if (Clash.Engine.ClashEngine.Instance.Battle.BattleTime.Seconds < 1)
-                gameHandling.IniGame(FightStyle.Balanced);
+                gameHandling.IniGame(FightStyle.Rusher);
 
             gameHandling.IniRound();
             Vector2f nextPosition = gameHandling.GetSpellPosition();

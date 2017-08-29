@@ -58,14 +58,52 @@ namespace Buddy.Clash.DefaultSelectors.Game
         {
             get
             {
-                if (GameBeginning)
-                    return GameBeginningDecision();
-
-                if (EnemyCharacterHandling.IsAnEnemyOnOurSide())
-                    return EnemyIsOnOurSideDecision();
-                else
-                    return AttackDecision();
+                switch (PlayerProperties.FightStyle)
+                {
+                    case FightStyle.Defensive:
+                        return GetCurrentFightStateDefensive();
+                    case FightStyle.Balanced:
+                        return GetCurrentFightStateBalanced();
+                    case FightStyle.Rusher:
+                        return GetCurrentFightStateRusher();
+                    default:
+                        return FightState.DKT;
+                }
             }
+        }
+
+        private static FightState GetCurrentFightStateBalanced()
+        {
+            if (GameBeginning)
+                return GameBeginningDecision();
+
+            if (EnemyCharacterHandling.IsAnEnemyOnOurSide())
+                return EnemyIsOnOurSideDecision();
+            else if (EnemyCharacterHandling.EnemiesWithoutTower.Count() > 1)
+                return EnemyHasCharsOnHisSideDecision();
+            else
+                return AttackDecision();
+        }
+
+        private static FightState GetCurrentFightStateRusher()
+        {
+            if (EnemyCharacterHandling.IsAnEnemyOnOurSide())
+                return EnemyIsOnOurSideDecision();
+            else
+                return AttackDecision();
+        }
+
+        private static FightState GetCurrentFightStateDefensive()
+        {
+            if (GameBeginning)
+                return GameBeginningDecision();
+
+            if (EnemyCharacterHandling.IsAnEnemyOnOurSide())
+                return EnemyIsOnOurSideDecision();
+            else if (EnemyCharacterHandling.EnemiesWithoutTower.Count() > 1)
+                return EnemyHasCharsOnHisSideDecision();
+            else
+                return DefenseDecision();
         }
 
         public static EnemyPrincessTowerState CurrentEnemyPrincessTowerState
@@ -125,10 +163,32 @@ namespace Buddy.Clash.DefaultSelectors.Game
         {
             Character princessTower = EnemyCharacterHandling.GetEnemyPrincessTowerWithLowestHealth(StaticValues.Player.OwnerIndex);
 
+            if(princessTower == null)
+                return FightState.AKT;
+
+            if (CurrentEnemyPrincessTowerState > 0)
+                return FightState.AKT;
+
             if (PlaygroundPositionHandling.IsPositionOnTheRightSide(princessTower.StartPosition))
                 return FightState.ARPT;
             else
                 return FightState.ALPT;
+        }
+
+        private static FightState DefenseDecision()
+        {
+            Character princessTower = EnemyCharacterHandling.GetEnemyPrincessTowerWithLowestHealth(StaticValues.Player.OwnerIndex);
+
+            if (princessTower == null)
+                return FightState.AKT;
+
+            if (CurrentEnemyPrincessTowerState > 0)
+                return FightState.AKT;
+
+            if (PlaygroundPositionHandling.IsPositionOnTheRightSide(princessTower.StartPosition))
+                return FightState.DRPT;
+            else
+                return FightState.DLPT;
         }
 
         private static FightState GameBeginningDecision()
@@ -163,6 +223,21 @@ namespace Buddy.Clash.DefaultSelectors.Game
             else
             {
                 return FightState.UAKT;
+            }
+        }
+
+        private static FightState EnemyHasCharsOnHisSideDecision()
+        {
+            if (PlayerCharacterHandling.PrincessTower.Count() > 1)
+            {
+                if (PlaygroundPositionHandling.IsPositionOnTheRightSide(EnemyCharacterHandling.NearestEnemy.StartPosition))
+                    return FightState.DRPT;
+                else
+                    return FightState.DLPT;
+            }
+            else
+            {
+                return FightState.DKT;
             }
         }
         #endregion
