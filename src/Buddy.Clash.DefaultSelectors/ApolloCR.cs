@@ -10,6 +10,8 @@
     using System.Collections.Generic;
     using Engine.NativeObjects.Logic.GameObjects;
     using Utilities;
+    using Buddy.Clash.DefaultSelectors.Player;
+    using Buddy.Clash.DefaultSelectors.Game;
 
     // Just 1v1
     public class ApolloCR : ActionSelectorBase
@@ -26,9 +28,8 @@
         public override Version Version => new Version(1, 0, 0, 0);
         public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
         #endregion
-        private static PositionHandling positionHandling = new PositionHandling();
-        private static CharacterHandling characterHandling = new CharacterHandling();
-        private static OwnCardHandling cardHandling = new OwnCardHandling();
+
+        private static GameHandling gameHandling = new GameHandling();
 
         public override CastRequest GetNextCast()
         {
@@ -36,8 +37,6 @@
             var battle = ClashEngine.Instance.Battle;
             if (battle == null || !battle.IsValid)
             {
-                Logger.Debug("Set game beginning = true");
-                GameStateHandling.GameBeginning = true;
                 return null;
             }
             #endregion
@@ -45,27 +44,12 @@
             if (StaticValues.Player.Mana < 2)
                 return null;
 
-            
-            /*
-            Log.Debug("Avatar-Count: " + ClashEngine.Instance.Battle.AvatarCount);
-            Log.Debug("Avatar1-StartPos: " + ClashEngine.Instance.Battle.AvatarLocations1.StartPosition);
 
-            Log.Debug("OwnerIndex: " + StaticValues.Player.OwnerIndex);
-            Logger.Debug("IsEnemyCharOnOurSide: " + CharacterHandling.IsEnemyOnOurSide());
-            characterHandling.LogCharInformations();
-            */
-            EnemieHandling.CreateEnemies();
-            //EnemieHandling.BuildEnemieDecks();
-            //characterHandling.LogCharInformations();
-            EnemieHandling.BuildEnemiesNextCardsAndHand();
-            
+            gameHandling.IniRound();
+            Vector2f nextPosition = gameHandling.GetSpellPosition();
+            FightState fightState = gameHandling.FightState;
 
-            #region GameState and next position
-            GameState gameState = GameStateHandling.CurrentGameState;
-            Vector2f nextPosition = positionHandling.GetNextSpellPosition(gameState);
-            #endregion
-
-            return CastHandling.SpellMagic(nextPosition, gameState);
+            return PlayerCastHandling.SpellMagic(nextPosition, fightState);
         }
     }
 }

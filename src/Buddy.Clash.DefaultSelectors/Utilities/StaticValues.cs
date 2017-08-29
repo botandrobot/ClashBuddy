@@ -1,13 +1,32 @@
 ﻿using Buddy.Clash.Engine;
-using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace Buddy.Clash.DefaultSelectors.Utilities
 {
     class StaticValues
     {
-        public static Player Player = ClashEngine.Instance.LocalPlayer;
+        public static Random rnd = new Random();
+
+        public static Engine.NativeObjects.Logic.GameObjects.Player Player
+        {
+            get{ return ClashEngine.Instance.LocalPlayer; }
+        }
+
+        private static int playerCount;
+        public static int PlayerCount
+        {
+            set
+            {
+                playerCount = value;
+            }
+            get
+            {
+                if (playerCount == 0)
+                    playerCount = ClashEngine.Instance.Battle.SummonerTowers.Where(n => n.StartPosition.X != 0).Count();
+
+                return playerCount;
+            }
+        }
     }
 }

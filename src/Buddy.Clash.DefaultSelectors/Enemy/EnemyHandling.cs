@@ -1,69 +1,77 @@
-﻿using Buddy.Clash.Engine;
+﻿using Buddy.Clash.DefaultSelectors.Game;
+using Buddy.Clash.DefaultSelectors.Utilities;
+using Buddy.Clash.Engine;
 using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
 using Buddy.Common;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-namespace Buddy.Clash.DefaultSelectors.Utilities
+namespace Buddy.Clash.DefaultSelectors.Enemy
 {
-    class EnemieHandling
+    class EnemyHandling
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<EnemieHandling>();
-        private static Dictionary<uint,Enemie> Enemies = new Dictionary<uint, Enemie>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<EnemyHandling>();
+        private static Dictionary<uint,Enemy> Enemies = new Dictionary<uint, Enemy>();
 
         public static void CreateEnemies()
         {
-            //Logger.Debug("Enemies-Count: {0}", Enemies.Count);
-            //Logger.Debug("Player-Count: {0}", GameStateHandling.PlayerCount);
-
-            if (Enemies.Count > 0)
-                return;
-            //Logger.Debug("Player-Count: {PlayerCount}", GameStateHandling.PlayerCount);
-
-            if (GameStateHandling.PlayerCount == 2)
+            switch (GameStateHandling.CurrentGameMode)
             {
-                switch (StaticValues.Player.OwnerIndex)
-                {
-
-                    case 0:
-                        Enemie enemie1 = new Enemie(1);
-                        Enemies.Add(enemie1.OwnerIndex,enemie1);
-                        break;
-                    case 1:
-                        Enemie enemie0 = new Enemie(0);
-                        Enemies.Add(enemie0.OwnerIndex,enemie0);
-                        break;
-                };
+                case GameMode.ONE_VERSUS_ONE:
+                    CreateEnemiesTwoPlayerMode();
+                    break;
+                case GameMode.TWO_VERSUS_TWO:
+                    CreateEnemiesFourPlayerMode();
+                    break;
+                case GameMode.NOT_IMPLEMENTED:
+                    break;
+                default:
+                    break;
             }
-            else if (GameStateHandling.PlayerCount == 4)
-            {
-                switch (StaticValues.Player.OwnerIndex)
-                {
-
-                    case 0:
-                    case 1:
-                        Enemie enemie2 = new Enemie(2);
-                        Enemie enemie3 = new Enemie(3);
-                        Enemies.Add(enemie2.OwnerIndex, enemie2);
-                        Enemies.Add(enemie3.OwnerIndex, enemie3);
-                        break;
-                    case 2:
-                    case 3:
-                        Enemie enemie0 = new Enemie(0);
-                        Enemie enemie1 = new Enemie(1);
-                        Enemies.Add(enemie0.OwnerIndex, enemie0);
-                        Enemies.Add(enemie1.OwnerIndex, enemie1);
-                        break;
-                };
-            }
-            else
-                Logger.Debug("Player-Count not correct or mode not implemented");
-
         }
 
-        public static Dictionary<uint,Enemie> GetEnemies()
+        private static void CreateEnemiesTwoPlayerMode()
+        {
+            switch (StaticValues.Player.OwnerIndex)
+            {
+
+                case 0:
+                    Enemy enemie1 = new Enemy(1);
+                    Enemies.Add(enemie1.OwnerIndex, enemie1);
+                    break;
+                case 1:
+                    Enemy enemie0 = new Enemy(0);
+                    Enemies.Add(enemie0.OwnerIndex, enemie0);
+                    break;
+            };
+        }
+
+        private static void CreateEnemiesFourPlayerMode()
+        {
+            switch (StaticValues.Player.OwnerIndex)
+            {
+
+                case 0:
+                case 1:
+                    Enemy enemie2 = new Enemy(2);
+                    Enemy enemie3 = new Enemy(3);
+                    Enemies.Add(enemie2.OwnerIndex, enemie2);
+                    Enemies.Add(enemie3.OwnerIndex, enemie3);
+                    break;
+                case 2:
+                case 3:
+                    Enemy enemie0 = new Enemy(0);
+                    Enemy enemie1 = new Enemy(1);
+                    Enemies.Add(enemie0.OwnerIndex, enemie0);
+                    Enemies.Add(enemie1.OwnerIndex, enemie1);
+                    break;
+            };
+        }
+
+        public static Dictionary<uint,Enemy> GetEnemies()
         {
             return Enemies;
         }
@@ -90,17 +98,17 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
         public static void BuildEnemiesNextCardsAndHand()
         {
-            Character spawnedCharacter = CharacterHandling.EnemyNewSpawnedCharacter;
+            Character spawnedCharacter = EnemyCharacterHandling.EnemyNewSpawnedCharacter;
             
 
             if (spawnedCharacter != null)
             {
                 String spawnedCharacterName = spawnedCharacter.LogicGameObjectData.Name.Value;
                 Logger.Debug("Build-Next-Cards: spawnedCharacter = {0}", spawnedCharacter.LogicGameObjectData.Name.Value);
-                Enemie enemie = Enemies[spawnedCharacter.OwnerIndex];
+                Enemy enemie = Enemies[spawnedCharacter.OwnerIndex];
                 enemie.Mana = enemie.Mana - Convert.ToUInt32(spawnedCharacter.Mana);
 
-                if (enemie.NextCards.Contains(new KeyValuePair<string, Character>(spawnedCharacterName, spawnedCharacter))
+                if ((enemie.NextCards.Where(item => item.Key == spawnedCharacterName).Count() > 0)
                                                 || spawnedCharacterName.Contains("Bomb"))
                     return;
 
@@ -120,7 +128,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 KeyValuePair<String,Character> newCardOnHand = enemie.NextCards.Dequeue();
                 enemie.Hand.Add(newCardOnHand.Key, newCardOnHand.Value);
 
-
+                Logger.Debug("Enemie-Index: {0}", enemie.OwnerIndex);
                 foreach (var item in enemie.NextCards)
                 {
                     Logger.Debug("Next-Card {0}", item.Key);

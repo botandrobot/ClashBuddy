@@ -6,15 +6,16 @@ using System.Linq;
 using Buddy.Clash.Engine;
 using Serilog;
 using Buddy.Common;
+using Buddy.Clash.DefaultSelectors.Utilities;
 
-namespace Buddy.Clash.DefaultSelectors.Utilities
+namespace Buddy.Clash.DefaultSelectors.Enemy
 {
-    class Enemie
+    class Enemy
     {
         private bool LogDeck = true;
         public int firstPlayedCards = 8;
 
-        private static readonly ILogger Logger = LogProvider.CreateLogger<Enemie>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<Enemy>();
         public uint Mana { get; set; }
         public uint ManaAsCharactersOnTheField { get; set; }
         public uint OwnerIndex { get; set; }
@@ -57,13 +58,13 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             set { hand = value; }
         }
 
-        public Enemie(uint ownerIndex)
+        public Enemy(uint ownerIndex)
         {
             OwnerIndex = ownerIndex;
             IEnumerable<Character> PrincessTower = CharacterHandling.PrincessTowerOfOwner(ownerIndex);
 
             #region PrincessTower
-            if (GameStateHandling.PlayerCount == 2)
+            if (StaticValues.PlayerCount == 2)
             {
                 if (ownerIndex == 0)
                 {
@@ -76,7 +77,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                     RightPrincessTower = PrincessTower.FirstOrDefault();
                 }
             }
-            else if (GameStateHandling.PlayerCount == 4)
+            else if (StaticValues.PlayerCount == 4)
             {
                 switch (StaticValues.Player.OwnerIndex)
                 {

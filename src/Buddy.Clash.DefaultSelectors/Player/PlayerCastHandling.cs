@@ -2,6 +2,9 @@
 using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
 using Buddy.Clash.Engine.NativeObjects.LogicData;
 using Buddy.Clash.Engine.NativeObjects.Native;
+using Buddy.Clash.DefaultSelectors.Game;
+using Buddy.Clash.DefaultSelectors.Utilities;
+using Buddy.Clash.DefaultSelectors.Enemy;
 using Buddy.Common;
 using Serilog;
 using System;
@@ -10,18 +13,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Buddy.Clash.DefaultSelectors.Utilities
+namespace Buddy.Clash.DefaultSelectors.Player
 {
-    class CastHandling
+    class PlayerCastHandling
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<CastHandling>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<PlayerCastHandling>();
         private static readonly ConcurrentQueue<string> _spellQueue = new ConcurrentQueue<string>();
         private static IOrderedEnumerable<Spell> Spells;
 
-        public static CastRequest SpellMagic(Vector2f nextPosition, GameState gameState)
+        public static CastRequest SpellMagic(Vector2f nextPosition, FightState gameState)
         {
             if (ClashEngine.Instance.LocalPlayer == null) return null;
-            Spells = OwnCardHandling.Troop;
+            Spells = PlayerCardHandling.Troop;
 
             CardType cardTypeToPlay = ChooseCardType(gameState);
 
@@ -39,23 +42,23 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             return null;
         }
 
-        public static CardType ChooseCardType(GameState gameState)
+        public static CardType ChooseCardType(FightState gameState)
         {
             switch (gameState)
             {
-                case GameState.UAKT:
-                case GameState.UALPT:
-                case GameState.UARPT:
+                case FightState.UAKT:
+                case FightState.UALPT:
+                case FightState.UARPT:
                     return CardType.Defense;
-                case GameState.AKT:
-                case GameState.ALPT:
-                case GameState.ARPT:
+                case FightState.AKT:
+                case FightState.ALPT:
+                case FightState.ARPT:
                     return CardType.All;
-                case GameState.DKT:
-                case GameState.DLPT:
-                case GameState.DRPT:
+                case FightState.DKT:
+                case FightState.DLPT:
+                case FightState.DRPT:
                     return CardType.Troop;
-                case GameState.START:
+                case FightState.START:
                     return CardType.NONE;
                 default:
                     return CardType.All;
@@ -65,7 +68,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
         public static bool DamagingSpellDecision(out Engine.NativeObjects.Logic.GameObjects.Character enemy)
         {
             int count = 0;
-            enemy = CharacterHandling.EnemyCharacterWithTheMostEnemiesAround(out count);
+            enemy = EnemyCharacterHandling.EnemyCharacterWithTheMostEnemiesAround(out count);
 
             /*
             Logger.Debug("enemyWhithTheMostEnemiesAround-Count: {count} enemy-Name {name}", count
@@ -79,9 +82,9 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
         public static CastRequest EarlyCycle(Vector2f nextPosition)
         {
-            IOrderedEnumerable<Spell> troopCycleSpells = OwnCardHandling.TroopCycleCards;
-            IOrderedEnumerable<Spell> troopPowerSpells = OwnCardHandling.TroopPowerCards;
-            IOrderedEnumerable<Spell> damagingSpells = OwnCardHandling.Damaging;
+            IOrderedEnumerable<Spell> troopCycleSpells = PlayerCardHandling.TroopCycleCards;
+            IOrderedEnumerable<Spell> troopPowerSpells = PlayerCardHandling.TroopPowerCards;
+            IOrderedEnumerable<Spell> damagingSpells = PlayerCardHandling.Damaging;
 
             Engine.NativeObjects.Logic.GameObjects.Character enemy;
 
@@ -95,9 +98,9 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
             if (IsAOEAttackNeeded())
             {
-                var spell = OwnCardHandling.TroopAOEAttack.FirstOrDefault();
+                var spell = PlayerCardHandling.TroopAOEAttack.FirstOrDefault();
                 if (spell == null)
-                    spell = OwnCardHandling.TroopGroundAttack.FirstOrDefault();
+                    spell = PlayerCardHandling.TroopGroundAttack.FirstOrDefault();
 
                 if (spell != null)
                     return new CastRequest(spell.Name.Value, nextPosition);
@@ -105,7 +108,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
             if(IsFlyingAttackNeeded())
             {
-                var spell = OwnCardHandling.TroopAirAttack.FirstOrDefault();
+                var spell = PlayerCardHandling.TroopAirAttack.FirstOrDefault();
                 if (spell != null)
                     return new CastRequest(spell.Name.Value, nextPosition);
             }
@@ -135,9 +138,9 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
         {
             if (IsAOEAttackNeeded())
             {
-                var spell = OwnCardHandling.TroopAOEAttack.FirstOrDefault();
+                var spell = PlayerCardHandling.TroopAOEAttack.FirstOrDefault();
                 if (spell == null)
-                    spell = OwnCardHandling.TroopGroundAttack.FirstOrDefault();
+                    spell = PlayerCardHandling.TroopGroundAttack.FirstOrDefault();
 
                 if(spell != null)
                     return new CastRequest(spell.Name.Value, nextPosition);
@@ -145,19 +148,19 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
             if (IsFlyingAttackNeeded())
             {
-                var spell = OwnCardHandling.TroopAirAttack.FirstOrDefault();
+                var spell = PlayerCardHandling.TroopAirAttack.FirstOrDefault();
 
                 if (spell != null)
                     return new CastRequest(spell.Name.Value, nextPosition);
             }
 
-            return new CastRequest(OwnCardHandling.Troop
+            return new CastRequest(PlayerCardHandling.Troop
                                     .FirstOrDefault().Name.Value, nextPosition);
         }
 
         public static CastRequest Defense(Vector2f nextPosition)
         {
-            IOrderedEnumerable<Spell> damagingSpells = OwnCardHandling.Damaging;
+            IOrderedEnumerable<Spell> damagingSpells = PlayerCardHandling.Damaging;
             Engine.NativeObjects.Logic.GameObjects.Character enemy;
 
             if (DamagingSpellDecision(out enemy))
@@ -170,9 +173,9 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
             if (IsAOEAttackNeeded())
             {
-                var spell = OwnCardHandling.TroopAOEAttack.FirstOrDefault();
+                var spell = PlayerCardHandling.TroopAOEAttack.FirstOrDefault();
                 if (spell == null)
-                    spell = OwnCardHandling.TroopGroundAttack.FirstOrDefault();
+                    spell = PlayerCardHandling.TroopGroundAttack.FirstOrDefault();
 
                 if (spell != null)
                     return new CastRequest(spell.Name.Value, nextPosition);
@@ -180,19 +183,19 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
             if (IsFlyingAttackNeeded())
             {
-                var spell = OwnCardHandling.TroopAirAttack.FirstOrDefault();
+                var spell = PlayerCardHandling.TroopAirAttack.FirstOrDefault();
 
                 if (spell != null)
                     return new CastRequest(spell.Name.Value, nextPosition);
             }
 
             {
-                var spell = OwnCardHandling.TroopCycleCards.FirstOrDefault();
+                var spell = PlayerCardHandling.TroopCycleCards.FirstOrDefault();
 
                 if (spell != null)
                     return new CastRequest(spell.Name.Value, nextPosition);
 
-                return new CastRequest(OwnCardHandling.Troop
+                return new CastRequest(PlayerCardHandling.Troop
                                         .FirstOrDefault().Name.Value, nextPosition);
             }
         }
@@ -202,7 +205,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
         {
             int biggestEnemieGroupCount;
             Engine.NativeObjects.Logic.GameObjects.Character @char = 
-                CharacterHandling.EnemyCharacterWithTheMostEnemiesAround(out biggestEnemieGroupCount);
+                EnemyCharacterHandling.EnemyCharacterWithTheMostEnemiesAround(out biggestEnemieGroupCount);
 
             if (biggestEnemieGroupCount > 3)
                 return true;
@@ -212,7 +215,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 
         public static bool IsFlyingAttackNeeded()
         {
-            return CharacterHandling.IsFlyingEnemyOnTheField();
+            return EnemyCharacterHandling.IsFlyingEnemyOnTheField();
         }
     }
 }

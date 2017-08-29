@@ -7,7 +7,7 @@ using System.Linq;
 using Buddy.Common;
 using Buddy.Clash.Engine.NativeObjects.LogicData;
 
-namespace Buddy.Clash.DefaultSelectors.Utilities
+namespace Buddy.Clash.DefaultSelectors.Player
 {
     enum TroopType
     {
@@ -26,9 +26,9 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
         NONE
     };
 
-    class OwnCardHandling
+    class PlayerCardHandling
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<OwnCardHandling>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<PlayerCardHandling>();
 
         public static IOrderedEnumerable<Spell> Damaging
         {
