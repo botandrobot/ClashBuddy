@@ -86,18 +86,10 @@ namespace Buddy.Clash.DefaultSelectors.Logic
         }
         private Vector2f DKT()
         {
-
-
             if (PlaygroundPositionHandling.IsPositionOnTheRightSide(EnemyCharacterHandling.NearestEnemy.StartPosition))
-            {
-                Logger.Debug("Defense-KT Right");
-                return PlayerCharacterHandling.KingTower.StartPosition + new Vector2f(2000, 0);
-            }
+                return PlayerCharacterHandling.KingTower.StartPosition + new Vector2f(1000, 0);
             else
-                Logger.Debug("Defense-KT Left");
-            {
-                return PlayerCharacterHandling.KingTower.StartPosition - new Vector2f(2000, 0);
-            }
+                return PlayerCharacterHandling.KingTower.StartPosition - new Vector2f(1000, 0);
 
         }
         private Vector2f DLPT()
@@ -157,7 +149,7 @@ namespace Buddy.Clash.DefaultSelectors.Logic
             // Prio1: Hit Enemy King Tower if health is low
             // Prio2: Every damaging spell if there is a big group of enemies
 
-            if (EnemyCharacterHandling.EnemyKingTower.HealthComponent.CurrentHealth < 400)
+            if (EnemyCharacterHandling.EnemyKingTower.HealthComponent.CurrentHealth < GameHandling.Settings.KingTowerSpellDamagingHealth)
                 return EnemyCharacterHandling.EnemyKingTower.StartPosition;
             else
             {
@@ -166,7 +158,7 @@ namespace Buddy.Clash.DefaultSelectors.Logic
                 if (CastHandling.DamagingSpellDecision(out enemy))
                 {
                     
-                    if (PlayerCharacterHandling.HowManyCharactersAroundCharacter(enemy) > 1)
+                    if (PlayerCharacterHandling.HowManyCharactersAroundCharacter(enemy) >= GameHandling.Settings.SpellCorrectionConditionCharCount)
                         return enemy.StartPosition;
                     else
                     {

@@ -88,8 +88,6 @@ namespace Buddy.Clash.DefaultSelectors.Logic
             IOrderedEnumerable<Spell> troopPowerSpells = PlayerCardHandling.TroopPowerCards;
             IOrderedEnumerable<Spell> damagingSpells = PlayerCardHandling.Damaging;
 
-            Engine.NativeObjects.Logic.GameObjects.Character enemy;
-
             Vector2f spellPosition = CastPositionHandling.GetPositionOfTheBestDamagingSpellDeploy();
             if (!spellPosition.Equals(Vector2f.Zero))
             {

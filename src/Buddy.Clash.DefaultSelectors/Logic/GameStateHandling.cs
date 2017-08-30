@@ -51,6 +51,7 @@ namespace Buddy.Clash.DefaultSelectors.Logic
         NOT_IMPLEMENTED
     }
 
+
     public enum Position
     {
         Down, // Starts from (0/0)
@@ -188,7 +189,7 @@ namespace Buddy.Clash.DefaultSelectors.Logic
         private static FightState DefenseDecision()
         {
             if (CurrentEnemyPrincessTowerState > 0)
-                return FightState.AKT;
+                return FightState.DKT;
 
             Character princessTower = EnemyCharacterHandling.GetEnemyPrincessTowerWithLowestHealth(StaticValues.Player.OwnerIndex);
 
@@ -200,7 +201,7 @@ namespace Buddy.Clash.DefaultSelectors.Logic
 
         private static FightState GameBeginningDecision()
         {
-            if (StaticValues.Player.Mana < 9)
+            if (StaticValues.Player.Mana < GameHandling.Settings.ManaTillFirstAttack)
             {
                 if (EnemyCharacterHandling.IsAnEnemyOnOurSide())
                     GameBeginning = false;
