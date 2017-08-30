@@ -3,6 +3,7 @@ using Buddy.Clash.DefaultSelectors.Player;
 using Buddy.Clash.DefaultSelectors.Utilities;
 using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
 using Buddy.Clash.Engine.NativeObjects.Native;
+using Buddy.Clash.DefaultSelectors.Logic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace Buddy.Clash.DefaultSelectors.Game
     class PlaygroundPositionHandling
     {
 
-        public Vector2f CalculatetLeftBridgePosition(uint ownerIndex)
+        public Vector2f CalculatetLeftBridgePosition()
         {
             IEnumerable<Character> ownPrincessTowers;
 
@@ -34,7 +35,7 @@ namespace Buddy.Clash.DefaultSelectors.Game
             return brPosition;
         }
 
-        public Vector2f CalculatetRightBridgePosition(uint ownerIndex)
+        public Vector2f CalculatetRightBridgePosition()
         {
             IEnumerable<Character> ownPrincessTowers;
 
@@ -69,11 +70,19 @@ namespace Buddy.Clash.DefaultSelectors.Game
             // ToDo: Is not rdy for 2v2
 
 
-            if (StaticValues.Player.OwnerIndex == 0)
+            if (PlayerProperties.PlayerPosition == Position.Down)
                 return (position.Y < MiddleLineY);
             else
                 return (position.Y > MiddleLineY);
 
+        }
+
+        public static Position IsPositionUpOrDown(Vector2 position)
+        {
+            if (position.Y > MiddleLineY)
+                return Position.Up;
+            else
+                return Position.Down;
         }
 
         #region Left and Right Bridge
@@ -83,7 +92,7 @@ namespace Buddy.Clash.DefaultSelectors.Game
             get
             {
                 if (leftBridge.Equals(Vector2f.Zero))
-                    leftBridge = CalculatetLeftBridgePosition(0);
+                    leftBridge = CalculatetLeftBridgePosition();
 
 
                 return leftBridge;
@@ -96,7 +105,7 @@ namespace Buddy.Clash.DefaultSelectors.Game
             get
             {
                 if (rightBridge.Equals(Vector2f.Zero))
-                    rightBridge = CalculatetRightBridgePosition(0);
+                    rightBridge = CalculatetRightBridgePosition();
 
 
                 return rightBridge;

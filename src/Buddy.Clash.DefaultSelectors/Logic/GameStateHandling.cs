@@ -1,5 +1,7 @@
 ﻿using Buddy.Clash.DefaultSelectors.Enemy;
+using Buddy.Clash.DefaultSelectors.Game;
 using Buddy.Clash.DefaultSelectors.Player;
+using Buddy.Clash.DefaultSelectors.Settings;
 using Buddy.Clash.DefaultSelectors.Utilities;
 using Buddy.Clash.Engine;
 using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
@@ -10,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Buddy.Clash.DefaultSelectors.Game
+namespace Buddy.Clash.DefaultSelectors.Logic
 {
     enum FightState
     {
@@ -49,6 +51,12 @@ namespace Buddy.Clash.DefaultSelectors.Game
         NOT_IMPLEMENTED
     }
 
+    public enum Position
+    {
+        Down, // Starts from (0/0)
+        Up    // Starts from (max/max)
+    }
+
     class GameStateHandling
     {
         private static readonly ILogger Logger = LogProvider.CreateLogger<GameStateHandling>();
@@ -58,7 +66,7 @@ namespace Buddy.Clash.DefaultSelectors.Game
         {
             get
             {
-                switch (PlayerProperties.FightStyle)
+                switch (GameHandling.Settings.FightStyle)
                 {
                     case FightStyle.Defensive:
                         return GetCurrentFightStateDefensive();
@@ -74,15 +82,20 @@ namespace Buddy.Clash.DefaultSelectors.Game
 
         private static FightState GetCurrentFightStateBalanced()
         {
+            FightState fightState;
+
             if (GameBeginning)
                 return GameBeginningDecision();
 
             if (EnemyCharacterHandling.IsAnEnemyOnOurSide())
-                return EnemyIsOnOurSideDecision();
-            else if (EnemyCharacterHandling.EnemiesWithoutTower.Count() > 1)
-                return EnemyHasCharsOnHisSideDecision();
+                fightState = EnemyIsOnOurSideDecision();
+            else if (EnemyCharacterHandling.EnemiesWithoutTower.Count() > 2) // ToDo: CHeck more (Health, Damage etc) 
+                fightState = EnemyHasCharsOnTheFieldDecision();
             else
-                return AttackDecision();
+                fightState = AttackDecision();
+
+            Logger.Debug("FightSate = {0}", fightState);
+            return fightState;
         }
 
         private static FightState GetCurrentFightStateRusher()
@@ -101,7 +114,7 @@ namespace Buddy.Clash.DefaultSelectors.Game
             if (EnemyCharacterHandling.IsAnEnemyOnOurSide())
                 return EnemyIsOnOurSideDecision();
             else if (EnemyCharacterHandling.EnemiesWithoutTower.Count() > 1)
-                return EnemyHasCharsOnHisSideDecision();
+                return EnemyHasCharsOnTheFieldDecision();
             else
                 return DefenseDecision();
         }
@@ -161,13 +174,10 @@ namespace Buddy.Clash.DefaultSelectors.Game
 
         private static FightState AttackDecision()
         {
-            Character princessTower = EnemyCharacterHandling.GetEnemyPrincessTowerWithLowestHealth(StaticValues.Player.OwnerIndex);
-
-            if(princessTower == null)
-                return FightState.AKT;
-
             if (CurrentEnemyPrincessTowerState > 0)
                 return FightState.AKT;
+
+            Character princessTower = EnemyCharacterHandling.GetEnemyPrincessTowerWithLowestHealth(StaticValues.Player.OwnerIndex);
 
             if (PlaygroundPositionHandling.IsPositionOnTheRightSide(princessTower.StartPosition))
                 return FightState.ARPT;
@@ -177,13 +187,10 @@ namespace Buddy.Clash.DefaultSelectors.Game
 
         private static FightState DefenseDecision()
         {
-            Character princessTower = EnemyCharacterHandling.GetEnemyPrincessTowerWithLowestHealth(StaticValues.Player.OwnerIndex);
-
-            if (princessTower == null)
-                return FightState.AKT;
-
             if (CurrentEnemyPrincessTowerState > 0)
                 return FightState.AKT;
+
+            Character princessTower = EnemyCharacterHandling.GetEnemyPrincessTowerWithLowestHealth(StaticValues.Player.OwnerIndex);
 
             if (PlaygroundPositionHandling.IsPositionOnTheRightSide(princessTower.StartPosition))
                 return FightState.DRPT;
@@ -226,7 +233,7 @@ namespace Buddy.Clash.DefaultSelectors.Game
             }
         }
 
-        private static FightState EnemyHasCharsOnHisSideDecision()
+        private static FightState EnemyHasCharsOnTheFieldDecision()
         {
             if (PlayerCharacterHandling.PrincessTower.Count() > 1)
             {

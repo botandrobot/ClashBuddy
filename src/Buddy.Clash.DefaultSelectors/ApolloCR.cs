@@ -15,6 +15,7 @@ namespace Buddy.Clash.DefaultSelectors
     using Utilities;
     using Buddy.Clash.DefaultSelectors.Player;
     using Buddy.Clash.DefaultSelectors.Game;
+    using Buddy.Clash.DefaultSelectors.Logic;
 
     // Just 1v1
     public class ApolloCR : ActionSelectorBase
@@ -49,14 +50,16 @@ namespace Buddy.Clash.DefaultSelectors
             if (StaticValues.Player.Mana < 2)
                 return null;
 
-            if (Clash.Engine.ClashEngine.Instance.Battle.BattleTime.Seconds < 1)
-                gameHandling.IniGame(FightStyle.Balanced);
+
+            if (Clash.Engine.ClashEngine.Instance.Battle.BattleTime.TotalSeconds < 1)
+                gameHandling.IniGame(Settings);
+
 
             gameHandling.IniRound();
             Vector2f nextPosition = gameHandling.GetSpellPosition();
             FightState fightState = gameHandling.FightState;
 
-            return PlayerCastHandling.SpellMagic(nextPosition, fightState);
+            return CastHandling.SpellMagic(nextPosition, fightState);
         }
 
 		public override void Initialize()

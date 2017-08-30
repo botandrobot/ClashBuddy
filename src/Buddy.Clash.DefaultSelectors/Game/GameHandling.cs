@@ -8,15 +8,18 @@ using Buddy.Clash.DefaultSelectors.Game;
 using Serilog;
 using Buddy.Common;
 using Buddy.Clash.DefaultSelectors.Utilities;
+using Buddy.Clash.DefaultSelectors.Logic;
+using Buddy.Clash.DefaultSelectors.Settings;
 
 namespace Buddy.Clash.DefaultSelectors.Game
 {
     class GameHandling
     {
         private static readonly ILogger Logger = LogProvider.CreateLogger<GameHandling>();
-        private static PlayerCastPositionHandling playerCastPositionHandling = new PlayerCastPositionHandling();
+        private static CastPositionHandling playerCastPositionHandling = new CastPositionHandling();
         private static CharacterHandling characterHandling = new CharacterHandling();
         private static PlayerCardHandling cardHandling = new PlayerCardHandling();
+        public static ApolloSettings Settings;
 
         public FightState FightState { get; set; }
 
@@ -24,17 +27,16 @@ namespace Buddy.Clash.DefaultSelectors.Game
         {
         }
 
-        public void IniGame(FightStyle fightStyle = FightStyle.Balanced)
+        public void IniGame(ApolloSettings settings, FightStyle fightStyle = FightStyle.Balanced)
         {
-                //Logger.Debug("Set game beginning = true");
-                GameStateHandling.GameBeginning = true;
-                PlayerProperties.FightStyle = fightStyle;
+            //Logger.Debug("Set game beginning = true");
+            GameStateHandling.GameBeginning = true;
+            Settings = settings;
 
-                PlayerCharacterHandling.Reset();
-                EnemyCharacterHandling.Reset();
-                EnemyCharacterPositionHandling.Reset();
+            PlayerCharacterHandling.Reset();
+            EnemyCharacterPositionHandling.SetPositions();
 
-
+            Logger.Debug("IniGame");
                 //EnemyHandling.CreateEnemies();
         }
 

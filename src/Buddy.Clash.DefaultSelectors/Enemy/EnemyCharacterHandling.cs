@@ -1,7 +1,11 @@
 ﻿using Buddy.Clash.DefaultSelectors.Game;
+using Buddy.Clash.DefaultSelectors.Logic;
+using Buddy.Clash.DefaultSelectors.Player;
 using Buddy.Clash.DefaultSelectors.Utilities;
 using Buddy.Clash.Engine;
 using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
+using Buddy.Common;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +16,11 @@ namespace Buddy.Clash.DefaultSelectors.Enemy
     class EnemyCharacterHandling
     {
         public static IEnumerable<Character> TempLastEnemieCharacters = new List<Character>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<EnemyCharacterHandling>();
 
         public static void Reset()
         {
-            enemyLeftPrincessTower = EnemyPrincessTower.FirstOrDefault();
-            enemyRightPrincessTower = EnemyPrincessTower.LastOrDefault();
+
         }
 
         #region characters
@@ -78,7 +82,7 @@ namespace Buddy.Clash.DefaultSelectors.Enemy
 
                 var orderedChar = nearestChar.OrderBy(n => n.StartPosition.Y);
 
-                if (ownerIndex == 0)
+                if (PlayerProperties.PlayerPosition == Position.Down)
                 {
                     //Logger.Debug("Nearest enemy-char: " + orderedChar.FirstOrDefault().LogicGameObjectData.Name);
                     return orderedChar.FirstOrDefault();
@@ -222,42 +226,33 @@ namespace Buddy.Clash.DefaultSelectors.Enemy
             }
         }
 
-        private static Character enemyLeftPrincessTower;
         public static Character EnemyLeftPrincessTower
         {
             get
             {
                 Character firstPrincessTower = EnemyPrincessTower.FirstOrDefault();
 
-                if (enemyLeftPrincessTower == null)
-                    enemyLeftPrincessTower = firstPrincessTower;
-
-                if (firstPrincessTower == null)
-                    return null;
-
                 // If the position is not equals, it means the LeftPrincessTower is already destroyed
-                if (!firstPrincessTower.StartPosition.Equals(enemyLeftPrincessTower.StartPosition))
+                if (!firstPrincessTower.StartPosition.Equals(EnemyCharacterPositionHandling.EnemyLeftPrincessTower))
                     return null;
+
+                Logger.Debug("LeftPrincessTower-Position {0}", firstPrincessTower.StartPosition);
 
                 return firstPrincessTower;
             }
         }
 
-        private static Character enemyRightPrincessTower;
         public static Character EnemyRightPrincessTower
         {
             get
             {
                 Character lastPrincessTower = EnemyPrincessTower.LastOrDefault();
 
-                if (enemyRightPrincessTower == null)
-                    enemyRightPrincessTower = lastPrincessTower;
-
-                if (lastPrincessTower == null)
-                    return null;
                 // If the position is not equals, it means the LeftPrincessTower is already destroyed
-                if (!lastPrincessTower.StartPosition.Equals(enemyRightPrincessTower.StartPosition))
+                if (!lastPrincessTower.StartPosition.Equals(EnemyCharacterPositionHandling.EnemyRightPrincessTower))
                     return null;
+
+                Logger.Debug("RightPrincessTower-Position {0}", lastPrincessTower.StartPosition);
 
                 return lastPrincessTower;
             }
@@ -274,6 +269,7 @@ namespace Buddy.Clash.DefaultSelectors.Enemy
             //Logger.Debug("PrincessTower: Owner - {0}; Position: {1}",
             //            princessTower.OwnerIndex, princessTower.LogicGameObjectData.HealthBar.Value);
 
+            Logger.Debug("EnemyPT-WithLowestHealth {0}", princessTower.StartPosition.ToString());
             return princessTower;
         }
         #endregion

@@ -1,15 +1,15 @@
-﻿using System;
+﻿using Buddy.Clash.DefaultSelectors.Game;
+using Buddy.Clash.DefaultSelectors.Logic;
+using Buddy.Common;
+using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Buddy.Clash.DefaultSelectors.Player
 {
-    enum DeckType
-    {
 
-    }
-
-    enum FightStyle
+    public enum FightStyle
     {
         Defensive,
         Balanced,
@@ -18,11 +18,16 @@ namespace Buddy.Clash.DefaultSelectors.Player
 
     class PlayerProperties
     {
-        private static FightStyle fightStyle = FightStyle.Balanced;
-        public static FightStyle FightStyle
+        private static readonly ILogger Logger = LogProvider.CreateLogger<CastHandling>();
+
+        public static Position PlayerPosition
         {
-            get { return fightStyle; }
-            set { fightStyle = value; }
+            get
+            {
+                return PlaygroundPositionHandling.IsPositionUpOrDown(PlayerCharacterHandling.KingTower.StartPosition);
+            }
         }
+
+        public static uint MinManaToStartFirstStrike {get;set;}
     }
 }

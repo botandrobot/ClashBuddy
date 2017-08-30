@@ -9,18 +9,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
+using Buddy.Clash.DefaultSelectors.Settings;
+using Buddy.Clash.DefaultSelectors.Player;
 
-namespace Buddy.Clash.DefaultSelectors.Player
+namespace Buddy.Clash.DefaultSelectors.Logic
 {
-    class PlayerCastPositionHandling
+    class CastPositionHandling
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<PlayerCastHandling>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<CastHandling>();
 
         public Vector2f GetNextSpellPosition(FightState gameState)
         {
             Random rnd = StaticValues.rnd;
+            float rndX = rnd.Next(-GameHandling.Settings.RandomDeploymentValue, GameHandling.Settings.RandomDeploymentValue);
+            float rndY = rnd.Next(-GameHandling.Settings.RandomDeploymentValue, GameHandling.Settings.RandomDeploymentValue);
 
-            Vector2f rndAddVector = new Vector2(rnd.Next(-100, 100), rnd.Next(-200, 200));
+            Vector2f rndAddVector = new Vector2f(rndX, rndY);
             Vector2f choosedPosition = Vector2f.Zero, nextPosition;
 
             // ToDo: Handle Defense Gamestates
@@ -57,7 +61,7 @@ namespace Buddy.Clash.DefaultSelectors.Player
                     //Logger.Debug("GameState unknown");
                     break;
             }
-            //Logger.Debug("GameState: {GameState}", gameState.ToString());
+            Logger.Debug("GameState: {GameState}", gameState.ToString());
             nextPosition = (choosedPosition + rndAddVector);
             //Logger.Debug("nextPosition: " + nextPosition);
 
@@ -66,7 +70,10 @@ namespace Buddy.Clash.DefaultSelectors.Player
 
         private Vector2f UAKT()
         {
-            return PlayerCharacterHandling.KingTower.StartPosition;
+            if (PlaygroundPositionHandling.IsPositionOnTheRightSide(EnemyCharacterHandling.NearestEnemy.StartPosition))
+                return PlayerCharacterHandling.KingTower.StartPosition + new Vector2f(1000, 0);
+            else
+                return PlayerCharacterHandling.KingTower.StartPosition - new Vector2f(1000, 0);
         }
 
         private Vector2f UALPT()
@@ -79,24 +86,30 @@ namespace Buddy.Clash.DefaultSelectors.Player
         }
         private Vector2f DKT()
         {
-            uint ownerIndex = StaticValues.Player.OwnerIndex;
+
 
             if (PlaygroundPositionHandling.IsPositionOnTheRightSide(EnemyCharacterHandling.NearestEnemy.StartPosition))
-                return PlayerCharacterHandling.KingTower.StartPosition + new Vector2f(1000,0);
+            {
+                Logger.Debug("Defense-KT Right");
+                return PlayerCharacterHandling.KingTower.StartPosition + new Vector2f(2000, 0);
+            }
             else
-                return PlayerCharacterHandling.KingTower.StartPosition - new Vector2f(1000, 0);
+                Logger.Debug("Defense-KT Left");
+            {
+                return PlayerCharacterHandling.KingTower.StartPosition - new Vector2f(2000, 0);
+            }
 
         }
         private Vector2f DLPT()
         {
             Vector2f lPT = PlayerCharacterHandling.LeftPrincessTower.StartPosition;
-            Vector2f positionBehindTower = PositionHelper.AddYInIndexDirection(lPT, StaticValues.Player.OwnerIndex);
+            Vector2f positionBehindTower = PositionHelper.AddYInDirection(lPT, PlayerProperties.PlayerPosition);
             return positionBehindTower;
         }
         private Vector2f DRPT()
         {
             Vector2f rPT = PlayerCharacterHandling.RightPrincessTower.StartPosition;
-            Vector2f positionBehindTower = PositionHelper.AddYInIndexDirection(rPT, StaticValues.Player.OwnerIndex);
+            Vector2f positionBehindTower = PositionHelper.AddYInDirection(rPT, PlayerProperties.PlayerPosition);
             return positionBehindTower;
         }
 
@@ -108,22 +121,33 @@ namespace Buddy.Clash.DefaultSelectors.Player
                     Logger.Debug("Bug: NoPrincessTowerDown-State in Attack-King-Tower-State!");
                     return EnemyCharacterPositionHandling.EnemyLeftPrincessTower;
                 case EnemyPrincessTowerState.LPTD:
-                    return EnemyCharacterPositionHandling.EnemyLeftPrincessTower;
+                    {
+                        Logger.Debug("LPTD");
+                        return EnemyCharacterPositionHandling.EnemyLeftPrincessTower;
+                    }
                 case EnemyPrincessTowerState.RPTD:
-                    return EnemyCharacterPositionHandling.EnemyRightPrincessTower;
+                    {
+                        Logger.Debug("RPTD");
+                        return EnemyCharacterPositionHandling.EnemyRightPrincessTower;
+                    }
                 case EnemyPrincessTowerState.BPTD:
-                    return EnemyCharacterHandling.EnemyKingTower.StartPosition;
+                    {
+                        Logger.Debug("BPTD");
+                        return EnemyCharacterHandling.EnemyKingTower.StartPosition;
+                    }
                 default:
                     return EnemyCharacterHandling.EnemyKingTower.StartPosition;
             }
         }
         private Vector2f ALPT()
         {
+            Logger.Debug("ALPT");
             Vector2f lPT = EnemyCharacterPositionHandling.EnemyLeftPrincessTower;
             return lPT;
         }
         private Vector2f ARPT()
         {
+            Logger.Debug("ARPT");
             Vector2f rPT = EnemyCharacterPositionHandling.EnemyRightPrincessTower;
             return rPT;
         }
@@ -139,7 +163,7 @@ namespace Buddy.Clash.DefaultSelectors.Player
             {
                 Character enemy;
 
-                if (PlayerCastHandling.DamagingSpellDecision(out enemy))
+                if (CastHandling.DamagingSpellDecision(out enemy))
                 {
                     
                     if (PlayerCharacterHandling.HowManyCharactersAroundCharacter(enemy) > 1)
@@ -147,7 +171,7 @@ namespace Buddy.Clash.DefaultSelectors.Player
                     else
                     {
                         // Position Correction
-                        return PositionHelper.AddYInIndexDirection(enemy.StartPosition, StaticValues.Player.OwnerIndex,4000);
+                        return PositionHelper.AddYInDirection(enemy.StartPosition, PlayerProperties.PlayerPosition, 4000);
                     }
                 }
             }

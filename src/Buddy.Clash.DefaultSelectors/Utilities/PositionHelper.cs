@@ -1,6 +1,9 @@
 ﻿using Buddy.Clash.DefaultSelectors.Game;
+using Buddy.Clash.DefaultSelectors.Logic;
 using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
 using Buddy.Clash.Engine.NativeObjects.Native;
+using Buddy.Common;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,19 +12,23 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
 {
     class PositionHelper
     {
-        public static Vector2f AddYInIndexDirection(Vector2f position, uint ownerIndex, int y = 1000)
+        private static readonly ILogger Logger = LogProvider.CreateLogger<PositionHelper>();
+
+
+        public static Vector2f AddYInDirection(Vector2f position, Position fieldPosition, int y = 500)
         {
             Vector2f moveVector = new Vector2(0, y);
+            Logger.Debug("PlayerPosition: {0}", fieldPosition);
 
             switch (GameStateHandling.CurrentGameMode)
             {
                 case GameMode.ONE_VERSUS_ONE:
-                    if (ownerIndex == 0)
+                    if (fieldPosition == Position.Down)
                         return position - moveVector;
                     else
                         return position + moveVector;
                 case GameMode.TWO_VERSUS_TWO:
-                    if (ownerIndex == 0 || ownerIndex == 1)
+                    if (fieldPosition == Position.Down)
                         return position - moveVector;
                     else
                         return position + moveVector;

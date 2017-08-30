@@ -14,14 +14,14 @@ namespace Buddy.Clash.DefaultSelectors.Settings
 		    
 	    }
 
-		[DefaultValue(true)]
-	    [SettingsName("Enable Awesomeness")]
-	    [SettingsDescription("Having this enabled, you get super awesome!")]
-	    public bool IsAwesome { get; set; }
+        [DefaultValue(Player.FightStyle.Balanced)]
+        [SettingsName("Choose Apollos fight style")]
+        [SettingsDescription("Smart balanced, concentrated on the Defense or as an angry rusher?")]
+        public Player.FightStyle FightStyle { get; set; }
 
-	    [SettingsGroup("Pwn Range")]
-	    [FloatRangeSettings(100f, 0f, 3000f)]
-	    [DefaultValue(500f)]
-	    public float PwnRange { get; set; }
-	}
+        [SettingsGroup("Random Deployment Faktor")]
+        [FloatRangeSettings(100, 0, 10000)]
+        [DefaultValue(200)]
+        public int RandomDeploymentValue { get; set; }
+    }
 }

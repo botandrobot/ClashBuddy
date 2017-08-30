@@ -12,12 +12,14 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Buddy.Clash.DefaultSelectors.Logic;
+using Buddy.Clash.DefaultSelectors.Player;
 
-namespace Buddy.Clash.DefaultSelectors.Player
+namespace Buddy.Clash.DefaultSelectors.Logic
 {
-    class PlayerCastHandling
+    class CastHandling
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<PlayerCastHandling>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<CastHandling>();
         private static readonly ConcurrentQueue<string> _spellQueue = new ConcurrentQueue<string>();
         private static IOrderedEnumerable<Spell> Spells;
 
@@ -88,7 +90,7 @@ namespace Buddy.Clash.DefaultSelectors.Player
 
             Engine.NativeObjects.Logic.GameObjects.Character enemy;
 
-            Vector2f spellPosition = PlayerCastPositionHandling.GetPositionOfTheBestDamagingSpellDeploy();
+            Vector2f spellPosition = CastPositionHandling.GetPositionOfTheBestDamagingSpellDeploy();
             if (!spellPosition.Equals(Vector2f.Zero))
             {
                 var damagingSpell = damagingSpells.FirstOrDefault();
@@ -164,7 +166,7 @@ namespace Buddy.Clash.DefaultSelectors.Player
             IOrderedEnumerable<Spell> damagingSpells = PlayerCardHandling.Damaging;
             Engine.NativeObjects.Logic.GameObjects.Character enemy;
 
-            Vector2f spellPosition = PlayerCastPositionHandling.GetPositionOfTheBestDamagingSpellDeploy();
+            Vector2f spellPosition = CastPositionHandling.GetPositionOfTheBestDamagingSpellDeploy();
             if (!spellPosition.Equals(Vector2f.Zero))
             {
                 var damagingSpell = damagingSpells.FirstOrDefault();
