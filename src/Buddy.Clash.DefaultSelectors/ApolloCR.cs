@@ -1,4 +1,7 @@
-﻿namespace Buddy.Clash.DefaultSelectors
+﻿using Buddy.Clash.DefaultSelectors.Settings;
+using Buddy.Engine.Settings;
+
+namespace Buddy.Clash.DefaultSelectors
 {
     using System;
     using System.Collections.Concurrent;
@@ -30,7 +33,9 @@
         private static CharacterHandling characterHandling = new CharacterHandling();
         private static OwnCardHandling cardHandling = new OwnCardHandling();
 
-        public override CastRequest GetNextCast()
+		internal static ApolloSettings Settings => SettingsManager.GetSetting<ApolloSettings>("Apollo");
+
+		public override CastRequest GetNextCast()
         {
             #region battle valid check
             var battle = ClashEngine.Instance.Battle;
@@ -58,5 +63,16 @@
 
             return CastHandling.SpellMagic(nextPosition, gameState);
         }
-    }
+
+		public override void Initialize()
+		{
+			SettingsManager.RegisterSettings(Name, new ApolloSettings());
+		}
+
+		public override void Deinitialize()
+		{
+			
+			SettingsManager.UnregisterSettings(Name);
+		}
+	}
 }
