@@ -6,6 +6,7 @@ using Serilog;
 using System.Linq;
 using Buddy.Common;
 using Buddy.Clash.Engine.NativeObjects.LogicData;
+using Buddy.Clash.DefaultSelectors.Utilities;
 
 namespace Buddy.Clash.DefaultSelectors.Player
 {
@@ -13,6 +14,7 @@ namespace Buddy.Clash.DefaultSelectors.Player
     {
         Tank,
         Damager,
+        Ranger,
         AirAttacker,
         AOE
     };
@@ -21,14 +23,17 @@ namespace Buddy.Clash.DefaultSelectors.Player
     {
         Troop,
         DamagingSpell,
+        DefenseSpell,
         Defense,
+        Building,
+        Spawner,
         All,
         NONE
     };
 
-    class PlayerCardHandling
+    class PlayerCardClassifying
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<PlayerCardHandling>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<PlayerCardClassifying>();
 
         public static IOrderedEnumerable<Spell> Damaging
         {
@@ -81,6 +86,22 @@ namespace Buddy.Clash.DefaultSelectors.Player
             get
             {
                 return Troop.Where(n => n.SummonCharacter.AreaDamageRadius > 0);
+            }
+        }
+
+        public static IEnumerable<Spell> TroopRanger
+        {
+            get
+            {
+                return Troop.Where(n => n.SummonCharacter.Projectile.IsValid);
+            }
+        }
+
+        public static IEnumerable<Spell> TroopTank
+        {
+            get
+            {
+                return Troop.Where(n => CSVClassifying.IsTank(n.Name.Value));
             }
         }
 

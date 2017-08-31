@@ -26,7 +26,7 @@ namespace Buddy.Clash.DefaultSelectors.Logic
         public static CastRequest SpellMagic(Vector2f nextPosition, FightState gameState)
         {
             if (ClashEngine.Instance.LocalPlayer == null) return null;
-            Spells = PlayerCardHandling.Troop;
+            Spells = PlayerCardClassifying.Troop;
 
             CardType cardTypeToPlay = ChooseCardType(gameState);
 
@@ -84,9 +84,9 @@ namespace Buddy.Clash.DefaultSelectors.Logic
 
         public static CastRequest EarlyCycle(Vector2f nextPosition)
         {
-            IOrderedEnumerable<Spell> troopCycleSpells = PlayerCardHandling.TroopCycleCards;
-            IOrderedEnumerable<Spell> troopPowerSpells = PlayerCardHandling.TroopPowerCards;
-            IOrderedEnumerable<Spell> damagingSpells = PlayerCardHandling.Damaging;
+            IOrderedEnumerable<Spell> troopCycleSpells = PlayerCardClassifying.TroopCycleCards;
+            IOrderedEnumerable<Spell> troopPowerSpells = PlayerCardClassifying.TroopPowerCards;
+            IOrderedEnumerable<Spell> damagingSpells = PlayerCardClassifying.Damaging;
 
             Vector2f spellPosition = CastPositionHandling.GetPositionOfTheBestDamagingSpellDeploy();
             if (!spellPosition.Equals(Vector2f.Zero))
@@ -99,9 +99,9 @@ namespace Buddy.Clash.DefaultSelectors.Logic
 
             if (IsAOEAttackNeeded())
             {
-                var spell = PlayerCardHandling.TroopAOEAttack.FirstOrDefault();
+                var spell = PlayerCardClassifying.TroopAOEAttack.FirstOrDefault();
                 if (spell == null)
-                    spell = PlayerCardHandling.TroopGroundAttack.FirstOrDefault();
+                    spell = PlayerCardClassifying.TroopGroundAttack.FirstOrDefault();
 
                 if (spell != null)
                     return new CastRequest(spell.Name.Value, nextPosition);
@@ -109,7 +109,7 @@ namespace Buddy.Clash.DefaultSelectors.Logic
 
             if(IsFlyingAttackNeeded())
             {
-                var spell = PlayerCardHandling.TroopAirAttack.FirstOrDefault();
+                var spell = PlayerCardClassifying.TroopAirAttack.FirstOrDefault();
                 if (spell != null)
                     return new CastRequest(spell.Name.Value, nextPosition);
             }
@@ -139,9 +139,9 @@ namespace Buddy.Clash.DefaultSelectors.Logic
         {
             if (IsAOEAttackNeeded())
             {
-                var spell = PlayerCardHandling.TroopAOEAttack.FirstOrDefault();
+                var spell = PlayerCardClassifying.TroopAOEAttack.FirstOrDefault();
                 if (spell == null)
-                    spell = PlayerCardHandling.TroopGroundAttack.FirstOrDefault();
+                    spell = PlayerCardClassifying.TroopGroundAttack.FirstOrDefault();
 
                 if(spell != null)
                     return new CastRequest(spell.Name.Value, nextPosition);
@@ -149,19 +149,19 @@ namespace Buddy.Clash.DefaultSelectors.Logic
 
             if (IsFlyingAttackNeeded())
             {
-                var spell = PlayerCardHandling.TroopAirAttack.FirstOrDefault();
+                var spell = PlayerCardClassifying.TroopAirAttack.FirstOrDefault();
 
                 if (spell != null)
                     return new CastRequest(spell.Name.Value, nextPosition);
             }
 
-            return new CastRequest(PlayerCardHandling.Troop
+            return new CastRequest(PlayerCardClassifying.Troop
                                     .FirstOrDefault().Name.Value, nextPosition);
         }
 
         public static CastRequest Defense(Vector2f nextPosition)
         {
-            IOrderedEnumerable<Spell> damagingSpells = PlayerCardHandling.Damaging;
+            IOrderedEnumerable<Spell> damagingSpells = PlayerCardClassifying.Damaging;
             Engine.NativeObjects.Logic.GameObjects.Character enemy;
 
             Vector2f spellPosition = CastPositionHandling.GetPositionOfTheBestDamagingSpellDeploy();
@@ -175,9 +175,9 @@ namespace Buddy.Clash.DefaultSelectors.Logic
 
             if (IsAOEAttackNeeded())
             {
-                var spell = PlayerCardHandling.TroopAOEAttack.FirstOrDefault();
+                var spell = PlayerCardClassifying.TroopAOEAttack.FirstOrDefault();
                 if (spell == null)
-                    spell = PlayerCardHandling.TroopGroundAttack.FirstOrDefault();
+                    spell = PlayerCardClassifying.TroopGroundAttack.FirstOrDefault();
 
                 if (spell != null)
                     return new CastRequest(spell.Name.Value, nextPosition);
@@ -185,19 +185,19 @@ namespace Buddy.Clash.DefaultSelectors.Logic
 
             if (IsFlyingAttackNeeded())
             {
-                var spell = PlayerCardHandling.TroopAirAttack.FirstOrDefault();
+                var spell = PlayerCardClassifying.TroopAirAttack.FirstOrDefault();
 
                 if (spell != null)
                     return new CastRequest(spell.Name.Value, nextPosition);
             }
 
             {
-                var spell = PlayerCardHandling.TroopCycleCards.FirstOrDefault();
+                var spell = PlayerCardClassifying.TroopCycleCards.FirstOrDefault();
 
                 if (spell != null)
                     return new CastRequest(spell.Name.Value, nextPosition);
 
-                return new CastRequest(PlayerCardHandling.Troop
+                return new CastRequest(PlayerCardClassifying.Troop
                                         .FirstOrDefault().Name.Value, nextPosition);
             }
         }

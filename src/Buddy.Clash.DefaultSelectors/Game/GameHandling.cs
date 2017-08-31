@@ -18,7 +18,7 @@ namespace Buddy.Clash.DefaultSelectors.Game
         private static readonly ILogger Logger = LogProvider.CreateLogger<GameHandling>();
         private static CastPositionHandling playerCastPositionHandling = new CastPositionHandling();
         private static CharacterHandling characterHandling = new CharacterHandling();
-        private static PlayerCardHandling cardHandling = new PlayerCardHandling();
+        private static PlayerCardClassifying cardHandling = new PlayerCardClassifying();
         public static ApolloSettings Settings;
 
         public FightState FightState { get; set; }

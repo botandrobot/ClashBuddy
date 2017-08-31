@@ -43,6 +43,12 @@ namespace Buddy.Clash.DefaultSelectors.Settings
         [DefaultValue(9)]
         public int ManaTillFirstAttack { get; set; }
 
+        [SettingsName("Tank health")]
+        [SettingsDescription("How much health-points to classify an character as a tank")]
+        [FloatRangeSettings(0, 0, 10000)]
+        [DefaultValue(1200)]
+        public int MinHealthAsTank { get; set; }
+
         //[SettingsGroup("Random Deployment Faktor")]
         //[FloatRangeSettings(100, 0, 10000)]
         //[DefaultValue(200)]
