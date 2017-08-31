@@ -13,6 +13,10 @@ namespace Buddy.Clash.DefaultSelectors
     using System.Collections.Generic;
     using Engine.NativeObjects.Logic.GameObjects;
     using Utilities;
+    using Buddy.Clash.DefaultSelectors.Player;
+    using Buddy.Clash.DefaultSelectors.Game;
+    using Buddy.Clash.DefaultSelectors.Logic;
+    using Buddy.Clash.DefaultSelectors.Card;
 
     // Just 1v1
     public class ApolloCR : ActionSelectorBase
@@ -22,16 +26,15 @@ namespace Buddy.Clash.DefaultSelectors
 
         public override string Name => "Apollo";
 
-        public override string Description => "Arena 1-4; 1vs1; Please lean back and let me Apollo do the work...";
+        public override string Description => "1vs1; Please lean back and let me Apollo do the work...";
 
         public override string Author => "Peros_";
 
-        public override Version Version => new Version(1, 0, 0, 0);
+        public override Version Version => new Version(1, 2, 0, 0);
         public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
         #endregion
-        private static PositionHandling positionHandling = new PositionHandling();
-        private static CharacterHandling characterHandling = new CharacterHandling();
-        private static OwnCardHandling cardHandling = new OwnCardHandling();
+
+        private static GameHandling gameHandling = new GameHandling();
 
 		internal static ApolloSettings Settings => SettingsManager.GetSetting<ApolloSettings>("Apollo");
 
@@ -41,27 +44,22 @@ namespace Buddy.Clash.DefaultSelectors
             var battle = ClashEngine.Instance.Battle;
             if (battle == null || !battle.IsValid)
             {
-                GameStateHandling.GameBeginning = true;
                 return null;
             }
-			#endregion
-
-			#region Just for logging
-	        Logger.Debug("Avatar-Count: " + ClashEngine.Instance.Battle.AvatarCount);
-	        Logger.Debug("Avatar1-StartPos: " + ClashEngine.Instance.Battle.AvatarLocations1.StartPosition);
-
-	        Logger.Debug("OwnerIndex: " + ClashEngine.Instance.LocalPlayer.OwnerIndex);
-            Logger.Debug("IsEnemyCharOnOurSide: " + CharacterHandling.IsEnemyOnOurSide());
-            characterHandling.LogCharInformations();
-            #endregion Just for logging
-
-            #region GameState and next position
-            GameState gameState = GameStateHandling.CurrentGameState;
-
-            Vector2f nextPosition = positionHandling.GetNextSpellPosition(gameState);
             #endregion
 
-            return CastHandling.SpellMagic(nextPosition, gameState);
+            if (StaticValues.Player.Mana < 2)
+                return null;
+
+            if (Clash.Engine.ClashEngine.Instance.Battle.BattleTime.TotalSeconds < 1)
+                gameHandling.IniGame(Settings);
+
+            gameHandling.IniRound();
+            FightState fightState = gameHandling.FightState;
+            ICard spell = CastDeploymentHandling.SpellMagic(fightState);
+            Vector2f nextPosition = CastPositionHandling.GetNextSpellPosition(fightState, spell);
+
+            return new CastRequest(spell.Name, nextPosition);
         }
 
 		public override void Initialize()

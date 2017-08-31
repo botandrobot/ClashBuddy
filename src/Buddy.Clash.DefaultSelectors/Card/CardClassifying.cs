@@ -6,29 +6,13 @@ using Serilog;
 using System.Linq;
 using Buddy.Common;
 using Buddy.Clash.Engine.NativeObjects.LogicData;
+using Buddy.Clash.DefaultSelectors.Utilities;
 
-namespace Buddy.Clash.DefaultSelectors.Utilities
+namespace Buddy.Clash.DefaultSelectors.Card
 {
-    enum TroopType
+    class CardClassifying
     {
-        Tank,
-        Damager,
-        AirAttacker,
-        AOE
-    };
-
-    enum CardType
-    {
-        Troop,
-        DamagingSpell,
-        Defense,
-        All,
-        NONE
-    };
-
-    class OwnCardHandling
-    {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<OwnCardHandling>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<CardClassifying>();
 
         public static IOrderedEnumerable<Spell> Damaging
         {
@@ -47,20 +31,20 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 var spells = ClashEngine.Instance.AvailableSpells;
                 var TroopSpell = spells.Where(s => s != null && s.IsValid && !String.IsNullOrEmpty(s.SummonCharacter.Name.Value)).OrderBy(s => s.ManaCost);
                 
-                foreach(var s in TroopSpell)
-                {
-	                Logger.Debug("TroopSpell: Name {0} EffektName {1} PushBack {2} ProjectileAOEtoAir {3} " +
-                        "ProjectileAOEtoGround {4} Projectile {5} AttacksAir {6} AttacksGround {7} LifeTime {8}",
-                                s.Name.Value, s.Effect.Name.Value, s.Pushback, 
-                                s.Projectile.AoeToAir, s.Projectile.AoeToGround, s.Projectile.Name.Value
-                                , s.SummonCharacter.AttacksAir, s.SummonCharacter.AttacksGround, s.SummonCharacter.LifeTime);
-                }
+                //foreach(var s in TroopSpell)
+                //{
+                //    Logger.Debug("TroopSpell: Name {0} EffektName {1} PushBack {2} ProjectileAOEtoAir {3} " +
+                //        "ProjectileAOEtoGround {4} Projectile {5} AttacksAir {6} AttacksGround {7} LifeTime {8} SummonCharacterType {9} SummonCharacter {10}",
+                //                s.Name.Value, s.Effect.Name.Value, s.Pushback, 
+                //                s.Projectile.AoeToAir, s.Projectile.AoeToGround, s.Projectile.Name.Value
+                //                , s.SummonCharacter.AttacksAir, s.SummonCharacter.AttacksGround, s.SummonCharacter.LifeTime, s.SummonCharacter.GetType(), s.SummonCharacter.Name.Value);
+                //}
 
                 return TroopSpell;
             }
         }
 
-        public static IEnumerable<Spell> AirAttack
+        public static IEnumerable<Spell> TroopAirAttack
         {
             get
             {
@@ -68,7 +52,7 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             }
         }
 
-        public static IEnumerable<Spell> GroundAttack
+        public static IEnumerable<Spell> TroopGroundAttack
         {
             get
             {
@@ -76,7 +60,31 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             }
         }
 
-        public static IEnumerable<Spell> Flying
+        public static IEnumerable<Spell> TroopAOEAttack
+        {
+            get
+            {
+                return Troop.Where(n => n.SummonCharacter.AreaDamageRadius > 0);
+            }
+        }
+
+        public static IEnumerable<Spell> TroopRanger
+        {
+            get
+            {
+                return Troop.Where(n => n.SummonCharacter.Projectile.IsValid);
+            }
+        }
+
+        public static IEnumerable<Spell> TroopTank
+        {
+            get
+            {
+                return Troop.Where(n => CSVCardClassifying.IsTank(n.Name.Value));
+            }
+        }
+
+        public static IEnumerable<Spell> TroopFlying
         {
             get
             {
@@ -119,5 +127,21 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
                 return spells.Where(s => s != null && s.IsValid && s.ManaCost > 3).OrderByDescending(s => s.ManaCost);
             }
         }
+
+        //public static IOrderedEnumerable<Spell> TroopTanks
+        //{
+        //    get
+        //    {
+        //        return Troop.Where(n => n.SummonCharacter. == 1);
+        //    }
+        //}
+
+        //public static IOrderedEnumerable<Spell> TroopDamageDealer
+        //{
+        //    get
+        //    {
+        //        return Troop.Where(n => n.SummonCharacter. == 1);
+        //    }
+        //}
     }
 }
