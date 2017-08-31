@@ -37,6 +37,12 @@ namespace Buddy.Clash.DefaultSelectors.Settings
         [DefaultValue(2)]
         public int SpellCorrectionConditionCharCount { get; set; }
 
+        [SettingsName("Spell deployment decision (minimum anzahl Characters)")]
+        [SettingsDescription("How many enemy characters should be at least in the area for an deploy")]
+        [FloatRangeSettings(0, 0, 50)]
+        [DefaultValue(5)]
+        public int SpellDeployConditionCharCount { get; set; }
+
         [SettingsName("Game-Beginning: Mana-Load")]
         [SettingsDescription("How much Mana till first attack")]
         [FloatRangeSettings(0, 0, 10)]

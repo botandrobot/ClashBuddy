@@ -76,7 +76,7 @@ namespace Buddy.Clash.DefaultSelectors.Logic
             Logger.Debug("enemyWhithTheMostEnemiesAround-Count: {count} enemy-Name {name}", count
                          , enemy.LogicGameObjectData.Name.Value);
                          */
-            if (count > 5)
+            if (count >= GameHandling.Settings.SpellDeployConditionCharCount)
                 return true;
 
             return false;
@@ -162,7 +162,6 @@ namespace Buddy.Clash.DefaultSelectors.Logic
         public static CastRequest Defense(Vector2f nextPosition)
         {
             IOrderedEnumerable<Spell> damagingSpells = PlayerCardClassifying.Damaging;
-            Engine.NativeObjects.Logic.GameObjects.Character enemy;
 
             Vector2f spellPosition = CastPositionHandling.GetPositionOfTheBestDamagingSpellDeploy();
             if (!spellPosition.Equals(Vector2f.Zero))

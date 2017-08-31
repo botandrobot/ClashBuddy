@@ -105,14 +105,14 @@ namespace Buddy.Clash.DefaultSelectors
             //        Logger.Debug("Name: " + item.Name);
             //}
 
-            Logger.Debug("SpellsOther: ");
-            foreach (var item in Engine.Csv.CsvLogic.SpellsOther.Entries)
-            {
-                if (item.Name != null)
-                    Logger.Debug("Name: " + item.Name);
-                if (item.InstantDamage != null)
-                    Logger.Debug("InstantDamage: " + item.InstantDamage.Value);
-            }
+            //Logger.Debug("SpellsOther: ");
+            //foreach (var item in Engine.Csv.CsvLogic.SpellsOther.Entries)
+            //{
+            //    if (item.Name != null)
+            //        Logger.Debug("Name: " + item.Name);
+            //    if (item.InstantDamage != null)
+            //        Logger.Debug("InstantDamage: " + item.InstantDamage.Value);
+            //}
 
             //Logger.Debug("Buildings: ");
             //foreach (var item in Engine.Csv.CsvLogic.Buildings.Entries)
