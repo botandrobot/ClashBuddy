@@ -25,7 +25,8 @@ namespace Buddy.Clash.DefaultSelectors.Logic
         ALPT,       // Attack LeftPrincessTower
         AKT,        // Attack KingTower
         ARPT,        // Attack RightPrincessTower
-        START
+        START,
+        WAIT
     };
 
     enum EnemyPrincessTowerState
@@ -62,11 +63,14 @@ namespace Buddy.Clash.DefaultSelectors.Logic
     {
         private static readonly ILogger Logger = LogProvider.CreateLogger<GameStateHandling>();
         public static bool GameBeginning = true;
+        private static bool AttackMode = false;
 
         public static FightState CurrentFightState
         {
             get
             {
+                SetAttackMode();
+
                 switch (GameHandling.Settings.FightStyle)
                 {
                     case FightStyle.Defensive:
@@ -83,19 +87,22 @@ namespace Buddy.Clash.DefaultSelectors.Logic
 
         private static FightState GetCurrentFightStateBalanced()
         {
-            FightState fightState;
+            FightState fightState = FightState.WAIT;
 
             if (GameBeginning)
                 return GameBeginningDecision();
 
             if (EnemyCharacterHandling.IsAnEnemyOnOurSide())
                 fightState = EnemyIsOnOurSideDecision();
-            else if (EnemyCharacterHandling.EnemiesWithoutTower.Count() > 2) // ToDo: CHeck more (Health, Damage etc) 
-                fightState = EnemyHasCharsOnTheFieldDecision();
-            else
-                fightState = AttackDecision();
+            else if(StaticValues.Player.Mana >= GameHandling.Settings.ManaTillAttack || AttackMode)
+            {
+                if (EnemyCharacterHandling.EnemiesWithoutTower.Count() > 2) // ToDo: CHeck more (Health, Damage etc) 
+                    fightState = EnemyHasCharsOnTheFieldDecision();
+                else
+                    fightState = AttackDecision();
+            }
 
-            Logger.Debug("FightSate = {0}", fightState);
+            Logger.Debug("FightSate = {0}", fightState.ToString());
             return fightState;
         }
 
@@ -169,9 +176,12 @@ namespace Buddy.Clash.DefaultSelectors.Logic
             }
         }
 
+        private static void SetAttackMode()
+        {
+            AttackMode = (PlayerCharacterHandling.Troop.Count() > 0);
+        }
 
-
-        #region GameState-Decisions
+#region GameState-Decisions
 
         private static FightState AttackDecision()
         {

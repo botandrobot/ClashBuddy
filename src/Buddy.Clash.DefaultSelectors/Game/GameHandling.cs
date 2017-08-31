@@ -1,10 +1,6 @@
-﻿using Buddy.Clash.Engine.NativeObjects.Native;
-using Buddy.Clash.DefaultSelectors.Player;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Buddy.Clash.DefaultSelectors.Player;
 using Buddy.Clash.DefaultSelectors.Enemy;
-using Buddy.Clash.DefaultSelectors.Game;
+using Buddy.Clash.DefaultSelectors.Card;
 using Serilog;
 using Buddy.Common;
 using Buddy.Clash.DefaultSelectors.Utilities;
@@ -16,9 +12,8 @@ namespace Buddy.Clash.DefaultSelectors.Game
     class GameHandling
     {
         private static readonly ILogger Logger = LogProvider.CreateLogger<GameHandling>();
-        private static CastPositionHandling playerCastPositionHandling = new CastPositionHandling();
         private static CharacterHandling characterHandling = new CharacterHandling();
-        private static PlayerCardClassifying cardHandling = new PlayerCardClassifying();
+        private static CardClassifying cardHandling = new CardClassifying();
         public static ApolloSettings Settings;
 
         public FightState FightState { get; set; }
@@ -44,11 +39,6 @@ namespace Buddy.Clash.DefaultSelectors.Game
         {
                 //EnemyHandling.BuildEnemiesNextCardsAndHand();
                 FightState = GameStateHandling.CurrentFightState;
-        }
-
-        public Vector2f GetSpellPosition()
-        {
-            return playerCastPositionHandling.GetNextSpellPosition(FightState);
         }
     }
 }

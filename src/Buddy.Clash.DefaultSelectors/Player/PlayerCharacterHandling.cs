@@ -107,5 +107,10 @@ namespace Buddy.Clash.DefaultSelectors.Player
 
             }
         }
+
+        //pubic static bool AmIAttacking()
+        //{
+
+        //}
     }
 }

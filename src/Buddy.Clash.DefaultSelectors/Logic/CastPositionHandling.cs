@@ -11,21 +11,27 @@ using System.Text;
 using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
 using Buddy.Clash.DefaultSelectors.Settings;
 using Buddy.Clash.DefaultSelectors.Player;
+using Buddy.Clash.DefaultSelectors.Card;
 
 namespace Buddy.Clash.DefaultSelectors.Logic
 {
     class CastPositionHandling
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<CastHandling>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<CastDeploymentHandling>();
+        private static ICard cardToDeploy;
 
-        public Vector2f GetNextSpellPosition(FightState gameState)
+        public static Vector2f GetNextSpellPosition(FightState gameState, ICard card)
         {
+            cardToDeploy = card;
             Random rnd = StaticValues.rnd;
             float rndX = rnd.Next(-GameHandling.Settings.RandomDeploymentValue, GameHandling.Settings.RandomDeploymentValue);
             float rndY = rnd.Next(-GameHandling.Settings.RandomDeploymentValue, GameHandling.Settings.RandomDeploymentValue);
 
             Vector2f rndAddVector = new Vector2f(rndX, rndY);
             Vector2f choosedPosition = Vector2f.Zero, nextPosition;
+
+            if (cardToDeploy is CardSpell)
+                return GetPositionOfTheBestDamagingSpellDeploy();
 
             // ToDo: Handle Defense Gamestates
             switch (gameState)
@@ -68,44 +74,70 @@ namespace Buddy.Clash.DefaultSelectors.Logic
             return nextPosition;
         }
 
-        private Vector2f UAKT()
+        private static Vector2f UAKT()
         {
+            return DKT();
+        }
+
+        private static Vector2f UALPT()
+        {
+            return DLPT();
+        }
+        private static Vector2f UARPT()
+        {
+            return DRPT();
+        }
+        private static Vector2f DKT()
+        {
+            if (cardToDeploy is CardCharacter)
+            {
+                switch ((cardToDeploy as CardCharacter).Type)
+                {
+                    case TroopType.GroundAttack:
+                    case TroopType.Flying:
+                    case TroopType.Tank:
+                        Logger.Debug("DKT Troop-Name {0} ; CartType GroundAttack, Flying or Tank", cardToDeploy.Name);
+                        if (PlaygroundPositionHandling.IsPositionOnTheRightSide(EnemyCharacterHandling.NearestEnemy.StartPosition))
+                            return PlayerCharacterHandling.KingTower.StartPosition + new Vector2f(1000, 0);
+                        else
+                            return PlayerCharacterHandling.KingTower.StartPosition - new Vector2f(1000, 0);
+                    case TroopType.Ranger:
+                    case TroopType.AirAttack:
+                    case TroopType.AOEAttackGround:
+                    case TroopType.AOEAttackFlying:
+                    case TroopType.Damager:
+                        Vector2f position = PositionHelper.AddYInDirection(PlayerCharacterHandling.KingTower.StartPosition, PlayerProperties.PlayerPosition);
+
+                        if (PlaygroundPositionHandling.IsPositionOnTheRightSide(EnemyCharacterHandling.NearestEnemy.StartPosition))
+                            return position + new Vector2f(300, 0);
+                        else
+                            return position - new Vector2f(300, 0);
+                    default:
+                        break;
+                }
+            }
+
             if (PlaygroundPositionHandling.IsPositionOnTheRightSide(EnemyCharacterHandling.NearestEnemy.StartPosition))
                 return PlayerCharacterHandling.KingTower.StartPosition + new Vector2f(1000, 0);
             else
                 return PlayerCharacterHandling.KingTower.StartPosition - new Vector2f(1000, 0);
-        }
-
-        private Vector2f UALPT()
-        {
-            return PlayerCharacterHandling.PrincessTower.FirstOrDefault().StartPosition;
-        }
-        private Vector2f UARPT()
-        {
-            return PlayerCharacterHandling.PrincessTower.LastOrDefault().StartPosition;
-        }
-        private Vector2f DKT()
-        {
-            if (PlaygroundPositionHandling.IsPositionOnTheRightSide(EnemyCharacterHandling.NearestEnemy.StartPosition))
-                return PlayerCharacterHandling.KingTower.StartPosition + new Vector2f(1000, 0);
-            else
-                return PlayerCharacterHandling.KingTower.StartPosition - new Vector2f(1000, 0);
 
         }
-        private Vector2f DLPT()
+        private static Vector2f DLPT()
         {
+            Logger.Debug("DLPT: LeftPrincessTower = " + PlayerCharacterHandling.LeftPrincessTower.ToString());
             Vector2f lPT = PlayerCharacterHandling.LeftPrincessTower.StartPosition;
-            Vector2f positionBehindTower = PositionHelper.AddYInDirection(lPT, PlayerProperties.PlayerPosition);
-            return positionBehindTower;
+            Vector2f correctedPosition = PrincessTowerCharacterDeploymentCorrection(lPT);
+            return correctedPosition;
         }
-        private Vector2f DRPT()
+        private static Vector2f DRPT()
         {
             Vector2f rPT = PlayerCharacterHandling.RightPrincessTower.StartPosition;
-            Vector2f positionBehindTower = PositionHelper.AddYInDirection(rPT, PlayerProperties.PlayerPosition);
-            return positionBehindTower;
+            Vector2f correctedPosition = PrincessTowerCharacterDeploymentCorrection(rPT);
+            return correctedPosition;
         }
 
-        private Vector2f AKT()
+        private static Vector2f AKT()
         {
             switch (GameStateHandling.CurrentEnemyPrincessTowerState)
             {
@@ -131,13 +163,13 @@ namespace Buddy.Clash.DefaultSelectors.Logic
                     return EnemyCharacterHandling.EnemyKingTower.StartPosition;
             }
         }
-        private Vector2f ALPT()
+        private static Vector2f ALPT()
         {
             Logger.Debug("ALPT");
             Vector2f lPT = EnemyCharacterPositionHandling.EnemyLeftPrincessTower;
             return lPT;
         }
-        private Vector2f ARPT()
+        private static Vector2f ARPT()
         {
             Logger.Debug("ARPT");
             Vector2f rPT = EnemyCharacterPositionHandling.EnemyRightPrincessTower;
@@ -153,9 +185,10 @@ namespace Buddy.Clash.DefaultSelectors.Logic
                 return EnemyCharacterHandling.EnemyKingTower.StartPosition;
             else
             {
-                Character enemy;
+                int count;
+                Character enemy = EnemyCharacterHandling.EnemyCharacterWithTheMostEnemiesAround(out count);
 
-                if (CastHandling.DamagingSpellDecision(out enemy))
+                if (enemy != null)
                 {
                     
                     if (PlayerCharacterHandling.HowManyCharactersAroundCharacter(enemy) >= GameHandling.Settings.SpellCorrectionConditionCharCount)
@@ -170,5 +203,35 @@ namespace Buddy.Clash.DefaultSelectors.Logic
 
             return Vector2f.Zero;
         }
+
+        private static Vector2f PrincessTowerCharacterDeploymentCorrection(Vector2f position)
+        {
+            Logger.Debug("PT Characer Position Correction: Name und Typ {0} " + cardToDeploy.Name, (cardToDeploy as CardCharacter).Type);
+            Vector2f result = Vector2f.Zero;
+
+            if (cardToDeploy is CardCharacter)
+            {
+                switch ((cardToDeploy as CardCharacter).Type)
+                {
+                    case TroopType.GroundAttack:
+                    case TroopType.Flying:
+                    case TroopType.Tank:
+                        return PositionHelper.SubtractYInDirection(position, PlayerProperties.PlayerPosition);
+                    case TroopType.Ranger:
+                    case TroopType.AirAttack:
+                    case TroopType.AOEAttackGround:
+                    case TroopType.AOEAttackFlying:
+                    case TroopType.Damager:
+                        return PositionHelper.AddYInDirection(position, PlayerProperties.PlayerPosition);
+                    default:
+                        break;
+                }
+            }
+            else
+                Logger.Debug("Tower Correction: No Correction!!!");
+
+            return position;
+        }
+
     }
 }

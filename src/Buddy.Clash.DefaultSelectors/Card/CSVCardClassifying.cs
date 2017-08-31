@@ -5,9 +5,9 @@ using System.Text;
 using Buddy.Clash.Engine.Csv.CsvLogic;
 using Buddy.Clash.DefaultSelectors.Game;
 
-namespace Buddy.Clash.DefaultSelectors.Utilities
+namespace Buddy.Clash.DefaultSelectors.Card
 {
-    class CSVClassifying
+    class CSVCardClassifying
     {
         public static bool IsTank(string name)
         {
@@ -31,15 +31,16 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
             return true;
         }
 
-        public static bool IsNonDamagingSpell(string name)
-        {
-            // ToDo: Char-Level beachten
-            SpellsOther.SpellsOtherEntry buildingEntry = SpellsOther.Entries.Where(n => n.Name == name).FirstOrDefault();
 
-            if (buildingEntry == null)
-                return false;
+        //public static bool IsNonDamagingSpell(string name)
+        //{
+        //    // ToDo: doesn´t works
+        //    SpellsOther.SpellsOtherEntry buildingEntry = SpellsOther.Entries.Where(n => n.Name == name).FirstOrDefault();
+
+        //    if (buildingEntry == null)
+        //        return false;
             
-            return true;
-        }
+        //    return true;
+        //}
     }
 }

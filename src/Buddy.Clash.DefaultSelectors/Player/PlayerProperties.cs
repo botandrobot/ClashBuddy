@@ -18,7 +18,7 @@ namespace Buddy.Clash.DefaultSelectors.Player
 
     class PlayerProperties
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<CastHandling>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<CastDeploymentHandling>();
 
         public static Position PlayerPosition
         {

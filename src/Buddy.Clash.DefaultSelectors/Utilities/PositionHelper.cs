@@ -15,28 +15,26 @@ namespace Buddy.Clash.DefaultSelectors.Utilities
         private static readonly ILogger Logger = LogProvider.CreateLogger<PositionHelper>();
 
 
-        public static Vector2f AddYInDirection(Vector2f position, Position fieldPosition, int y = 500)
+        public static Vector2f AddYInDirection(Vector2f position, Position fieldPosition, int y = 1000)
         {
             Vector2f moveVector = new Vector2(0, y);
             Logger.Debug("PlayerPosition: {0}", fieldPosition);
 
-            switch (GameStateHandling.CurrentGameMode)
-            {
-                case GameMode.ONE_VERSUS_ONE:
                     if (fieldPosition == Position.Down)
-                        return position - moveVector;
+                        return position - (moveVector*4);
                     else
                         return position + moveVector;
-                case GameMode.TWO_VERSUS_TWO:
+        }
+
+        public static Vector2f SubtractYInDirection(Vector2f position, Position fieldPosition, int y = 1000)
+        {
+            Vector2f moveVector = new Vector2(0, y);
+            Logger.Debug("PlayerPosition: {0}", fieldPosition);
+
                     if (fieldPosition == Position.Down)
-                        return position - moveVector;
+                        return position + (moveVector*4);
                     else
-                        return position + moveVector;
-                case GameMode.NOT_IMPLEMENTED:
-                    return position;
-                default:
-                    return position;
-            }
+                        return position - moveVector;
         }
     }
 }

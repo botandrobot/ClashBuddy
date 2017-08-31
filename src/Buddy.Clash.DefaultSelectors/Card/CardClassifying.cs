@@ -8,32 +8,11 @@ using Buddy.Common;
 using Buddy.Clash.Engine.NativeObjects.LogicData;
 using Buddy.Clash.DefaultSelectors.Utilities;
 
-namespace Buddy.Clash.DefaultSelectors.Player
+namespace Buddy.Clash.DefaultSelectors.Card
 {
-    enum TroopType
+    class CardClassifying
     {
-        Tank,
-        Damager,
-        Ranger,
-        AirAttacker,
-        AOE
-    };
-
-    enum CardType
-    {
-        Troop,
-        DamagingSpell,
-        DefenseSpell,
-        Defense,
-        Building,
-        Spawner,
-        All,
-        NONE
-    };
-
-    class PlayerCardClassifying
-    {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<PlayerCardClassifying>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<CardClassifying>();
 
         public static IOrderedEnumerable<Spell> Damaging
         {
@@ -101,7 +80,7 @@ namespace Buddy.Clash.DefaultSelectors.Player
         {
             get
             {
-                return Troop.Where(n => CSVClassifying.IsTank(n.Name.Value));
+                return Troop.Where(n => CSVCardClassifying.IsTank(n.Name.Value));
             }
         }
 
