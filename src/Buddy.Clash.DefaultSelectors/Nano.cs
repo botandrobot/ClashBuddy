@@ -153,6 +153,7 @@
             //var ssdf  = Buddy.Clash.Engine.Csv.CsvLogic.SpellsCharacters
 
             help.logg("###################entrance############### " + DateTime.Now);
+            help.logg("###################test############### " + DateTime.Now);
 
             List<BoardObj> ownMinions = new List<BoardObj>();
             List<BoardObj> enemyMinions = new List<BoardObj>();
