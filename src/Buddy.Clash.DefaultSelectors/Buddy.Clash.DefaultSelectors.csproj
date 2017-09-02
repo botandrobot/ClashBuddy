@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netcoreapp1.1</TargetFramework>
@@ -43,9 +43,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="Serilog" Version="2.5.0" />
-		<PackageReference Include="Buddy.Common" Version="*" Condition="'$(BuildingInsideVisualStudio)' != 'true'" />
-		<PackageReference Include="Buddy.Engine" Version="*" Condition="'$(BuildingInsideVisualStudio)' != 'true'" />
-		<PackageReference Include="Buddy.Clash.Engine" Version="*" Condition="'$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Buddy.Common" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Buddy.Engine" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Buddy.Clash.Engine" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\src\Buddy.Engine\Buddy.Engine.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' ">
