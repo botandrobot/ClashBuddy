@@ -18,7 +18,8 @@ namespace Buddy.Clash.DefaultSelectors
 	public class EarlyCycleSelector : ActionSelectorBase
 	{
 		private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
-		private static readonly ILogEventSink fileSink = new RollingFileSink($"{ Path.Combine(LogProvider.LogPath, "EarlyActionSelector") }-{{HalfHour}}.log", new MessageTemplateTextFormatter("{Timestamp:HH:mm:ss} [{Level:u3}] [{SourceContext}] {Message:I}{NewLine}{Exception}", null), null, null);
+		private static readonly LoggerConfiguration LoggerConfiguration = new LoggerConfiguration().Filter.ByIncludingOnly(l => l.Properties.TryGetValue("SourceContext", out LogEventPropertyValue ctx) && ctx.ToString().Trim('"').StartsWith("Buddy.Clash.DefaultSelectors.EarlyCycleSelector", StringComparison.OrdinalIgnoreCase));
+		private static readonly ILogEventSink Sink = LoggerConfiguration.WriteTo.Sink(new RollingFileSink($"{ Path.Combine(LogProvider.LogPath, "EarlyActionSelector") }-{{HalfHour}}.log", new MessageTemplateTextFormatter("{Timestamp:HH:mm:ss} [{Level:u3}] [{SourceContext}] {Message:I}{NewLine}{Exception}", null), null, null)).CreateLogger();
 		private readonly ConcurrentQueue<string> _spellQueue = new ConcurrentQueue<string>();
 
 		public override string Name => "Early Cycle Selector";
@@ -33,12 +34,13 @@ namespace Buddy.Clash.DefaultSelectors
 
 		public override void Initialize()
 		{
-			LogProvider.AttachSink(l => l.Properties.TryGetValue("SourceContext", out LogEventPropertyValue ctx) && ctx.ToString().Trim('"').StartsWith("Buddy.Clash.DefaultSelectors.EarlyCycleSelector", StringComparison.OrdinalIgnoreCase), fileSink);
+			
+			LogProvider.AttachSink(Sink);
 		}
 
 		public override void Deinitialize()
 		{
-			LogProvider.DetachSink(fileSink);
+			LogProvider.DetachSink(Sink);
 		}
 
 		public override CastRequest GetNextCast()
