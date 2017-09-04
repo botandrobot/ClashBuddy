@@ -128,6 +128,17 @@ namespace Buddy.Clash.DefaultSelectors.Card
             }
         }
 
+
+        public static IOrderedEnumerable<Spell> Buildings
+        {
+            get
+            {
+                var spells = ClashEngine.Instance.AvailableSpells;
+                var Buildings = spells.Where(s => s != null && s.IsValid && CSVCardClassifying.IsBuilding(s.Name.Value)).OrderByDescending(s => s.ManaCost);
+                return Buildings;
+            }
+        }
+
         //public static IOrderedEnumerable<Spell> TroopTanks
         //{
         //    get

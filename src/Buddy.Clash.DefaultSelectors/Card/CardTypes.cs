@@ -33,6 +33,7 @@ namespace Buddy.Clash.DefaultSelectors.Card
         Defense,
         All,
         Troop,
+        Buildings,
         NONE
     };
 }

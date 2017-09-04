@@ -14,15 +14,15 @@ namespace Buddy.Clash.DefaultSelectors.Settings
 		    
 	    }
 
-        [DefaultValue(Player.FightStyle.Balanced)]
+        [DefaultValue((int)Player.FightStyle.Balanced)]
         [SettingsName("Choose Apollos fight style")]
         [SettingsDescription("Smart balanced, concentrated on the Defense or as an angry rusher?")]
         public Player.FightStyle FightStyle { get; set; }
 
         [SettingsName("Random Deployment Faktor")]
         [SettingsDescription("Random deployment factor range to let the bot look more human like")]
-        [FloatRangeSettings(100, 0, 10000)]
-        [DefaultValue(200)]
+        [FloatRangeSettings(0, 0, 10000)]
+        [DefaultValue(50)]
         public int RandomDeploymentValue { get; set; }
 
         [SettingsName("Enemys KingTower spell damaging mode")]
@@ -48,6 +48,12 @@ namespace Buddy.Clash.DefaultSelectors.Settings
         [FloatRangeSettings(0, 0, 10)]
         [DefaultValue(9)]
         public int ManaTillFirstAttack { get; set; }
+
+        [SettingsName("Attack: Mana-Load")]
+        [SettingsDescription("How much Mana till start attacking the enemy if no friendly-chars already attacking")]
+        [FloatRangeSettings(0, 0, 10)]
+        [DefaultValue(7)]
+        public int ManaTillAttack { get; set; }
 
         [SettingsName("Tank health")]
         [SettingsDescription("How much health-points to classify an character as a tank")]
