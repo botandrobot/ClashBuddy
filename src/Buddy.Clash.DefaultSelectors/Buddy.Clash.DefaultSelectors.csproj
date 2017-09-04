@@ -46,6 +46,7 @@
 		<PackageReference Include="Buddy.Common" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
 		<PackageReference Include="Buddy.Engine" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
 		<PackageReference Include="Buddy.Clash.Engine" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\..\src\Buddy.Engine\Buddy.Engine.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' ">
