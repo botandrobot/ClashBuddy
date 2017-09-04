@@ -1,4 +1,11 @@
-﻿namespace Buddy.Clash.DefaultSelectors
+﻿using System.IO;
+using NSwag.SwaggerGeneration.WebApi.Infrastructure;
+using Serilog.Core;
+using Serilog.Events;
+using Serilog.Formatting.Display;
+using Serilog.Sinks.RollingFile;
+
+namespace Buddy.Clash.DefaultSelectors
 {
 	using System;
 	using System.Collections.Concurrent;
@@ -6,23 +13,36 @@
 	using Engine;
 	using Common;
 	using Serilog;
-    using Buddy.Clash.DefaultSelectors.Utilities;
+	using Buddy.Clash.DefaultSelectors.Utilities;
 
-    public class EarlyCycleSelector : ActionSelectorBase
+	public class EarlyCycleSelector : ActionSelectorBase
 	{
 		private static readonly ILogger Logger = LogProvider.CreateLogger<EarlyCycleSelector>();
+		private static readonly LoggerConfiguration LoggerConfiguration = new LoggerConfiguration().Filter.ByIncludingOnly(l => l.Properties.TryGetValue("SourceContext", out LogEventPropertyValue ctx) && ctx.ToString().Trim('"').StartsWith("Buddy.Clash.DefaultSelectors.EarlyCycleSelector", StringComparison.OrdinalIgnoreCase));
+		private static readonly ILogEventSink Sink = LoggerConfiguration.WriteTo.Sink(new RollingFileSink($"{ Path.Combine(LogProvider.LogPath, "EarlyActionSelector") }-{{HalfHour}}.log", new MessageTemplateTextFormatter("{Timestamp:HH:mm:ss} [{Level:u3}] [{SourceContext}] {Message:I}{NewLine}{Exception}", null), null, null)).CreateLogger();
 		private readonly ConcurrentQueue<string> _spellQueue = new ConcurrentQueue<string>();
 
 		public override string Name => "Early Cycle Selector";
-		
+
 		public override string Description => "This selector implements a simple attack logic that cycles throu cards till it has 3 cards that require more than 3 mana. Then plays two cards at almost the same time.";
-		
+
 		public override string Author => "Token";
-		
+
 		public override Version Version => new Version(1, 0, 0, 0);
-		
+
 		public override Guid Identifier => new Guid("{9996B2EB-8002-4684-BACB-4321FF7D359E}");
-		
+
+		public override void Initialize()
+		{
+			
+			LogProvider.AttachSink(Sink);
+		}
+
+		public override void Deinitialize()
+		{
+			LogProvider.DetachSink(Sink);
+		}
+
 		public override CastRequest GetNextCast()
 		{
 			var om = ClashEngine.Instance.ObjectManager;
