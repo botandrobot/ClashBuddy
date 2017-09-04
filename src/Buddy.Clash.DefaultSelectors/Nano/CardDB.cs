@@ -186,6 +186,237 @@ namespace Buddy.Clash.DefaultSelectors
             public List<cardtrigers> trigers;
 
 
+
+            /*
+
+
+            //stuff for test and seech
+            public string TargettedDamageEffect3 = "";
+            public string TargettedDamageEffect2 = "";
+            public string TargettedDamageEffect1 = "";
+            public string TargetedHitEffectSpecial = "";
+            public string TargetedHitEffect = "";
+            public string TakeDamageEffect = "";
+            public string TID = "";
+            public string StartingBuff = "";
+            public string SpecialReadyEffect = "";
+            public string SpawnProjectile = "";
+            public string SpawnPathfindMorph = "";
+            public string SpawnPathfindEffect = "";
+            public string SpawnEffect = "";
+            public string SpawnDeployBaseAnim = "";
+            public string SpawnCharacterEffect = "";
+            public string SpawnCharacter = "";
+            public string SpawnAreaObject = "";
+            public string ShieldLostEffect = "";
+            public string ShadowCustomLow = "";
+            public string ShadowCustom = "";
+            public string RedTopExportName = "";
+            public string RedShieldExportName = "";
+            public string RedExportName = "";
+            public string Rarity = "";
+            public string ProjectileSpecial = "";
+            public string ProjectileEffectSpecial = "";
+            public string ProjectileEffect = "";
+            public string Projectile = "";
+            public string Name = "";
+            public string MoveEffect = "";
+            public string MorphEffect = "";
+            public string MorphCharacter = "";
+            public string LoopingFilter = "";
+            public string LoadAttackEffectReady = "";
+            public string LoadAttackEffect3 = "";
+            public string LoadAttackEffect2 = "";
+            public string LoadAttackEffect1 = "";
+            public string LandingEffect = "";
+            public string KamikazeEffect = "";
+            public string HideEffect = "";
+            public string HealthBar = "";
+            public string FlameEffect3 = "";
+            public string FlameEffect2 = "";
+            public string FlameEffect1 = "";
+            public string FileName = "";
+            public string DeployBaseAnimExportName = "";
+            public string DeathSpawnProjectile = "";
+            public string DeathSpawnCharacter = "";
+            public string DeathEffect = "";
+            public string DeathAreaEffect = "";
+            public string DashStartEffect = "";
+            public string DashFilter = "";
+            public string DashEffect = "";
+            public string DamageLevelTransitionEffect23 = "";
+            public string DamageLevelTransitionEffect12 = "";
+            public string DamageExportName = "";
+            public string DamageEffectSpecial = "";
+            public string DamageEffect = "";
+            public string CustomFirstProjectile = "";
+            public string ContinuousEffect = "";
+            public string ChargeEffect = "";
+            public string BuffOnDamage = "";
+            public string BlueTopExportName = "";
+            public string BlueShieldExportName = "";
+            public string BlueExportName = "";
+            public string AttackStartEffectSpecial = "";
+            public string AttackStartEffect = "";
+            public string AttachedCharacter = "";
+            public string AreaEffectOnMorph = "";
+            public string AreaEffectOnDash = "";
+            public string AreaBuff = "";
+            public string AppearEffect = "";
+            public string AppearAreaObject = "";
+            public string Ability = "";
+            public int WalkingSpeedTweakPercentage = 0;
+            public int WaitMS = 0;
+            public int VisualHitSpeed = 0;
+            public int VariableDamageTransitionTime = 0;
+            public int VariableDamageTime2 = 0;
+            public int VariableDamageTime1 = 0;
+            public int VariableDamage3 = 0;
+            public int VariableDamage2 = 0;
+            public int UpTimeMs = 0;
+            public int TurretMovement = 0;
+            public int TileSizeOverride = 0;
+            public int TargetEffectY = 0;
+            public int StopTimeAfterSpecialAttack = 0;
+            public int StopTimeAfterAttack = 0;
+            public int StopMovementAfterMS = 0;
+            public int StartingBuffTime = 0;
+            public int Speed = 0;
+            public int SpecialRange = 0;
+            public int SpecialMinRange = 0;
+            public int SpecialLoadTime = 0;
+            public int SpecialAttackInterval = 0;
+            public int SpawnStartTime = 0;
+            public int SpawnRadius = 0;
+            public int SpawnPushbackRadius = 0;
+            public int SpawnPushback = 0;
+            public int SpawnPauseTime = 0;
+            public int SpawnPathfindSpeed = 0;
+            public int SpawnNumber = 0;
+            public int SpawnLimit = 0;
+            public int SpawnInterval = 0;
+            public int SpawnCharacterLevelIndex = 0;
+            public int SpawnAreaObjectLevelIndex = 0;
+            public int SpawnAngleShift = 0;
+            public int SightRange = 0;
+            public int SightClipSide = 0;
+            public int SightClip = 0;
+            public int ShieldHitpoints = 0;
+            public int ShieldDiePushback = 0;
+            public int ShadowY = 0;
+            public int ShadowX = 0;
+            public int ShadowSkew = 0;
+            public int ShadowScaleY = 0;
+            public int ShadowScaleX = 0;
+            public int Scale = 0;
+            public int RotateAngleSpeed = 0;
+            public int Range = 0;
+            public int Pushback = 0;
+            public int ProjectileYOffset = 0;
+            public int ProjectileStartZ = 0;
+            public int ProjectileStartRadius = 0;
+            public int NoDeploySizeW = 0;
+            public int NoDeploySizeH = 0;
+            public int MultipleTargets = 0;
+            public int MultipleProjectiles = 0;
+            public int MorphTime = 0;
+            public int MinimumRange = 0;
+            public int Mass = 0;
+            public int ManaGenerateTimeMs = 0;
+            public int ManaGenerateLimit = 0;
+            public int ManaCollectAmount = 0;
+            public int LoadTime = 0;
+            public int LifeTime = 0;
+            public int KamikazeTime = 0;
+            public int JumpSpeed = 0;
+            public int JumpHeight = 0;
+            public int Hitpoints = 0;
+            public int HitSpeed = 0;
+            public int HideTimeMs = 0;
+            public int HealthBarOffsetY = 0;
+            public int GrowTime = 0;
+            public int GrowSize = 0;
+            public int FlyingHeight = 0;
+            public int DeployTimerDelay = 0;
+            public int DeployTime = 0;
+            public int DeployDelay = 0;
+            public int DeathSpawnRadius = 0;
+            public int DeathSpawnMinRadius = 0;
+            public int DeathSpawnDeployTime = 0;
+            public int DeathSpawnCount = 0;
+            public int DeathPushBack = 0;
+            public int DeathDamageRadius = 0;
+            public int DeathDamage = 0;
+            public int DashRadius = 0;
+            public int DashPushBack = 0;
+            public int DashMinRange = 0;
+            public int DashMaxRange = 0;
+            public int DashLandingTime = 0;
+            public int DashImmuneToDamageTime = 0;
+            public int DashDamage = 0;
+            public int DashCooldown = 0;
+            public int DashConstantTime = 0;
+            public int DamageSpecial = 0;
+            public int Damage = 0;
+            public int CrownTowerDamagePercent = 0;
+            public int CollisionRadius = 0;
+            public int ChargeSpeedMultiplier = 0;
+            public int ChargeRange = 0;
+            public int BurstDelay = 0;
+            public int Burst = 0;
+            public int BuffOnDamageTime = 0;
+            public int AttackShakeTime = 0;
+            public int AttackPushBack = 0;
+            public int AttackDashTime = 0;
+            public int AttachedCharacterHeight = 0;
+            public int AreaDamageRadius = 0;
+            public int AreaBuffTime = 0;
+            public int AreaBuffRadius = 0;
+            public int AppearPushbackRadius = 0;
+            public int AppearPushback = 0;
+            public int ActivationTime = 0;
+            public bool VariableDamageLifeTime = false;
+            public bool UseAnimator = false;
+            public bool TargetOnlyBuildings = false;
+            public bool SpecialAttackWhenHidden = false;
+            public bool SpawnConstPriority = false;
+            public bool ShowHealthNumber = false;
+            public bool SelfAsAoeCenter = false;
+            public bool RetargetAfterAttack = false;
+            public bool MorphKeepTarget = false;
+            public bool LoopMoveEffect = false;
+            public bool LoadFirstHit = false;
+            public bool Kamikaze = false;
+            public bool JumpEnabled = false;
+            public bool IsSummonerTower = false;
+            public bool IgnorePushback = false;
+            public bool HidesWhenNotAttacking = false;
+            public bool HideBeforeFirstHit = false;
+            public bool HealOnMorph = false;
+            public bool HasRotationOnTimeline = false;
+            public bool FlyFromGround = false;
+            public bool FlyDirectPaths = false;
+            public bool DontStopMoveAnim = false;
+            public bool DeathSpawnPushback = false;
+            public bool DeathInheritIgnoreList = false;
+            public bool CrowdEffects = false;
+            public bool BurstKeepTarget = false;
+            public bool BuildingTarget = false;
+            public bool AttacksGround = false;
+            public bool AttacksAir = false;
+            public bool AllTargetsHit = false;
+
+
+
+
+            */
+
+
+
+
+
+
+
             public Card()
             {
 
@@ -239,6 +470,15 @@ namespace Buddy.Clash.DefaultSelectors
 
         private CardDB()
         {
+            
+            //foreach (string actName in Enum.GetNames(typeof(actionEnum)))
+           /* foreach (var e in Buddy.Clash.Engine.Csv.CsvLogic.Characters.Entries)
+            {
+                Logger.Information("{TID}: {Name} has {ShieldHitpoints}", e.TID, e.Name, e.ShieldHitpoints);
+            }
+            help.logg("-----------------Initialize");
+            CardDB cdb = CardDB.Instance;*/
+
             //-TODO: заглушка - just for test - просто имена - потом создать реальные значения
             /*
             foreach (var s in Enum.GetNames(typeof(cardName)))
@@ -265,6 +505,7 @@ namespace Buddy.Clash.DefaultSelectors
             }
             this.cardNameToCardList.Clear();
             this.unknownCard = new Card { name = cardName.unknown, cost = 1000 };
+            /*
             foreach (string s in lines)
             {
                 Card c = new Card();
@@ -306,7 +547,7 @@ namespace Buddy.Clash.DefaultSelectors
                 }
                 if (!cardNameToCardList.ContainsKey(c.name)) cardNameToCardList.Add(c.name, c);
                 else Helpfunctions.Instance.ErrorLog("#####ERR. Duplicate name:" + c.name);
-            }
+            }*/
             Helpfunctions.Instance.ErrorLog("CardList:" + cardNameToCardList.Count);
         }
 
