@@ -58,7 +58,7 @@
                             retval = hc;
                         }
                     }
-                    bc = new Cast(retval.name, ownGroup.Position);
+                    bc = new Cast(retval.name, ownGroup.Position, retval);
                 }
             }
             else if (p.ownMana >= 9)
@@ -70,11 +70,11 @@
                         Handcard tank = p.getTankCard();
                         if (tank != null)
                         {
-                            bc = new Cast(tank.name, p.getBackPosition(tank));
+                            bc = new Cast(tank.name, p.getBackPosition(tank), tank);
                         }
                         else
                         {
-                            List<Handcard> BuildingsCard = p.getBuildingsCard();
+                            List<Handcard> BuildingsCard = p.getCardsByType(boardObjType.BUILDING);
                             if (BuildingsCard.Count > 0)
                             {
                                 Handcard hut = BuildingsCard[0];
@@ -90,7 +90,7 @@
                                         }
                                     }
                                 }
-                                bc = new Cast(hut.name, p.getBackPosition(hut));
+                                bc = new Cast(hut.name, p.getBackPosition(hut), hut);
                             }
                             else
                             {
@@ -105,11 +105,11 @@
                                         {
                                             CheapestCard = p.getCheapestCard(boardObjType.PROJECTILE, targetType.NONE);
                                             if (CheapestCard == null) bc = null;
-                                            else bc = new Cast(CheapestCard.name, p.enemyBuildings[0].Position);
+                                            else bc = new Cast(CheapestCard.name, p.enemyBuildings[0].Position, CheapestCard);
                                         }
                                     }
                                 }
-                                bc = new Cast(CheapestCard.name, p.getBackPosition(CheapestCard));
+                                bc = new Cast(CheapestCard.name, p.getBackPosition(CheapestCard), CheapestCard);
                             }
                         }
                     }
@@ -117,7 +117,7 @@
                     {
                         BoardObj m = p.getFrontMob();
                         Handcard hc = p.getPatnerForMobInPeace(m);
-                        bc = new Cast(hc.name, m.Position);
+                        bc = new Cast(hc.name, m.Position, hc);
                     }
                 }
                 else

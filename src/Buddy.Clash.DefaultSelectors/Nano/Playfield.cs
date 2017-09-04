@@ -327,7 +327,8 @@
 
         public List<Handcard> ownHandCards = new List<Handcard>();
         public Handcard nextCard = new Handcard();
-        public List<CardDB.cardName> enemyHandCards = new List<CardDB.cardName>();
+        public List<CardDB.cardName> ownDeck = new List<CardDB.cardName>();
+        public List<CardDB.cardName> enemyDeck = new List<CardDB.cardName>();
 
         public List<BoardObj> ownMinions = new List<BoardObj>();
         public List<BoardObj> enemyMinions = new List<BoardObj>();
@@ -361,9 +362,9 @@
         public int ruleWeight = 0;
         public string rulesUsed = "";
         public bool needPrint = false;
-        public Int64 hashcode = 0;
+        //public Int64 hashcode = 0; //TODO
         public float value = Int32.MinValue;
-        public int guessingHeroHP = 30;                
+        //public int guessingKingTowerHP = 30;                
         public List<Action> playactions = new List<Action>();
         public List<int> pIdHistory = new List<int>();
         
@@ -422,6 +423,9 @@
             copyBoardObj(p.enemyTowers, this.enemyTowers);
 
             copyCards(p.ownHandCards, p.nextCard);
+
+            this.ownDeck = p.ownDeck;
+            this.enemyDeck = p.enemyDeck;
 
             ownGroup = p.ownGroup;
             enemyGroup = p.enemyGroup;
@@ -552,16 +556,13 @@
                         p = new Playfield(p, callTime);
                         VectorAI position = p.getDeployPosition(opp);
 
-                        bestCast = new Cast(opp.hc.name, position);
+                        bestCast = new Cast(opp.hc.name, position, opp.hc);
                     }
                     else if (opp.bo != null)
                     {
                         if (opp.bo.TargetType == targetType.GROUND)
                         {
-                            /*foreach (Handcard hc in p.ownHandCards)
-                            {
-                                if (hc.card.TargetType == targetType.ALL)
-                            }*/
+                            //TODO 
                         }
                     }
                     else
@@ -725,6 +726,27 @@
             return retval;
         }
 
+        public int getDistanceToPointFromBorder(VectorAI Position) //TODO: get actual size fom game for Battlefield + bool CanDeploy
+        {
+            int retval = 0;
+            if ((Position.Y > 15250) == home)
+            {
+                int line = Position.X > 8700 ? 1 : 2;
+                foreach (BoardObj bo in this.enemyTowers)
+                {
+                    if (bo.Line == line)
+                    {
+
+                    }
+                    else if (bo.Line == 3)
+                    {
+
+                    }
+                }
+            }
+            return retval;
+        }
+
         public bool noEnemiesOnMySide()
         {
             foreach (BoardObj m in this.enemyMinions)
@@ -765,12 +787,15 @@
             return retval;
         }
 
-        public List<Handcard> getBuildingsCard()
+        public List<Handcard> getCardsByType(boardObjType type)
         {
             List<Handcard> retval = new List<Handcard>();
-            foreach (Handcard hc in ownHandCards)
+            int count = ownHandCards.Count;
+            Handcard hc;
+            for (int i = 0; i < count; i++ )
             {
-                if (hc.card.type == boardObjType.BUILDING) retval.Add(hc);
+                hc = ownHandCards[i];
+                if (hc.card.type == type) retval.Add(hc);
             }
             return retval;
         }
@@ -827,8 +852,8 @@
             }
             return retval;
         }
-        
-        public BoardObj getFrontMob()
+
+        public BoardObj getFrontMob()  //TODO: perhaps add for enemy minions
         {
             BoardObj retval = null;
             int count = ownMinions.Count;
@@ -882,139 +907,13 @@
             return retval;
         }
         
-        public void guessObjDamage()
+        public void guessObjDamage() //TODO
         {
             //или как то по другому когда один наносит урон другому - типа кто сильнее
             //здесь мы быренько предугадуем дамаг по башне и/или миниону
         }
 
 
-
-        // do the action--------------------------------------------------------------
-
-        //minion attacks a minion
-
-        //dontcount = betrayal effect!
-        //public void minionAttacksMinion(Minion attacker, Minion defender, bool dontcount = false)
-        //{
-        //TODO надо ли в принципе или по другому реализовать
-        /*
-        if (attacker.isHero)
-        if (defender.isHero)
-        other
-                    */
-        //defender gets dmg
-        //}
-
-        //TODO надо ли в принципе
-        /*public void triggerAMinionGotDmg()
-        public void triggerAMinionDied()*/
-
-
-        /*public Minion createNewMinion(Handmanager.Handcard hc, int zonepos, bool own)
-        {
-            Minion m = new Minion();
-            Handmanager.Handcard handc = new Handmanager.Handcard(hc);
-            m.handcard = handc;
-            m.own = own;
-            m.isHero = false;
-            m.entitiyID = hc.entity;
-            if (this.ownCrystalCore > 0)
-            {
-                m.Angr = ownCrystalCore;
-                m.Hp = ownCrystalCore;
-                m.maxHp = ownCrystalCore;
-            }
-            else
-            {
-                m.Angr = hc.card.Attack + hc.addattack;
-                m.Hp = hc.card.Health + hc.addHp;
-                m.maxHp = hc.card.Health;
-            }
-
-            hc.addattack = 0;
-            hc.addHp = 0;
-
-            m.name = hc.card.name;
-            m.playedThisTurn = true;
-            m.numAttacksThisTurn = 0;
-            m.zonepos = zonepos;
-            m.windfury = hc.card.windfury;
-            m.taunt = hc.card.tank;
-            m.charge = (hc.card.Charge) ? 1 : 0;
-            m.divineshild = hc.card.Shield;
-            m.poisonous = hc.card.poisonous;
-            m.stealth = hc.card.Stealth;
-            m.untouchable = hc.card.untouchable;
-
-            switch (m.name)
-            {
-                case CardDB.cardName.lightspawn:
-                    m.Angr = m.Hp;
-                    break;
-            }
-            m.updateReadyness();
-
-            if (m.name == CardDB.cardName.lightspawn)
-            {
-                m.Angr = m.Hp;
-            }
-
-            if (own) m.synergy = prozis.penman.getClassRacePriorityPenality(this.ownHeroStartClass, (TAG_RACE)m.handcard.card.race);
-            else m.synergy = prozis.penman.getClassRacePriorityPenality(this.enemyHeroStartClass, (TAG_RACE)m.handcard.card.race);
-            if (m.synergy > 0 && hc.card.Stealth) m.synergy++;
-
-            //trigger on summon effect!
-            this.triggerAMinionIsSummoned(m);
-            //activate onAura effect
-            m.handcard.card.sim_card.onAuraStarts(this, m);
-            //buffs minion
-            this.minionGetOrEraseAllAreaBuffs(m, true);
-            return m;
-        }
-        */
-
-        /*
-    public void addMinionToBattlefield(Minion m, bool isSummon = true)
-    {
-        List<Minion> temp = (m.own) ? this.ownMinions : this.enemyMinions;
-        if (temp.Count >= m.zonepos && m.zonepos >= 1)
-        {
-            temp.Insert(m.zonepos - 1, m);
-        }
-        else
-        {
-            temp.Add(m);
-        }
-        if (m.own)
-        {
-            this.tempTrigger.ownMinionsChanged = true;
-            if (m.handcard.card.race == 20) this.tempTrigger.ownBeastSummoned++;
-        }
-        else this.tempTrigger.enemyMininsChanged = true;
-
-        //minion was played secrets? trigger here---- (+ do triggers)
-
-        //trigger a minion was summoned
-        triggerAMinionWasSummoned(m);
-        doDmgTriggers();
-
-        m.updateReadyness();
-    }
-    */
-
-        /*
-    public void minionGetTempBuff(Minion m, int tempAttack, int tempHp)
-    {
-        if (!m.silenced && m.name == CardDB.cardName.lightspawn) return;
-        if (tempAttack < 0 && -tempAttack > m.Angr)
-        {
-            tempAttack = -m.Angr;
-        }
-        m.tempAttack += tempAttack;
-        m.Angr += tempAttack;
-    }
-    */
 
         //TODO allCharsInAreaGetDamage
 
@@ -1049,15 +948,6 @@
             if (this.playactions.Count >= 1) return this.playactions[0];
             return null;
         }
-        /*
-        public void printActions(bool toBuffer = false)
-        {
-            foreach (Action a in this.playactions)
-            {
-                a.print(toBuffer);
-                Helpfunctions.Instance.logg("");
-            }
-        }*/
         
 
 

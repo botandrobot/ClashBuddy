@@ -7,14 +7,16 @@ namespace Buddy.Clash.DefaultSelectors
     {
         public string SpellName = "";
         public VectorAI Position;
+        public Handcard hc = new Handcard();
 
-        public Cast(string spellName, VectorAI position)
+        public Cast(string spellName, VectorAI position, Handcard handCard)
         {
             this.SpellName = spellName;
             this.Position = position;
+            this.hc = handCard;
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return this.SpellName + " " + this.Position.ToString();
         }
