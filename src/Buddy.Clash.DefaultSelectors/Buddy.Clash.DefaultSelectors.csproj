@@ -42,6 +42,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="EarlyCycleSelector.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Serilog" Version="2.5.0" />
 		<PackageReference Include="Buddy.Common" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
 		<PackageReference Include="Buddy.Engine" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
