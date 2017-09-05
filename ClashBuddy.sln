@@ -1,0 +1,82 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.8
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Buddy.Clash.DefaultSelectors", "src\Buddy.Clash.DefaultSelectors\Buddy.Clash.DefaultSelectors.csproj", "{05778BF2-A1CC-4071-9687-CCFF379186FA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Buddy.Clash.DefaultSelectors.Tests", "src\Buddy.Clash.DefaultSelectors.Tests\Buddy.Clash.DefaultSelectors.Tests.csproj", "{3E76D62A-2EB9-4B0D-8764-AD535F5BFFDB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A988EA44-48F0-40FC-9084-A4330B29A3A4}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{0647E48A-2BAB-4C28-BC89-87ADECC71EF7}"
+	ProjectSection(SolutionItems) = preProject
+		docs\README.md = docs\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "en", "en", "{3ACE9E59-1A10-443C-ACBB-464E6BA45221}"
+	ProjectSection(SolutionItems) = preProject
+		docs\en\getting-started.md = docs\en\getting-started.md
+		docs\en\README.md = docs\en\README.md
+		docs\en\trouble-shooting.md = docs\en\trouble-shooting.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "de", "de", "{14915817-3D90-4EC2-94B0-44B88743374E}"
+	ProjectSection(SolutionItems) = preProject
+		docs\de\README.md = docs\de\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{B5C9B8BF-4C65-4BE5-9310-84F9BB2E0788}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "quick-start", "quick-start", "{9F4884A3-888D-4132-B871-77923ED17549}"
+	ProjectSection(SolutionItems) = preProject
+		docs\images\quick-start\action.selector.png = docs\images\quick-start\action.selector.png
+		docs\images\quick-start\auth.png = docs\images\quick-start\auth.png
+		docs\images\quick-start\buddy.launcher.png = docs\images\quick-start\buddy.launcher.png
+		docs\images\quick-start\device.selection.png = docs\images\quick-start\device.selection.png
+		docs\images\quick-start\ready.png = docs\images\quick-start\ready.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "devices", "devices", "{0FA4FBF8-EC85-4F2C-8D80-298EAF2ECFED}"
+	ProjectSection(SolutionItems) = preProject
+		docs\en\devices\bluestacks-3.md = docs\en\devices\bluestacks-3.md
+		docs\en\devices\lenovo-moto-g5-plus.md = docs\en\devices\lenovo-moto-g5-plus.md
+		docs\en\devices\memu.md = docs\en\devices\memu.md
+		docs\en\devices\README.md = docs\en\devices\README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		DebugIntegrated|Any CPU = DebugIntegrated|Any CPU
+		Release|Any CPU = Release|Any CPU
+		ReleaseIntegrated|Any CPU = ReleaseIntegrated|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F9E57485-D7F3-4523-A894-5DF4457D983F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9E57485-D7F3-4523-A894-5DF4457D983F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9E57485-D7F3-4523-A894-5DF4457D983F}.DebugIntegrated|Any CPU.ActiveCfg = DebugIntegrated|Any CPU
+		{F9E57485-D7F3-4523-A894-5DF4457D983F}.DebugIntegrated|Any CPU.Build.0 = DebugIntegrated|Any CPU
+		{F9E57485-D7F3-4523-A894-5DF4457D983F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9E57485-D7F3-4523-A894-5DF4457D983F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9E57485-D7F3-4523-A894-5DF4457D983F}.ReleaseIntegrated|Any CPU.ActiveCfg = ReleaseIntegrated|Any CPU
+		{F9E57485-D7F3-4523-A894-5DF4457D983F}.ReleaseIntegrated|Any CPU.Build.0 = ReleaseIntegrated|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0647E48A-2BAB-4C28-BC89-87ADECC71EF7} = {A988EA44-48F0-40FC-9084-A4330B29A3A4}
+		{3ACE9E59-1A10-443C-ACBB-464E6BA45221} = {0647E48A-2BAB-4C28-BC89-87ADECC71EF7}
+		{14915817-3D90-4EC2-94B0-44B88743374E} = {0647E48A-2BAB-4C28-BC89-87ADECC71EF7}
+		{B5C9B8BF-4C65-4BE5-9310-84F9BB2E0788} = {0647E48A-2BAB-4C28-BC89-87ADECC71EF7}
+		{9F4884A3-888D-4132-B871-77923ED17549} = {B5C9B8BF-4C65-4BE5-9310-84F9BB2E0788}
+		{0FA4FBF8-EC85-4F2C-8D80-298EAF2ECFED} = {3ACE9E59-1A10-443C-ACBB-464E6BA45221}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {794C05A1-D8D8-4223-86B7-B20201258ABA}
+	EndGlobalSection
+EndGlobal

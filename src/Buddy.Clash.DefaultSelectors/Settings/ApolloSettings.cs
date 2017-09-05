@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 using Buddy.Common;
 using Buddy.Engine.Settings.Attributes;
@@ -14,56 +15,64 @@ namespace Buddy.Clash.DefaultSelectors.Settings
 		    
 	    }
 
-        [DefaultValue((int)Player.FightStyle.Balanced)]
-        [SettingsName("Choose Apollos fight style")]
-        [SettingsDescription("Smart balanced, concentrated on the Defense or as an angry rusher?")]
+		[Category("Default")]
+        [DefaultValue(Player.FightStyle.Balanced)]
+        [DisplayName("Fight Style")]
+        [Description("Choose Apollos fight style. Smart balanced, concentrated on the Defense or as an angry rusher?")]
         public Player.FightStyle FightStyle { get; set; }
 
-        [SettingsName("Random Deployment Faktor")]
-        [SettingsDescription("Random deployment factor range to let the bot look more human like")]
-        [FloatRangeSettings(0, 0, 10000)]
-        [DefaultValue(50)]
+	    [Category("Default")]
+		[DisplayName("Random Deployment Faktor")]
+        [Description("Random deployment factor range to let the bot look more human like")]
+        [Range(0, 10000)]
+        [DefaultValue(200)]
         public int RandomDeploymentValue { get; set; }
 
-        [SettingsName("Enemys KingTower spell damaging mode")]
-        [SettingsDescription("Starts to attack the enemys KingTower with all damaging spells at the Health...")]
-        [FloatRangeSettings(100, 0, 10000)]
+	    [Category("Default")]
+		[DisplayName("Enemys KingTower spell damaging mode")]
+        [Description("Starts to attack the enemys KingTower with all damaging spells at the Health...")]
+        [Range(0, 10000)]
         [DefaultValue(400)]
         public int KingTowerSpellDamagingHealth { get; set; }
 
-        [SettingsName("Spell position correction (friendly chars around)")]
-        [SettingsDescription("Don´t correct spell deployment position if at least x friendly characters around the enemy")]
-        [FloatRangeSettings(0, 0, 50)]
+	    [Category("Default")]
+		[DisplayName("Spell position correction (friendly chars around)")]
+        [Description("Don´t correct spell deployment position if at least x friendly characters around the enemy")]
+        [Range(0, 50)]
         [DefaultValue(2)]
         public int SpellCorrectionConditionCharCount { get; set; }
 
-        [SettingsName("Spell deployment decision (minimum anzahl Characters)")]
-        [SettingsDescription("How many enemy characters should be at least in the area for an deploy")]
-        [FloatRangeSettings(0, 0, 50)]
+	    [Category("Default")]
+		[DisplayName("Spell deployment decision (minimum anzahl Characters)")]
+        [Description("How many enemy characters should be at least in the area for an deploy")]
+        [Range(0, 50)]
         [DefaultValue(5)]
         public int SpellDeployConditionCharCount { get; set; }
 
-        [SettingsName("Game-Beginning: Mana-Load")]
-        [SettingsDescription("How much Mana till first attack")]
-        [FloatRangeSettings(0, 0, 10)]
+	    [Category("Game Start")]
+		[DisplayName("Mana-Load")]
+        [Description("How much Mana till first attack")]
+        [Range(0, 10)]
         [DefaultValue(9)]
         public int ManaTillFirstAttack { get; set; }
+		
+		[Category("Attack")]
+	    [DisplayName("Mana-Load")]
+	    [Description("How much Mana till first attack")]
+	    [Range(0, 10)]
+	    [DefaultValue(7)]
+	    public int ManaTillAttack { get; set; }
 
-        [SettingsName("Attack: Mana-Load")]
-        [SettingsDescription("How much Mana till start attacking the enemy if no friendly-chars already attacking")]
-        [FloatRangeSettings(0, 0, 10)]
-        [DefaultValue(7)]
-        public int ManaTillAttack { get; set; }
-
-        [SettingsName("Tank health")]
-        [SettingsDescription("How much health-points to classify an character as a tank")]
-        [FloatRangeSettings(0, 0, 10000)]
+	    [Category("Default")]
+		[DisplayName("Tank health")]
+        [Description("How much health-points to classify an character as a tank")]
+		[Range(0,10000)]
         [DefaultValue(1200)]
         public int MinHealthAsTank { get; set; }
 
-        //[SettingsGroup("Random Deployment Faktor")]
-        //[FloatRangeSettings(100, 0, 10000)]
-        //[DefaultValue(200)]
-        //public int RandomDeploymentValue { get; set; }
-    }
+		//[SettingsGroup("Random Deployment Faktor")]
+		//[FloatRangeSettings(100, 0, 10000)]
+		//[DefaultValue(200)]
+		//public int RandomDeploymentValue { get; set; }
+	}
 }
