@@ -2,13 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Buddy.Clash.DefaultSelectors
 {
-    class BehaviorApollo : Behavior
+    public class BehaviorApollo : Behavior
     {
-        public override string BehaviorName() { return "Apollo"; }
+        public override string BehaviorName() { return "ApolloNew"; }
 
         public enum FightState
         {
@@ -44,6 +43,13 @@ namespace Buddy.Clash.DefaultSelectors
             PowerSpell
         };
 
+        enum FightStyle
+        {
+            Defensive,
+            Balanced,
+            Rusher
+        };
+
         public override Cast getBestCast(Playfield p)
         {
             Cast bc = null;
@@ -52,7 +58,7 @@ namespace Buddy.Clash.DefaultSelectors
             group ownGroup = p.getGroup(true, 85, boPriority.byTotalNumber, 3000);
 
             #region Apollo Magic
-            FightState currentSituation = AnalyseCurrentSituation(p);
+            FightState currentSituation = CurrentFightState(p);
             Handcard hc = SpellMagic(p, currentSituation);
             VectorAI nextPosition = GetNextSpellPosition(currentSituation, hc, p);
             bc = new Cast(hc.name, nextPosition, hc);
@@ -68,7 +74,22 @@ namespace Buddy.Clash.DefaultSelectors
         }
 
         #region Analyse Current Situation
-        private static FightState AnalyseCurrentSituation(Playfield p)
+        public static FightState CurrentFightState(Playfield p)
+        {
+            switch ((FightStyle)ApolloNew.Settings.FightStyle)
+            {
+                case FightStyle.Defensive:
+                    return GetCurrentFightStateDefensive(p);
+                case FightStyle.Balanced:
+                    return GetCurrentFightStateBalanced(p);
+                case FightStyle.Rusher:
+                    return GetCurrentFightStateRusher(p);
+                default:
+                    return FightState.DKT;
+            }
+        }
+
+        private static FightState GetCurrentFightStateBalanced(Playfield p)
         {
             FightState fightState = FightState.WAIT;
 
@@ -87,6 +108,40 @@ namespace Buddy.Clash.DefaultSelectors
 
             //Logger.Debug("FightSate = {0}", fightState.ToString());
             return fightState;
+        }
+
+        private static FightState GetCurrentFightStateDefensive(Playfield p)
+        {
+            if (ApolloNew.GameBeginning)
+                return GameBeginningDecision(p);
+
+            if (!p.noEnemiesOnMySide())
+                return EnemyIsOnOurSideDecision(p);
+            else if (p.enemyMinions.Count > 1)
+                return EnemyHasCharsOnTheFieldDecision(p);
+            else
+                return DefenseDecision(p);
+        }
+
+        private static FightState GetCurrentFightStateRusher(Playfield p)
+        {
+            if (!p.noEnemiesOnMySide())
+                return EnemyIsOnOurSideDecision(p);
+            else
+                return AttackDecision(p);
+        }
+
+        private static FightState DefenseDecision(Playfield p)
+        {
+            if (p.ownTowers.Count < 3)
+                return FightState.DKT;
+
+            BoardObj princessTower = p.enemyTowers.OrderBy(n => n.HP).FirstOrDefault();
+
+            if (princessTower.Line == 2)
+                return FightState.DRPT;
+            else
+                return FightState.DLPT;
         }
 
         private static FightState EnemyHasCharsOnTheFieldDecision(Playfield p)
