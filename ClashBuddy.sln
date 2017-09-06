@@ -30,6 +30,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "de", "de", "{14915817-3D90-
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{B5C9B8BF-4C65-4BE5-9310-84F9BB2E0788}"
+	ProjectSection(SolutionItems) = preProject
+		docs\images\GoldGoblin.png = docs\images\GoldGoblin.png
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "quick-start", "quick-start", "{9F4884A3-888D-4132-B871-77923ED17549}"
 	ProjectSection(SolutionItems) = preProject

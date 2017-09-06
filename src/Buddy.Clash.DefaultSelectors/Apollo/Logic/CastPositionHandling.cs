@@ -5,11 +5,7 @@ using Buddy.Clash.DefaultSelectors.Enemy;
 using Buddy.Common;
 using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
-using Buddy.Clash.DefaultSelectors.Settings;
 using Buddy.Clash.DefaultSelectors.Player;
 using Buddy.Clash.DefaultSelectors.Card;
 
@@ -23,11 +19,14 @@ namespace Buddy.Clash.DefaultSelectors.Logic
         public static Vector2f GetNextSpellPosition(FightState gameState, ICard card)
         {
             cardToDeploy = card;
+
+            #region Randomise
             Random rnd = StaticValues.rnd;
             float rndX = rnd.Next(-GameHandling.Settings.RandomDeploymentValue, GameHandling.Settings.RandomDeploymentValue);
             float rndY = rnd.Next(-GameHandling.Settings.RandomDeploymentValue, GameHandling.Settings.RandomDeploymentValue);
-
             Vector2f rndAddVector = new Vector2f(rndX, rndY);
+            #endregion
+
             Vector2f choosedPosition = Vector2f.Zero, nextPosition;
 
             if (cardToDeploy is CardSpell)
@@ -74,6 +73,7 @@ namespace Buddy.Clash.DefaultSelectors.Logic
             return nextPosition;
         }
 
+        #region UnderAttack
         private static Vector2f UAKT()
         {
             return DKT();
@@ -87,6 +87,9 @@ namespace Buddy.Clash.DefaultSelectors.Logic
         {
             return DRPT();
         }
+        #endregion
+
+        #region Defense
         private static Vector2f DKT()
         {
             if (cardToDeploy is CardCharacter)
@@ -116,6 +119,15 @@ namespace Buddy.Clash.DefaultSelectors.Logic
                         break;
                 }
             }
+            else if(cardToDeploy is CardBuilding)
+            {
+                switch ((cardToDeploy as CardBuilding).Type)
+                {
+                    case BuildingType.BuildingDefense:
+                    case BuildingType.BuildingSpawning:
+                        return GetPositionOfTheBestBuildingDeploy();
+                }
+            }
 
             if (PlaygroundPositionHandling.IsPositionOnTheRightSide(EnemyCharacterHandling.NearestEnemy.StartPosition))
                 return PlayerCharacterHandling.KingTower.StartPosition + new Vector2f(1000, 0);
@@ -125,18 +137,28 @@ namespace Buddy.Clash.DefaultSelectors.Logic
         }
         private static Vector2f DLPT()
         {
-            Logger.Debug("DLPT: LeftPrincessTower = " + PlayerCharacterHandling.LeftPrincessTower.ToString());
-            Vector2f lPT = PlayerCharacterHandling.LeftPrincessTower.StartPosition;
-            Vector2f correctedPosition = PrincessTowerCharacterDeploymentCorrection(lPT);
+            Character lPT = PlayerCharacterHandling.LeftPrincessTower;
+            if (lPT == null)
+                return DKT();
+
+            Logger.Debug("DLPT: LeftPrincessTower = " + lPT.ToString());
+            Vector2f lPTP = lPT.StartPosition;
+            Vector2f correctedPosition = PrincessTowerCharacterDeploymentCorrection(lPTP);
             return correctedPosition;
         }
         private static Vector2f DRPT()
         {
-            Vector2f rPT = PlayerCharacterHandling.RightPrincessTower.StartPosition;
-            Vector2f correctedPosition = PrincessTowerCharacterDeploymentCorrection(rPT);
+            Character rPT = PlayerCharacterHandling.RightPrincessTower;
+            if (rPT == null)
+                return DKT();
+
+            Vector2f rPTP = PlayerCharacterHandling.RightPrincessTower.StartPosition;
+            Vector2f correctedPosition = PrincessTowerCharacterDeploymentCorrection(rPTP);
             return correctedPosition;
         }
+        #endregion
 
+        #region Attack
         private static Vector2f AKT()
         {
             switch (GameStateHandling.CurrentEnemyPrincessTowerState)
@@ -175,6 +197,7 @@ namespace Buddy.Clash.DefaultSelectors.Logic
             Vector2f rPT = EnemyCharacterPositionHandling.EnemyRightPrincessTower;
             return rPT;
         }
+        #endregion
 
         public static Vector2f GetPositionOfTheBestDamagingSpellDeploy()
         {
@@ -196,12 +219,20 @@ namespace Buddy.Clash.DefaultSelectors.Logic
                     else
                     {
                         // Position Correction
-                        return PositionHelper.AddYInDirection(enemy.StartPosition, PlayerProperties.PlayerPosition, 4000);
+                        return PositionHelper.AddYInDirection(enemy.StartPosition, PlayerProperties.PlayerPosition, 3000);
                     }
                 }
             }
 
             return Vector2f.Zero;
+        }
+
+        public static Vector2f GetPositionOfTheBestBuildingDeploy()
+        {
+            // ToDo: Find the best position
+            Vector2f nextPosition = PlayerCharacterHandling.KingTower.StartPosition;
+            nextPosition = PositionHelper.AddYInDirection(nextPosition, PlayerProperties.PlayerPosition, 3000);
+            return nextPosition;
         }
 
         private static Vector2f PrincessTowerCharacterDeploymentCorrection(Vector2f position)
@@ -227,8 +258,17 @@ namespace Buddy.Clash.DefaultSelectors.Logic
                         break;
                 }
             }
+            else if (cardToDeploy is CardBuilding)
+            {
+                switch ((cardToDeploy as CardBuilding).Type)
+                {
+                    case BuildingType.BuildingDefense:
+                    case BuildingType.BuildingSpawning:
+                        return GetPositionOfTheBestBuildingDeploy();
+                }
+            }
             else
-                Logger.Debug("Tower Correction: No Correction!!!");
+            Logger.Debug("Tower Correction: No Correction!!!");
 
             return position;
         }
