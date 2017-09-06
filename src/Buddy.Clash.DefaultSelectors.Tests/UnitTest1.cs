@@ -8,6 +8,7 @@ namespace Buddy.Clash.DefaultSelectors.Tests
         [Fact]
         public void Test1()
         {
+            Helpfunctions.Instance.setnewLoggFile();
             CardDB cdb = CardDB.Instance;
             BoardTester bt = new BoardTester();
             Behavior behave = new BehaviorControl();//change this to new BehaviorRush() for rush mode

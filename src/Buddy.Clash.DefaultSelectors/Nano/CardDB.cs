@@ -48,94 +48,176 @@ namespace Buddy.Clash.DefaultSelectors
             triggerInspire
         }
         
-        public enum cardName //-заменяем пробелы, убираем . и - потом переводим в нижний регистр
+        public enum cardName //-replace " ", ".", lower case
         {
             unknown,
-            kingtower,
-            kingtowermiddle,
-            princesstower,
-            //-Troops
+            //Troops
+            angrybarbarian,
             archer,
+            assassin,
+            axeman, //executioner
             babydragon,
             balloon,
-            balloonbomb,
-            bandit,
             barbarian,
+            bat,
             battleram,
+            blowdartgoblin,
             bomber,
             bowler,
+            brokencannon,
             darkprince,
-            dartgoblin,
+            darkwitch,
+            dartbarrell,
             electrowizard,
-            elitebarbarian,
-            executioner,
             firespirits,
-            firespirithut,
             giant,
             giantskeleton,
-            giantskeletonbomb,
-            goblingang,
             goblin,
             golem,
-            guards,
+            golemite,
             hogrider,
-            icegolem,
-            icespirit,
+            icegolemite,
+            icespirits,
             icewizard,
             infernodragon,
             knight,
             lavahound,
             lavapups,
-            lumberjack,
+            megaknight,
             megaminion,
             miner,
-            minionhorde,
             minion,
             minipekka,
+            movingcannon,
             musketeer,
-            nightwitch,
             pekka,
             prince,
             princess,
+            ragebarbarian,
             royalgiant,
-            skeletonarmy,
             skeleton,
-            sparky,
+            skeletonballoon,
+            skeletonwarrior,
             speargoblin,
-            threemusketeers, //TODO: check it
+            towerprincess,
             valkyrie,
             witch,
             wizard,
-
-            //-Spels
-            arrows,
-            clonespell,
-            fireball,
-            freeze,
-            goblinbarrel,
-            graveyard,
-            heal,
-            lightning,
-            mirror,
-            poison,
-            rage,
-            rocket,
-            thelog,
-            tornado,
-            zap,
-
+            zapmachine,
+            
             //-Buildings
+            balloonbomb,
             barbarianhut,
             bombtower,
             cannon,
             elixircollector,
-            furnace,
+            firespirithut,
+            giantskeletonbomb,
             goblinhut,
             infernotower,
+            kingtower,
+            kingtowermiddle,
             mortar,
+            princesstower,
+            ragebarbarianbottle,
+            skeletoncontainer,
             tesla,
             tombstone,
-            xbow
+            xbow,
+
+            //-Spels/AOE
+            barbarianrage,
+            clone,
+            freeze,
+            freezeicegolemite,
+            graveyard,
+            heal,
+            lightning,
+            poison,
+            rage,
+            tornado,
+            zap,
+            
+            //Projectiles
+            archerarrow,
+            arrowsspell,
+            arrowsspelldeco,
+            axemanprojectile,
+            babydragonprojectile,
+            batprojectile,
+            blowdartgoblinprojectile,
+            bombskeletonprojectile,
+            bombtowerprojectile,
+            bowlerprojectile,
+            chr_wizardprojectile,
+            dartbarrellprojectile,
+            fireballspell,
+            firespiritsprojectile,
+            goblinbarrelspell,
+            ice_wizardprojectile,
+            icespiritsprojectile,
+            kingprojectile,
+            lavahoundprojectile,
+            lavapupprojectile,
+            lighningspell,
+            logprojectile,
+            logprojectilerolling,
+            megaknightappear,
+            megaminionspit,
+            minionspit,
+            mortarprojectile,
+            movingcannonprojectile,
+            musketeerprojectile,
+            princessprojectile,
+            princessprojectiledeco,
+            rocketspell,
+            royalgiantprojectile,
+            speargoblinprojectile,
+            towercannonball,
+            towerprincessprojectile,
+            witchprojectile,
+            xbow_projectile,
+            zapmachineprojectile,
+
+            //Not in use
+            not_in_use,
+            notinuse1,
+            notinuse2,
+            notinuse3,
+            notinuse4,
+            notinuse5,
+            notinuse8,
+            notinuse9,
+            notinuse21,
+            notinuse22,
+
+
+            //TODO: check names below
+            //troops
+            bandit,
+            dartgoblin,
+            elitebarbarian,
+            executioner, //axeman
+            goblingang,
+            guards,
+            icegolem,
+            icespirit,
+            lumberjack,
+            minionhorde,
+            //nightwitch,
+            skeletonarmy,
+            sparky,
+            threemusketeers, 
+            //-Spels
+            arrows,
+            clonespell,
+            fireball,
+            goblinbarrel,
+            mirror,
+            rocket,
+            thelog,
+            //-Buildings
+            furnace,
         }
 
         public cardName cardNamestringToEnum(string s)
@@ -152,13 +234,15 @@ namespace Buddy.Clash.DefaultSelectors
         public class Card
         {
             public CardDB.cardName name = CardDB.cardName.unknown;
+            public string stringName = "";
             public boardObjType type = boardObjType.NONE;
             public transportType Transport = transportType.NONE; //-Mob (Air, Ground)
             public targetType TargetType = targetType.NONE; //-AttacksAir, TargetOnlyBuildings
-            public affectType EffectType = affectType.NONE;
+            public affectType affectType = affectType.NONE;
 
             public int cost = 0; //All
-            public int DeployTime = 0; //-All
+            public int DeployTime = 0; //-mob,buildings
+            public int DeployDelay = 0; //-mob,buildings
             public int MaxHP = 0; //-All
             public int Atk = 0; //-All Damage
             public int Shield = 0; //-Mob
@@ -167,18 +251,24 @@ namespace Buddy.Clash.DefaultSelectors
             public int MinRange = 0; //-Mob+AreaEffect Radius
             public int MaxRange = 0; //-Mob+AreaEffect Radius
             public int SightRange = 0;
-            public int MaxTargets = 0; //-All
-            public int DeathEffect = 0;
-            public int Rarity = 0;
+            public int SightClip = 0;
+            public int MultipleTargets = 0; //- only ElectroWizard
+            public int MultipleProjectiles = 0; //- only Princess
+            public int DeathEffect = 0; //TODO:deathEffects/deathSpawn
+            public string Rarity = "";
             public int Level = 0;
             public int DamageRadius = 0;
+            public bool aoeGround = false; //-projectile
+            public bool aoeAir = false; //-projectile
+            public int CollisionRadius = 0; //-Mobs+Buildings
+            public int towerDamage = 0; //aoe
 
-            public int LifeTime = 0; //-Buildings+AreaEffect LifeDuration
+            public int LifeTime = 0; //-Buildings; AreaEffect=LifeDuration
             public int SpawnNumber = 0; //-Mobs+Buildings
-            public int SpawnTime = 0; //-Mobs+Buildings DataTime
+            public int SpawnPause = 0; //-Mobs+Buildings
             public int SpawnInterval = 0; //-Mobs+Buildings
             public int SpawnCharacterLevel = 0;
-
+            
 
             public bool needUpdate = true;
             public int numDuplicates = 0;
@@ -187,233 +277,345 @@ namespace Buddy.Clash.DefaultSelectors
 
 
 
-            /*
+
 
 
             //stuff for test and seech
-            public string TargettedDamageEffect3 = "";
-            public string TargettedDamageEffect2 = "";
-            public string TargettedDamageEffect1 = "";
-            public string TargetedHitEffectSpecial = "";
-            public string TargetedHitEffect = "";
-            public string TakeDamageEffect = "";
-            public string TID = "";
-            public string StartingBuff = "";
-            public string SpecialReadyEffect = "";
-            public string SpawnProjectile = "";
-            public string SpawnPathfindMorph = "";
-            public string SpawnPathfindEffect = "";
-            public string SpawnEffect = "";
-            public string SpawnDeployBaseAnim = "";
-            public string SpawnCharacterEffect = "";
-            public string SpawnCharacter = "";
-            public string SpawnAreaObject = "";
-            public string ShieldLostEffect = "";
-            public string ShadowCustomLow = "";
-            public string ShadowCustom = "";
-            public string RedTopExportName = "";
-            public string RedShieldExportName = "";
-            public string RedExportName = "";
-            public string Rarity = "";
-            public string ProjectileSpecial = "";
-            public string ProjectileEffectSpecial = "";
-            public string ProjectileEffect = "";
-            public string Projectile = "";
-            public string Name = "";
-            public string MoveEffect = "";
-            public string MorphEffect = "";
-            public string MorphCharacter = "";
-            public string LoopingFilter = "";
-            public string LoadAttackEffectReady = "";
-            public string LoadAttackEffect3 = "";
-            public string LoadAttackEffect2 = "";
-            public string LoadAttackEffect1 = "";
-            public string LandingEffect = "";
-            public string KamikazeEffect = "";
-            public string HideEffect = "";
-            public string HealthBar = "";
-            public string FlameEffect3 = "";
-            public string FlameEffect2 = "";
-            public string FlameEffect1 = "";
-            public string FileName = "";
-            public string DeployBaseAnimExportName = "";
-            public string DeathSpawnProjectile = "";
-            public string DeathSpawnCharacter = "";
-            public string DeathEffect = "";
-            public string DeathAreaEffect = "";
-            public string DashStartEffect = "";
-            public string DashFilter = "";
-            public string DashEffect = "";
-            public string DamageLevelTransitionEffect23 = "";
-            public string DamageLevelTransitionEffect12 = "";
-            public string DamageExportName = "";
-            public string DamageEffectSpecial = "";
-            public string DamageEffect = "";
-            public string CustomFirstProjectile = "";
-            public string ContinuousEffect = "";
-            public string ChargeEffect = "";
-            public string BuffOnDamage = "";
-            public string BlueTopExportName = "";
-            public string BlueShieldExportName = "";
-            public string BlueExportName = "";
-            public string AttackStartEffectSpecial = "";
-            public string AttackStartEffect = "";
-            public string AttachedCharacter = "";
-            public string AreaEffectOnMorph = "";
-            public string AreaEffectOnDash = "";
-            public string AreaBuff = "";
-            public string AppearEffect = "";
-            public string AppearAreaObject = "";
-            public string Ability = "";
-            public int WalkingSpeedTweakPercentage = 0;
-            public int WaitMS = 0;
-            public int VisualHitSpeed = 0;
-            public int VariableDamageTransitionTime = 0;
-            public int VariableDamageTime2 = 0;
-            public int VariableDamageTime1 = 0;
-            public int VariableDamage3 = 0;
-            public int VariableDamage2 = 0;
-            public int UpTimeMs = 0;
-            public int TurretMovement = 0;
-            public int TileSizeOverride = 0;
-            public int TargetEffectY = 0;
-            public int StopTimeAfterSpecialAttack = 0;
-            public int StopTimeAfterAttack = 0;
-            public int StopMovementAfterMS = 0;
-            public int StartingBuffTime = 0;
-            public int Speed = 0;
-            public int SpecialRange = 0;
-            public int SpecialMinRange = 0;
-            public int SpecialLoadTime = 0;
-            public int SpecialAttackInterval = 0;
-            public int SpawnStartTime = 0;
-            public int SpawnRadius = 0;
-            public int SpawnPushbackRadius = 0;
-            public int SpawnPushback = 0;
-            public int SpawnPauseTime = 0;
-            public int SpawnPathfindSpeed = 0;
-            public int SpawnNumber = 0;
-            public int SpawnLimit = 0;
-            public int SpawnInterval = 0;
-            public int SpawnCharacterLevelIndex = 0;
-            public int SpawnAreaObjectLevelIndex = 0;
-            public int SpawnAngleShift = 0;
-            public int SightRange = 0;
-            public int SightClipSide = 0;
-            public int SightClip = 0;
-            public int ShieldHitpoints = 0;
-            public int ShieldDiePushback = 0;
-            public int ShadowY = 0;
-            public int ShadowX = 0;
-            public int ShadowSkew = 0;
-            public int ShadowScaleY = 0;
-            public int ShadowScaleX = 0;
-            public int Scale = 0;
-            public int RotateAngleSpeed = 0;
-            public int Range = 0;
-            public int Pushback = 0;
-            public int ProjectileYOffset = 0;
-            public int ProjectileStartZ = 0;
-            public int ProjectileStartRadius = 0;
-            public int NoDeploySizeW = 0;
-            public int NoDeploySizeH = 0;
-            public int MultipleTargets = 0;
-            public int MultipleProjectiles = 0;
-            public int MorphTime = 0;
-            public int MinimumRange = 0;
-            public int Mass = 0;
-            public int ManaGenerateTimeMs = 0;
-            public int ManaGenerateLimit = 0;
-            public int ManaCollectAmount = 0;
-            public int LoadTime = 0;
-            public int LifeTime = 0;
-            public int KamikazeTime = 0;
-            public int JumpSpeed = 0;
-            public int JumpHeight = 0;
-            public int Hitpoints = 0;
-            public int HitSpeed = 0;
-            public int HideTimeMs = 0;
-            public int HealthBarOffsetY = 0;
-            public int GrowTime = 0;
-            public int GrowSize = 0;
-            public int FlyingHeight = 0;
-            public int DeployTimerDelay = 0;
-            public int DeployTime = 0;
-            public int DeployDelay = 0;
-            public int DeathSpawnRadius = 0;
-            public int DeathSpawnMinRadius = 0;
-            public int DeathSpawnDeployTime = 0;
-            public int DeathSpawnCount = 0;
-            public int DeathPushBack = 0;
-            public int DeathDamageRadius = 0;
-            public int DeathDamage = 0;
-            public int DashRadius = 0;
-            public int DashPushBack = 0;
-            public int DashMinRange = 0;
-            public int DashMaxRange = 0;
-            public int DashLandingTime = 0;
-            public int DashImmuneToDamageTime = 0;
-            public int DashDamage = 0;
-            public int DashCooldown = 0;
-            public int DashConstantTime = 0;
-            public int DamageSpecial = 0;
-            public int Damage = 0;
-            public int CrownTowerDamagePercent = 0;
-            public int CollisionRadius = 0;
-            public int ChargeSpeedMultiplier = 0;
-            public int ChargeRange = 0;
-            public int BurstDelay = 0;
-            public int Burst = 0;
-            public int BuffOnDamageTime = 0;
-            public int AttackShakeTime = 0;
-            public int AttackPushBack = 0;
-            public int AttackDashTime = 0;
-            public int AttachedCharacterHeight = 0;
-            public int AreaDamageRadius = 0;
-            public int AreaBuffTime = 0;
-            public int AreaBuffRadius = 0;
-            public int AppearPushbackRadius = 0;
-            public int AppearPushback = 0;
-            public int ActivationTime = 0;
-            public bool VariableDamageLifeTime = false;
-            public bool UseAnimator = false;
-            public bool TargetOnlyBuildings = false;
-            public bool SpecialAttackWhenHidden = false;
-            public bool SpawnConstPriority = false;
-            public bool ShowHealthNumber = false;
-            public bool SelfAsAoeCenter = false;
-            public bool RetargetAfterAttack = false;
-            public bool MorphKeepTarget = false;
-            public bool LoopMoveEffect = false;
-            public bool LoadFirstHit = false;
-            public bool Kamikaze = false;
-            public bool JumpEnabled = false;
-            public bool IsSummonerTower = false;
-            public bool IgnorePushback = false;
-            public bool HidesWhenNotAttacking = false;
-            public bool HideBeforeFirstHit = false;
-            public bool HealOnMorph = false;
-            public bool HasRotationOnTimeline = false;
-            public bool FlyFromGround = false;
-            public bool FlyDirectPaths = false;
-            public bool DontStopMoveAnim = false;
-            public bool DeathSpawnPushback = false;
-            public bool DeathInheritIgnoreList = false;
-            public bool CrowdEffects = false;
-            public bool BurstKeepTarget = false;
-            public bool BuildingTarget = false;
-            public bool AttacksGround = false;
-            public bool AttacksAir = false;
-            public bool AllTargetsHit = false;
+            public string srcTargettedDamageEffect3 = "";
+            public string srcTargettedDamageEffect2 = "";
+            public string srcTargettedDamageEffect1 = "";
+            public string srcTargetedHitEffectSpecial = "";
+            public string srcTargetedHitEffect = "";
+            public string srcTakeDamageEffect = "";
+            public string srcTID = "";
+            public string srcStartingBuff = "";
+            public string srcSpecialReadyEffect = "";
+            public string srcSpawnProjectile = "";
+            public string srcSpawnPathfindMorph = "";
+            public string srcSpawnPathfindEffect = "";
+            public string srcSpawnEffect = "";
+            public string srcSpawnDeployBaseAnim = "";
+            public string srcSpawnCharacterEffect = "";
+            public string srcSpawnCharacter = "";
+            public string srcSpawnAreaObject = "";
+            public string srcShieldLostEffect = "";
+            public string srcShadowCustomLow = "";
+            public string srcShadowCustom = "";
+            public string srcRedTopExportName = "";
+            public string srcRedShieldExportName = "";
+            public string srcRedExportName = "";
+            public string srcRarity = "";
+            public string srcProjectileSpecial = "";
+            public string srcProjectileEffectSpecial = "";
+            public string srcProjectileEffect = "";
+            public string srcProjectile = "";
+            public string srcName = "";
+            public string srcMoveEffect = "";
+            public string srcMorphEffect = "";
+            public string srcMorphCharacter = "";
+            public string srcLoopingFilter = "";
+            public string srcLoadAttackEffectReady = "";
+            public string srcLoadAttackEffect3 = "";
+            public string srcLoadAttackEffect2 = "";
+            public string srcLoadAttackEffect1 = "";
+            public string srcLandingEffect = "";
+            public string srcKamikazeEffect = "";
+            public string srcHideEffect = "";
+            public string srcHealthBar = "";
+            public string srcFlameEffect3 = "";
+            public string srcFlameEffect2 = "";
+            public string srcFlameEffect1 = "";
+            public string srcFileName = "";
+            public string srcDeployBaseAnimExportName = "";
+            public string srcDeathSpawnProjectile = "";
+            public string srcDeathSpawnCharacter = "";
+            public string srcDeathEffect = "";
+            public string srcDeathAreaEffect = "";
+            public string srcDashStartEffect = "";
+            public string srcDashFilter = "";
+            public string srcDashEffect = "";
+            public string srcDamageLevelTransitionEffect23 = "";
+            public string srcDamageLevelTransitionEffect12 = "";
+            public string srcDamageExportName = "";
+            public string srcDamageEffectSpecial = "";
+            public string srcDamageEffect = "";
+            public string srcCustomFirstProjectile = "";
+            public string srcContinuousEffect = "";
+            public string srcChargeEffect = "";
+            public string srcBuffOnDamage = "";
+            public string srcBlueTopExportName = "";
+            public string srcBlueShieldExportName = "";
+            public string srcBlueExportName = "";
+            public string srcAttackStartEffectSpecial = "";
+            public string srcAttackStartEffect = "";
+            public string srcAttachedCharacter = "";
+            public string srcAreaEffectOnMorph = "";
+            public string srcAreaEffectOnDash = "";
+            public string srcAreaBuff = "";
+            public string srcAppearEffect = "";
+            public string srcAppearAreaObject = "";
+            public string srcAbility = "";
+            public int? srcWalkingSpeedTweakPercentage = 0;
+            public int? srcWaitMS = 0;
+            public int? srcVisualHitSpeed = 0;
+            public int? srcVariableDamageTransitionTime = 0;
+            public int? srcVariableDamageTime2 = 0;
+            public int? srcVariableDamageTime1 = 0;
+            public int? srcVariableDamage3 = 0;
+            public int? srcVariableDamage2 = 0;
+            public int? srcUpTimeMs = 0;
+            public int? srcTurretMovement = 0;
+            public int? srcTileSizeOverride = 0;
+            public int? srcTargetEffectY = 0;
+            public int? srcStopTimeAfterSpecialAttack = 0;
+            public int? srcStopTimeAfterAttack = 0;
+            public int? srcStopMovementAfterMS = 0;
+            public int? srcStartingBuffTime = 0;
+            public int? srcSpeed = 0;
+            public int? srcSpecialRange = 0;
+            public int? srcSpecialMinRange = 0;
+            public int? srcSpecialLoadTime = 0;
+            public int? srcSpecialAttackInterval = 0;
+            public int? srcSpawnStartTime = 0;
+            public int? srcSpawnRadius = 0;
+            public int? srcSpawnPushbackRadius = 0;
+            public int? srcSpawnPushback = 0;
+            public int? srcSpawnPauseTime = 0;
+            public int? srcSpawnPathfindSpeed = 0;
+            public int? srcSpawnNumber = 0;
+            public int? srcSpawnLimit = 0;
+            public int? srcSpawnInterval = 0;
+            public int? srcSpawnCharacterLevelIndex = 0;
+            public int? srcSpawnAreaObjectLevelIndex = 0;
+            public int? srcSpawnAngleShift = 0;
+            public int? srcSightRange = 0;
+            public int? srcSightClipSide = 0;
+            public int? srcSightClip = 0;
+            public int? srcShieldHitpoints = 0;
+            public int? srcShieldDiePushback = 0;
+            public int? srcShadowY = 0;
+            public int? srcShadowX = 0;
+            public int? srcShadowSkew = 0;
+            public int? srcShadowScaleY = 0;
+            public int? srcShadowScaleX = 0;
+            public int? srcScale = 0;
+            public int? srcRotateAngleSpeed = 0;
+            public int? srcRange = 0;
+            public int? srcPushback = 0;
+            public int? srcProjectileYOffset = 0;
+            public int? srcProjectileStartZ = 0;
+            public int? srcProjectileStartRadius = 0;
+            public int? srcNoDeploySizeW = 0;
+            public int? srcNoDeploySizeH = 0;
+            public int? srcMultipleTargets = 0;
+            public int? srcMultipleProjectiles = 0;
+            public int? srcMorphTime = 0;
+            public int? srcMinimumRange = 0;
+            public int? srcMass = 0;
+            public int? srcManaGenerateTimeMs = 0;
+            public int? srcManaGenerateLimit = 0;
+            public int? srcManaCollectAmount = 0;
+            public int? srcLoadTime = 0;
+            public int? srcLifeTime = 0;
+            public int? srcKamikazeTime = 0;
+            public int? srcJumpSpeed = 0;
+            public int? srcJumpHeight = 0;
+            public int? srcHitpoints = 0;
+            public int? srcHitSpeed = 0;
+            public int? srcHideTimeMs = 0;
+            public int? srcHealthBarOffsetY = 0;
+            public int? srcGrowTime = 0;
+            public int? srcGrowSize = 0;
+            public int? srcFlyingHeight = 0;
+            public int? srcDeployTimerDelay = 0;
+            public int? srcDeployTime = 0;
+            public int? srcDeployDelay = 0;
+            public int? srcDeathSpawnRadius = 0;
+            public int? srcDeathSpawnMinRadius = 0;
+            public int? srcDeathSpawnDeployTime = 0;
+            public int? srcDeathSpawnCount = 0;
+            public int? srcDeathPushBack = 0;
+            public int? srcDeathDamageRadius = 0;
+            public int? srcDeathDamage = 0;
+            public int? srcDashRadius = 0;
+            public int? srcDashPushBack = 0;
+            public int? srcDashMinRange = 0;
+            public int? srcDashMaxRange = 0;
+            public int? srcDashLandingTime = 0;
+            public int? srcDashImmuneToDamageTime = 0;
+            public int? srcDashDamage = 0;
+            public int? srcDashCooldown = 0;
+            public int? srcDashConstantTime = 0;
+            public int? srcDamageSpecial = 0;
+            public int? srcDamage = 0;
+            public int? srcCrownTowerDamagePercent = 0;
+            public int? srcCollisionRadius = 0;
+            public int? srcChargeSpeedMultiplier = 0;
+            public int? srcChargeRange = 0;
+            public int? srcBurstDelay = 0;
+            public int? srcBurst = 0;
+            public int? srcBuffOnDamageTime = 0;
+            public int? srcAttackShakeTime = 0;
+            public int? srcAttackPushBack = 0;
+            public int? srcAttackDashTime = 0;
+            public int? srcAttachedCharacterHeight = 0;
+            public int? srcAreaDamageRadius = 0;
+            public int? srcAreaBuffTime = 0;
+            public int? srcAreaBuffRadius = 0;
+            public int? srcAppearPushbackRadius = 0;
+            public int? srcAppearPushback = 0;
+            public int? srcActivationTime = 0;
+            public bool? srcVariableDamageLifeTime = false;
+            public bool? srcUseAnimator = false;
+            public bool? srcTargetOnlyBuildings = false;
+            public bool? srcSpecialAttackWhenHidden = false;
+            public bool? srcSpawnConstPriority = false;
+            public bool? srcShowHealthNumber = false;
+            public bool? srcSelfAsAoeCenter = false;
+            public bool? srcRetargetAfterAttack = false;
+            public bool? srcMorphKeepTarget = false;
+            public bool? srcLoopMoveEffect = false;
+            public bool? srcLoadFirstHit = false;
+            public bool? srcKamikaze = false;
+            public bool? srcJumpEnabled = false;
+            public bool? srcIsSummonerTower = false;
+            public bool? srcIgnorePushback = false;
+            public bool? srcHidesWhenNotAttacking = false;
+            public bool? srcHideBeforeFirstHit = false;
+            public bool? srcHealOnMorph = false;
+            public bool? srcHasRotationOnTimeline = false;
+            public bool? srcFlyFromGround = false;
+            public bool? srcFlyDirectPaths = false;
+            public bool? srcDontStopMoveAnim = false;
+            public bool? srcDeathSpawnPushback = false;
+            public bool? srcDeathInheritIgnoreList = false;
+            public bool? srcCrowdEffects = false;
+            public bool? srcBurstKeepTarget = false;
+            public bool? srcBuildingTarget = false;
+            public bool? srcAttacksGround = false;
+            public bool? srcAttacksAir = false;
+            public bool? srcAllTargetsHit = false;
 
 
 
 
-            */
 
 
 
+            //aoe
+            public string srcSpawnsAEO = "";
+            public string srcScaledEffect = "";
+            public string srcOneShotEffect = "";
+            public string srcLoopingEffect = "";
+            public string srcHitEffect = "";
+            public string srcBuff = "";
+            public int? srcSpawnTime = 0;
+            public int? srcSpawnMaxCount = 0;
+            public int? srcSpawnInitialDelay = 0;
+            public int? srcRadius = 0;
+            public int? srcProjectileStartHeight = 0;
+            public int? srcMaximumTargets = 0;
+            public int? srcLifeDurationIncreasePerLevel = 0;
+            public int? srcLifeDurationIncreaseAfterTournamentCap = 0;
+            public int? srcLifeDuration = 0;
+            public int? srcBuffTimeIncreasePerLevel = 0;
+            public int? srcBuffTimeIncreaseAfterTournamentCap = 0;
+            public int? srcBuffTime = 0;
+            public int? srcBuffNumber = 0;
+            public int? srcAttractPercentage = 0;
+            public bool? srcProjectilesToCenter = false;
+            public bool? srcOnlyOwnTroops = false;
+            public bool? srcOnlyEnemies = false;
+            public bool? srcNoEffectToCrownTowers = false;
+            public bool? srcIgnoreBuildings = false;
+            public bool? srcHitsGround = false;
+            public bool? srcHitsAir = false;
+            public bool? srcHitBiggestTargets = false;
+            public bool? srcControlsBuff = false;
+            public bool? srcClone = false;
+            public bool? srcCapBuffTimeToAreaEffectTime = false;
+            public bool? srcAffectsHidden = false;
 
+
+
+            //buildings
+
+            //projectiles
+
+            public string srcTrailEffect = "";
+            public string srcTargettedEffect = "";
+            public string srcTargetBuff = "";
+            public string srcSpawnAreaEffectObject = "";
+            public string srcShadowExportName = "";
+            public string srcScatter = "";
+            public string srcRedShadowExportName = "";
+            public string srcPingpongDeathEffect = "";
+            public string srcHitSoundWhenParentAlive = "";
+            public string srcExportName = "";
+            public string srcChainedHitEndEffect = "";
+            public int? srcSpawnCharacterDeployTime = 0;
+            public int? srcSpawnCharacterCount = 0;
+            public int? srcRandomDistance = 0;
+            public int? srcRandomAngle = 0;
+            public int? srcRadiusY = 0;
+            public int? srcProjectileRange = 0;
+            public int? srcProjectileRadiusY = 0;
+            public int? srcProjectileRadius = 0;
+            public int? srcPingpongVisualTime = 0;
+            public int? srcMinDistance = 0;
+            public int? srcMaxDistance = 0;
+            public int? srcHeal = 0;
+            public int? srcGravity = 0;
+            public int? srcDragMargin = 0;
+            public int? srcDragBackSpeed = 0;
+            public int? srcCrownTowerHealPercent = 0;
+            public int? srcConstantHeight = 0;
+            public int? srcChainedHitRadius = 0;
+            public bool? srcUse360Frames = false;
+            public bool? srcTargetToEdge = false;
+            public bool? srcShakesTargets = false;
+            public bool? srcShadowDisableRotate = false;
+            public bool? srcPushbackAll = false;
+            public bool? srcHoming = false;
+            public bool? srcHeightFromTargetRadius = false;
+            public bool? srcAoeToGround = false;
+            public bool? srcAoeToAir = false;
+
+
+            //CharacterBuff
+            public string srcPortalSpell = "";
+            public string srcNegatesBuffs = "";
+            public string srcMarkEffect = "";
+            public string srcImmunityToBuffs = "";
+            public string srcIconFileName = "";
+            public string srcIconExportName = "";
+            public string srcFilterFile = "";
+            public string srcFilterExportName = "";
+            public string srcEffect = "";
+            public int? srcSpeedMultiplier = 0;
+            public int? srcSpawnSpeedMultiplier = 0;
+            public int? srcSizeMultiplier = 0;
+            public int? srcHitSpeedMultiplier = 0;
+            public int? srcHitFrequency = 0;
+            public int? srcHealPerSecond = 0;
+            public int? srcDamageReduction = 0;
+            public int? srcDamagePerSecond = 0;
+            public int? srcDamageMultiplier = 0;
+            public int? srcAudioPitchModifier = 0;
+            public bool? srcStaticTarget = false;
+            public bool? srcRemoveOnHeal = false;
+            public bool? srcRemoveOnAttack = false;
+            public bool? srcPanic = false;
+            public bool? srcInvisible = false;
+            public bool? srcImmuneToAntiMagic = false;
+            public bool? srcIgnorePushBack = false;
+            public bool? srcFilterInheritLifeDuration = false;
+            public bool? srcFilterAffectsTransformation = false;
+            public bool? srcEnableStacking = false;
+            public bool? srcControlledByParent = false;
+            public bool? srcChangeControl = false;
+
+            
 
 
 
@@ -445,6 +647,7 @@ namespace Buddy.Clash.DefaultSelectors
 
         }
 
+        Dictionary<int, Card> forTestBase = new Dictionary<int, Card>();
         Dictionary<cardName, Card> cardNameToCardList = new Dictionary<cardName, Card>();
         List<string> allCardIDS = new List<string>();
         public Card unknownCard;
@@ -470,84 +673,223 @@ namespace Buddy.Clash.DefaultSelectors
 
         private CardDB()
         {
-            
-            //foreach (string actName in Enum.GetNames(typeof(actionEnum)))
-           /* foreach (var e in Buddy.Clash.Engine.Csv.CsvLogic.Characters.Entries)
-            {
-                Logger.Information("{TID}: {Name} has {ShieldHitpoints}", e.TID, e.Name, e.ShieldHitpoints);
-            }
-            help.logg("-----------------Initialize");
-            CardDB cdb = CardDB.Instance;*/
 
-            //-TODO: заглушка - just for test - просто имена - потом создать реальные значения
-            /*
-            foreach (var s in Enum.GetNames(typeof(cardName)))
-            {
-                cardName cName = this.cardNamestringToEnum(s);
-                Card c = new Card() { Name = cName };
-                cardNameToCardList.Add(cName, c);
-            }
-                */
-
-            string[] lines = new string[0] { };
-            string fileName = Path.Combine(Nano.Settings.DatabaseFullpath, "data", "_carddb.txt");
-            if (File.Exists(fileName))
-            {
-                lines = System.IO.File.ReadAllLines(fileName);
-                Helpfunctions.Instance.ErrorLog("read carddb.txt " + lines.Length + " lines");
-            }
-            else
-            {
-                Helpfunctions.Instance.ErrorLog("ERROR#################################################");
-                Helpfunctions.Instance.ErrorLog($"cant find _carddb.txt at {fileName}");
-                Helpfunctions.Instance.ErrorLog("or read error");
-                return;
-            }
             this.cardNameToCardList.Clear();
-            this.unknownCard = new Card { name = cardName.unknown, cost = 1000 };
-            /*
-            foreach (string s in lines)
+            Card c = new Card();
+            foreach (var e in Buddy.Clash.Engine.Csv.CsvLogic.Characters.Entries)
             {
-                Card c = new Card();
-                string[] tmp = s.Split(' ');
-                foreach (string ss in tmp)
-                {
-                    string[] param = ss.Split(':');
-                    switch (param[0])
-                    {
-                        case "Name": c.name = cardNamestringToEnum(param[1]); continue;
-                        case "type": c.type = stringToBoardObjType(param[1]); continue;
-                        case "Transport": c.Transport = stringToTransportType(param[1]); continue;
-                        case "TargetType": c.TargetType = stringToTargetType(param[1]); continue;
-                        case "EffectType": c.EffectType = stringToAffectType(param[1]); continue;
-                        case "cost": c.cost = Convert.ToInt32(param[1]); continue;
-                        case "deployTime": c.DeployTime = Convert.ToInt32(param[1]); continue;
-                        case "MaxHP": c.MaxHP = Convert.ToInt32(param[1]); continue;
-                        case "Atk": c.Atk = Convert.ToInt32(param[1]); continue;
-                        case "Shield": c.Shield = Convert.ToInt32(param[1]); continue;
-                        case "Speed": c.Speed = Convert.ToInt32(param[1]); continue;
-                        case "DamageRadius": c.DamageRadius = Convert.ToInt32(param[1]); continue;
-                        case "HitSpeed": c.HitSpeed = Convert.ToInt32(param[1]); continue;
-                        case "MinRange": c.MinRange = Convert.ToInt32(param[1]); continue;
-                        case "MaxRange": c.MaxRange = Convert.ToInt32(param[1]); continue;
-                        case "SightRange": c.SightRange = Convert.ToInt32(param[1]); continue;
-                        case "MaxTargets": c.MaxTargets = Convert.ToInt32(param[1]); continue;
-                        case "DeathEffect": c.DeathEffect = Convert.ToInt32(param[1]); continue;
-                        case "Rarity": c.Rarity = Convert.ToInt32(param[1]); continue;
-                        case "Level": c.Level = Convert.ToInt32(param[1]); continue;
-                        case "LifeTime": c.LifeTime = Convert.ToInt32(param[1]); continue;
-                        case "SpawnNumber": c.SpawnNumber = Convert.ToInt32(param[1]); continue;
-                        case "SpawnTime": c.SpawnTime = Convert.ToInt32(param[1]); continue;
-                        case "SpawnInterval": c.SpawnInterval = Convert.ToInt32(param[1]); continue;
-                        case "SpawnCharacterLevel": c.SpawnCharacterLevel = Convert.ToInt32(param[1]); continue;
-                        case "needUpdate": c.needUpdate = param[1] == "False" ? false : true; continue;
-                        case "numDuplicates": c.numDuplicates = Convert.ToInt32(param[1]); continue;
-                        case "numDifferences": c.numDifferences = Convert.ToInt32(param[1]); continue;
-                    }
-                }
+                c = new Card();
+                c.stringName = e.Name;
+                c.name = cardNamestringToEnum(c.stringName);
+                c.type = boardObjType.MOB;
+                c.Transport = e.FlyingHeight > 0 ? transportType.AIR : transportType.GROUND;
+
+                if (e.TargetOnlyBuildings != null && (bool)e.TargetOnlyBuildings) c.TargetType = targetType.BUILDINGS;
+                else if (e.AttacksAir != null && (bool)e.AttacksAir) c.TargetType = targetType.ALL;
+                else if (e.AttacksGround != null && (bool)e.AttacksGround) c.TargetType = targetType.GROUND;
+                
+                //c.affectType = //-aoe
+                c.cost = -1; //TODO: dig this value in !Characters
+                if (e.DeployTime != null) c.DeployTime = (int)e.DeployTime; //-mob,buildings
+                if (e.DeployDelay != null) c.DeployDelay = (int)e.DeployDelay; //-mob,buildings
+                if (e.Hitpoints != null) c.MaxHP = (int)e.Hitpoints; //-All
+                if (e.Damage != null) c.Atk = (int)e.Damage; //-All Damage
+                if (e.ShieldHitpoints != null) c.Shield = (int)e.ShieldHitpoints; //-Mob
+                if (e.Speed != null) c.Speed = (int)e.Speed; //-Mob, Projectile
+                if (e.HitSpeed != null) c.HitSpeed = (int)e.HitSpeed; //-Mob,aoe,building
+                if (e.MinimumRange != null) c.MinRange = (int)e.MinimumRange; //-only Mortar
+                if (e.Range != null) c.MaxRange = (int)e.Range; //-Mob,building
+                if (e.SightRange != null) c.SightRange = (int)e.SightRange; //-Mob,building
+                if (e.SightClip != null) c.SightClip = (int)e.SightClip; //-Mob,building
+                if (e.MultipleTargets != null) c.MultipleTargets = (int)e.MultipleTargets; //-only ElectroWizard
+                if (e.MultipleProjectiles != null) c.MultipleProjectiles = (int)e.MultipleProjectiles; //- only Princess
+                if (e.Rarity != null) c.Rarity = e.Rarity;
+                c.Level = 0;
+                if (e.AreaDamageRadius != null) c.DamageRadius = (int)e.AreaDamageRadius; //mob,aoe,projectile=Radius
+                //c.aoeGround = false; //-projectile
+                //c.aoeAir = false; //-projectile
+                if (e.CollisionRadius != null) c.CollisionRadius = (int)e.CollisionRadius; //-Mobs+Buildings          
+                if (e.LifeTime != null) c.LifeTime = (int)e.LifeTime; //-Buildings; AreaEffect=LifeDuration
+                if (e.SpawnPauseTime != null) c.SpawnPause = (int)e.SpawnPauseTime; //-Mobs+Buildings DataTime
+                if (e.SpawnNumber != null) c.SpawnNumber = (int)e.SpawnNumber; //-Mobs+Buildings
+                if (e.SpawnInterval != null) c.SpawnInterval = (int)e.SpawnInterval; //-Mobs+Buildings > 0 if SpawnNumber > 1
+                if (e.SpawnCharacterLevelIndex != null) c.SpawnCharacterLevel = (int)e.SpawnCharacterLevelIndex;
+
+                /*//TODO:explore real value on field for below
+                 * ProjectileRange don't use, just set val to Log
+                BowlerProjectile 6000 - Bowler 4500
+                LogProjectileRolling 11100
+                AxeManProjectile 6000 axeman 4500*/
+
                 if (!cardNameToCardList.ContainsKey(c.name)) cardNameToCardList.Add(c.name, c);
                 else Helpfunctions.Instance.ErrorLog("#####ERR. Duplicate name:" + c.name);
-            }*/
+            }
+
+
+            foreach (var e in Buddy.Clash.Engine.Csv.CsvLogic.Buildings.Entries)
+            {
+                c = new Card();
+                c.stringName = e.Name;
+                c.name = cardNamestringToEnum(c.stringName);
+                c.type = boardObjType.BUILDING;
+                c.Transport = e.FlyingHeight > 0 ? transportType.AIR : transportType.GROUND;
+
+                if (e.TargetOnlyBuildings != null && (bool)e.TargetOnlyBuildings) c.TargetType = targetType.BUILDINGS;
+                else if (e.AttacksAir != null && (bool)e.AttacksAir) c.TargetType = targetType.ALL;
+                else if (e.AttacksGround != null && (bool)e.AttacksGround) c.TargetType = targetType.GROUND;
+                
+                //c.affectType = //-aoe
+                c.cost = -1; //TODO: dig this value in !Characters
+                if (e.DeployTime != null) c.DeployTime = (int)e.DeployTime; //-mob,buildings
+                if (e.DeployDelay != null) c.DeployDelay = (int)e.DeployDelay; //-mob,buildings
+                if (e.Hitpoints != null) c.MaxHP = (int)e.Hitpoints; //-All
+                if (e.Damage != null) c.Atk = (int)e.Damage; //-All Damage
+                if (e.ShieldHitpoints != null) c.Shield = (int)e.ShieldHitpoints; //-Mob
+                if (e.Speed != null) c.Speed = (int)e.Speed; //-Mob, Projectile
+                if (e.HitSpeed != null) c.HitSpeed = (int)e.HitSpeed; //-Mob,aoe,building
+                if (e.MinimumRange != null) c.MinRange = (int)e.MinimumRange; //-only Mortar
+                if (e.Range != null) c.MaxRange = (int)e.Range; //-Mob,building
+                if (e.SightRange != null) c.SightRange = (int)e.SightRange; //-Mob,building
+                if (e.SightClip != null) c.SightClip = (int)e.SightClip; //-Mob,building
+                if (e.MultipleTargets != null) c.MultipleTargets = (int)e.MultipleTargets; //-only ElectroWizard
+                if (e.MultipleProjectiles != null) c.MultipleProjectiles = (int)e.MultipleProjectiles; //- only Princess
+                if (e.Rarity != null) c.Rarity = e.Rarity;
+                c.Level = 0;
+                if (e.AreaDamageRadius != null) c.DamageRadius = (int)e.AreaDamageRadius; //mob,aoe,projectile=Radius TODO: match troop and projectile Заполняем сначала минионов, здания, аое - потом проджектил и оттуда кейсом тупо сопоставляем с минионом
+                //c.aoeGround = false; //-projectile
+                //c.aoeAir = false; //-projectile
+                if (e.CollisionRadius != null) c.CollisionRadius = (int)e.CollisionRadius; //-Mobs+Buildings          
+                if (e.LifeTime != null) c.LifeTime = (int)e.LifeTime; //-Buildings; AreaEffect=LifeDuration
+                if (e.SpawnPauseTime != null) c.SpawnPause = (int)e.SpawnPauseTime; //-Mobs+Buildings DataTime
+                if (e.SpawnNumber != null) c.SpawnNumber = (int)e.SpawnNumber; //-Mobs+Buildings
+                if (e.SpawnInterval != null) c.SpawnInterval = (int)e.SpawnInterval; //-Mobs+Buildings > 0 if SpawnNumber > 1
+                if (e.SpawnCharacterLevelIndex != null) c.SpawnCharacterLevel = (int)e.SpawnCharacterLevelIndex;
+                
+                if (!cardNameToCardList.ContainsKey(c.name)) cardNameToCardList.Add(c.name, c);
+                else Helpfunctions.Instance.ErrorLog("#####ERR. Duplicate name:" + c.name);
+            }
+            
+            foreach (var e in Buddy.Clash.Engine.Csv.CsvLogic.AreaEffectObjects.Entries)
+            {
+                c = new Card();
+                c.stringName = e.Name;
+                c.name = cardNamestringToEnum(c.stringName);
+                c.type = boardObjType.AOE;
+                if (e.IgnoreBuildings != null) c.TargetType = (bool)e.IgnoreBuildings ? targetType.IGNOREBUILDINGS : targetType.ALL;
+
+                if (e.OnlyEnemies != null)
+                {
+                    if ((bool)e.OnlyEnemies)
+                    {
+                        if (e.OnlyOwnTroops != null && (bool)e.OnlyOwnTroops) c.affectType = affectType.ALL;
+                        else c.affectType = affectType.ONLY_ENEMIES;
+                    }
+                }
+                else if (e.OnlyOwnTroops != null && (bool)e.OnlyOwnTroops) c.affectType = affectType.ONLY_OWN;
+                
+                c.cost = -1; //TODO: dig this value in !Characters
+                //c.DeployTime =  //-mob,buildings
+                //c.DeployDelay = //-mob,buildings
+                //c.MaxHP = 
+                //c.Atk = (int)e.Damage; //no one real values :(
+                //c.Shield = 
+                //c.Speed = 
+                if (e.HitSpeed != null) c.HitSpeed = (int)e.HitSpeed; //-Mob,aoe,building
+                //c.MinRange = 
+                //c.MaxRange = 
+                //c.SightRange = 
+                //c.SightClip = 
+                //c.MultipleTargets = 
+                //c.MultipleProjectiles = 
+                //c.Rarity = e.Rarity;
+                c.Level = 0;
+                if (e.Radius != null) c.DamageRadius = (int)e.Radius; //mob,aoe,projectile=Radius
+                //c.aoeGround = false; //-projectile
+                //c.aoeAir = false; //-projectile
+                //c.CollisionRadius = (        
+                if (e.LifeDuration != null) c.LifeTime = (int)e.LifeDuration; //-Buildings; AreaEffect=LifeDuration
+                //c.SpawnPause = 
+                //c.SpawnNumber =  //-Mobs+Buildings
+                if (e.SpawnInterval != null) c.SpawnInterval = (int)e.SpawnInterval; //-Mobs+Buildings > 0 if SpawnNumber > 1
+                if (e.SpawnCharacterLevelIndex != null) c.SpawnCharacterLevel = (int)e.SpawnCharacterLevelIndex;
+
+                switch (c.name)
+                {
+                    case cardName.poison: c.Atk = 57; c.towerDamage = 23; break;
+                    case cardName.tornado: c.Atk = 44; break;
+                    case cardName.heal: c.Atk = -100; break;
+                    case cardName.zap: c.Atk = 75; c.towerDamage = 30; break;
+                    case cardName.graveyard: c.SpawnNumber = 15; break;
+                    case cardName.lightning: c.Atk = 650; c.towerDamage = 260; break;
+                        
+
+                }
+
+                if (!cardNameToCardList.ContainsKey(c.name)) cardNameToCardList.Add(c.name, c);
+                else Helpfunctions.Instance.ErrorLog("#####ERR. Duplicate name:" + c.name);
+            }
+
+
+            foreach (var e in Buddy.Clash.Engine.Csv.CsvLogic.Projectiles.Entries)
+            {
+                c = new Card();
+                c.stringName = e.Name;
+                c.name = cardNamestringToEnum(c.stringName);
+                c.type = boardObjType.PROJECTILE;
+                c.TargetType = targetType.ALL;
+
+                if (e.OnlyEnemies != null)
+                {
+                    if ((bool)e.OnlyEnemies)
+                    {
+                        if (e.OnlyOwnTroops != null && (bool)e.OnlyOwnTroops) c.affectType = affectType.ALL;
+                        else c.affectType = affectType.ONLY_ENEMIES;
+                    }
+                }
+                else if (e.OnlyOwnTroops != null && (bool)e.OnlyOwnTroops) c.affectType = affectType.ONLY_OWN;
+
+                c.cost = -1; //TODO: dig this value
+                if (e.Damage != null) c.Atk = (int)e.Damage; //-All Damage
+                if (e.Speed != null) c.Speed = (int)e.Speed; //-Mob, Projectile
+                if (e.Rarity != null) c.Rarity = e.Rarity;
+                c.Level = 0;
+                if (e.Radius != null) c.DamageRadius = (int)e.Radius; //mob,aoe,projectile=Radius
+                if (e.AoeToGround != null) c.aoeGround = (bool)e.AoeToGround; //-projectile
+                if (e.AoeToAir != null) c.aoeAir = (bool)e.AoeToAir; //-projectile
+                if (e.SpawnCharacterCount != null) c.SpawnNumber = (int)e.SpawnCharacterCount; //-Mobs+Buildings
+                if (e.SpawnCharacterLevelIndex != null) c.SpawnCharacterLevel = (int)e.SpawnCharacterLevelIndex;
+
+                /*//TODO:explore real value on field for below
+                 * ProjectileRange don't use, just set val to Log
+                BowlerProjectile 6000 - Bowler 4500
+                LogProjectileRolling 11100
+                AxeManProjectile 6000 axeman 4500*/
+
+                switch (c.stringName)
+                {
+                    case "AxeManProjectile": if (cardNameToCardList.ContainsKey(cardName.axeman)) { cardNameToCardList[cardName.axeman].Atk = c.Atk; cardNameToCardList[cardName.axeman].DamageRadius = c.DamageRadius; } break;
+                    case "ice_wizardProjectile": if (cardNameToCardList.ContainsKey(cardName.icewizard)) { cardNameToCardList[cardName.icewizard].Atk = c.Atk; cardNameToCardList[cardName.icewizard].DamageRadius = c.DamageRadius; } break;
+                    case "chr_wizardProjectile": if (cardNameToCardList.ContainsKey(cardName.wizard)) { cardNameToCardList[cardName.wizard].Atk = c.Atk; cardNameToCardList[cardName.wizard].DamageRadius = c.DamageRadius; } break;
+                    case "BombSkeletonProjectile": if (cardNameToCardList.ContainsKey(cardName.bomber)) { cardNameToCardList[cardName.bomber].Atk = c.Atk; cardNameToCardList[cardName.bomber].DamageRadius = c.DamageRadius; } break;
+                    case "ZapMachineProjectile": if (cardNameToCardList.ContainsKey(cardName.zapmachine)) { cardNameToCardList[cardName.zapmachine].Atk = c.Atk; cardNameToCardList[cardName.zapmachine].DamageRadius = c.DamageRadius; } break;
+                    case "BowlerProjectile": if (cardNameToCardList.ContainsKey(cardName.bowler)) { cardNameToCardList[cardName.bowler].Atk = c.Atk; cardNameToCardList[cardName.bowler].DamageRadius = c.DamageRadius; } break;
+                    case "MovingCannonProjectile":
+                        if (cardNameToCardList.ContainsKey(cardName.movingcannon)) { cardNameToCardList[cardName.movingcannon].Atk = c.Atk; cardNameToCardList[cardName.movingcannon].DamageRadius = c.DamageRadius; }
+                        if (cardNameToCardList.ContainsKey(cardName.brokencannon)) { cardNameToCardList[cardName.brokencannon].Atk = c.Atk; cardNameToCardList[cardName.brokencannon].DamageRadius = c.DamageRadius; }
+                        break;
+                    case "MegaKnightAppear": if (cardNameToCardList.ContainsKey(cardName.megaknight)) { cardNameToCardList[cardName.megaknight].Atk = c.Atk; cardNameToCardList[cardName.megaknight].DamageRadius = c.DamageRadius; } break;
+                    case "KingProjectile": if (cardNameToCardList.ContainsKey(cardName.kingtower)) { cardNameToCardList[cardName.kingtower].Atk = c.Atk; cardNameToCardList[cardName.kingtower].DamageRadius = c.DamageRadius; } break;
+                    case "TowerCannonball": if (cardNameToCardList.ContainsKey(cardName.cannon)) { cardNameToCardList[cardName.cannon].Atk = c.Atk; cardNameToCardList[cardName.cannon].DamageRadius = c.DamageRadius; } break;
+                    case "MortarProjectile": if (cardNameToCardList.ContainsKey(cardName.mortar)) { cardNameToCardList[cardName.mortar].Atk = c.Atk; cardNameToCardList[cardName.mortar].DamageRadius = c.DamageRadius; } break;
+                    case "BombTowerProjectile": if (cardNameToCardList.ContainsKey(cardName.bombtower)) { cardNameToCardList[cardName.bombtower].Atk = c.Atk; cardNameToCardList[cardName.bombtower].DamageRadius = c.DamageRadius; } break;
+                    case "xbow_projectile": if (cardNameToCardList.ContainsKey(cardName.xbow)) { cardNameToCardList[cardName.xbow].Atk = c.Atk; cardNameToCardList[cardName.xbow].DamageRadius = c.DamageRadius; } break;
+                    default:
+                        if (!cardNameToCardList.ContainsKey(c.name)) cardNameToCardList.Add(c.name, c);
+                        else Helpfunctions.Instance.ErrorLog("#####ERR. Duplicate name:" + c.name);
+                        break;
+                }
+            }
+            
             Helpfunctions.Instance.ErrorLog("CardList:" + cardNameToCardList.Count);
         }
 
@@ -590,7 +932,7 @@ namespace Buddy.Clash.DefaultSelectors
                     c.type = bo.type;
                     c.Transport = bo.Transport;
                     c.TargetType = bo.TargetType;
-                    c.EffectType = bo.EffectType;
+                    c.affectType = bo.affectOn;
                     c.cost = bo.cost;
                     c.DeployTime = bo.DeployTime;
                     c.DamageRadius = bo.DamageRadius;
@@ -602,12 +944,12 @@ namespace Buddy.Clash.DefaultSelectors
                     c.MinRange = bo.MinRange;
                     c.MaxRange = bo.Range;
                     c.SightRange = bo.SightRange;
-                    c.MaxTargets = bo.MaxTargets;
+                    c.MultipleTargets = bo.MaxTargets;
                     c.DeathEffect = bo.DeathEffect;
                     c.Level = bo.level;
                     c.LifeTime = bo.LifeTime;
                     c.SpawnNumber = bo.SpawnNumber;
-                    c.SpawnTime = bo.SpawnTime;
+                    c.SpawnPause = bo.SpawnTime;
                     c.SpawnInterval = bo.SpawnInterval;
                     c.SpawnCharacterLevel = bo.SpawnCharacterLevel;
                     c.needUpdate = false;
@@ -622,41 +964,9 @@ namespace Buddy.Clash.DefaultSelectors
 
         public void uploadCardInfo()
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder(20000);
-            foreach (var kvp in cardNameToCardList)
-            {
-                Card c = kvp.Value;
-                sb.Append("Name:").Append(c.name).Append(" ");
-                sb.Append("type:").Append(c.type).Append(" ");
-                sb.Append("Transport:").Append(c.Transport).Append(" ");
-                sb.Append("TargetType:").Append(c.TargetType).Append(" ");
-                sb.Append("EffectType:").Append(c.EffectType).Append(" ");
-                sb.Append("cost:").Append(c.cost).Append(" ");
-                sb.Append("deployTime:").Append(c.DeployTime).Append(" ");
-                sb.Append("DamageRadius:").Append(c.DamageRadius).Append(" ");
-                sb.Append("MaxHP:").Append(c.MaxHP).Append(" ");
-                sb.Append("Atk:").Append(c.Atk).Append(" ");
-                sb.Append("Shield:").Append(c.Shield).Append(" ");
-                sb.Append("Speed:").Append(c.Speed).Append(" ");
-                sb.Append("HitSpeed:").Append(c.HitSpeed).Append(" ");
-                sb.Append("MinRange:").Append(c.MinRange).Append(" ");
-                sb.Append("MaxRange:").Append(c.MaxRange).Append(" ");
-                sb.Append("SightRange:").Append(c.SightRange).Append(" ");
-                sb.Append("MaxTargets:").Append(c.MaxTargets).Append(" ");
-                sb.Append("DeathEffect:").Append(c.DeathEffect).Append(" ");
-                sb.Append("Rarity:").Append(c.Rarity).Append(" ");
-                sb.Append("Level:").Append(c.Level).Append(" ");
-                sb.Append("LifeTime:").Append(c.LifeTime).Append(" ");
-                sb.Append("SpawnNumber:").Append(c.SpawnNumber).Append(" ");
-                sb.Append("SpawnTime:").Append(c.SpawnTime).Append(" ");
-                sb.Append("SpawnInterval:").Append(c.SpawnInterval).Append(" ");
-                sb.Append("SpawnCharacterLevel:").Append(c.SpawnCharacterLevel).Append(" ");
-                sb.Append("needUpdate:").Append(c.needUpdate).Append(" ");
-                sb.Append("numDuplicates:").Append(c.numDuplicates).Append(" ");
-                sb.Append("numDifferences:").Append(c.numDifferences);
-                sb.Append("\r\n");
-            }
-
+            System.Text.StringBuilder sb = new System.Text.StringBuilder(1000000);
+            
+            /*
             try
             {
                 using (StreamWriter sw = File.AppendText(Path.Combine(Nano.Settings.DatabaseFullpath,"_carddb_upd.txt")))
@@ -667,7 +977,7 @@ namespace Buddy.Clash.DefaultSelectors
             catch
             {
                 //TODO: other way to inform about this problem (m.b. line in main bot-log)
-            }
+            }*/
         }
 
 
@@ -675,36 +985,7 @@ namespace Buddy.Clash.DefaultSelectors
         public Card getCardDataFromName(CardDB.cardName cardname, int lvl)
         {
             return this.cardNameToCardList.ContainsKey(cardname) ? this.cardNameToCardList[cardname] : this.unknownCard;
-        }
-
-        /*
-        public SimTemplate getSimCard(cardIDEnum id)
-        {
-            switch (id)
-            {
-                case cardIDEnum.None:
-                    return new Sim_None();
-                case cardIDEnum.NAX3_02_TB:
-                    return new Sim_NAX3_02_TB();
-                case cardIDEnum.NAX12_02H_2_TB:
-                    return new Sim_NAX12_02H_2_TB();
-                case cardIDEnum.NAX11_02H_2_TB:
-                    return new Sim_NAX11_02H_2_TB();
-                case cardIDEnum.BRMA17_5_TB:
-                    return new Sim_BRMA17_5_TB();
-                case cardIDEnum.BRMA14_10H_TB:
-                    return new Sim_BRMA14_10H_TB();
-                case cardIDEnum.BRMA13_4_2_TB:
-                    return new Sim_BRMA13_4_2_TB();
-                case cardIDEnum.UNG_999t7:
-                    return new Sim_UNG_999t7();
-                case cardIDEnum.UNG_999t8:
-                    return new Sim_UNG_999t8();
-            }
-
-            return new SimTemplate();
-        }*/
-        
+        }       
         
 
     }

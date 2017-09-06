@@ -107,7 +107,14 @@
         }
 
     }
-
+	
+    public enum towerName
+    {
+        LeftPrincessTower,
+        RightPrincessTower,
+		KingsTower
+    }
+	
     public enum boPriority
     {
         byTotalGroundDPS,
@@ -342,6 +349,9 @@
         public List<BoardObj> ownTowers = new List<BoardObj>();
         public List<BoardObj> enemyTowers = new List<BoardObj>();
 
+        public BoardObj ownKingsTower = new BoardObj();
+        public BoardObj enemyKingsTower = new BoardObj();
+
         public group ownGroup = null;
         public group enemyGroup = null;
 
@@ -421,14 +431,16 @@
 
             copyBoardObj(p.ownTowers, this.ownTowers);
             copyBoardObj(p.enemyTowers, this.enemyTowers);
+            this.ownKingsTower = new BoardObj(p.ownKingsTower);
+            this.enemyKingsTower = new BoardObj(p.enemyKingsTower);
 
             copyCards(p.ownHandCards, p.nextCard);
 
             this.ownDeck = p.ownDeck;
             this.enemyDeck = p.enemyDeck;
 
-            ownGroup = p.ownGroup;
-            enemyGroup = p.enemyGroup;
+            this.ownGroup = p.ownGroup;
+            this.enemyGroup = p.enemyGroup;
             //enemyHandCards = prozis.enemyHandCards;
         
             if (p.needPrint)
@@ -897,8 +909,24 @@
                 }
             }
         }
+        			
+        public void setKingsLine(bool own)
+        {
+            BoardObj tower = own ? this.ownKingsTower : this.enemyKingsTower;
+            List<BoardObj> list = own ? this.ownTowers : this.enemyTowers;
+            int i = 0;
+            foreach (BoardObj t in list) if (t.Tower < 10) i += t.Line;
+            tower.Line = 0;
+            switch (i)
+            {
+                case 0: tower.Line = 3; break;
+                case 1: tower.Line = 2; break;
+                case 2: tower.Line = 1; break;
+            }
+            foreach (BoardObj t in list) if (t.Tower > 9) t.Line = tower.Line;
+        }
 
-                
+
         public int getNextEntity()
         {
             //i dont trust return this.nextEntity++; !!!
@@ -912,6 +940,25 @@
             //или как то по другому когда один наносит урон другому - типа кто сильнее
             //здесь мы быренько предугадуем дамаг по башне и/или миниону
         }
+		/*
+		public BoardObj getTower (towerName TowerName, bool own)
+		{
+			BoardObj retval = null;
+			List<BoardObj> list = own ? this.OwnTowers : this.EnemyTowers;
+			int count = list.count;
+			for (int i = 0; i < count; i++)
+			{
+				switch (towerName)
+				{
+					case towerName.LeftPrincessTower:
+						if (home)
+					case towerName.RightPrincessTower:
+					case towerName.KingsTower:
+						if (list[i].Tower > 9) return list[i];
+						continue;
+				}
+			}
+		}*/
 
 
 

@@ -42,7 +42,7 @@
         public boardObjType type = boardObjType.NONE;        
         public transportType Transport = transportType.NONE; //-Mob (Air, Ground)
         public targetType TargetType = targetType.NONE; //-AttacksAir, TargetOnlyBuildings
-        public affectType EffectType = affectType.NONE;
+        public affectType affectOn = affectType.NONE;
         //-        public bool isHero = false; решить вопрос с башнями - сюда или в бордТип
         public VectorAI Position;
         public bool own = true;
@@ -81,7 +81,7 @@
         public int SpawnInterval = 0; //-Mobs+Buildings
         public int SpawnCharacterLevel = 0;
 
-
+        public bool clone = false;
         public bool frozen = false;
         public int startFrozen = 0; //-dstatime or %
         public string extraData = "";
@@ -339,7 +339,7 @@
             this.card = bo.card;
             this.type = bo.type;
             this.Transport = bo.Transport;
-            this.EffectType = bo.EffectType;
+            this.affectOn = bo.affectOn;
             this.Position = bo.Position;
             this.own = bo.own;
             this.pID = bo.pID; //-????????
@@ -367,6 +367,7 @@
             this.SpawnTime = bo.SpawnTime;
             this.SpawnCharacterLevel = bo.SpawnCharacterLevel;
             this.frozen = bo.frozen;
+            this.clone = bo.clone;
             this.startFrozen = bo.startFrozen;
             this.attacker = bo.attacker;
             this.target = bo.target;
@@ -382,7 +383,7 @@
             this.Name = c.name;
             this.type = c.type;
             this.Transport = c.Transport;
-            this.EffectType = c.EffectType;
+            this.affectOn = c.affectType;
             //this.Position = c.Position;
             //this.own = c.own;
             //this.pID = c.pID; //-????????
@@ -401,13 +402,13 @@
             this.Range = c.MaxRange;
             this.SightRange = c.SightRange;
             this.TargetType = c.TargetType;
-            this.MaxTargets = c.MaxTargets;
+            this.MaxTargets = c.MultipleTargets;
             //this.attacking = c.attacking;
             //this.attacked = c.attacked;
             this.LifeTime = c.LifeTime;
             this.SpawnNumber = c.SpawnNumber;
             this.SpawnInterval = c.SpawnInterval;
-            this.SpawnTime = c.SpawnTime;
+            this.SpawnTime = c.SpawnPause;
             this.SpawnCharacterLevel = c.SpawnCharacterLevel;
             //this.frozen = c.frozen;
             //this.startFrozen = c.startFrozen;
@@ -534,13 +535,13 @@
                 case boardObjType.AOE:
                     if (!printAll) return this.Name + " " + this.GId + " " + this.type + " " + this.Position + " " + this.level + " " + this.LifeTime;
                     else return this.Name + " " + this.GId + " " + this.type + " " + this.Position + " lvl:" + this.level + " LifeTime:" + this.LifeTime +
-                        " cost:" + this.cost + " EffectType:" + this.EffectType + " TargetType:" + this.TargetType +
+                        " cost:" + this.cost + " EffectType:" + this.affectOn + " TargetType:" + this.TargetType +
                         " buffSpeed:" + this.Speed + " buffHitSpeed:" + this.HitSpeed + " Radius:" + this.Range + " Atk:" + this.Atk +
                         " SpawnInterval:" + this.SpawnInterval + " SpawnCharacterLevel:" + this.SpawnCharacterLevel;
                 case boardObjType.MOB:
                     if (!printAll) return this.Name + " " + this.GId + " " + this.type + " " + this.Position + " " + this.level + " " + this.LifeTime;
                     else return this.Name + " " + this.GId + " " + this.type + " " + this.Position + " lvl:" + this.level + " LifeTime:" + this.LifeTime +
-                        " cost:" + this.cost + " EffectType:" + this.EffectType + " TargetType:" + this.TargetType +
+                        " cost:" + this.cost + " EffectType:" + this.affectOn + " TargetType:" + this.TargetType +
                         " buffSpeed:" + this.Speed + " buffHitSpeed:" + this.HitSpeed + " Radius:" + this.Range + " Atk:" + this.Atk +
                         " SpawnInterval:" + this.SpawnInterval + " SpawnCharacterLevel:" + this.SpawnCharacterLevel;
 
@@ -631,12 +632,58 @@
             return attackersList;
         }
 
-        
 
-        public void minionDied(Playfield p)
+        /*
+        public void objectDied(Playfield p)
         {
-            //TODO: possible effects
-        }
+            switch (this.type)
+            {
+
+                case boardObjType.BUILDING:
+                    List<BoardObj> list = bo.own ? this.ownBuildings : this.enemyBuildings;
+                    //if (bo.own) p.tempTrigger.ownBoDied++; //TODO triggers
+                    //else p.tempTrigger.enemyBoDied++;
+                    switch (this.Tower)
+                    {
+                        case 0: //just building
+                            //TODO: possible effects
+                            break;
+                        case 1: goto case 2;
+                        case 2:
+                            //if (bo.own) p.tempTrigger.ownTowerDied++; //TODO triggers
+                            //else p.tempTrigger.enemyTowerDied++;
+                            p.ownTowersState = p.getTowersState();
+                            break;
+                    }
+                    if (this.Tower == 0)
+                    {
+
+                    }
+                    else if (bo.Tower < 10) //PrincessTower
+                    {
+                        towersState
+                    }
+                    else //KingsTower
+                    {
+                        if (bo.own)
+                        {
+                            //p.tempTrigger.ownTowerDied++; //TODO triggers
+                            this.ownTowersState = towersState.allDestroyed;
+                        }
+                        else
+                        {
+                            //p.tempTrigger.enemyTowerDied++; //TODO triggers
+                            this.enemyTowersState = towersState.allDestroyed;
+                        }
+                    }
+
+
+                    break;
+                case boardObjType.MOB:
+                    //TODO: possible effects
+                    break;
+            }
+        }*/
         
         
 
