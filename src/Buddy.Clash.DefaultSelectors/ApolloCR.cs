@@ -37,7 +37,7 @@ namespace Buddy.Clash.DefaultSelectors
         private static GameHandling gameHandling = new GameHandling();
 
 		internal static ApolloSettings Settings => SettingsManager.GetSetting<ApolloSettings>("Apollo");
-
+        private static bool NewBattle = true;
 		public override CastRequest GetNextCast()
         {
             #region battle valid check
@@ -51,18 +51,36 @@ namespace Buddy.Clash.DefaultSelectors
             if (StaticValues.Player.Mana < 2)
                 return null;
 
-            if (Clash.Engine.ClashEngine.Instance.Battle.BattleTime.TotalSeconds < 1)
+            if (NewBattle)
+            {
                 gameHandling.IniGame(Settings);
+                NewBattle = false;
+            }
 
             gameHandling.IniRound();
             FightState fightState = gameHandling.FightState;
             ICard spell = CastDeploymentHandling.SpellMagic(fightState);
+
+            if (spell == null)
+                return null;
+
             Vector2f nextPosition = CastPositionHandling.GetNextSpellPosition(fightState, spell);
 
             return new CastRequest(spell.Name, nextPosition);
         }
 
-		public override void Initialize()
+        public override void BattleStart()
+        {
+            Logger.Debug("-----------------BattleStart");
+            NewBattle = true;
+        }
+
+        public override void BattleEnd()
+        {
+            Logger.Debug("-----------------BattleEnd");
+        }
+
+        public override void Initialize()
 		{
 			SettingsManager.RegisterSettings(Name, new ApolloSettings());
 		}

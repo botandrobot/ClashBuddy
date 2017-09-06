@@ -219,11 +219,11 @@ namespace Buddy.Clash.DefaultSelectors.Logic
                     else
                     {
                         // Position Correction
-                        return PositionHelper.AddYInDirection(enemy.StartPosition, PlayerProperties.PlayerPosition, 3000);
+                        return PositionHelper.AddYInDirection(enemy.StartPosition, PlayerProperties.PlayerPosition, 2000);
                     }
                 }
             }
-
+            Logger.Debug("Error: Enemy for damaging spell is null!!!");
             return Vector2f.Zero;
         }
 
@@ -245,7 +245,7 @@ namespace Buddy.Clash.DefaultSelectors.Logic
                 switch ((cardToDeploy as CardCharacter).Type)
                 {
                     case TroopType.GroundAttack:
-                    case TroopType.Flying:
+                    
                     case TroopType.Tank:
                         return PositionHelper.SubtractYInDirection(position, PlayerProperties.PlayerPosition);
                     case TroopType.Ranger:
@@ -253,6 +253,7 @@ namespace Buddy.Clash.DefaultSelectors.Logic
                     case TroopType.AOEAttackGround:
                     case TroopType.AOEAttackFlying:
                     case TroopType.Damager:
+                    case TroopType.Flying:
                         return PositionHelper.AddYInDirection(position, PlayerProperties.PlayerPosition);
                     default:
                         break;
