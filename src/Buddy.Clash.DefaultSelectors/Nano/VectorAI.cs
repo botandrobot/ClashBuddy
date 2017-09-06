@@ -80,5 +80,27 @@ namespace Buddy.Clash.DefaultSelectors
             return "{" + this.x + "/" + this.y + "}";
         }
 
+        public void AddYInDirection(Playfield p, int y = 1000)
+        {
+            VectorAI moveVector = new VectorAI(0, y);
+            //Logger.Debug("PlayerPosition: {0}", fieldPosition);
+
+            if (p.home)
+                this.Y -= (y * 4);
+            else
+                this.Y += y;
+        }
+
+        public void SubtractYInDirection(Playfield p, int y = 1000)
+        {
+            VectorAI moveVector = new VectorAI(0, y);
+            //Logger.Debug("PlayerPosition: {0}", fieldPosition);
+
+            if (p.home)
+                this.Y += (y * 4);
+            else
+                this.Y -= y;
+        }
+
     }
 }

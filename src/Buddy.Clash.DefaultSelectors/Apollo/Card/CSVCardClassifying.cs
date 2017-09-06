@@ -22,7 +22,6 @@ namespace Buddy.Clash.DefaultSelectors.Card
 
         public static bool IsBuilding(string name)
         {
-            // ToDo: Char-Level beachten
             Buildings.BuildingEntry buildingEntry = Buildings.Entries.Where(n => n.Name == name).FirstOrDefault();
 
             if (buildingEntry == null)
