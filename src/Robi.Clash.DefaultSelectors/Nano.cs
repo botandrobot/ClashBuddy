@@ -150,7 +150,7 @@
         //it just concept for ActionSelector  (TODO: in future connect it with NN or other DB)
         public override CastRequest GetNextCast()
         {
-            //var ssdf  = Buddy.Clash.Engine.Csv.CsvLogic.SpellsCharacters
+            //var ssdf  = Robi.Clash.Engine.Csv.CsvLogic.SpellsCharacters
 
             help.logg("###################entrance############### " + DateTime.Now);
 

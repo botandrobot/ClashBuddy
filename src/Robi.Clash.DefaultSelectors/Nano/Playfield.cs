@@ -318,12 +318,12 @@
     public class Playfield
     {
         Helpfunctions help = Helpfunctions.Instance;
-        //Buddy.Clash.Engine.NativeObjects.LogicData.Spell
-        //Buddy.Clash.Engine.NativeObjects.LogicData.Character
-        //Buddy.Clash.Engine.NativeObjects.LogicData.AreaEffectObject
-        //    Buddy.Clash.Engine.NativeObjects.LogicData.CharacterBuff.Effect
+        //Robi.Clash.Engine.NativeObjects.LogicData.Spell
+        //Robi.Clash.Engine.NativeObjects.LogicData.Character
+        //Robi.Clash.Engine.NativeObjects.LogicData.AreaEffectObject
+        //    Robi.Clash.Engine.NativeObjects.LogicData.CharacterBuff.Effect
         // CastRequest GetNextCast()
-        // Buddy.Clash.Engine.Csv.CsvLogic.BuildingEntry
+        // Robi.Clash.Engine.Csv.CsvLogic.BuildingEntry
 
         public List<Handcard> ownHandCards = new List<Handcard>();
         public Handcard nextCard = new Handcard();

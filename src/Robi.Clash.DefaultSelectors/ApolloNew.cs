@@ -1,4 +1,4 @@
-﻿namespace Buddy.Clash.DefaultSelectors
+﻿namespace Robi.Clash.DefaultSelectors
 {
     using System;
     using System.Text;
@@ -9,8 +9,8 @@
     using Common;
     using Serilog;
     using System.IO;
-    using Buddy.Engine.Settings;
-    using Buddy.Clash.DefaultSelectors.Settings;
+    using Robi.Engine.Settings;
+    using Robi.Clash.DefaultSelectors.Settings;
 
     public class ApolloNew : ActionSelectorBase
     {
@@ -121,7 +121,7 @@
         { 
             SettingsManager.RegisterSettings(Name, Settings);
 
-            foreach(var e in Buddy.Clash.Engine.Csv.CsvLogic.Characters.Entries)
+            foreach(var e in Robi.Clash.Engine.Csv.CsvLogic.Characters.Entries)
             {
                 Logger.Information("{TID}: {Name} has {ShieldHitpoints}", e.TID, e.Name, e.ShieldHitpoints);
             }
@@ -153,7 +153,7 @@
         //it just concept for ActionSelector  (TODO: in future connect it with NN or other DB)
         public override CastRequest GetNextCast()
         {
-            //var ssdf  = Buddy.Clash.Engine.Csv.CsvLogic.SpellsCharacters
+            //var ssdf  = Robi.Clash.Engine.Csv.CsvLogic.SpellsCharacters
 
             help.logg("###################entrance############### " + DateTime.Now);
 
