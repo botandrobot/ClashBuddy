@@ -5,9 +5,9 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
 
-    internal class NanoSettings : JsonSettings
+    internal class DefaultRoutineSettings : JsonSettings
     {
-        internal NanoSettings() : base(SettingsPath, "Settings", "Nano.json")
+        internal DefaultRoutineSettings() : base(SettingsPath, "Settings", "DefaultRoutine.json")
         {
 
         }
@@ -15,8 +15,8 @@
         public string DatabaseFullpath => System.IO.Path.GetFullPath(DatabaseFolder);
         
         [DisplayName("Database Folder")]
-        [Description("The folder containing the Nano Databases.")]
-        [DefaultValue("Nano")]
+        [Description("The folder containing the DefaultRoutine Databases.")]
+        [DefaultValue("DefaultRoutine")]
         public string DatabaseFolder { get; set; }
                 
         [DisplayName("Random Deployment Faktor")]

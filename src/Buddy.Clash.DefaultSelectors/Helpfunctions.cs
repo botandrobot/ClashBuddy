@@ -18,7 +18,7 @@ namespace Buddy.Clash.DefaultSelectors
 
         //private static readonly ILog Log = Logger.GetLoggerInstanceForType();
 
-        public string logFilePath = "nano.log";
+        private string logFilePath = "DefaultRoutine.log";
         private static Helpfunctions instance;
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
@@ -42,8 +42,8 @@ namespace Buddy.Clash.DefaultSelectors
 
         public void setnewLoggFile()
         {
-            string RoutineFolder = "Nano";
-            string AIlogFolderPath = Path.Combine(RoutineFolder, "AIlog");
+            string RoutineFolder = "DefaultRoutine";
+            string AIlogFolderPath = Path.Combine(RoutineFolder, "AIlogs");
             logFilePath = Path.Combine(AIlogFolderPath, DateTime.Now.ToString("_yyyy-MM-dd_HH-mm-ss") + ".txt");
             if (!Directory.Exists(AIlogFolderPath)) Directory.CreateDirectory(AIlogFolderPath);
         }
