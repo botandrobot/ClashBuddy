@@ -85,7 +85,7 @@
         public bool frozen = false;
         public int startFrozen = 0; //-dstatime or %
         public string extraData = "";
-        
+
 
         public BoardObj()
         {
@@ -176,7 +176,7 @@
             this.DeathEffect = c.DeathEffect;
             //this.Tower = c.Tower;
         }
-        
+
         public string ToString(bool printAll = false)
         {
             switch (this.type)
