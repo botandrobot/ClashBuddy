@@ -1,12 +1,12 @@
-﻿using Buddy.Clash.DefaultSelectors.Utilities;
-using Buddy.Clash.Engine;
-using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
+﻿using Robi.Clash.DefaultSelectors.Utilities;
+using Robi.Clash.Engine;
+using Robi.Clash.Engine.NativeObjects.Logic.GameObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Buddy.Clash.DefaultSelectors.Player
+namespace Robi.Clash.DefaultSelectors.Player
 {
     class PlayerCharacterHandling
     {

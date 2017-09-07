@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Buddy.Clash.DefaultSelectors
+namespace Robi.Clash.DefaultSelectors
 {
 	using System;
 	using Engine;

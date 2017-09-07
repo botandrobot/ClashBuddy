@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Buddy.Clash.DefaultSelectors
+namespace Robi.Clash.DefaultSelectors
 {
     using System;
     using System.Collections.Generic;

@@ -1,12 +1,12 @@
-﻿using Buddy.Clash.DefaultSelectors.Game;
-using Buddy.Clash.DefaultSelectors.Logic;
-using Buddy.Common;
+﻿using Robi.Clash.DefaultSelectors.Game;
+using Robi.Clash.DefaultSelectors.Logic;
+using Robi.Common;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Buddy.Clash.DefaultSelectors.Player
+namespace Robi.Clash.DefaultSelectors.Player
 {
 
     public enum FightStyle

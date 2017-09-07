@@ -1,11 +1,11 @@
-﻿using Buddy.Clash.DefaultSelectors.Utilities;
-using Buddy.Clash.Engine.NativeObjects.Native;
+﻿using Robi.Clash.DefaultSelectors.Utilities;
+using Robi.Clash.Engine.NativeObjects.Native;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Buddy.Clash.DefaultSelectors.Enemy
+namespace Robi.Clash.DefaultSelectors.Enemy
 {
     class EnemyCharacterPositionHandling
     {

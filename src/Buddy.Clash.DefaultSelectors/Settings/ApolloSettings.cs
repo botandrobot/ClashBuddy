@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
-using Buddy.Common;
-using Buddy.Engine.Settings.Attributes;
+using Robi.Common;
+using Robi.Engine.Settings.Attributes;
 
-namespace Buddy.Clash.DefaultSelectors.Settings
+namespace Robi.Clash.DefaultSelectors.Settings
 {
     internal class ApolloSettings : JsonSettings
     {

@@ -1,8 +1,8 @@
-﻿using Buddy.Clash.Engine;
+﻿using Robi.Clash.Engine;
 using System;
 using System.Linq;
 
-namespace Buddy.Clash.DefaultSelectors.Utilities
+namespace Robi.Clash.DefaultSelectors.Utilities
 {
     class StaticValues
     {

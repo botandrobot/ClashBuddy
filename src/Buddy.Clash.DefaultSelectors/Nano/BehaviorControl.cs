@@ -1,4 +1,4 @@
-﻿namespace Buddy.Clash.DefaultSelectors
+﻿namespace Robi.Clash.DefaultSelectors
 {
     using System.Collections.Generic;
 

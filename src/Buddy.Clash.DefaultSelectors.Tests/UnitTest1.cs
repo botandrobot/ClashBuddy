@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace Buddy.Clash.DefaultSelectors.Tests
+namespace Robi.Clash.DefaultSelectors.Tests
 {
     public class UnitTest1
     {

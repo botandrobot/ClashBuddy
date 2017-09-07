@@ -1,13 +1,13 @@
-﻿using Buddy.Clash.Engine;
-using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
-using Buddy.Common;
+﻿using Robi.Clash.Engine;
+using Robi.Clash.Engine.NativeObjects.Logic.GameObjects;
+using Robi.Common;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Buddy.Clash.DefaultSelectors.Utilities
+namespace Robi.Clash.DefaultSelectors.Utilities
 {
     class CharacterHandling
     {

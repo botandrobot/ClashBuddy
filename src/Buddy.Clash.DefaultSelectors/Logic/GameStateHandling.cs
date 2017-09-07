@@ -1,18 +1,18 @@
-﻿using Buddy.Clash.DefaultSelectors.Enemy;
-using Buddy.Clash.DefaultSelectors.Game;
-using Buddy.Clash.DefaultSelectors.Player;
-using Buddy.Clash.DefaultSelectors.Settings;
-using Buddy.Clash.DefaultSelectors.Utilities;
-using Buddy.Clash.Engine;
-using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
-using Buddy.Common;
+﻿using Robi.Clash.DefaultSelectors.Enemy;
+using Robi.Clash.DefaultSelectors.Game;
+using Robi.Clash.DefaultSelectors.Player;
+using Robi.Clash.DefaultSelectors.Settings;
+using Robi.Clash.DefaultSelectors.Utilities;
+using Robi.Clash.Engine;
+using Robi.Clash.Engine.NativeObjects.Logic.GameObjects;
+using Robi.Common;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Buddy.Clash.DefaultSelectors.Logic
+namespace Robi.Clash.DefaultSelectors.Logic
 {
     enum FightState
     {

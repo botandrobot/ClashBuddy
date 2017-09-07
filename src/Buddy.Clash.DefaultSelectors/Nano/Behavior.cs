@@ -1,4 +1,4 @@
-﻿namespace Buddy.Clash.DefaultSelectors
+﻿namespace Robi.Clash.DefaultSelectors
 {
     public abstract class Behavior
     {

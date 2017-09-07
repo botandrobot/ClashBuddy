@@ -1,13 +1,13 @@
-﻿using Buddy.Clash.DefaultSelectors.Player;
-using Buddy.Clash.DefaultSelectors.Enemy;
-using Buddy.Clash.DefaultSelectors.Card;
+﻿using Robi.Clash.DefaultSelectors.Player;
+using Robi.Clash.DefaultSelectors.Enemy;
+using Robi.Clash.DefaultSelectors.Card;
 using Serilog;
-using Buddy.Common;
-using Buddy.Clash.DefaultSelectors.Utilities;
-using Buddy.Clash.DefaultSelectors.Logic;
-using Buddy.Clash.DefaultSelectors.Settings;
+using Robi.Common;
+using Robi.Clash.DefaultSelectors.Utilities;
+using Robi.Clash.DefaultSelectors.Logic;
+using Robi.Clash.DefaultSelectors.Settings;
 
-namespace Buddy.Clash.DefaultSelectors.Game
+namespace Robi.Clash.DefaultSelectors.Game
 {
     class GameHandling
     {

@@ -1,19 +1,19 @@
-﻿using Buddy.Clash.Engine.NativeObjects.Native;
-using Buddy.Clash.DefaultSelectors.Game;
-using Buddy.Clash.DefaultSelectors.Utilities;
-using Buddy.Clash.DefaultSelectors.Enemy;
-using Buddy.Common;
+﻿using Robi.Clash.Engine.NativeObjects.Native;
+using Robi.Clash.DefaultSelectors.Game;
+using Robi.Clash.DefaultSelectors.Utilities;
+using Robi.Clash.DefaultSelectors.Enemy;
+using Robi.Common;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
-using Buddy.Clash.DefaultSelectors.Settings;
-using Buddy.Clash.DefaultSelectors.Player;
-using Buddy.Clash.DefaultSelectors.Card;
+using Robi.Clash.Engine.NativeObjects.Logic.GameObjects;
+using Robi.Clash.DefaultSelectors.Settings;
+using Robi.Clash.DefaultSelectors.Player;
+using Robi.Clash.DefaultSelectors.Card;
 
-namespace Buddy.Clash.DefaultSelectors.Logic
+namespace Robi.Clash.DefaultSelectors.Logic
 {
     class CastPositionHandling
     {

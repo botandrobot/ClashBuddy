@@ -5,7 +5,7 @@ using Serilog.Events;
 using Serilog.Formatting.Display;
 using Serilog.Sinks.RollingFile;
 
-namespace Buddy.Clash.DefaultSelectors
+namespace Robi.Clash.DefaultSelectors
 {
 	using System;
 	using System.Collections.Concurrent;
@@ -13,7 +13,7 @@ namespace Buddy.Clash.DefaultSelectors
 	using Engine;
 	using Common;
 	using Serilog;
-	using Buddy.Clash.DefaultSelectors.Utilities;
+	using Robi.Clash.DefaultSelectors.Utilities;
 
 	public class EarlyCycleSelector : ActionSelectorBase
 	{

@@ -1,14 +1,14 @@
-﻿using Buddy.Clash.DefaultSelectors.Game;
-using Buddy.Clash.DefaultSelectors.Logic;
-using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
-using Buddy.Clash.Engine.NativeObjects.Native;
-using Buddy.Common;
+﻿using Robi.Clash.DefaultSelectors.Game;
+using Robi.Clash.DefaultSelectors.Logic;
+using Robi.Clash.Engine.NativeObjects.Logic.GameObjects;
+using Robi.Clash.Engine.NativeObjects.Native;
+using Robi.Common;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Buddy.Clash.DefaultSelectors.Utilities
+namespace Robi.Clash.DefaultSelectors.Utilities
 {
     class PositionHelper
     {

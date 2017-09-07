@@ -1,17 +1,17 @@
-﻿using Buddy.Clash.DefaultSelectors.Game;
-using Buddy.Clash.DefaultSelectors.Logic;
-using Buddy.Clash.DefaultSelectors.Player;
-using Buddy.Clash.DefaultSelectors.Utilities;
-using Buddy.Clash.Engine;
-using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
-using Buddy.Common;
+﻿using Robi.Clash.DefaultSelectors.Game;
+using Robi.Clash.DefaultSelectors.Logic;
+using Robi.Clash.DefaultSelectors.Player;
+using Robi.Clash.DefaultSelectors.Utilities;
+using Robi.Clash.Engine;
+using Robi.Clash.Engine.NativeObjects.Logic.GameObjects;
+using Robi.Common;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Buddy.Clash.DefaultSelectors.Enemy
+namespace Robi.Clash.DefaultSelectors.Enemy
 {
     class EnemyCharacterHandling
     {

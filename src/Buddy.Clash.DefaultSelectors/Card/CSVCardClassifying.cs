@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Buddy.Clash.Engine.Csv.CsvLogic;
-using Buddy.Clash.DefaultSelectors.Game;
+using Robi.Clash.Engine.Csv.CsvLogic;
+using Robi.Clash.DefaultSelectors.Game;
 
-namespace Buddy.Clash.DefaultSelectors.Card
+namespace Robi.Clash.DefaultSelectors.Card
 {
     class CSVCardClassifying
     {

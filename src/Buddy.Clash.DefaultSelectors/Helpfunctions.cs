@@ -1,7 +1,7 @@
 ﻿// TODO: Make sure to figure out a way to use the general logger for that.
-namespace Buddy.Clash.DefaultSelectors
+namespace Robi.Clash.DefaultSelectors
 {
-    using Buddy.Common;
+    using Robi.Common;
     using Serilog;
     using System;
     using System.Collections.Generic;

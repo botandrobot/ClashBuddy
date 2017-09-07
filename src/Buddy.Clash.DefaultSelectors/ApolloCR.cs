@@ -1,7 +1,7 @@
-﻿using Buddy.Clash.DefaultSelectors.Settings;
-using Buddy.Engine.Settings;
+﻿using Robi.Clash.DefaultSelectors.Settings;
+using Robi.Engine.Settings;
 
-namespace Buddy.Clash.DefaultSelectors
+namespace Robi.Clash.DefaultSelectors
 {
     using System;
     using System.Collections.Concurrent;
@@ -13,10 +13,10 @@ namespace Buddy.Clash.DefaultSelectors
     using System.Collections.Generic;
     using Engine.NativeObjects.Logic.GameObjects;
     using Utilities;
-    using Buddy.Clash.DefaultSelectors.Player;
-    using Buddy.Clash.DefaultSelectors.Game;
-    using Buddy.Clash.DefaultSelectors.Logic;
-    using Buddy.Clash.DefaultSelectors.Card;
+    using Robi.Clash.DefaultSelectors.Player;
+    using Robi.Clash.DefaultSelectors.Game;
+    using Robi.Clash.DefaultSelectors.Logic;
+    using Robi.Clash.DefaultSelectors.Card;
 
     // Just 1v1
     public class ApolloCR : ActionSelectorBase

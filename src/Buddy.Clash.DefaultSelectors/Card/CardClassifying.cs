@@ -1,14 +1,14 @@
-﻿using Buddy.Clash.Engine;
+﻿using Robi.Clash.Engine;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Serilog;
 using System.Linq;
-using Buddy.Common;
-using Buddy.Clash.Engine.NativeObjects.LogicData;
-using Buddy.Clash.DefaultSelectors.Utilities;
+using Robi.Common;
+using Robi.Clash.Engine.NativeObjects.LogicData;
+using Robi.Clash.DefaultSelectors.Utilities;
 
-namespace Buddy.Clash.DefaultSelectors.Card
+namespace Robi.Clash.DefaultSelectors.Card
 {
     class CardClassifying
     {

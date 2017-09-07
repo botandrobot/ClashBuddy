@@ -1,14 +1,14 @@
-﻿using Buddy.Clash.Engine.NativeObjects.Logic.GameObjects;
+﻿using Robi.Clash.Engine.NativeObjects.Logic.GameObjects;
 using System.Collections.Generic;
 using System.Text;
 using System;
 using System.Linq;
-using Buddy.Clash.Engine;
+using Robi.Clash.Engine;
 using Serilog;
-using Buddy.Common;
-using Buddy.Clash.DefaultSelectors.Utilities;
+using Robi.Common;
+using Robi.Clash.DefaultSelectors.Utilities;
 
-namespace Buddy.Clash.DefaultSelectors.Enemy
+namespace Robi.Clash.DefaultSelectors.Enemy
 {
     class Enemy
     {

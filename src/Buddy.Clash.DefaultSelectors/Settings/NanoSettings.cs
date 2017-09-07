@@ -1,7 +1,7 @@
-﻿namespace Buddy.Clash.DefaultSelectors.Settings
+﻿namespace Robi.Clash.DefaultSelectors.Settings
 {
-    using Buddy.Common;
-    using Buddy.Engine.Settings.Attributes;
+    using Robi.Common;
+    using Robi.Engine.Settings.Attributes;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
 

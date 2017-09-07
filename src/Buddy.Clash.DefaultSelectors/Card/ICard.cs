@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Buddy.Clash.DefaultSelectors.Card
+namespace Robi.Clash.DefaultSelectors.Card
 {
     interface ICard
     {

@@ -1,14 +1,14 @@
-﻿using Buddy.Clash.Engine;
-using Buddy.Clash.Engine.NativeObjects.LogicData;
-using Buddy.Clash.DefaultSelectors.Game;
-using Buddy.Clash.DefaultSelectors.Enemy;
-using Buddy.Common;
+﻿using Robi.Clash.Engine;
+using Robi.Clash.Engine.NativeObjects.LogicData;
+using Robi.Clash.DefaultSelectors.Game;
+using Robi.Clash.DefaultSelectors.Enemy;
+using Robi.Common;
 using Serilog;
 using System.Collections.Concurrent;
 using System.Linq;
-using Buddy.Clash.DefaultSelectors.Card;
+using Robi.Clash.DefaultSelectors.Card;
 
-namespace Buddy.Clash.DefaultSelectors.Logic
+namespace Robi.Clash.DefaultSelectors.Logic
 {
     class CastDeploymentHandling
     {
