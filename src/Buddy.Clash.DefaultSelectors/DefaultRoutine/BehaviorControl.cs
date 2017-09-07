@@ -1,10 +1,14 @@
 ﻿namespace Buddy.Clash.DefaultSelectors
 {
+    using Buddy.Clash.DefaultSelectors.Settings;
+    using Buddy.Engine.Settings;
     using System.Collections.Generic;
 
     public class BehaviorControl : Behavior
     {
         public override string BehaviorName() { return "Control"; }
+        //internal static ControlSettings Settings => SettingsManager.GetSetting<ControlSettings>("Control");
+
 
 
         public override Cast getBestCast(Playfield p)
