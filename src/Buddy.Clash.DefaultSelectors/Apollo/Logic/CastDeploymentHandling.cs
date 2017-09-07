@@ -26,11 +26,13 @@ namespace Robi.Clash.DefaultSelectors.Logic
             switch (cardTypeToPlay)
             {
                 case CardTypeOld.All:
-                    return EarlyCycle();
+                    return AllSpellDecision();
                 case CardTypeOld.Defense:
-                    return Defense();
+                    return DefenseSpellDecision();
                 case CardTypeOld.Troop:
-                    return DefenseTroop();
+                    return DefenseTroopSpellDecision();
+                case CardTypeOld.Buildings:
+                    return BuildingsSpellDecision();
                 case CardTypeOld.NONE:
                     return null;
             }
@@ -62,22 +64,7 @@ namespace Robi.Clash.DefaultSelectors.Logic
             }
         }
 
-        public static bool DamagingSpellDecision()
-        {
-            int count = 0;
-            EnemyCharacterHandling.EnemyCharacterWithTheMostEnemiesAround(out count);
-
-            /*
-            Logger.Debug("enemyWhithTheMostEnemiesAround-Count: {count} enemy-Name {name}", count
-                         , enemy.LogicGameObjectData.Name.Value);
-                         */
-            if (count > GameHandling.Settings.SpellDeployConditionCharCount)
-                return true;
-
-            return false;
-        }
-
-        public static Card.ICard EarlyCycle()
+        public static Card.ICard AllSpellDecision()
         {
             IOrderedEnumerable<Spell> troopCycleSpells = CardClassifying.TroopCycleCards;
             IOrderedEnumerable<Spell> damagingSpells = CardClassifying.Damaging;
@@ -107,6 +94,14 @@ namespace Robi.Clash.DefaultSelectors.Logic
                     return new CardCharacter(spell.Name.Value, TroopType.AOEAttackFlying);
             }
 
+            if (DeployBuildingDecision())
+            {
+                // ToDo: Take right building and set right Building-Type
+                CardBuilding spell = BuildingsSpellDecision();
+                if (spell != null)
+                    return new CardBuilding(spell.Name, spell.Type);
+            }
+
             // ToDo: Ranger, Flying usw.
             if (troopCycleSpells.Count() > 1)
             {
@@ -117,7 +112,7 @@ namespace Robi.Clash.DefaultSelectors.Logic
             return TroopPowerSpells();
         }
 
-        public static ICard DefenseTroop()
+        public static ICard DefenseTroopSpellDecision()
         {
             if (IsAOEAttackNeeded())
             {
@@ -138,7 +133,7 @@ namespace Robi.Clash.DefaultSelectors.Logic
             return new CardCharacter(CardClassifying.Troop.FirstOrDefault().Name.Value, TroopType.Ranger);
         }
 
-        public static ICard Defense()
+        public static ICard DefenseSpellDecision()
         {
             IOrderedEnumerable<Spell> damagingSpells = CardClassifying.Damaging;
 
@@ -176,6 +171,16 @@ namespace Robi.Clash.DefaultSelectors.Logic
                 // Maybe also flying possible
                 return TroopPowerSpells();
             }
+        }
+
+        private static CardBuilding BuildingsSpellDecision()
+        {
+            var spell = CardClassifying.Buildings.FirstOrDefault();
+
+            if (spell != null)
+                return new CardBuilding(spell.Name.Value, BuildingType.BuildingSpawning);
+
+            return null;
         }
 
 
@@ -217,5 +222,28 @@ namespace Robi.Clash.DefaultSelectors.Logic
             }
             return null;
         }
+
+        #region Spell and Buildings
+        public static bool DamagingSpellDecision()
+        {
+            int count = 0;
+            EnemyCharacterHandling.EnemyCharacterWithTheMostEnemiesAround(out count);
+
+            /*
+            Logger.Debug("enemyWhithTheMostEnemiesAround-Count: {count} enemy-Name {name}", count
+                         , enemy.LogicGameObjectData.Name.Value);
+                         */
+            if (count > GameHandling.Settings.SpellDeployConditionCharCount)
+                return true;
+
+            return false;
+        }
+
+        public static bool DeployBuildingDecision()
+        {
+            // ToDo: Find gut conditions
+            return true;
+        }
+        #endregion
     }
 }

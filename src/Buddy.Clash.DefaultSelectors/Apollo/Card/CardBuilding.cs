@@ -6,9 +6,10 @@ namespace Robi.Clash.DefaultSelectors.Card
 {
     class CardBuilding : ICard
     {
-        public CardBuilding(string name)
+        public CardBuilding(string name, BuildingType type)
         {
             Name = name;
+            Type = type;
         }
 
         public string Name { get; set; }

@@ -33,6 +33,7 @@ namespace Robi.Clash.DefaultSelectors.Card
         Defense,
         All,
         Troop,
+        Buildings,
         NONE
     };
 }

@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
 
-    
+
     public class attackDef
     {
         public BoardObj attacker;
@@ -157,7 +157,7 @@
         public int hiHPboBuildingsDPS = 0;
         public int hiHPboAirTransport = 0;
         public int hiHPboHP = 0;
-        
+
         public group(bool own, VectorAI position, List<BoardObj> list, int lowHpLimit, bool recalcParams = false, int radius = 3000)
         {
             sum = false;
@@ -309,7 +309,7 @@
             }
         }
 
-        public bool isInGroup (VectorAI pos)
+        public bool isInGroup(VectorAI pos)
         {
             return (Position.X - pos.X) * (Position.X - pos.X) + (Position.Y - pos.Y) * (Position.Y - pos.Y) < SquaredR;
         }
@@ -342,6 +342,9 @@
         public List<BoardObj> ownTowers = new List<BoardObj>();
         public List<BoardObj> enemyTowers = new List<BoardObj>();
 
+        public BoardObj ownKingsTower = new BoardObj();
+        public BoardObj enemyKingsTower = new BoardObj();
+
         public group ownGroup = null;
         public group enemyGroup = null;
 
@@ -367,7 +370,7 @@
         //public int guessingKingTowerHP = 30;                
         public List<Action> playactions = new List<Action>();
         public List<int> pIdHistory = new List<int>();
-        
+
 
         private void copyBoardObj(List<BoardObj> source, List<BoardObj> trgt)
         {
@@ -396,7 +399,7 @@
             this.nextEntity = 1000;
             this.evaluatePenality = 0;
             this.ruleWeight = 0;
-            this.rulesUsed = "";        
+            this.rulesUsed = "";
 
 
         }
@@ -421,16 +424,18 @@
 
             copyBoardObj(p.ownTowers, this.ownTowers);
             copyBoardObj(p.enemyTowers, this.enemyTowers);
+            this.ownKingsTower = new BoardObj(p.ownKingsTower);
+            this.enemyKingsTower = new BoardObj(p.enemyKingsTower);
 
             copyCards(p.ownHandCards, p.nextCard);
 
             this.ownDeck = p.ownDeck;
             this.enemyDeck = p.enemyDeck;
 
-            ownGroup = p.ownGroup;
-            enemyGroup = p.enemyGroup;
+            this.ownGroup = p.ownGroup;
+            this.enemyGroup = p.enemyGroup;
             //enemyHandCards = prozis.enemyHandCards;
-        
+
             if (p.needPrint)
             {
                 this.needPrint = true;
@@ -438,7 +443,7 @@
                 this.pIdHistory.Add(pID);
             }
             this.nextEntity = p.nextEntity;
-                        
+
             this.evaluatePenality = p.evaluatePenality;
             this.ruleWeight = p.ruleWeight;
             this.rulesUsed = p.rulesUsed;
@@ -454,7 +459,7 @@
             //TODO
             return true;
         }
-        
+
         public Int64 getPHash()
         {
             //TODO
@@ -603,7 +608,7 @@
                 break;
             }
 
-            if  (enemyMelee)
+            if (enemyMelee)
             {
                 if (attackerMelee)
                 {
@@ -763,7 +768,7 @@
         public Handcard getTankCard()
         {
             Handcard retval = null;
-            foreach(Handcard hc in ownHandCards)
+            foreach (Handcard hc in ownHandCards)
             {
                 if (hc.card.type == boardObjType.MOB && (retval == null || hc.card.MaxHP > retval.card.MaxHP)) retval = hc;
             }
@@ -792,7 +797,7 @@
             List<Handcard> retval = new List<Handcard>();
             int count = ownHandCards.Count;
             Handcard hc;
-            for (int i = 0; i < count; i++ )
+            for (int i = 0; i < count; i++)
             {
                 hc = ownHandCards[i];
                 if (hc.card.type == type) retval.Add(hc);
@@ -898,7 +903,23 @@
             }
         }
 
-                
+        public void setKingsLine(bool own)
+        {
+            BoardObj tower = own ? this.ownKingsTower : this.enemyKingsTower;
+            List<BoardObj> list = own ? this.ownTowers : this.enemyTowers;
+            int i = 0;
+            foreach (BoardObj t in list) if (t.Tower < 10) i += t.Line;
+            tower.Line = 0;
+            switch (i)
+            {
+                case 0: tower.Line = 3; break;
+                case 1: tower.Line = 2; break;
+                case 2: tower.Line = 1; break;
+            }
+            foreach (BoardObj t in list) if (t.Tower > 9) t.Line = tower.Line;
+        }
+
+
         public int getNextEntity()
         {
             //i dont trust return this.nextEntity++; !!!
@@ -906,7 +927,7 @@
             this.nextEntity++;
             return retval;
         }
-        
+
         public void guessObjDamage() //TODO
         {
             //или как то по другому когда один наносит урон другому - типа кто сильнее
@@ -941,14 +962,14 @@
             //help.logg("enemyBuildings");
             foreach (BoardObj bo in enemyBuildings) help.logg(bo);
         }
-        
+
 
         public Action getNextAction()
         {
             if (this.playactions.Count >= 1) return this.playactions[0];
             return null;
         }
-        
+
 
 
     }
