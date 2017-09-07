@@ -14,9 +14,7 @@ namespace Buddy.Clash.DefaultSelectors.Tests
             Behavior behave = new BehaviorControl();//change this to new BehaviorRush() for rush mode
 
             Cast bc = behave.getBestCast(bt.btPlayfield);
-
-            Assert.Equal(0, bc.Position.X);
-            Assert.Equal(0, bc.Position.Y);
+            
         }
     }
 }

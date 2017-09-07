@@ -54,7 +54,7 @@ namespace Buddy.Clash.DefaultSelectors
             //Troops
             angrybarbarian,
             archer,
-            assassin,
+            assassin, //bandit
             axeman, //executioner
             babydragon,
             balloon,
@@ -137,10 +137,13 @@ namespace Buddy.Clash.DefaultSelectors
             rage,
             tornado,
             zap,
-            
+
             //Projectiles
+            arrows,
+            fireball,
+            goblinbarrel,
+            rocket,
             archerarrow,
-            arrowsspell,
             arrowsspelldeco,
             axemanprojectile,
             babydragonprojectile,
@@ -151,15 +154,12 @@ namespace Buddy.Clash.DefaultSelectors
             bowlerprojectile,
             chr_wizardprojectile,
             dartbarrellprojectile,
-            fireballspell,
             firespiritsprojectile,
-            goblinbarrelspell,
             ice_wizardprojectile,
             icespiritsprojectile,
             kingprojectile,
             lavahoundprojectile,
             lavapupprojectile,
-            lighningspell,
             logprojectile,
             logprojectilerolling,
             megaknightappear,
@@ -170,7 +170,6 @@ namespace Buddy.Clash.DefaultSelectors
             musketeerprojectile,
             princessprojectile,
             princessprojectiledeco,
-            rocketspell,
             royalgiantprojectile,
             speargoblinprojectile,
             towercannonball,
@@ -194,7 +193,6 @@ namespace Buddy.Clash.DefaultSelectors
 
             //TODO: check names below
             //troops
-            bandit,
             dartgoblin,
             elitebarbarian,
             executioner, //axeman
@@ -209,12 +207,8 @@ namespace Buddy.Clash.DefaultSelectors
             sparky,
             threemusketeers, 
             //-Spels
-            arrows,
             clonespell,
-            fireball,
-            goblinbarrel,
             mirror,
-            rocket,
             thelog,
             //-Buildings
             furnace,
@@ -273,349 +267,7 @@ namespace Buddy.Clash.DefaultSelectors
             public bool needUpdate = true;
             public int numDuplicates = 0;
             public int numDifferences = 0;
-            public List<cardtrigers> trigers;
-
-
-
-
-
-
-            //stuff for test and seech
-            public string srcTargettedDamageEffect3 = "";
-            public string srcTargettedDamageEffect2 = "";
-            public string srcTargettedDamageEffect1 = "";
-            public string srcTargetedHitEffectSpecial = "";
-            public string srcTargetedHitEffect = "";
-            public string srcTakeDamageEffect = "";
-            public string srcTID = "";
-            public string srcStartingBuff = "";
-            public string srcSpecialReadyEffect = "";
-            public string srcSpawnProjectile = "";
-            public string srcSpawnPathfindMorph = "";
-            public string srcSpawnPathfindEffect = "";
-            public string srcSpawnEffect = "";
-            public string srcSpawnDeployBaseAnim = "";
-            public string srcSpawnCharacterEffect = "";
-            public string srcSpawnCharacter = "";
-            public string srcSpawnAreaObject = "";
-            public string srcShieldLostEffect = "";
-            public string srcShadowCustomLow = "";
-            public string srcShadowCustom = "";
-            public string srcRedTopExportName = "";
-            public string srcRedShieldExportName = "";
-            public string srcRedExportName = "";
-            public string srcRarity = "";
-            public string srcProjectileSpecial = "";
-            public string srcProjectileEffectSpecial = "";
-            public string srcProjectileEffect = "";
-            public string srcProjectile = "";
-            public string srcName = "";
-            public string srcMoveEffect = "";
-            public string srcMorphEffect = "";
-            public string srcMorphCharacter = "";
-            public string srcLoopingFilter = "";
-            public string srcLoadAttackEffectReady = "";
-            public string srcLoadAttackEffect3 = "";
-            public string srcLoadAttackEffect2 = "";
-            public string srcLoadAttackEffect1 = "";
-            public string srcLandingEffect = "";
-            public string srcKamikazeEffect = "";
-            public string srcHideEffect = "";
-            public string srcHealthBar = "";
-            public string srcFlameEffect3 = "";
-            public string srcFlameEffect2 = "";
-            public string srcFlameEffect1 = "";
-            public string srcFileName = "";
-            public string srcDeployBaseAnimExportName = "";
-            public string srcDeathSpawnProjectile = "";
-            public string srcDeathSpawnCharacter = "";
-            public string srcDeathEffect = "";
-            public string srcDeathAreaEffect = "";
-            public string srcDashStartEffect = "";
-            public string srcDashFilter = "";
-            public string srcDashEffect = "";
-            public string srcDamageLevelTransitionEffect23 = "";
-            public string srcDamageLevelTransitionEffect12 = "";
-            public string srcDamageExportName = "";
-            public string srcDamageEffectSpecial = "";
-            public string srcDamageEffect = "";
-            public string srcCustomFirstProjectile = "";
-            public string srcContinuousEffect = "";
-            public string srcChargeEffect = "";
-            public string srcBuffOnDamage = "";
-            public string srcBlueTopExportName = "";
-            public string srcBlueShieldExportName = "";
-            public string srcBlueExportName = "";
-            public string srcAttackStartEffectSpecial = "";
-            public string srcAttackStartEffect = "";
-            public string srcAttachedCharacter = "";
-            public string srcAreaEffectOnMorph = "";
-            public string srcAreaEffectOnDash = "";
-            public string srcAreaBuff = "";
-            public string srcAppearEffect = "";
-            public string srcAppearAreaObject = "";
-            public string srcAbility = "";
-            public int? srcWalkingSpeedTweakPercentage = 0;
-            public int? srcWaitMS = 0;
-            public int? srcVisualHitSpeed = 0;
-            public int? srcVariableDamageTransitionTime = 0;
-            public int? srcVariableDamageTime2 = 0;
-            public int? srcVariableDamageTime1 = 0;
-            public int? srcVariableDamage3 = 0;
-            public int? srcVariableDamage2 = 0;
-            public int? srcUpTimeMs = 0;
-            public int? srcTurretMovement = 0;
-            public int? srcTileSizeOverride = 0;
-            public int? srcTargetEffectY = 0;
-            public int? srcStopTimeAfterSpecialAttack = 0;
-            public int? srcStopTimeAfterAttack = 0;
-            public int? srcStopMovementAfterMS = 0;
-            public int? srcStartingBuffTime = 0;
-            public int? srcSpeed = 0;
-            public int? srcSpecialRange = 0;
-            public int? srcSpecialMinRange = 0;
-            public int? srcSpecialLoadTime = 0;
-            public int? srcSpecialAttackInterval = 0;
-            public int? srcSpawnStartTime = 0;
-            public int? srcSpawnRadius = 0;
-            public int? srcSpawnPushbackRadius = 0;
-            public int? srcSpawnPushback = 0;
-            public int? srcSpawnPauseTime = 0;
-            public int? srcSpawnPathfindSpeed = 0;
-            public int? srcSpawnNumber = 0;
-            public int? srcSpawnLimit = 0;
-            public int? srcSpawnInterval = 0;
-            public int? srcSpawnCharacterLevelIndex = 0;
-            public int? srcSpawnAreaObjectLevelIndex = 0;
-            public int? srcSpawnAngleShift = 0;
-            public int? srcSightRange = 0;
-            public int? srcSightClipSide = 0;
-            public int? srcSightClip = 0;
-            public int? srcShieldHitpoints = 0;
-            public int? srcShieldDiePushback = 0;
-            public int? srcShadowY = 0;
-            public int? srcShadowX = 0;
-            public int? srcShadowSkew = 0;
-            public int? srcShadowScaleY = 0;
-            public int? srcShadowScaleX = 0;
-            public int? srcScale = 0;
-            public int? srcRotateAngleSpeed = 0;
-            public int? srcRange = 0;
-            public int? srcPushback = 0;
-            public int? srcProjectileYOffset = 0;
-            public int? srcProjectileStartZ = 0;
-            public int? srcProjectileStartRadius = 0;
-            public int? srcNoDeploySizeW = 0;
-            public int? srcNoDeploySizeH = 0;
-            public int? srcMultipleTargets = 0;
-            public int? srcMultipleProjectiles = 0;
-            public int? srcMorphTime = 0;
-            public int? srcMinimumRange = 0;
-            public int? srcMass = 0;
-            public int? srcManaGenerateTimeMs = 0;
-            public int? srcManaGenerateLimit = 0;
-            public int? srcManaCollectAmount = 0;
-            public int? srcLoadTime = 0;
-            public int? srcLifeTime = 0;
-            public int? srcKamikazeTime = 0;
-            public int? srcJumpSpeed = 0;
-            public int? srcJumpHeight = 0;
-            public int? srcHitpoints = 0;
-            public int? srcHitSpeed = 0;
-            public int? srcHideTimeMs = 0;
-            public int? srcHealthBarOffsetY = 0;
-            public int? srcGrowTime = 0;
-            public int? srcGrowSize = 0;
-            public int? srcFlyingHeight = 0;
-            public int? srcDeployTimerDelay = 0;
-            public int? srcDeployTime = 0;
-            public int? srcDeployDelay = 0;
-            public int? srcDeathSpawnRadius = 0;
-            public int? srcDeathSpawnMinRadius = 0;
-            public int? srcDeathSpawnDeployTime = 0;
-            public int? srcDeathSpawnCount = 0;
-            public int? srcDeathPushBack = 0;
-            public int? srcDeathDamageRadius = 0;
-            public int? srcDeathDamage = 0;
-            public int? srcDashRadius = 0;
-            public int? srcDashPushBack = 0;
-            public int? srcDashMinRange = 0;
-            public int? srcDashMaxRange = 0;
-            public int? srcDashLandingTime = 0;
-            public int? srcDashImmuneToDamageTime = 0;
-            public int? srcDashDamage = 0;
-            public int? srcDashCooldown = 0;
-            public int? srcDashConstantTime = 0;
-            public int? srcDamageSpecial = 0;
-            public int? srcDamage = 0;
-            public int? srcCrownTowerDamagePercent = 0;
-            public int? srcCollisionRadius = 0;
-            public int? srcChargeSpeedMultiplier = 0;
-            public int? srcChargeRange = 0;
-            public int? srcBurstDelay = 0;
-            public int? srcBurst = 0;
-            public int? srcBuffOnDamageTime = 0;
-            public int? srcAttackShakeTime = 0;
-            public int? srcAttackPushBack = 0;
-            public int? srcAttackDashTime = 0;
-            public int? srcAttachedCharacterHeight = 0;
-            public int? srcAreaDamageRadius = 0;
-            public int? srcAreaBuffTime = 0;
-            public int? srcAreaBuffRadius = 0;
-            public int? srcAppearPushbackRadius = 0;
-            public int? srcAppearPushback = 0;
-            public int? srcActivationTime = 0;
-            public bool? srcVariableDamageLifeTime = false;
-            public bool? srcUseAnimator = false;
-            public bool? srcTargetOnlyBuildings = false;
-            public bool? srcSpecialAttackWhenHidden = false;
-            public bool? srcSpawnConstPriority = false;
-            public bool? srcShowHealthNumber = false;
-            public bool? srcSelfAsAoeCenter = false;
-            public bool? srcRetargetAfterAttack = false;
-            public bool? srcMorphKeepTarget = false;
-            public bool? srcLoopMoveEffect = false;
-            public bool? srcLoadFirstHit = false;
-            public bool? srcKamikaze = false;
-            public bool? srcJumpEnabled = false;
-            public bool? srcIsSummonerTower = false;
-            public bool? srcIgnorePushback = false;
-            public bool? srcHidesWhenNotAttacking = false;
-            public bool? srcHideBeforeFirstHit = false;
-            public bool? srcHealOnMorph = false;
-            public bool? srcHasRotationOnTimeline = false;
-            public bool? srcFlyFromGround = false;
-            public bool? srcFlyDirectPaths = false;
-            public bool? srcDontStopMoveAnim = false;
-            public bool? srcDeathSpawnPushback = false;
-            public bool? srcDeathInheritIgnoreList = false;
-            public bool? srcCrowdEffects = false;
-            public bool? srcBurstKeepTarget = false;
-            public bool? srcBuildingTarget = false;
-            public bool? srcAttacksGround = false;
-            public bool? srcAttacksAir = false;
-            public bool? srcAllTargetsHit = false;
-
-
-
-
-
-
-
-            //aoe
-            public string srcSpawnsAEO = "";
-            public string srcScaledEffect = "";
-            public string srcOneShotEffect = "";
-            public string srcLoopingEffect = "";
-            public string srcHitEffect = "";
-            public string srcBuff = "";
-            public int? srcSpawnTime = 0;
-            public int? srcSpawnMaxCount = 0;
-            public int? srcSpawnInitialDelay = 0;
-            public int? srcRadius = 0;
-            public int? srcProjectileStartHeight = 0;
-            public int? srcMaximumTargets = 0;
-            public int? srcLifeDurationIncreasePerLevel = 0;
-            public int? srcLifeDurationIncreaseAfterTournamentCap = 0;
-            public int? srcLifeDuration = 0;
-            public int? srcBuffTimeIncreasePerLevel = 0;
-            public int? srcBuffTimeIncreaseAfterTournamentCap = 0;
-            public int? srcBuffTime = 0;
-            public int? srcBuffNumber = 0;
-            public int? srcAttractPercentage = 0;
-            public bool? srcProjectilesToCenter = false;
-            public bool? srcOnlyOwnTroops = false;
-            public bool? srcOnlyEnemies = false;
-            public bool? srcNoEffectToCrownTowers = false;
-            public bool? srcIgnoreBuildings = false;
-            public bool? srcHitsGround = false;
-            public bool? srcHitsAir = false;
-            public bool? srcHitBiggestTargets = false;
-            public bool? srcControlsBuff = false;
-            public bool? srcClone = false;
-            public bool? srcCapBuffTimeToAreaEffectTime = false;
-            public bool? srcAffectsHidden = false;
-
-
-
-            //buildings
-
-            //projectiles
-
-            public string srcTrailEffect = "";
-            public string srcTargettedEffect = "";
-            public string srcTargetBuff = "";
-            public string srcSpawnAreaEffectObject = "";
-            public string srcShadowExportName = "";
-            public string srcScatter = "";
-            public string srcRedShadowExportName = "";
-            public string srcPingpongDeathEffect = "";
-            public string srcHitSoundWhenParentAlive = "";
-            public string srcExportName = "";
-            public string srcChainedHitEndEffect = "";
-            public int? srcSpawnCharacterDeployTime = 0;
-            public int? srcSpawnCharacterCount = 0;
-            public int? srcRandomDistance = 0;
-            public int? srcRandomAngle = 0;
-            public int? srcRadiusY = 0;
-            public int? srcProjectileRange = 0;
-            public int? srcProjectileRadiusY = 0;
-            public int? srcProjectileRadius = 0;
-            public int? srcPingpongVisualTime = 0;
-            public int? srcMinDistance = 0;
-            public int? srcMaxDistance = 0;
-            public int? srcHeal = 0;
-            public int? srcGravity = 0;
-            public int? srcDragMargin = 0;
-            public int? srcDragBackSpeed = 0;
-            public int? srcCrownTowerHealPercent = 0;
-            public int? srcConstantHeight = 0;
-            public int? srcChainedHitRadius = 0;
-            public bool? srcUse360Frames = false;
-            public bool? srcTargetToEdge = false;
-            public bool? srcShakesTargets = false;
-            public bool? srcShadowDisableRotate = false;
-            public bool? srcPushbackAll = false;
-            public bool? srcHoming = false;
-            public bool? srcHeightFromTargetRadius = false;
-            public bool? srcAoeToGround = false;
-            public bool? srcAoeToAir = false;
-
-
-            //CharacterBuff
-            public string srcPortalSpell = "";
-            public string srcNegatesBuffs = "";
-            public string srcMarkEffect = "";
-            public string srcImmunityToBuffs = "";
-            public string srcIconFileName = "";
-            public string srcIconExportName = "";
-            public string srcFilterFile = "";
-            public string srcFilterExportName = "";
-            public string srcEffect = "";
-            public int? srcSpeedMultiplier = 0;
-            public int? srcSpawnSpeedMultiplier = 0;
-            public int? srcSizeMultiplier = 0;
-            public int? srcHitSpeedMultiplier = 0;
-            public int? srcHitFrequency = 0;
-            public int? srcHealPerSecond = 0;
-            public int? srcDamageReduction = 0;
-            public int? srcDamagePerSecond = 0;
-            public int? srcDamageMultiplier = 0;
-            public int? srcAudioPitchModifier = 0;
-            public bool? srcStaticTarget = false;
-            public bool? srcRemoveOnHeal = false;
-            public bool? srcRemoveOnAttack = false;
-            public bool? srcPanic = false;
-            public bool? srcInvisible = false;
-            public bool? srcImmuneToAntiMagic = false;
-            public bool? srcIgnorePushBack = false;
-            public bool? srcFilterInheritLifeDuration = false;
-            public bool? srcFilterAffectsTransformation = false;
-            public bool? srcEnableStacking = false;
-            public bool? srcControlledByParent = false;
-            public bool? srcChangeControl = false;
-
-            
+            public List<cardtrigers> trigers;           
 
 
 
@@ -650,7 +302,7 @@ namespace Buddy.Clash.DefaultSelectors
         Dictionary<int, Card> forTestBase = new Dictionary<int, Card>();
         Dictionary<cardName, Card> cardNameToCardList = new Dictionary<cardName, Card>();
         List<string> allCardIDS = new List<string>();
-        public Card unknownCard;
+        public Card unknownCard = new Card();
         public bool installedWrong = false;
 
         public Card teacherminion;
@@ -834,6 +486,14 @@ namespace Buddy.Clash.DefaultSelectors
             {
                 c = new Card();
                 c.stringName = e.Name;
+                switch (c.stringName)
+                {
+                    case "FireballSpell": c.stringName = "Fireball"; break;
+                    case "ArrowsSpell": c.stringName = "Arrows"; break;
+                    case "RocketSpell": c.stringName = "Rocket"; break;
+                    case "GoblinBarrelSpell": c.stringName = "GoblinBarrel"; break;
+                    case "LighningSpell": c.stringName = "Lightning"; break;
+                }
                 c.name = cardNamestringToEnum(c.stringName);
                 c.type = boardObjType.PROJECTILE;
                 c.TargetType = targetType.ALL;
@@ -865,8 +525,26 @@ namespace Buddy.Clash.DefaultSelectors
                 LogProjectileRolling 11100
                 AxeManProjectile 6000 axeman 4500*/
 
+                string tmp = "";
                 switch (c.stringName)
                 {
+                    case "DartBarrellProjectile": if (cardNameToCardList.ContainsKey(cardName.dartbarrell)) { cardNameToCardList[cardName.dartbarrell].Atk = c.Atk; cardNameToCardList[cardName.dartbarrell].DamageRadius = c.DamageRadius; } break;
+                    case "BatProjectile": if (cardNameToCardList.ContainsKey(cardName.bat)) { cardNameToCardList[cardName.bat].Atk = c.Atk; cardNameToCardList[cardName.bat].DamageRadius = c.DamageRadius; } break;
+                    case "MegaMinionSpit": if (cardNameToCardList.ContainsKey(cardName.megaminion)) { cardNameToCardList[cardName.megaminion].Atk = c.Atk; cardNameToCardList[cardName.megaminion].DamageRadius = c.DamageRadius; } break;
+                    case "MinionSpit": if (cardNameToCardList.ContainsKey(cardName.minion)) { cardNameToCardList[cardName.minion].Atk = c.Atk; cardNameToCardList[cardName.minion].DamageRadius = c.DamageRadius; } break;
+                    case "BabyDragonProjectile": if (cardNameToCardList.ContainsKey(cardName.babydragon)) { cardNameToCardList[cardName.babydragon].Atk = c.Atk; cardNameToCardList[cardName.babydragon].DamageRadius = c.DamageRadius; } break;
+                    case "LavaPupProjectile": if (cardNameToCardList.ContainsKey(cardName.lavapups)) { cardNameToCardList[cardName.lavapups].Atk = c.Atk; cardNameToCardList[cardName.lavapups].DamageRadius = c.DamageRadius; } break;
+                    case "LavaHoundProjectile": if (cardNameToCardList.ContainsKey(cardName.lavahound)) { cardNameToCardList[cardName.lavahound].Atk = c.Atk; cardNameToCardList[cardName.lavahound].DamageRadius = c.DamageRadius; } break;
+                    case "RoyalGiantProjectile": if (cardNameToCardList.ContainsKey(cardName.royalgiant)) { cardNameToCardList[cardName.royalgiant].Atk = c.Atk; cardNameToCardList[cardName.royalgiant].DamageRadius = c.DamageRadius; } break;
+                    case "ArcherArrow": if (cardNameToCardList.ContainsKey(cardName.archer)) { cardNameToCardList[cardName.archer].Atk = c.Atk; cardNameToCardList[cardName.archer].DamageRadius = c.DamageRadius; } break;
+                    case "MusketeerProjectile": if (cardNameToCardList.ContainsKey(cardName.musketeer)) { cardNameToCardList[cardName.musketeer].Atk = c.Atk; cardNameToCardList[cardName.musketeer].DamageRadius = c.DamageRadius; } break;
+                    case "SpearGoblinProjectile": if (cardNameToCardList.ContainsKey(cardName.speargoblin)) { cardNameToCardList[cardName.speargoblin].Atk = c.Atk; cardNameToCardList[cardName.speargoblin].DamageRadius = c.DamageRadius; } break;
+                    case "BlowdartGoblinProjectile": if (cardNameToCardList.ContainsKey(cardName.blowdartgoblin)) { cardNameToCardList[cardName.blowdartgoblin].Atk = c.Atk; cardNameToCardList[cardName.blowdartgoblin].DamageRadius = c.DamageRadius; } break;
+                    case "WitchProjectile": if (cardNameToCardList.ContainsKey(cardName.witch)) { cardNameToCardList[cardName.witch].Atk = c.Atk; cardNameToCardList[cardName.witch].DamageRadius = c.DamageRadius; } break;
+                    case "TowerPrincessProjectile": if (cardNameToCardList.ContainsKey(cardName.towerprincess)) { cardNameToCardList[cardName.towerprincess].Atk = c.Atk; cardNameToCardList[cardName.towerprincess].DamageRadius = c.DamageRadius; } break;
+                    case "IceSpiritsProjectile": if (cardNameToCardList.ContainsKey(cardName.icespirits)) { cardNameToCardList[cardName.icespirits].Atk = c.Atk; cardNameToCardList[cardName.icespirits].DamageRadius = c.DamageRadius; } break;
+                    case "FireSpiritsProjectile": if (cardNameToCardList.ContainsKey(cardName.firespirits)) { cardNameToCardList[cardName.firespirits].Atk = c.Atk; cardNameToCardList[cardName.firespirits].DamageRadius = c.DamageRadius; } break;
+                    case "PrincessProjectile": if (cardNameToCardList.ContainsKey(cardName.princess)) { cardNameToCardList[cardName.princess].Atk = c.Atk; cardNameToCardList[cardName.princess].DamageRadius = c.DamageRadius; } break;
                     case "AxeManProjectile": if (cardNameToCardList.ContainsKey(cardName.axeman)) { cardNameToCardList[cardName.axeman].Atk = c.Atk; cardNameToCardList[cardName.axeman].DamageRadius = c.DamageRadius; } break;
                     case "ice_wizardProjectile": if (cardNameToCardList.ContainsKey(cardName.icewizard)) { cardNameToCardList[cardName.icewizard].Atk = c.Atk; cardNameToCardList[cardName.icewizard].DamageRadius = c.DamageRadius; } break;
                     case "chr_wizardProjectile": if (cardNameToCardList.ContainsKey(cardName.wizard)) { cardNameToCardList[cardName.wizard].Atk = c.Atk; cardNameToCardList[cardName.wizard].DamageRadius = c.DamageRadius; } break;
@@ -883,13 +561,14 @@ namespace Buddy.Clash.DefaultSelectors
                     case "MortarProjectile": if (cardNameToCardList.ContainsKey(cardName.mortar)) { cardNameToCardList[cardName.mortar].Atk = c.Atk; cardNameToCardList[cardName.mortar].DamageRadius = c.DamageRadius; } break;
                     case "BombTowerProjectile": if (cardNameToCardList.ContainsKey(cardName.bombtower)) { cardNameToCardList[cardName.bombtower].Atk = c.Atk; cardNameToCardList[cardName.bombtower].DamageRadius = c.DamageRadius; } break;
                     case "xbow_projectile": if (cardNameToCardList.ContainsKey(cardName.xbow)) { cardNameToCardList[cardName.xbow].Atk = c.Atk; cardNameToCardList[cardName.xbow].DamageRadius = c.DamageRadius; } break;
+
                     default:
                         if (!cardNameToCardList.ContainsKey(c.name)) cardNameToCardList.Add(c.name, c);
                         else Helpfunctions.Instance.ErrorLog("#####ERR. Duplicate name:" + c.name);
                         break;
                 }
             }
-            
+
             Helpfunctions.Instance.ErrorLog("CardList:" + cardNameToCardList.Count);
         }
 
@@ -965,26 +644,65 @@ namespace Buddy.Clash.DefaultSelectors
         public void uploadCardInfo()
         {
             System.Text.StringBuilder sb = new System.Text.StringBuilder(1000000);
-            
-            /*
-            try
+            foreach (var kvp in cardNameToCardList)
             {
-                using (StreamWriter sw = File.AppendText(Path.Combine(Nano.Settings.DatabaseFullpath,"_carddb_upd.txt")))
+                sb.Clear();
+                Card c = kvp.Value;
+                sb.Append("name:").Append(c.name).Append(" ");
+                sb.Append("stringName:").Append(c.stringName).Append(" ");
+                sb.Append("type:").Append(c.type).Append(" ");
+                sb.Append("Transport:").Append(c.Transport).Append(" ");
+                sb.Append("TargetType:").Append(c.TargetType).Append(" ");
+                sb.Append("affectType:").Append(c.affectType).Append(" ");
+                sb.Append("cost:").Append(c.cost).Append(" ");
+                sb.Append("DeployTime:").Append(c.DeployTime).Append(" ");
+                sb.Append("DeployDelay:").Append(c.DeployDelay).Append(" ");
+                sb.Append("MaxHP:").Append(c.MaxHP).Append(" ");
+                sb.Append("Atk:").Append(c.Atk).Append(" ");
+                sb.Append("Shield:").Append(c.Shield).Append(" ");
+                sb.Append("Speed:").Append(c.Speed).Append(" ");
+                sb.Append("HitSpeed:").Append(c.HitSpeed).Append(" ");
+                sb.Append("MinRange:").Append(c.MinRange).Append(" ");
+                sb.Append("MaxRange:").Append(c.MaxRange).Append(" ");
+                sb.Append("SightRange:").Append(c.SightRange).Append(" ");
+                sb.Append("SightClip:").Append(c.SightClip).Append(" ");
+                sb.Append("MultipleTargets:").Append(c.MultipleTargets).Append(" ");
+                sb.Append("MultipleProjectiles:").Append(c.MultipleProjectiles).Append(" ");
+                sb.Append("DeathEffect:").Append(c.DeathEffect).Append(" ");
+                sb.Append("Rarity:").Append(c.Rarity).Append(" ");
+                sb.Append("Level:").Append(c.Level).Append(" ");
+                sb.Append("DamageRadius:").Append(c.DamageRadius).Append(" ");
+                sb.Append("aoeGround:").Append(c.aoeGround).Append(" ");
+                sb.Append("aoeAir:").Append(c.aoeAir).Append(" ");
+                sb.Append("CollisionRadius:").Append(c.CollisionRadius).Append(" ");
+                sb.Append("towerDamage:").Append(c.towerDamage).Append(" ");
+                sb.Append("LifeTime:").Append(c.LifeTime).Append(" ");
+                sb.Append("SpawnNumber:").Append(c.SpawnNumber).Append(" ");
+                sb.Append("SpawnPause:").Append(c.SpawnPause).Append(" ");
+                sb.Append("SpawnInterval:").Append(c.SpawnInterval).Append(" ");
+                sb.Append("SpawnCharacterLevel:").Append(c.SpawnCharacterLevel).Append(" ");
+
+                try
                 {
-                    sw.WriteLine(sb.ToString());
+                    using (StreamWriter sw = File.AppendText("_carddb_upd.txt"))
+                    {
+                        sw.WriteLine(sb.ToString());
+                    }
                 }
+                catch { }
             }
-            catch
-            {
-                //TODO: other way to inform about this problem (m.b. line in main bot-log)
-            }*/
         }
 
 
 
         public Card getCardDataFromName(CardDB.cardName cardname, int lvl)
         {
-            return this.cardNameToCardList.ContainsKey(cardname) ? this.cardNameToCardList[cardname] : this.unknownCard;
+            if (this.cardNameToCardList.ContainsKey(cardname)) return this.cardNameToCardList[cardname];
+            else
+            {
+                Helpfunctions.Instance.logg("!!!NEW CardName: " + cardname);
+                return this.unknownCard;
+            }
         }       
         
 

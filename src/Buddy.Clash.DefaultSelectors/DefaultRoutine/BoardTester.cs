@@ -12,7 +12,7 @@
 
         public BoardTester()
         {
-            string dataFolder = Path.Combine("Nano", "Data");
+            string dataFolder = Path.Combine("DefaultRoutine", "Data");
             if (!Directory.Exists(dataFolder))
             {
                 Directory.CreateDirectory(dataFolder);
@@ -34,7 +34,7 @@
             catch
             {
                 Helpfunctions.Instance.ErrorLog("ERROR#################################################");
-                //Helpfunctions.Instance.ErrorLog("cant find test.txt in " + Nano.Settings.DatabaseFullpath + @"\data");
+                //Helpfunctions.Instance.ErrorLog("cant find test.txt in " + DefaultRoutine.Settings.DatabaseFullpath + @"\data");
                 Helpfunctions.Instance.ErrorLog("or read error");
                 return null;
             }

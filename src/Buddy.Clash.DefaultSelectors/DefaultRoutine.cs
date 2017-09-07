@@ -12,12 +12,12 @@
     using Buddy.Engine.Settings;
     using Buddy.Clash.DefaultSelectors.Settings;
 
-    public class Nano : ActionSelectorBase
+    public class DefaultRoutine : ActionSelectorBase
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<Nano>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<DefaultRoutine>();
         private readonly ConcurrentQueue<string> _spellQueue = new ConcurrentQueue<string>();
 
-        internal static NanoSettings Settings { get; } = new NanoSettings();
+        internal static DefaultRoutineSettings Settings { get; } = new DefaultRoutineSettings();
 
         Helpfunctions help = Helpfunctions.Instance;
 
@@ -30,7 +30,7 @@
         /// <summary> The name of the routine. </summary>
         public override string Name
         {
-            get { return "Nano"; }
+            get { return "DefaultRoutine"; }
         }
 
         /// <summary> The description of the routine. </summary>
@@ -176,8 +176,7 @@
 
             var battle = ClashEngine.Instance.Battle;
             if (battle == null || !battle.IsValid) return null;
-
-
+            
             StringBuilder sb = new StringBuilder();
                         
             var lp = ClashEngine.Instance.LocalPlayer;
@@ -190,11 +189,10 @@
                     Handcard hc = new Handcard(spell.Name.Value, lvl); //hc.lvl = ??? TODO
                     hc.manacost = spell.ManaCost;
                     //hc.position = ??? TODO
+                    //TODO:for all objects - if (new name) get actual params
                     ownHandCards.Add(hc);
                 }
-                
             }
-            
             
             var aoes = om.OfType<Engine.NativeObjects.Logic.GameObjects.AreaEffectObject>();
             foreach (var aoe in aoes)
@@ -328,7 +326,8 @@
             p.print();
             help.logg("###Start_calc: " + DateTime.Now + "\r\n");
             
-            Behavior behave = new BehaviorControl();//change this to new Behavior
+            Behavior behave = new BehaviorApollo();//change this to new Behavior
+            //Behavior behave = new BehaviorControl();//change this to new Behavior
             Cast bc = behave.getBestCast(p);
             CastRequest retval = null;
             if (bc != null)
