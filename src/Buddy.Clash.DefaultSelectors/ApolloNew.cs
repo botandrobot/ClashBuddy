@@ -14,7 +14,7 @@
 
     public class ApolloNew : ActionSelectorBase
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<Nano>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<DefaultRoutine>();
         private readonly ConcurrentQueue<string> _spellQueue = new ConcurrentQueue<string>();
         public static bool GameBeginning = true;
 
