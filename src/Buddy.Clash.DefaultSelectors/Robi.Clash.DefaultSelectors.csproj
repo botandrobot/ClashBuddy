@@ -1,0 +1,61 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netcoreapp2.0</TargetFramework>
+		<RuntimeIdentifiers>win7-x86;win7-x64;osx.10.10-x64;osx.10.11-x64;osx.10.12-x64;ubuntu.14.04-x64;ubuntu.16.04-x64;centos.7-x64;debian.8-x64;rhel.7-x64</RuntimeIdentifiers>
+		<PackageId>Buddy.Clash.DefaultSelectors</PackageId>
+		<Title>Buddy.Clash.DefaultSelecors</Title>
+		<Description>The Default Action Selectors shiped with ClashBuddy.</Description>
+		<Authors>Buddy Community</Authors>
+		<PackageTags>engine bot ClashBuddy DefaultSelectors</PackageTags>
+
+		<PackageVersion Condition="'$(PackageVersion)' == ''">1.0.0</PackageVersion>
+		<Copyright Condition="'$(Copyright)' == ''">Copyright 2017 (c) Bot and Robot Entertainment GmbH. All rights reserved.</Copyright>
+
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+
+		<Configurations>Debug;Release;DebugIntegrated;ReleaseIntegrated</Configurations>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<OutputPath>..\..\bin\Debug\</OutputPath>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<DefineConstants>TRACE;DEBUG;NETCOREAPP1_1;MEMPTR_ARCH_X86</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugIntegrated|AnyCPU'">
+		<OutputPath>..\..\..\..\bin\Debug\</OutputPath>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<DefineConstants>TRACE;DEBUG;NETCOREAPP1_1;MEMPTR_ARCH_X86</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<OutputPath>..\..\bin\Release\</OutputPath>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<DefineConstants>TRACE;RELEASE;NETCOREAPP1_1;MEMPTR_ARCH_X86</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseIntegrated|AnyCPU'">
+		<OutputPath>..\..\..\..\bin\Release\</OutputPath>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<DefineConstants>TRACE;RELEASE;NETCOREAPP1_1;MEMPTR_ARCH_X86</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="EarlyCycleSelector.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Serilog" Version="2.5.0" />
+		<PackageReference Include="Robi.Common" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Robi.Engine" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Robi.Clash.Engine" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\..\src\Robi.Clash.Engine\Robi.Clash.Engine.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Robi.Common\Robi.Common.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Robi.Engine\Robi.Engine.csproj" />
+	</ItemGroup>
+
+</Project>
