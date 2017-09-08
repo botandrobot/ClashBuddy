@@ -472,7 +472,7 @@ namespace Robi.Clash.DefaultSelectors
         {
             
             //foreach (string actName in Enum.GetNames(typeof(actionEnum)))
-           /* foreach (var e in Buddy.Clash.Engine.Csv.CsvLogic.Characters.Entries)
+           /* foreach (var e in Robi.Clash.Engine.Csv.CsvLogic.Characters.Entries)
             {
                 Logger.Information("{TID}: {Name} has {ShieldHitpoints}", e.TID, e.Name, e.ShieldHitpoints);
             }

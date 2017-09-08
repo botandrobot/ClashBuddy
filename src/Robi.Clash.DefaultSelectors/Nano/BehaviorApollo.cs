@@ -1,9 +1,9 @@
-﻿using Buddy.Clash.Engine.NativeObjects.Native;
+﻿using Robi.Clash.Engine.NativeObjects.Native;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Buddy.Clash.DefaultSelectors
+namespace Robi.Clash.DefaultSelectors
 {
     public class BehaviorApollo : Behavior
     {

@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Buddy.Clash.DefaultSelectors\Buddy.Clash.DefaultSelectors.csproj" />
+    <ProjectReference Include="..\Robi.Clash.DefaultSelectors\Robi.Clash.DefaultSelectors.csproj" />
   </ItemGroup>
 
   <ItemGroup>

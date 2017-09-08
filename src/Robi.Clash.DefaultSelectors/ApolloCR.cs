@@ -57,6 +57,11 @@ namespace Robi.Clash.DefaultSelectors
             gameHandling.IniRound();
             FightState fightState = gameHandling.FightState;
             ICard spell = CastDeploymentHandling.SpellMagic(fightState);
+
+            // No spell, don't throw a NullReferenceException in the process please.
+            if (spell == null)
+                return null;
+
             Vector2f nextPosition = CastPositionHandling.GetNextSpellPosition(fightState, spell);
 
             return new CastRequest(spell.Name, nextPosition);

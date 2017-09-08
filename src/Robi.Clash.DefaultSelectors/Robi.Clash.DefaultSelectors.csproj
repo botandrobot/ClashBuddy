@@ -3,10 +3,10 @@
 	<PropertyGroup>
 		<TargetFramework>netcoreapp2.0</TargetFramework>
 		<RuntimeIdentifiers>win7-x86;win7-x64;osx.10.10-x64;osx.10.11-x64;osx.10.12-x64;ubuntu.14.04-x64;ubuntu.16.04-x64;centos.7-x64;debian.8-x64;rhel.7-x64</RuntimeIdentifiers>
-		<PackageId>Buddy.Clash.DefaultSelectors</PackageId>
-		<Title>Buddy.Clash.DefaultSelecors</Title>
+		<PackageId>Robi.Clash.DefaultSelectors</PackageId>
+		<Title>Robi.Clash.DefaultSelecors</Title>
 		<Description>The Default Action Selectors shiped with ClashBuddy.</Description>
-		<Authors>Buddy Community</Authors>
+		<Authors>Robi Community</Authors>
 		<PackageTags>engine bot ClashBuddy DefaultSelectors</PackageTags>
 
 		<PackageVersion Condition="'$(PackageVersion)' == ''">1.0.0</PackageVersion>
@@ -53,6 +53,7 @@
 		<PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
 	</ItemGroup>
 	<ItemGroup>
+<<<<<<< HEAD:src/Buddy.Clash.DefaultSelectors/Robi.Clash.DefaultSelectors.csproj
 		<ProjectReference Include="..\..\..\..\src\Buddy.Engine\Buddy.Engine.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' ">
 			<Private>true</Private>
 		</ProjectReference>
@@ -62,6 +63,11 @@
 		<ProjectReference Include="..\..\..\..\src\Buddy.Common\Buddy.Common.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' ">
 			<Private>true</Private>
 		</ProjectReference>
+=======
+		<ProjectReference Include="..\..\..\..\src\Robi.Clash.Engine\Robi.Clash.Engine.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' " />
+		<ProjectReference Include="..\..\..\..\src\Robi.Common\Robi.Common.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' " />
+		<ProjectReference Include="..\..\..\..\src\Robi.Engine\Robi.Engine.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' " />
+>>>>>>> upstream/master:src/Robi.Clash.DefaultSelectors/Robi.Clash.DefaultSelectors.csproj
 	</ItemGroup>
 
 </Project>

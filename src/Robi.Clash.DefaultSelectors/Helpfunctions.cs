@@ -100,7 +100,7 @@ namespace Robi.Clash.DefaultSelectors
             }
         }
         /*
-        public void printAllFields(Buddy.Clash.Engine.NativeObjects.Logic.GameObjects.Character @char, int num)
+        public void printAllFields(Robi.Clash.Engine.NativeObjects.Logic.GameObjects.Character @char, int num)
         {
             sb.Clear();
             sb.Append(num).Append(" ");

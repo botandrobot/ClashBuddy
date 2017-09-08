@@ -232,6 +232,10 @@ namespace Robi.Clash.DefaultSelectors.Enemy
             {
                 Character firstPrincessTower = EnemyPrincessTower.FirstOrDefault();
 
+                // Seriously.... need to pay attention to this shit.
+                if (firstPrincessTower == null)
+                    return null;
+
                 // If the position is not equals, it means the LeftPrincessTower is already destroyed
                 if (!firstPrincessTower.StartPosition.Equals(EnemyCharacterPositionHandling.EnemyLeftPrincessTower))
                     return null;
@@ -247,6 +251,9 @@ namespace Robi.Clash.DefaultSelectors.Enemy
             get
             {
                 Character lastPrincessTower = EnemyPrincessTower.LastOrDefault();
+
+                if (lastPrincessTower == null)
+                    return null;
 
                 // If the position is not equals, it means the LeftPrincessTower is already destroyed
                 if (!lastPrincessTower.StartPosition.Equals(EnemyCharacterPositionHandling.EnemyRightPrincessTower))

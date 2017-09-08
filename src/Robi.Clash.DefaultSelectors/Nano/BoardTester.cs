@@ -12,14 +12,8 @@
 
         public BoardTester()
         {
-            string dataFolder = Path.Combine("DefaultRoutine", "Data");
-            if (!Directory.Exists(dataFolder))
-            {
-                Directory.CreateDirectory(dataFolder);
-                return; // you should to create test.txt with test Playdield in this folder
-            }
-            string testFilePath = Path.Combine(dataFolder, "test.txt");
-            btPlayfield = getPlayfield(testFilePath);
+            string path = Nano.Settings.DatabaseFullpath;
+            btPlayfield = getPlayfield(path);
             btPlayfield.print();
         }
 
@@ -34,7 +28,7 @@
             catch
             {
                 Helpfunctions.Instance.ErrorLog("ERROR#################################################");
-                //Helpfunctions.Instance.ErrorLog("cant find test.txt in " + DefaultRoutine.Settings.DatabaseFullpath + @"\data");
+                Helpfunctions.Instance.ErrorLog("cant find test.txt in " + Nano.Settings.DatabaseFullpath + @"\data");
                 Helpfunctions.Instance.ErrorLog("or read error");
                 return null;
             }

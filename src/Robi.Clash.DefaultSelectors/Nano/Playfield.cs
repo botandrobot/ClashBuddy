@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
 
-    
+
     public class attackDef
     {
         public BoardObj attacker;
@@ -107,14 +107,7 @@
         }
 
     }
-	
-    public enum towerName
-    {
-        LeftPrincessTower,
-        RightPrincessTower,
-		KingsTower
-    }
-	
+
     public enum boPriority
     {
         byTotalGroundDPS,
@@ -164,7 +157,7 @@
         public int hiHPboBuildingsDPS = 0;
         public int hiHPboAirTransport = 0;
         public int hiHPboHP = 0;
-        
+
         public group(bool own, VectorAI position, List<BoardObj> list, int lowHpLimit, bool recalcParams = false, int radius = 3000)
         {
             sum = false;
@@ -316,7 +309,7 @@
             }
         }
 
-        public bool isInGroup (VectorAI pos)
+        public bool isInGroup(VectorAI pos)
         {
             return (Position.X - pos.X) * (Position.X - pos.X) + (Position.Y - pos.Y) * (Position.Y - pos.Y) < SquaredR;
         }
@@ -325,12 +318,12 @@
     public class Playfield
     {
         Helpfunctions help = Helpfunctions.Instance;
-        //Buddy.Clash.Engine.NativeObjects.LogicData.Spell
-        //Buddy.Clash.Engine.NativeObjects.LogicData.Character
-        //Buddy.Clash.Engine.NativeObjects.LogicData.AreaEffectObject
-        //    Buddy.Clash.Engine.NativeObjects.LogicData.CharacterBuff.Effect
+        //Robi.Clash.Engine.NativeObjects.LogicData.Spell
+        //Robi.Clash.Engine.NativeObjects.LogicData.Character
+        //Robi.Clash.Engine.NativeObjects.LogicData.AreaEffectObject
+        //    Robi.Clash.Engine.NativeObjects.LogicData.CharacterBuff.Effect
         // CastRequest GetNextCast()
-        // Buddy.Clash.Engine.Csv.CsvLogic.BuildingEntry
+        // Robi.Clash.Engine.Csv.CsvLogic.BuildingEntry
 
         public List<Handcard> ownHandCards = new List<Handcard>();
         public Handcard nextCard = new Handcard();
@@ -377,7 +370,7 @@
         //public int guessingKingTowerHP = 30;                
         public List<Action> playactions = new List<Action>();
         public List<int> pIdHistory = new List<int>();
-        
+
 
         private void copyBoardObj(List<BoardObj> source, List<BoardObj> trgt)
         {
@@ -406,7 +399,7 @@
             this.nextEntity = 1000;
             this.evaluatePenality = 0;
             this.ruleWeight = 0;
-            this.rulesUsed = "";        
+            this.rulesUsed = "";
 
 
         }
@@ -442,7 +435,7 @@
             this.ownGroup = p.ownGroup;
             this.enemyGroup = p.enemyGroup;
             //enemyHandCards = prozis.enemyHandCards;
-        
+
             if (p.needPrint)
             {
                 this.needPrint = true;
@@ -450,7 +443,7 @@
                 this.pIdHistory.Add(pID);
             }
             this.nextEntity = p.nextEntity;
-                        
+
             this.evaluatePenality = p.evaluatePenality;
             this.ruleWeight = p.ruleWeight;
             this.rulesUsed = p.rulesUsed;
@@ -466,7 +459,7 @@
             //TODO
             return true;
         }
-        
+
         public Int64 getPHash()
         {
             //TODO
@@ -615,7 +608,7 @@
                 break;
             }
 
-            if  (enemyMelee)
+            if (enemyMelee)
             {
                 if (attackerMelee)
                 {
@@ -775,7 +768,7 @@
         public Handcard getTankCard()
         {
             Handcard retval = null;
-            foreach(Handcard hc in ownHandCards)
+            foreach (Handcard hc in ownHandCards)
             {
                 if (hc.card.type == boardObjType.MOB && (retval == null || hc.card.MaxHP > retval.card.MaxHP)) retval = hc;
             }
@@ -804,7 +797,7 @@
             List<Handcard> retval = new List<Handcard>();
             int count = ownHandCards.Count;
             Handcard hc;
-            for (int i = 0; i < count; i++ )
+            for (int i = 0; i < count; i++)
             {
                 hc = ownHandCards[i];
                 if (hc.card.type == type) retval.Add(hc);
@@ -909,7 +902,7 @@
                 }
             }
         }
-        			
+
         public void setKingsLine(bool own)
         {
             BoardObj tower = own ? this.ownKingsTower : this.enemyKingsTower;
@@ -934,31 +927,12 @@
             this.nextEntity++;
             return retval;
         }
-        
+
         public void guessObjDamage() //TODO
         {
             //или как то по другому когда один наносит урон другому - типа кто сильнее
             //здесь мы быренько предугадуем дамаг по башне и/или миниону
         }
-		/*
-		public BoardObj getTower (towerName TowerName, bool own)
-		{
-			BoardObj retval = null;
-			List<BoardObj> list = own ? this.OwnTowers : this.EnemyTowers;
-			int count = list.count;
-			for (int i = 0; i < count; i++)
-			{
-				switch (towerName)
-				{
-					case towerName.LeftPrincessTower:
-						if (home)
-					case towerName.RightPrincessTower:
-					case towerName.KingsTower:
-						if (list[i].Tower > 9) return list[i];
-						continue;
-				}
-			}
-		}*/
 
 
 
@@ -988,14 +962,14 @@
             //help.logg("enemyBuildings");
             foreach (BoardObj bo in enemyBuildings) help.logg(bo);
         }
-        
+
 
         public Action getNextAction()
         {
             if (this.playactions.Count >= 1) return this.playactions[0];
             return null;
         }
-        
+
 
 
     }

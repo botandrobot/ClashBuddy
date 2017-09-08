@@ -12,12 +12,13 @@
     using Robi.Engine.Settings;
     using Robi.Clash.DefaultSelectors.Settings;
 
-    public class Nano : ActionSelectorBase
+    public class ApolloNew : ActionSelectorBase
     {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<Nano>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<DefaultRoutine>();
         private readonly ConcurrentQueue<string> _spellQueue = new ConcurrentQueue<string>();
+        public static bool GameBeginning = true;
 
-        internal static NanoSettings Settings { get; } = new NanoSettings();
+        internal static ApolloSettings Settings { get; } = new ApolloSettings();
 
         Helpfunctions help = Helpfunctions.Instance;
 
@@ -30,7 +31,7 @@
         /// <summary> The name of the routine. </summary>
         public override string Name
         {
-            get { return "Nano"; }
+            get { return "ApolloNew"; }
         }
 
         /// <summary> The description of the routine. </summary>
@@ -42,19 +43,19 @@
         /// <summary>The author of this routine.</summary>
         public override string Author
         {
-            get { return "Vlad"; }
+            get { return "Peros"; }
         }
 
         /// <summary>The version of this routine.</summary>
         public override Version Version
         {
-            get { return new Version(0, 0, 0, 7); }
+            get { return new Version(0, 0, 0, 1); }
         }
 
         /// <summary>Unique Identifier.</summary>
         public override Guid Identifier
         {
-            get { return new Guid("{591611D1-B5F2-4483-AF4F-B154153C40F7}"); }
+            get { return new Guid("{e5b7756b-36e8-4c7f-a97b-b910318ec3e1}"); }
         }
 
         #endregion
@@ -132,6 +133,8 @@
         public override void BattleStart()
         {
             help.logg("-----------------BattleStart");
+            GameBeginning = true;
+
         }
 
         public override void BattleEnd()
@@ -150,7 +153,7 @@
         //it just concept for ActionSelector  (TODO: in future connect it with NN or other DB)
         public override CastRequest GetNextCast()
         {
-            //var ssdf  = Buddy.Clash.Engine.Csv.CsvLogic.SpellsCharacters
+            //var ssdf  = Robi.Clash.Engine.Csv.CsvLogic.SpellsCharacters
 
             help.logg("###################entrance############### " + DateTime.Now);
 
@@ -850,7 +853,7 @@
             p.print();
             help.logg("###Start_calc: " + DateTime.Now + "\r\n");
             
-            Behavior behave = new BehaviorControl();//change this to new Behavior
+            Behavior behave = new BehaviorApollo();//change this to new Behavior
             Cast bc = behave.getBestCast(p);
             CastRequest retval = null;
             if (bc != null)
