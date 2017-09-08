@@ -1,5 +1,9 @@
 ﻿
 
+using System.IO;
+using Serilog.Core;
+using Serilog.Events;
+
 namespace Robi.Clash.DefaultSelectors
 {
 	using Common;
@@ -23,6 +27,31 @@ namespace Robi.Clash.DefaultSelectors
 		public abstract int GetPlayCardPenalty(CardDB.Card card, Playfield p);
 
 		private static BehaviorBaseSettings Settings { get; } = new BehaviorBaseSettings();
+
+		private ILogEventSink _battleLogger;
+		public override void BattleStart()
+		{
+			base.BattleStart();
+			var battleLogName = Path.Combine(LogProvider.LogPath, "BattleLog", $"battle-{DateTime.Now:yyyyMMddHHmmss}.log");
+			Logger.Information($"BattleLog: {battleLogName}");
+			_battleLogger = new LoggerConfiguration()
+				.Filter.ByExcluding(e =>
+				{
+					if (!e.Properties.ContainsKey("SourceContext")) return true;
+					var ctx = ((Serilog.Events.ScalarValue)e.Properties["SourceContext"]).Value as string;
+					if (string.IsNullOrWhiteSpace(ctx)) return true;
+					return !(ctx.StartsWith("Robi.Clash.DefaultSelectors") || ctx.StartsWith("Robi.Engine.PerformanceTimer"));
+				}).WriteTo.File(battleLogName).CreateLogger();
+			LogProvider.AttachSink(_battleLogger);
+		}
+
+		public override void BattleEnd()
+		{
+			LogProvider.DetachSink(_battleLogger);
+			((Logger)_battleLogger).Dispose();
+			_battleLogger = null;
+			base.BattleEnd();
+		}
 
 		public override void Initialize()
 		{
