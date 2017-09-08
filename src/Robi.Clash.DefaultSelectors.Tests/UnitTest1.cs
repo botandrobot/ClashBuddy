@@ -8,13 +8,8 @@ namespace Robi.Clash.DefaultSelectors.Tests
         [Fact]
         public void Test1()
         {
-            Helpfunctions.Instance.setnewLoggFile();
             CardDB cdb = CardDB.Instance;
             BoardTester bt = new BoardTester();
-
-            group g = bt.btPlayfield.getGroup(false, 85);
-            Handcard hc = KnowledgeBase.Instance.getOppositeCard(bt.btPlayfield, g);
-
             Behavior behave = new BehaviorControl();//change this to new BehaviorRush() for rush mode
 
             Cast bc = behave.getBestCast(bt.btPlayfield);

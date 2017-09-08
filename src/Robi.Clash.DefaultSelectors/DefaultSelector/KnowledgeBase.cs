@@ -326,7 +326,7 @@ namespace Robi.Clash.DefaultSelectors
                 { CardDB.cardName.musketeer, 50 }
             });
 
-//bandit
+            //assassin(bandit)
 
             OppositeDB.Add(CardDB.cardName.barbarian, new Dictionary<CardDB.cardName, int>(){
                 { CardDB.cardName.fireball, 100 },
