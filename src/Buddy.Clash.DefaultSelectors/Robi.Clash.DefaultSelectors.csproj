@@ -10,7 +10,7 @@
 		<PackageTags>engine bot ClashBuddy DefaultSelectors</PackageTags>
 
 		<PackageVersion Condition="'$(PackageVersion)' == ''">1.0.0</PackageVersion>
-		<Copyright Condition="'$(Copyright)' == ''">Copyright 2017 (c) Bot and Robot Entertainment GmbH. All rights reserved.</Copyright>
+		<Copyright Condition="'$(Copyright)' == ''">Copyright 2017 (c) Bossland GmbH. All rights reserved.</Copyright>
 
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 
@@ -46,16 +46,22 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Buddy.Common" Version="1.0.155" />
 		<PackageReference Include="Serilog" Version="2.5.0" />
-		<PackageReference Include="Robi.Common" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
-		<PackageReference Include="Robi.Engine" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
-		<PackageReference Include="Robi.Clash.Engine" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Buddy.Engine" Version="1.0.155" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Buddy.Clash.Engine" Version="1.221.192" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
 		<PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\..\src\Robi.Clash.Engine\Robi.Clash.Engine.csproj" />
-		<ProjectReference Include="..\..\..\..\src\Robi.Common\Robi.Common.csproj" />
-		<ProjectReference Include="..\..\..\..\src\Robi.Engine\Robi.Engine.csproj" />
+		<ProjectReference Include="..\..\..\..\src\Buddy.Engine\Buddy.Engine.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' ">
+			<Private>true</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\..\..\..\src\Buddy.Clash.Engine\Buddy.Clash.Engine.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' ">
+			<Private>true</Private>
+		</ProjectReference>
+		<ProjectReference Include="..\..\..\..\src\Buddy.Common\Buddy.Common.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' ">
+			<Private>true</Private>
+		</ProjectReference>
 	</ItemGroup>
 
 </Project>
