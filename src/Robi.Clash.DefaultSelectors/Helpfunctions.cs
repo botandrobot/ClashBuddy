@@ -18,7 +18,7 @@ namespace Robi.Clash.DefaultSelectors
         
         //private static readonly ILog Log = Logger.GetLoggerInstanceForType();
 
-        
+        public string logFilePath = "defaultRoutine.log";
         private static Helpfunctions instance;
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
@@ -33,16 +33,19 @@ namespace Robi.Clash.DefaultSelectors
         }
 
         private bool writelogg = true;
-        
-        /*public void createNewLoggfile()
-        {
-            //System.IO.File.WriteAllText(Settings.Instance.logpath + Settings.Instance.logfile, "");
-        }*/
-        
+                
         public void ErrorLog(string s)
         {
             logg(s);
             //Console.WriteLine(s);
+        }
+
+        public void setnewLoggFile()
+        {
+            string RoutineFolder = "DefaultRoutine";
+            string AIlogFolderPath = Path.Combine(RoutineFolder, "AIlogs");
+            logFilePath = Path.Combine(AIlogFolderPath, DateTime.Now.ToString("_yyyy-MM-dd_HH-mm-ss") + ".txt");
+            if (!Directory.Exists(AIlogFolderPath)) Directory.CreateDirectory(AIlogFolderPath);
         }
 
         public void logg(string s)
@@ -50,7 +53,7 @@ namespace Robi.Clash.DefaultSelectors
             if (!writelogg) return;
             try
             {
-                using (StreamWriter sw = File.AppendText(Path.Combine(Nano.Settings.DatabaseFullpath, "Logs", Nano.Settings.LogFileName)))
+                using (StreamWriter sw = File.AppendText(logFilePath))
                 {
                     sw.WriteLine(s);
                 }
@@ -66,7 +69,7 @@ namespace Robi.Clash.DefaultSelectors
             if (!writelogg) return;
             try
             {
-                using (StreamWriter sw = File.AppendText(Path.Combine(Nano.Settings.DatabaseFullpath, "Logs", Nano.Settings.LogFileName)))
+                using (StreamWriter sw = File.AppendText(logFilePath))
                 {
                     sw.WriteLine("Hand " + hc.position + " " + hc.card.name + " " + hc.lvl + " " + hc.manacost);
                 }
@@ -82,7 +85,7 @@ namespace Robi.Clash.DefaultSelectors
             if (!writelogg) return;
             try
             {
-                using (StreamWriter sw = File.AppendText(Path.Combine(Nano.Settings.DatabaseFullpath, "Logs", Nano.Settings.LogFileName)))
+                using (StreamWriter sw = File.AppendText(logFilePath))
                 {
                     sw.WriteLine(bo.type + " " + bo.ownerIndex + " " + bo.Name + " " + bo.GId + " " + bo.Position.ToString() + " " + bo.level + " " + bo.Atk + " " + bo.HP + " " + bo.Shield
                         + (bo.frozen ? " frozen:" + bo.startFrozen : "")

@@ -176,6 +176,7 @@
             for (int i = 0; i < count; i++)
             {
                 bo = list[i];
+                if (bo.HP < 1) continue;
                 if ((Position.X - bo.Position.X) * (Position.X - bo.Position.X) + (Position.Y - bo.Position.Y) * (Position.Y - bo.Position.Y) < SquaredR)
                 {
                     if (bo.HP <= LowHPlimit) lowHPbo.Add(bo);
@@ -339,11 +340,18 @@
         public List<BoardObj> ownBuildings = new List<BoardObj>();
         public List<BoardObj> enemyBuildings = new List<BoardObj>();
 
-        public List<BoardObj> ownTowers = new List<BoardObj>();
-        public List<BoardObj> enemyTowers = new List<BoardObj>();
-
         public BoardObj ownKingsTower = new BoardObj();
+        public BoardObj ownPrincessTower1 = new BoardObj();
+        public BoardObj ownPrincessTower2 = new BoardObj();
         public BoardObj enemyKingsTower = new BoardObj();
+        public BoardObj enemyPrincessTower1 = new BoardObj();
+        public BoardObj enemyPrincessTower2 = new BoardObj();
+
+        public List<BoardObj> ownTowers = new List<BoardObj>();
+        public List<BoardObj> ownPrincessTowers = new List<BoardObj>();
+        public List<BoardObj> enemyTowers = new List<BoardObj>();
+        public List<BoardObj> enemyPrincessTowers = new List<BoardObj>();
+        
 
         public group ownGroup = null;
         public group enemyGroup = null;
@@ -370,7 +378,21 @@
         //public int guessingKingTowerHP = 30;                
         public List<Action> playactions = new List<Action>();
         public List<int> pIdHistory = new List<int>();
-
+        
+        private void addTower(BoardObj tower)
+        {
+            //maybe add duplicate check (todo) - depending on the performance
+            if (tower.own)
+            {
+                ownTowers.Add(tower);
+                if (tower.Tower < 9) ownPrincessTowers.Add(tower);
+            }
+            else
+            {
+                enemyTowers.Add(tower);
+                if (tower.Tower < 9) enemyPrincessTowers.Add(tower);
+            }
+        }
 
         private void copyBoardObj(List<BoardObj> source, List<BoardObj> trgt)
         {
@@ -399,9 +421,22 @@
             this.nextEntity = 1000;
             this.evaluatePenality = 0;
             this.ruleWeight = 0;
-            this.rulesUsed = "";
+            this.rulesUsed = "";  
+        }
 
+        public void initTowers()
+        {
+            ownTowers.Add(ownKingsTower);
+            ownTowers.Add(ownPrincessTower1);
+            ownTowers.Add(ownPrincessTower2);
+            ownPrincessTowers.Add(ownPrincessTower1);
+            ownPrincessTowers.Add(ownPrincessTower2);
 
+            enemyTowers.Add(enemyKingsTower);
+            enemyTowers.Add(enemyPrincessTower1);
+            enemyTowers.Add(enemyPrincessTower2);
+            enemyPrincessTowers.Add(enemyPrincessTower1);
+            enemyPrincessTowers.Add(enemyPrincessTower2);
         }
 
         public Playfield(Playfield p, int timeShift = 0)
@@ -412,6 +447,8 @@
             this.home = p.home;
             this.ownMana = p.ownMana;
             this.enemyMana = p.enemyMana;
+
+            copyCards(p.ownHandCards, p.nextCard);
 
             copyBoardObj(p.ownMinions, this.ownMinions);
             copyBoardObj(p.enemyMinions, this.enemyMinions);
@@ -424,10 +461,16 @@
 
             copyBoardObj(p.ownTowers, this.ownTowers);
             copyBoardObj(p.enemyTowers, this.enemyTowers);
+            
             this.ownKingsTower = new BoardObj(p.ownKingsTower);
-            this.enemyKingsTower = new BoardObj(p.enemyKingsTower);
+            this.ownPrincessTower1 = new BoardObj(p.ownPrincessTower1);
+            this.ownPrincessTower2 = new BoardObj(p.ownPrincessTower2);
 
-            copyCards(p.ownHandCards, p.nextCard);
+            this.enemyKingsTower = new BoardObj(p.enemyKingsTower);
+            this.enemyPrincessTower1 = new BoardObj(p.enemyPrincessTower1);
+            this.enemyPrincessTower2 = new BoardObj(p.enemyPrincessTower2);
+
+            initTowers();
 
             this.ownDeck = p.ownDeck;
             this.enemyDeck = p.enemyDeck;
@@ -480,7 +523,7 @@
             int count = listMobs.Count;
             for (int i = 0; i < count; i++)
             {
-                bo = ownMinions[i];
+                bo = listMobs[i];
                 Group = new group(true, bo.Position, listMobs, lowHPlimit, false, radius);
                 Group.addToGroup(listBuildings, false);
                 Group.addToGroup(listTowers, true);
@@ -919,13 +962,27 @@
             foreach (BoardObj t in list) if (t.Tower > 9) t.Line = tower.Line;
         }
 
-
+        /*
         public int getNextEntity()
         {
             //i dont trust return this.nextEntity++; !!!
             int retval = this.nextEntity;
             this.nextEntity++;
             return retval;
+        }*/
+
+        public VectorAI getPrincessTowerPosition(int Line, bool own)
+        {
+            if (own == home)
+            {
+                if (Line == 1) return new VectorAI(14500, 6500);
+                else return new VectorAI(3500, 6500);
+            }
+            else
+            {
+                if (Line == 1) return new VectorAI(14500, 25500);
+                else return new VectorAI(3500, 25500);
+            }
         }
 
         public void guessObjDamage() //TODO

@@ -12,8 +12,14 @@
 
         public BoardTester()
         {
-            string path = Nano.Settings.DatabaseFullpath;
-            btPlayfield = getPlayfield(path);
+            string dataFolder = Path.Combine("DefaultRoutine", "Data");
+            if (!Directory.Exists(dataFolder))
+            {
+                Directory.CreateDirectory(dataFolder);
+                return; // you should to create test.txt with test Playdield in this folder
+            }
+            string testFilePath = Path.Combine(dataFolder, "test.txt");
+            btPlayfield = getPlayfield(testFilePath);
             btPlayfield.print();
         }
 
@@ -28,7 +34,7 @@
             catch
             {
                 Helpfunctions.Instance.ErrorLog("ERROR#################################################");
-                Helpfunctions.Instance.ErrorLog("cant find test.txt in " + Nano.Settings.DatabaseFullpath + @"\data");
+                //Helpfunctions.Instance.ErrorLog("cant find test.txt in " + DefaultRoutine.Settings.DatabaseFullpath + @"\data");
                 Helpfunctions.Instance.ErrorLog("or read error");
                 return null;
             }
@@ -58,17 +64,30 @@
                         int tower = 0;
                         switch (bo.Name)
                         {
-                            case CardDB.cardName.princesstower: tower = bo.Line; break;
-                            case CardDB.cardName.kingtower: tower = 10 + bo.Line; break;
+                            case CardDB.cardName.princesstower:
+                                tower = bo.Line;
+                                if (bo.own)
+                                {
+                                    if (tower == 1) p.ownPrincessTower1 = bo;
+                                    else p.ownPrincessTower2 = bo;
+                                }
+                                else
+                                {
+                                    if (tower == 1) p.enemyPrincessTower1 = bo;
+                                    else p.enemyPrincessTower2 = bo;
+                                }
+                                break;
+                            case CardDB.cardName.kingtower:
+                                tower = 10 + bo.Line;
+                                if (bo.own)
+                                {
+                                    if (p.ownerIndex == bo.ownerIndex) p.ownKingsTower = bo;
+                                }
+                                else p.enemyKingsTower = bo;
+                                break;
                             case CardDB.cardName.kingtowermiddle: tower = 100; break;
                         }
-                        if (tower > 0)
-                        {
-                            bo.Tower = tower;
-                            if (bo.own) p.ownTowers.Add(bo);
-                            else p.enemyTowers.Add(bo);
-                        }
-                        else
+                        if (tower == 0)
                         {
                             if (bo.own) p.ownBuildings.Add(bo);
                             else p.enemyBuildings.Add(bo);
@@ -81,7 +100,9 @@
                         continue;
                 }
             }
-            p.home = p.ownTowers[0].Position.Y < 15250 ? true : false;
+            p.home = p.ownKingsTower.Position.Y < 15250 ? true : false;
+
+            p.initTowers();
             int i = 0;
             foreach (BoardObj t in p.ownTowers) if (t.Tower < 10) i += t.Line;
             int kingsLine = 0;

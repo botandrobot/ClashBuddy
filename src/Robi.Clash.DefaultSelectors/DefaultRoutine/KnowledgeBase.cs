@@ -23,7 +23,7 @@ namespace Robi.Clash.DefaultSelectors
             setupOppositeDB();
         }
 
-        public Handcard getOpposite(Playfield p, BoardObj attacker, bool canWait = true)
+        public Handcard getOppositeCard(Playfield p, BoardObj attacker, bool canWait = true)
         {
             Handcard bestCard = null;
             if (OppositeDB.ContainsKey(attacker.Name))
@@ -40,11 +40,77 @@ namespace Robi.Clash.DefaultSelectors
                         {
                             if (tmp[name] > bestCardVal)
                             {
-                                bestCard = hc;
                                 bestCardVal = tmp[name];
+                                bestCard = hc;
+                                bestCard.val = bestCardVal;
                             }
                             if (bestCardVal == 100) break;
                         }
+                    }
+                }
+            }
+            return bestCard;
+        }
+
+        public Handcard getOppositeCard(Playfield p, group Group, bool canWait = true, int gangSize = 5)
+        {
+            Handcard bestCard = null;
+            int bestVal = int.MinValue;
+            int tmpVal;
+            foreach (Handcard hc in p.ownHandCards)
+            {
+                if (canWait || hc.manacost <= p.ownMana)
+                {
+                    tmpVal = 0;
+                    int numAirTransport = Group.lowHPboAirTransport + Group.avgHPboAirTransport + Group.hiHPboAirTransport;
+                    int groupSize = Group.lowHPbo.Count + Group.avgHPbo.Count + Group.hiHPbo.Count;
+                    if (hc.card.aoeAir) tmpVal += 3;
+                    if (hc.card.type == boardObjType.MOB) tmpVal += 2;
+                    if (hc.card.Transport == transportType.AIR) tmpVal += 3;
+                    if (numAirTransport > 0)
+                    {
+                        if (hc.card.TargetType == targetType.ALL) tmpVal += 20;
+                        if (Group.lowHPboAirTransport >= gangSize && hc.card.aoeAir) tmpVal += 5;
+                    }
+                    if (groupSize > numAirTransport)
+                    {
+                        if (Group.lowHPbo.Count - Group.lowHPboAirTransport >= gangSize)
+                        {
+                            if (hc.card.aoeAir) tmpVal += 15;
+                            if (hc.card.aoeGround) tmpVal += 15;
+                        }
+                        if (hc.card.TargetType == targetType.GROUND) tmpVal += 15;
+                        if (hc.card.TargetType == targetType.ALL) tmpVal += 15;
+                    }
+                    foreach (BoardObj tmp in Group.hiHPbo)
+                    {
+                        if (OppositeDB.ContainsKey(tmp.card.name))
+                        {
+                            var opp = OppositeDB[tmp.card.name];
+                            if (opp.ContainsKey(hc.card.name)) tmpVal += opp[hc.card.name] / 10;
+                        }
+                    }
+                    foreach (BoardObj tmp in Group.avgHPbo)
+                    {
+                        if (OppositeDB.ContainsKey(tmp.card.name))
+                        {
+                            var opp = OppositeDB[tmp.card.name];
+                            if (opp.ContainsKey(hc.card.name)) tmpVal += opp[hc.card.name] / 10;
+                        }
+                    }
+                    foreach (BoardObj tmp in Group.lowHPbo)
+                    {
+                        if (OppositeDB.ContainsKey(tmp.card.name))
+                        {
+                            var opp = OppositeDB[tmp.card.name];
+                            if (opp.ContainsKey(hc.card.name)) tmpVal += opp[hc.card.name] / 15;
+                        }
+                    }
+                    if (bestVal < tmpVal)
+                    {
+                        bestVal = tmpVal;
+                        bestCard = hc;
+                        bestCard.val = tmpVal;
                     }
                 }
             }
@@ -260,7 +326,7 @@ namespace Robi.Clash.DefaultSelectors
                 { CardDB.cardName.musketeer, 50 }
             });
 
-//bandit
+            //assassin(bandit)
 
             OppositeDB.Add(CardDB.cardName.barbarian, new Dictionary<CardDB.cardName, int>(){
                 { CardDB.cardName.fireball, 100 },
