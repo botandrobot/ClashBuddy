@@ -10,7 +10,7 @@
 		<PackageTags>engine bot ClashBuddy DefaultSelectors</PackageTags>
 
 		<PackageVersion Condition="'$(PackageVersion)' == ''">1.0.0</PackageVersion>
-		<Copyright Condition="'$(Copyright)' == ''">Copyright 2017 (c) Bossland GmbH. All rights reserved.</Copyright>
+		<Copyright Condition="'$(Copyright)' == ''">Copyright 2017 (c) Bot and Robot Entertainment GmbH. All rights reserved.</Copyright>
 
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 

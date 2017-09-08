@@ -1,9 +1,8 @@
-using System;
-using Xunit;
-
 namespace Robi.Clash.DefaultSelectors.Tests
 {
-    public class UnitTest1
+	using Xunit;
+
+	public class UnitTest1
     {
         [Fact]
         public void Test1()
