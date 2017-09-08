@@ -151,7 +151,6 @@ namespace Robi.Clash.DefaultSelectors
 					{
 						//TODO: get static data for all objects
 						//Here we get dynamic data only
-
 						BoardObj bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(data.Name.Value));
 						bo.GId = @char.GlobalId;
 						bo.Position = new VectorAI(@char.StartPosition);
@@ -297,7 +296,7 @@ namespace Robi.Clash.DefaultSelectors
 				bc = this.GetBestCast(p);
 
 				CastRequest retval = null;
-				if (bc != null)
+				if (bc != null && bc.Position != null)
 				{
 					Logger.Information("Cast {bc}", bc.ToString());
 					retval = new CastRequest(bc.SpellName, bc.Position.ToVector2());

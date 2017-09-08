@@ -90,6 +90,9 @@
 			#region Apollo Magic
 			FightState currentSituation = CurrentFightState(p);
 			Handcard hc = SpellMagic(p, currentSituation);
+			if (hc == null)
+				return null;
+
 			VectorAI nextPosition = GetNextSpellPosition(currentSituation, hc, p);
 			bc = new Cast(hc.name, nextPosition, hc);
 			#endregion
@@ -502,6 +505,8 @@
 			VectorAI rndAddVector = new VectorAI(rndX, rndY);
 			#endregion
 
+			if (hc == null || hc.card == null) return null;
+
 			VectorAI choosedPosition = new VectorAI(0, 0), nextPosition;
 
 			if (hc.card.type == boardObjType.AOE)
@@ -545,6 +550,9 @@
 					//Logger.Debug("GameState unknown");
 					break;
 			}
+
+			if (choosedPosition == null) return null;
+
 			//Logger.Debug("GameState: {GameState}", gameState.ToString());
 			Vector2 v = (choosedPosition.ToVector2() + rndAddVector.ToVector2());
 			nextPosition = new VectorAI(v.X, v.Y);
@@ -577,7 +585,7 @@
 				if (hc.card.MaxHP >= Apollo.Settings.MinHealthAsTank)
 				{
 					//Logger.Debug("DKT Troop-Name {0} ; CartType GroundAttack, Flying or Tank", cardToDeploy.Name);
-					if (GetNearestEnemy(p).Line == 2)
+					if (GetNearestEnemy(p)?.Line == 2)
 					{
 						VectorAI v = new VectorAI(p.enemyKingsTower.Position.X + 1000, p.enemyKingsTower.Position.Y);
 						return v;
