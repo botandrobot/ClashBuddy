@@ -15,7 +15,7 @@ namespace Robi.Clash.DefaultSelectors
     public class Helpfunctions
     {
         //ILogger Logger = LogProvider.CreateLogger<Helpfunctions>();
-
+        
         //private static readonly ILog Log = Logger.GetLoggerInstanceForType();
 
         public string logFilePath = "defaultRoutine.log";
