@@ -164,11 +164,13 @@
             List<BoardObj> ownBuildings = new List<BoardObj>();
             List<BoardObj> enemyBuildings = new List<BoardObj>();
 
-            List<BoardObj> ownTowers = new List<BoardObj>();
-            List<BoardObj> enemyTowers = new List<BoardObj>();
             BoardObj ownKingsTower = new BoardObj();
+            BoardObj ownPrincessTower1 = new BoardObj();
+            BoardObj ownPrincessTower2 = new BoardObj();
             BoardObj enemyKingsTower = new BoardObj();
-
+            BoardObj enemyPrincessTower1 = new BoardObj();
+            BoardObj enemyPrincessTower2 = new BoardObj();
+            
             List<Handcard> ownHandCards = new List<Handcard>();
 
 
@@ -247,15 +249,42 @@
                     bo.HP = @char.HealthComponent.CurrentHealth; //TODO: check it
                     bo.Shield = @char.HealthComponent.CurrentShieldHealth; //TODO: check it
                     bo.LifeTime = @char.HealthComponent.LifeTime - @char.HealthComponent.RemainingTime; //TODO: check it of data.LifeTime, - find real value for battle stage
-                    switch (bo.Name)
-                    {
-                        case CardDB.cardName.princesstower: bo.Tower = bo.Line; break;
-                        case CardDB.cardName.kingtower: bo.Tower = 10 + bo.Line; break;
-                        case CardDB.cardName.kingtowermiddle: bo.Tower = 100; break;
-                    }
                     
                     bo.ownerIndex = (int)@char.OwnerIndex;
                     bool own = bo.ownerIndex == lp.OwnerIndex ? true : false; //TODO: replace it on Friendly (for 2x2 mode)
+
+                    int tower = 0;
+                    switch (bo.Name)
+                    {
+                        case CardDB.cardName.princesstower:
+                            tower = bo.Line;
+                            if (bo.own)
+                            {
+                                if (tower == 1) ownPrincessTower1 = bo;
+                                else ownPrincessTower2 = bo;
+                            }
+                            else
+                            {
+                                if (tower == 1) enemyPrincessTower1 = bo;
+                                else enemyPrincessTower2 = bo;
+                            }
+                            break;
+                        case CardDB.cardName.kingtower:
+                            tower = 10 + bo.Line;
+                            if (bo.own)
+                            {
+                                if (lp.OwnerIndex == bo.ownerIndex) ownKingsTower = bo;
+                            }
+                            else enemyKingsTower = bo;
+                            break;
+                        case CardDB.cardName.kingtowermiddle: tower = 100; break;
+                    }
+                    if (tower == 0)
+                    {
+                        if (bo.own) ownBuildings.Add(bo);
+                        else enemyBuildings.Add(bo);
+                    }
+                    
                     bo.own = own;
                     if (own)
                     {
@@ -265,8 +294,7 @@
                             case boardObjType.BUILDING:
                                 if (bo.Tower > 0)
                                 {
-                                    ownTowers.Add(bo);
-                                    if (bo.Tower > 10) ownKingsTower = bo;
+                                    if (bo.Tower > 9 && bo.ownerIndex == lp.OwnerIndex) ownKingsTower = bo;
                                 }
                                 else ownBuildings.Add(bo);
                                 break;
@@ -278,10 +306,9 @@
                         {
                             case boardObjType.MOB: enemyMinions.Add(bo); continue;
                             case boardObjType.BUILDING:
-                                if (bo.Tower > 0)
+                                if (bo.Tower == 0)
                                 {
-                                    enemyTowers.Add(bo);
-                                    if (bo.Tower > 10) enemyKingsTower = bo;
+                                    if (bo.Tower > 9) enemyKingsTower = bo;
                                 }
                                 else enemyBuildings.Add(bo);
                                 break;
@@ -302,17 +329,22 @@
             p.ownAreaEffects = ownAreaEffects;
             p.ownMinions = ownMinions;
             p.ownBuildings = ownBuildings;
-            p.ownTowers = ownTowers;
             p.ownKingsTower = ownKingsTower;
-            p.enemyKingsTower = enemyKingsTower;
+            p.ownPrincessTower1 = ownPrincessTower1;
+            p.ownPrincessTower2 = ownPrincessTower2;
             
             p.enemyAreaEffects = enemyAreaEffects;
             p.enemyMinions = enemyMinions;
             p.enemyBuildings = enemyBuildings;
-            p.enemyTowers = enemyTowers;
+            p.enemyKingsTower = enemyKingsTower;
+            p.enemyPrincessTower1 = enemyPrincessTower1;
+            p.enemyPrincessTower2 = enemyPrincessTower2;
 
-            p.home = p.ownTowers[0].Position.Y < 15250 ? true : false; int i = 0;
+            p.home = p.ownKingsTower.Position.Y < 15250 ? true : false;
 
+            p.initTowers();
+
+            int i = 0;
             foreach (BoardObj t in p.ownTowers) if (t.Tower < 10) i += t.Line;
             int kingsLine = 0;
             switch (i)
@@ -325,9 +357,26 @@
 
             p.print();
             help.logg("###Start_calc: " + DateTime.Now + "\r\n");
-            
-            Behavior behave = new BehaviorApollo();//change this to new Behavior
-            //Behavior behave = new BehaviorControl();//change this to new Behavior
+
+            Behavior behave;
+
+            switch (Settings.SelectedBehavior)
+            {
+                case DefaultRoutineSettings.Behavior.BehaviorApollo:
+                    behave = new BehaviorApollo();//change this to new Behavior
+                    SettingsManager.UnregisterSettings(Name);
+                    SettingsManager.RegisterSettings(Name, new ApolloSettings());
+                    break;
+                case DefaultRoutineSettings.Behavior.BehaviorControl:
+                    //SettingsManager.UnregisterSettings(Name);
+                    //SettingsManager.RegisterSettings(Name, new ControlSettings());
+                    behave = new BehaviorControl();
+                    break;
+                default:
+                    behave = new BehaviorControl();
+                    break;
+            }
+
             Cast bc = behave.getBestCast(p);
             CastRequest retval = null;
             if (bc != null)

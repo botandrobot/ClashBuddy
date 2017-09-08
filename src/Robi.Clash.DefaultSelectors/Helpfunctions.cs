@@ -18,7 +18,7 @@ namespace Robi.Clash.DefaultSelectors
 
         //private static readonly ILog Log = Logger.GetLoggerInstanceForType();
 
-        private string logFilePath = "DefaultRoutine.log";
+        public string logFilePath = "defaultRoutine.log";
         private static Helpfunctions instance;
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
 
