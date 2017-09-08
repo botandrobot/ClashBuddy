@@ -1,13 +1,10 @@
-﻿using System.Linq;
-
-namespace Robi.Clash.DefaultSelectors
+﻿namespace Robi.Clash.DefaultSelectors
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
+	using System;
+	using System.Collections.Generic;
+	using System.IO;
 
-
-    public struct targett
+	public struct targett
     {
         public int target;
         public int targetEntity;
@@ -311,17 +308,15 @@ namespace Robi.Clash.DefaultSelectors
         public Card burlyrockjaw;
         private static CardDB instance;
 
-        public static CardDB Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new CardDB();
-                }
-                return instance;
-            }
-        }
+	    public static CardDB Instance => instance;
+
+	    public static void Initialize()
+	    {
+			if (instance == null)
+			{
+				instance = new CardDB();
+			}
+		}
 
         private CardDB()
         {
