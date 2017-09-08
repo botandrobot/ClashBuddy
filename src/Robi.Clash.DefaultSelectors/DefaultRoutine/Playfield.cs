@@ -1,4 +1,7 @@
-﻿namespace Robi.Clash.DefaultSelectors
+﻿using Robi.Common;
+using Serilog;
+
+namespace Robi.Clash.DefaultSelectors
 {
     using System;
     using System.Collections.Generic;
@@ -318,14 +321,8 @@
 
     public class Playfield
     {
-        Helpfunctions help = Helpfunctions.Instance;
-        //Robi.Clash.Engine.NativeObjects.LogicData.Spell
-        //Robi.Clash.Engine.NativeObjects.LogicData.Character
-        //Robi.Clash.Engine.NativeObjects.LogicData.AreaEffectObject
-        //    Robi.Clash.Engine.NativeObjects.LogicData.CharacterBuff.Effect
-        // CastRequest GetNextCast()
-        // Robi.Clash.Engine.Csv.CsvLogic.BuildingEntry
-
+	    private static readonly ILogger Logger = LogProvider.CreateLogger<Playfield>();
+        
         public List<Handcard> ownHandCards = new List<Handcard>();
         public Handcard nextCard = new Handcard();
         public List<CardDB.cardName> ownDeck = new List<CardDB.cardName>();
@@ -995,42 +992,49 @@
 
         //TODO allCharsInAreaGetDamage
 
+	    private void LogBoardObject(BoardObj bo)
+	    {
+			Logger.Information("{type} {ownerIndex} {Name} {GId} {Position} {level} {Atk} {HP} {Shield}",bo.type, bo.ownerIndex, bo.Name, bo.GId, bo.Position, bo.level, bo.Atk, bo.HP, bo.Shield);
+			if(bo.frozen)
+				Logger.Information("frozen: {startFrozen}", bo.startFrozen);
+			if(bo.LifeTime > 0)
+				Logger.Information("LifeTime: {LifeTime}", bo.LifeTime);
+		}
+
+	    private void LogHandCard(Handcard hc)
+	    {
+		    Logger.Information("Hand {position} {name} {lvl} {manacost}", hc.position, hc.card.name, hc.lvl, hc.manacost);
+	    }
+
         public void print()
         {
-            help.logg("##########_DefaultRoutine_v.0.9_########## " + DateTime.Now);
-            help.logg("Data" + " bt:" + this.BattleTime + " owner:" + ownerIndex + " mana:" + ownMana + " nxtc:" + nextCard.name + ":" + nextCard.lvl);
+			Logger.Information("bt: {BattleTime} owner: {ownerIndex} mana: {ownMana} nxtc: {name}: {lvl}", BattleTime, ownerIndex, ownMana, nextCard?.name, nextCard?.lvl);
+            
             //help.logg("ownCards");
-            foreach (Handcard hc in ownHandCards) help.logg(hc);
+            foreach (Handcard hc in ownHandCards) LogHandCard(hc);
             //help.logg("ownTowers");
-            foreach (BoardObj bo in ownTowers) help.logg(bo);
+            foreach (BoardObj bo in ownTowers) LogBoardObject(bo);
             //help.logg("ownAOE");
-            foreach (BoardObj bo in ownAreaEffects) help.logg(bo);
+            foreach (BoardObj bo in ownAreaEffects) LogBoardObject(bo);
             //help.logg("ownMinions");
-            foreach (BoardObj bo in ownMinions) help.logg(bo);
+            foreach (BoardObj bo in ownMinions) LogBoardObject(bo);
             //help.logg("ownBuildings");
-            foreach (BoardObj bo in ownBuildings) help.logg(bo);
+            foreach (BoardObj bo in ownBuildings) LogBoardObject(bo);
 
             //help.logg("enemyTowers");
-            foreach (BoardObj bo in enemyTowers) help.logg(bo);
+            foreach (BoardObj bo in enemyTowers) LogBoardObject(bo);
             //help.logg("enemyAOE");
-            foreach (BoardObj bo in enemyAreaEffects) help.logg(bo);
+            foreach (BoardObj bo in enemyAreaEffects) LogBoardObject(bo);
             //help.logg("enemyMinions");
-            foreach (BoardObj bo in enemyMinions) help.logg(bo);
+            foreach (BoardObj bo in enemyMinions) LogBoardObject(bo);
             //help.logg("enemyBuildings");
-            foreach (BoardObj bo in enemyBuildings) help.logg(bo);
+            foreach (BoardObj bo in enemyBuildings) LogBoardObject(bo);
         }
-
 
         public Action getNextAction()
         {
             if (this.playactions.Count >= 1) return this.playactions[0];
             return null;
         }
-
-
-
     }
-
-
-
 }

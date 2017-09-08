@@ -1,3 +1,6 @@
+using Robi.Common;
+using Serilog;
+
 namespace Robi.Clash.DefaultSelectors
 {
     using System;
@@ -5,7 +8,7 @@ namespace Robi.Clash.DefaultSelectors
 
 	public class KnowledgeBase
 	{
-
+		private static readonly ILogger Logger = LogProvider.CreateLogger<KnowledgeBase>();
         Dictionary<CardDB.cardName, Dictionary<CardDB.cardName, int>> OppositeDB = new Dictionary<CardDB.cardName, Dictionary<CardDB.cardName, int>>();
 
         private static KnowledgeBase instance;
@@ -288,7 +291,7 @@ namespace Robi.Clash.DefaultSelectors
                     }
                     else
                     {
-                        Helpfunctions.Instance.logg("!OppositeDB.ContainsKey");
+                        Logger.Debug("!OppositeDB.ContainsKey");
                     }
                     if (bestOpposite != null)
                     {
