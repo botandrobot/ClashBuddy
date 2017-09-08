@@ -53,21 +53,9 @@
 		<PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
 	</ItemGroup>
 	<ItemGroup>
-<<<<<<< HEAD:src/Buddy.Clash.DefaultSelectors/Robi.Clash.DefaultSelectors.csproj
-		<ProjectReference Include="..\..\..\..\src\Buddy.Engine\Buddy.Engine.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' ">
-			<Private>true</Private>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\src\Buddy.Clash.Engine\Buddy.Clash.Engine.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' ">
-			<Private>true</Private>
-		</ProjectReference>
-		<ProjectReference Include="..\..\..\..\src\Buddy.Common\Buddy.Common.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' ">
-			<Private>true</Private>
-		</ProjectReference>
-=======
 		<ProjectReference Include="..\..\..\..\src\Robi.Clash.Engine\Robi.Clash.Engine.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' " />
 		<ProjectReference Include="..\..\..\..\src\Robi.Common\Robi.Common.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' " />
 		<ProjectReference Include="..\..\..\..\src\Robi.Engine\Robi.Engine.csproj" Condition=" ('$(Configuration)' == 'DebugIntegrated' OR '$(Configuration)' == 'ReleaseIntegrated') AND '$(BuildingInsideVisualStudio)' == 'true' " />
->>>>>>> upstream/master:src/Robi.Clash.DefaultSelectors/Robi.Clash.DefaultSelectors.csproj
 	</ItemGroup>
 
 </Project>
