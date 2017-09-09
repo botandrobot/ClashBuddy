@@ -10,9 +10,10 @@ namespace Robi.Clash.DefaultSelectors.Tests
         {
             CardDB.Initialize();
             BoardTester bt = new BoardTester();
-            Control behave = new Control();
+            Test behave = new Test();
 
             Cast bc = behave.GetBestCast(bt.btPlayfield);
+            bt.btPlayfield.print();
 
             Assert.Equal(0, bc.Position.X);
             Assert.Equal(0, bc.Position.Y);
@@ -26,8 +27,9 @@ namespace Robi.Clash.DefaultSelectors.Tests
 		    Apollo behave = new Apollo();
 
 		    Cast bc = behave.GetBestCast(bt.btPlayfield);
+            bt.btPlayfield.print();
 
-		    Assert.Equal(0, bc.Position.X);
+            Assert.Equal(0, bc.Position.X);
 		    Assert.Equal(0, bc.Position.Y);
 		}
     }

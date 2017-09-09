@@ -165,7 +165,7 @@ namespace Robi.Clash.DefaultSelectors
             bo.own = bo.ownerIndex == ownerIndex ? true : false;
             bo.GId = Convert.ToUInt32(line[3]);
             bo.Position = new VectorAI(line[4]);
-            bo.Line = bo.Position.X > 8700 ? 1 : 2;
+            bo.Line = bo.Position.X > 8700 ? 2 : 1;
             bo.level = Convert.ToInt32(line[5]);
             bo.Atk = Convert.ToInt32(line[6]);
             bo.HP = Convert.ToInt32(line[7]);

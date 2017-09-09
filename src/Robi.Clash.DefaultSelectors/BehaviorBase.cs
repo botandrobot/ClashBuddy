@@ -41,7 +41,7 @@ namespace Robi.Clash.DefaultSelectors
 					var ctx = ((Serilog.Events.ScalarValue)e.Properties["SourceContext"]).Value as string;
 					if (string.IsNullOrWhiteSpace(ctx)) return true;
 					return !(ctx.StartsWith("Robi.Clash.DefaultSelectors") || ctx.StartsWith("Robi.Engine.PerformanceTimer"));
-				}).WriteTo.File(battleLogName).CreateLogger();
+				}).WriteTo.File(battleLogName,  outputTemplate: "{Message}{NewLine}{Exception}").CreateLogger();
 			LogProvider.AttachSink(_battleLogger);
 		}
 
@@ -121,7 +121,7 @@ namespace Robi.Clash.DefaultSelectors
 						BoardObj bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(aoe.LogicGameObjectData.Name.Value));
 						bo.GId = aoe.GlobalId;
 						bo.Position = new VectorAI(aoe.StartPosition);
-						bo.Line = bo.Position.X > 8700 ? 1 : 2;
+						bo.Line = bo.Position.X > 8700 ? 2 : 1;
 						//bo.level = TODO real value
 						//bo.Atk = TODO real value
 						bo.LifeTime = aoe.HealthComponent.RemainingTime; //TODO check this value
@@ -154,7 +154,7 @@ namespace Robi.Clash.DefaultSelectors
 						BoardObj bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(data.Name.Value));
 						bo.GId = @char.GlobalId;
 						bo.Position = new VectorAI(@char.StartPosition);
-						bo.Line = bo.Position.X > 8700 ? 1 : 2;
+						bo.Line = bo.Position.X > 8700 ? 2 : 1;
 						//bo.level = TODO real value
 						//bo.Atk = TODO real value
 						//this.frozen = TODO
@@ -168,7 +168,8 @@ namespace Robi.Clash.DefaultSelectors
 						bo.ownerIndex = (int)@char.OwnerIndex;
 						bool own = bo.ownerIndex == lp.OwnerIndex ? true : false; //TODO: replace it on Friendly (for 2x2 mode)
 
-						int tower = 0;
+                        bo.own = own;
+                        int tower = 0;
 						switch (bo.Name)
 						{
 							case CardDB.cardName.princesstower:
@@ -195,47 +196,33 @@ namespace Robi.Clash.DefaultSelectors
 							case CardDB.cardName.kingtowermiddle:
 								tower = 100;
 								break;
-						}
-						if (tower == 0)
-						{
-							if (bo.own) ownBuildings.Add(bo);
-							else enemyBuildings.Add(bo);
-						}
-
-						bo.own = own;
-						if (own)
-						{
-							switch (bo.type)
-							{
-								case boardObjType.MOB:
-									ownMinions.Add(bo);
-									break;
-								case boardObjType.BUILDING:
-									if (bo.Tower > 0)
-									{
-										if (bo.Tower > 9 && bo.ownerIndex == lp.OwnerIndex) ownKingsTower = bo;
-									}
-									else ownBuildings.Add(bo);
-									break;
-							}
-						}
-						else
-						{
-							switch (bo.type)
-							{
-								case boardObjType.MOB:
-									enemyMinions.Add(bo);
-									continue;
-								case boardObjType.BUILDING:
-									if (bo.Tower == 0)
-									{
-										if (bo.Tower > 9) enemyKingsTower = bo;
-									}
-									else enemyBuildings.Add(bo);
-									break;
-							}
-						}
-
+                            default:
+                                if (own)
+                                {
+                                    switch (bo.type)
+                                    {
+                                        case boardObjType.MOB:
+                                            ownMinions.Add(bo);
+                                            break;
+                                        case boardObjType.BUILDING:
+                                            ownBuildings.Add(bo);
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    switch (bo.type)
+                                    {
+                                        case boardObjType.MOB:
+                                            enemyMinions.Add(bo);
+                                            break;
+                                        case boardObjType.BUILDING:
+                                            enemyBuildings.Add(bo);
+                                            break;
+                                    }
+                                }
+                                break;
+                        }
 					}
 				}
 			}

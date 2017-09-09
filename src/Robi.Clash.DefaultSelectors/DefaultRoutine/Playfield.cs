@@ -599,7 +599,8 @@ namespace Robi.Clash.DefaultSelectors
                         int callTime = near.time - opp.hc.card.DeployTime;
                         if (callTime < 0) callTime = 0;
                         p = new Playfield(p, callTime);
-                        VectorAI position = p.getDeployPosition(opp);
+                        VectorAI position = new VectorAI(0, 0);
+                        //VectorAI position = p.getDeployPosition(opp); //TODO: this decision takes a behavior or a time machine
 
                         bestCast = new Cast(opp.hc.name, position, opp.hc);
                     }
@@ -619,156 +620,76 @@ namespace Robi.Clash.DefaultSelectors
 
         }
 
-        private VectorAI getDeployPosition(opposite opp)
+        public VectorAI getDeployPosition(deployDirection direction = deployDirection.none, int random = 30)
         {
-            VectorAI retval = new VectorAI(0, 0);
-            //TODO:
-            /*
-             1.Исходя из Радиуса атаки высчитываем точку его призыва.
-             а)учесть, он дамагер или отвлекатель
-             если дамагер - то так что бы сразу был на линии своей атаки
-             если отвлекатель - то так чтобы башни или другие минионы дамажили как можно дольше + подальше от других вражеских
-             distractor 
-             * */
-
-            if (noEnemiesOnMySide()) return getBackPosition(opp.hc);
-
-            BoardObj enemy = opp.target;
-            bool enemyMelee = (opp.target.Range < 1000) ? true : false; //TODO: set real value
-            bool defenderMelee = (opp.target.attacker.Range < 1000) ? true : false; //TODO: set real value
-            bool attackerMelee = (opp.hc.card.MaxRange < 3) ? true : false; //TODO: set real value
-
-            VectorAI centerPos = new VectorAI(0, 0);
-            int kingLine = 0;
-            foreach (BoardObj tower in this.ownTowers)
+            //Absolute directions
+            int sign = this.home ? 1 : -1;
+            switch (direction)
             {
-                if (tower.Tower < 10) continue;
-                kingLine = tower.Line;
-                centerPos = tower.Position;
-                break;
+                case deployDirection.behindKingsTowerCenter: return home ? new VectorAI(9500, 1100, random) : new VectorAI(9500, 30900, random); //TODO: test !home
+                case deployDirection.behindKingsTowerLine1: return home ? new VectorAI(8300, 1200, random) : new VectorAI(8700, 30950, random);
+                case deployDirection.behindKingsTowerLine2: return home ? new VectorAI(10400, 1250, random) : new VectorAI(10300, 31000, random);
+                case deployDirection.cornerLine1: return home ? new VectorAI(800, 2200, random) : new VectorAI(550, 30050, random);
+                case deployDirection.cornerLine2: return home ? new VectorAI(17000, 2500, random) : new VectorAI(17450, 30080, random);
+                case deployDirection.bridgeLine1: return home ? new VectorAI(3500, 14900, random) : new VectorAI(3500, 17200, random);
+                case deployDirection.bridgeLine2: return home ? new VectorAI(14100, 15100, random) : new VectorAI(14100, 17000, random);
+                case deployDirection.betweenBridges: return new VectorAI(9500, 16000, random); //TODO test
+                case deployDirection.borderBridgeLine1: return home ? new VectorAI(600, 14900, random) : new VectorAI(550, 17200, random); //TODO: test
+                case deployDirection.borderBridgeLine2: return home ? new VectorAI(17000, 16700, random) : new VectorAI(17100, 17000, random); //TODO: test
+                case deployDirection.ownPrincessTowerLine1: return home ? new VectorAI(3500, 6500, random) : new VectorAI(3500, 25500, random);
+                case deployDirection.ownPrincessTowerLine2: return home ? new VectorAI(14500, 6500, random) : new VectorAI(14500, 25500, random);
+                case deployDirection.enemyPrincessTowerLine1: return home ? new VectorAI(3500, 25500, random) : new VectorAI(3500, 6500, random);
+                case deployDirection.enemyPrincessTowerLine2: return home ? new VectorAI(14500, 25500, random) : new VectorAI(14500, 6500, random);
+            }
+            Logger.Information("!!![getDeployPosition]Error: Absolute directions unhandled: " + direction);
+            return new VectorAI(0, 0);
+        }
+
+        public VectorAI getDeployPosition(VectorAI targetPosition, deployDirection direction = deployDirection.none, int deployDistance = 0, int random = 30) //for deployDistance you can use hc.card.DamageRadius; we random use only for Absolute directions
+        {
+            //Relative directions
+            int sign = this.home ? 1 : -1;
+            int lineSign = targetPosition.X > 8700 ? 1 : -1;
+
+            if (targetPosition == null)
+            {
+                Logger.Information("!!![getDeployPosition]Error: Relative targetPosition == NULL");
+                return new VectorAI(0, 0);
             }
 
-            if (enemyMelee)
+            switch (direction)
             {
-                if (attackerMelee)
-                {
-                    if (enemy.attacked)
-                    {
-                        if (defenderMelee)
-                        {
-                            retval = enemy.Position;
-                        }
-                        else
-                        {
-                            //0.TODO: ставить так что бы сагрился именно на оппозит + максимально увести вбок под башни
-                            //или других юнитов с радиусом атаки и не вывести из под текущего дефендера(того кто ща атакует)
-                            retval = centerPos;
-                        }
-                    }
-                    else if (enemy.attacking)
-                    {
-                        retval = enemy.Position;
-                    }
-                    else
-                    {
-                        //1.TODO: выбрать:
-                        //а)если на линии есть R атакер - то поближе к нему
-                        //б)прям на врага
-                        //с)если отвлекатель - то увести вбок меж башен
-                        retval = enemy.Position;
-                    }
-                }
-                else
-                {
-                    if (enemy.attacked)
-                    {
-                        if (defenderMelee)
-                        {
-                            //2.TODO: max R + под башни если не сдержит или поближе (но не слишком близко на случай аое) и
-                            //в бок паралельно 1 башне что бы она доставала если сдержит (что бы потом войска настакались)
-                            retval = centerPos;
-                        }
-                        else
-                        {
-                            //3.TODO: выбрать кто ценнее - дефендер или атакер и поставить на max R + под башни
-                            //если не сдержит или в бок паралельно 1 башне что бы она доставала если сдержит
-                            //что бы потом войска настакались но небыли слишком близко на случай аое
-                            retval = centerPos;
-                        }
-                    }
-                    else if (enemy.attacking)
-                    {
-                        //2.TODO: max R + под башни если не сдержит или в бок паралельно 1 башне что бы она доставала если сдержит
-                        //что бы потом войска настакались но небыли слишком близко на случай аое
-                        retval = centerPos;
-                    }
-                    else
-                    {
-                        //6.TODO: выбрать: 
-                        //а)если есть рэндж атакер на поле который сможет его атаковать - выбрать кто ценнее и поставить
-                        //так что бы сагрился на менее ценного (не забываем уводить под башни и max R)
-                        //б) //2.
-                        retval = centerPos;
-                    }
-                }
-            }
-            else
-            {
-                if (attackerMelee)
-                {
-                    if (enemy.attacked)
-                    {
-                        retval = enemy.Position;
-                    }
-                    else if (enemy.attacking)
-                    {
-                        retval = enemy.Position;
-                    }
-                    else
-                    {
-                        //4.TODO: выбрать: 
-                        //а)если есть рэндж атакер на поле который сможет его атаковать и сам не будет атакован
-                        //то выбать что лучше подставить под дефендера и позволить врагу атаковать юнитов пока они 
-                        //топают к нему (отвлекатель, нельзя дамагера) или поставить сразу на врага (дамагер или отвлекатель)
-                        //б)поставить сразу на врага
-                        retval = enemy.Position;
-                    }
-                }
-                else
-                {
-                    if (enemy.attacked)
-                    {
-                        if (defenderMelee)
-                        {
-                            //2.TODO: max R + под башни если не сдержит или в бок паралельно 1 башне что бы она доставала если сдержит
-                            //что бы потом войска настакались но небыли слишком близко на случай аое
-                            retval = centerPos;
-                        }
-                        else
-                        {
-                            //3.TODO: выбрать кто ценнее - дефендер или атакер и поставить на max R + под башни
-                            //если не сдержит или в бок паралельно 1 башне что бы она доставала если сдержит
-                            //что бы потом войска настакались но небыли слишком близко на случай аое
-                            retval = centerPos;
-                        }
-                    }
-                    else if (enemy.attacking)
-                    {
-                        //2.TODO: max R + под башни если не сдержит или в бок паралельно 1 башне что бы она доставала если сдержит
-                        //что бы потом войска настакались но небыли слишком близко на случай аое
-                        retval = centerPos;
-                    }
-                    else
-                    {
-                        //5.TODO: выбрать:
-                        //а)если ток башня - выбрать кто ценнее и поставить на max R
-                        //б) //2.
-                        retval = centerPos;
-                    }
-                }
-            }
+                case deployDirection.Up: return new VectorAI(targetPosition.X, targetPosition.Y + sign * (1000 + deployDistance));
+                case deployDirection.Down: return new VectorAI(targetPosition.X, targetPosition.Y - sign * (1000 + deployDistance));
 
-            return retval;
+                case deployDirection.RightUp: return new VectorAI(targetPosition.X - sign * (1000 + 7071 / 10000 * deployDistance), targetPosition.Y + sign * (1000 + 7071 / 10000 * deployDistance));
+                case deployDirection.Right: return new VectorAI(targetPosition.X - sign * (1000 + deployDistance), targetPosition.Y);
+                case deployDirection.RightDown: return new VectorAI(targetPosition.X - sign * (1000 + 7071 / 10000 * deployDistance), targetPosition.Y - sign * (1000 + 7071 / 10000 * deployDistance));
+                case deployDirection.LeftDown: return new VectorAI(targetPosition.X + sign * (1000 + 7071 / 10000 * deployDistance), targetPosition.Y - sign * (1000 + 7071 / 10000 * deployDistance));
+                case deployDirection.Left: return new VectorAI(targetPosition.X + sign * (1000 + deployDistance), targetPosition.Y);
+                case deployDirection.LeftUp: return new VectorAI(targetPosition.X + sign * (1000 + 7071 / 10000 * deployDistance), targetPosition.Y + sign * (1000 + 7071 / 10000 * deployDistance));
+
+                case deployDirection.borderSideUp: return new VectorAI(targetPosition.X + lineSign * (1000 + 7071 / 10000 * deployDistance), targetPosition.Y + sign * (1000 + 7071 / 10000 * deployDistance));
+                case deployDirection.borderSideMiddle: return new VectorAI(targetPosition.X + lineSign * (1000 + deployDistance), targetPosition.Y);
+                case deployDirection.borderSideDown: return new VectorAI(targetPosition.X + lineSign * (1000 + 7071 / 10000 * deployDistance), targetPosition.Y - sign * (1000 + 7071 / 10000 * deployDistance));
+                case deployDirection.centerSideUp: return new VectorAI(targetPosition.X - lineSign * (1000 + 7071 / 10000 * deployDistance), targetPosition.Y + sign * (1000 + 7071 / 10000 * deployDistance));
+                case deployDirection.centerSideMiddle: return new VectorAI(targetPosition.X - lineSign * (1000 + deployDistance), targetPosition.Y);
+                case deployDirection.centerSideDown: return new VectorAI(targetPosition.X - lineSign * (1000 + 7071 / 10000 * deployDistance), targetPosition.Y - sign * (1000 + 7071 / 10000 * deployDistance));
+
+                case deployDirection.lineCorner: return (lineSign > 0) ? (home ? new VectorAI(17000, 2500, random) : new VectorAI(17450, 30080, random)) : (home ? new VectorAI(800, 2200, random) : new VectorAI(550, 30050, random));
+                default:
+                    return new VectorAI(targetPosition);
+            }
+        }
+
+        public VectorAI getDeployPosition(BoardObj bo, deployDirection direction = deployDirection.none, int deployDistance = 0, int random = 35) //for deployDistance you can use hc.card.DamageRadius
+        {
+            if (bo == null)
+            {
+                Logger.Information("!!![getDeployPosition]Error:BoardObj == NULL");
+                return new VectorAI(0, 0);
+            }
+            else return getDeployPosition(bo.Position, direction, deployDistance, random);
         }
 
         public int getDistanceToPointFromBorder(VectorAI Position) //TODO: get actual size fom game for Battlefield + bool CanDeploy
@@ -776,7 +697,7 @@ namespace Robi.Clash.DefaultSelectors
             int retval = 0;
             if ((Position.Y > 15250) == home)
             {
-                int line = Position.X > 8700 ? 1 : 2;
+                int line = Position.X > 8700 ? 2 : 1;
                 foreach (BoardObj bo in this.enemyTowers)
                 {
                     if (bo.Line == line)
@@ -917,29 +838,11 @@ namespace Robi.Clash.DefaultSelectors
         {
             if (hc.card.Transport == transportType.GROUND)
             {
-                if (home)
-                {
-                    if ((line == 1)) return new VectorAI(10337, 1370, 12); //1
-                    else return new VectorAI(8290, 1270, 12); //2
-                }
-                else
-                {
-                    if ((line == 1)) return new VectorAI(10000, 31000, 12); //1
-                    else return new VectorAI(9000, 31000, 12); //2
-                }
+                return getDeployPosition(line == 1 ? deployDirection.behindKingsTowerLine1 : deployDirection.behindKingsTowerLine2);
             }
             else
             {
-                if (home)
-                {
-                    if ((line == 1)) return new VectorAI(17000, 2600, 30); //1
-                    else return new VectorAI(800, 2100, 12); //2
-                }
-                else
-                {
-                    if ((line == 1)) return new VectorAI(17450, 30080, 30); //1
-                    else return new VectorAI(550, 30050, 40); //2
-                }
+                return getDeployPosition(line == 1 ? deployDirection.cornerLine1 : deployDirection.cornerLine2);
             }
         }
 
@@ -968,19 +871,6 @@ namespace Robi.Clash.DefaultSelectors
             return retval;
         }*/
 
-        public VectorAI getPrincessTowerPosition(int Line, bool own)
-        {
-            if (own == home)
-            {
-                if (Line == 1) return new VectorAI(14500, 6500);
-                else return new VectorAI(3500, 6500);
-            }
-            else
-            {
-                if (Line == 1) return new VectorAI(14500, 25500);
-                else return new VectorAI(3500, 25500);
-            }
-        }
 
         public void guessObjDamage() //TODO
         {
@@ -988,17 +878,12 @@ namespace Robi.Clash.DefaultSelectors
             //здесь мы быренько предугадуем дамаг по башне и/или миниону
         }
 
-
-
         //TODO allCharsInAreaGetDamage
 
 	    private void LogBoardObject(BoardObj bo)
 	    {
-			Logger.Information("{type} {ownerIndex} {Name} {GId} {Position} {level} {Atk} {HP} {Shield}",bo.type, bo.ownerIndex, bo.Name, bo.GId, bo.Position, bo.level, bo.Atk, bo.HP, bo.Shield);
-			if(bo.frozen)
-				Logger.Information("frozen: {startFrozen}", bo.startFrozen);
-			if(bo.LifeTime > 0)
-				Logger.Information("LifeTime: {LifeTime}", bo.LifeTime);
+            string extrainfo = (bo.frozen ? " frozen:" + bo.startFrozen : "") + (bo.LifeTime > 0 ? " LifeTime:" + bo.LifeTime : "") + (bo.extraData != "" ? " " + bo.extraData : "");
+            Logger.Information("{type} {ownerIndex} {Name} {GId} {Position:l} {level} {Atk} {HP} {Shield}{extrainfo:l}", bo.type, bo.ownerIndex, bo.Name, bo.GId, bo.Position, bo.level, bo.Atk, bo.HP, bo.Shield, extrainfo);
 		}
 
 	    private void LogHandCard(Handcard hc)
@@ -1008,7 +893,7 @@ namespace Robi.Clash.DefaultSelectors
 
         public void print()
         {
-			Logger.Information("bt: {BattleTime} owner: {ownerIndex} mana: {ownMana} nxtc: {name}: {lvl}", BattleTime, ownerIndex, ownMana, nextCard?.name, nextCard?.lvl);
+			Logger.Information("Data bt:{BattleTime} owner:{ownerIndex} mana:{ownMana} nxtc:{name:l}:{lvl}", BattleTime, ownerIndex, ownMana, nextCard.name, nextCard.lvl);
             
             //help.logg("ownCards");
             foreach (Handcard hc in ownHandCards) LogHandCard(hc);
