@@ -27,21 +27,33 @@ namespace Robi.Clash.DefaultSelectors
         private int x = 0;
         private int y = 0;
 
+        public int X
+        {
+            get { return x; }
+            set { x = value; }
+        }
+        public int Y
+        {
+            get { return y; }
+            set { y = value; }
+        }
+
         public VectorAI(int X, int Y)
         {
             x = X;
             y = Y;
         }
-        
+
+        public VectorAI(VectorAI copy)
+        {
+            x = copy.X;
+            y = copy.Y;
+        }
+
         public VectorAI(Engine.NativeObjects.Native.Vector2 pos)
         {
             x = pos.X;
             y = pos.Y;
-        }
-
-        public Engine.NativeObjects.Native.Vector2 ToVector2()
-        {
-            return new Engine.NativeObjects.Native.Vector2(x, y);
         }
 
         public VectorAI(int X, int Y, int random)
@@ -59,20 +71,15 @@ namespace Robi.Clash.DefaultSelectors
             y = Convert.ToInt32(ss[1]);
         }
 
-        public int X
+        public Engine.NativeObjects.Native.Vector2 ToVector2()
         {
-            get { return x; }
-            set { x = value; }
-        }
-        public int Y
-        {
-            get { return y; }
-            set { y = value; }
+            return new Engine.NativeObjects.Native.Vector2(x, y);
         }
 
-        public int getDistance(VectorAI v2)
+        //If ever will be is available real direction, speed, acceleration, then maybe all this can be changed to a Vector form
+        public int getDistanceToTarget(VectorAI targetPosition)
         {
-            return (int)Math.Sqrt((v2.x - x) * (v2.x - x) + (v2.y - y) * (v2.y - y));
+            return (int)Math.Sqrt((targetPosition.x - x) * (targetPosition.x - x) + (targetPosition.y - y) * (targetPosition.y - y));
         }
 
         public override string ToString()

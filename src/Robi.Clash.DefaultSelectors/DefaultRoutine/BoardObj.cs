@@ -3,40 +3,6 @@
     using System;
     using System.Collections.Generic;
     
-    public enum boardObjType
-    {
-        NONE,
-        BUILDING,
-        MOB,
-        AOE,
-        PROJECTILE
-    }
-
-    public enum transportType
-    {
-        NONE,
-        AIR,
-        GROUND
-    }
-
-    public enum targetType
-    {
-        NONE,
-        ALL,
-        GROUND,
-        BUILDINGS,
-        IGNOREBUILDINGS
-    }
-
-    public enum affectType
-    {
-        NONE,
-        ALL,
-        ONLY_OWN,
-        ONLY_ENEMIES
-    }
-
-
     public class BoardObj
     {
         public boardObjType type = boardObjType.NONE;        

@@ -5,9 +5,9 @@
 	using System;
 	using System.Collections.Generic;
 
-	public class Control : BehaviorBase
+	public class Test : BehaviorBase
 	{
-		private static readonly ILogger Logger = LogProvider.CreateLogger<Control>();
+		private static readonly ILogger Logger = LogProvider.CreateLogger<Test>();
 
 		public override string Name { get; } = "Control";
 		public override string Description { get; } = "<Add useful description here>";
@@ -130,13 +130,13 @@
 				}
 				else
 				{
-					p.rotateLines();
+					//p.rotateLines();
 					bc = p.bestCast;
 				}
 			}
 			else
 			{
-				p.rotateLines();
+				//p.rotateLines();
 				bc = p.bestCast;
 			}
 
