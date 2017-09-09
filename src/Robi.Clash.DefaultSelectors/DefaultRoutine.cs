@@ -114,7 +114,7 @@
         */
         #endregion
 
-
+        public static bool GameBeginning = true; // Just for Apollo, I will find a better possibility later
 
         public override void Initialize()
         { 
@@ -133,6 +133,7 @@
         {
             help.setnewLoggFile();
             help.logg("-----------------BattleStart");
+            GameBeginning = true; // Just for Apollo, I will find a better possibility later
         }
 
         public override void BattleEnd()

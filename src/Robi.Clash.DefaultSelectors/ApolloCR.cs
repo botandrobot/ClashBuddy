@@ -20,7 +20,7 @@ namespace Robi.Clash.DefaultSelectors
 
     // Just 1v1
     public class ApolloCR : ActionSelectorBase
-	{
+    {
         #region
         private static readonly ILogger Logger = LogProvider.CreateLogger<ApolloCR>();
 
@@ -30,15 +30,16 @@ namespace Robi.Clash.DefaultSelectors
 
         public override string Author => "Peros_";
 
-        public override Version Version => new Version(1, 2, 0, 0);
+        public override Version Version => new Version(1, 3, 0, 0);
         public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
         #endregion
 
         private static GameHandling gameHandling = new GameHandling();
 
-		internal static ApolloSettings Settings => SettingsManager.GetSetting<ApolloSettings>("Apollo");
+        internal static ApolloSettings Settings => SettingsManager.GetSetting<ApolloSettings>("Apollo");
+        private static bool NewBattle = true;
 
-		public override CastRequest GetNextCast()
+        public override CastRequest GetNextCast()
         {
             #region battle valid check
             var battle = ClashEngine.Instance.Battle;
@@ -51,14 +52,16 @@ namespace Robi.Clash.DefaultSelectors
             if (StaticValues.Player.Mana < 2)
                 return null;
 
-            if (Clash.Engine.ClashEngine.Instance.Battle.BattleTime.TotalSeconds < 1)
+            if (NewBattle)
+            {
                 gameHandling.IniGame(Settings);
+                NewBattle = false;
+            }
 
             gameHandling.IniRound();
             FightState fightState = gameHandling.FightState;
             ICard spell = CastDeploymentHandling.SpellMagic(fightState);
 
-            // No spell, don't throw a NullReferenceException in the process please.
             if (spell == null)
                 return null;
 
@@ -67,15 +70,27 @@ namespace Robi.Clash.DefaultSelectors
             return new CastRequest(spell.Name, nextPosition);
         }
 
-		public override void Initialize()
-		{
-			SettingsManager.RegisterSettings(Name, new ApolloSettings());
-		}
+        public override void BattleStart()
+        {
+            Logger.Debug("-----------------BattleStart");
+            NewBattle = true;
+        }
 
-		public override void Deinitialize()
-		{
-			
-			SettingsManager.UnregisterSettings(Name);
-		}
-	}
+        public override void BattleEnd()
+        {
+            Logger.Debug("-----------------BattleEnd");
+        }
+
+        public override void Initialize()
+        {
+            SettingsManager.RegisterSettings(Name, new ApolloSettings());
+        }
+
+        public override void Deinitialize()
+        {
+
+            SettingsManager.UnregisterSettings(Name);
+        }
+    }
 }
+

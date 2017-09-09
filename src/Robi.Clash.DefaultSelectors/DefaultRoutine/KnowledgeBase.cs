@@ -1,3 +1,6 @@
+using Robi.Common;
+using Serilog;
+
 namespace Robi.Clash.DefaultSelectors
 {
     using System;
@@ -5,7 +8,7 @@ namespace Robi.Clash.DefaultSelectors
 
 	public class KnowledgeBase
 	{
-
+		private static readonly ILogger Logger = LogProvider.CreateLogger<KnowledgeBase>();
         Dictionary<CardDB.cardName, Dictionary<CardDB.cardName, int>> OppositeDB = new Dictionary<CardDB.cardName, Dictionary<CardDB.cardName, int>>();
 
         private static KnowledgeBase instance;
@@ -43,6 +46,7 @@ namespace Robi.Clash.DefaultSelectors
                                 bestCardVal = tmp[name];
                                 bestCard = hc;
                                 bestCard.val = bestCardVal;
+                                bestCard.missingMana = hc.manacost - p.ownMana;
                             }
                             if (bestCardVal == 100) break;
                         }
@@ -111,6 +115,7 @@ namespace Robi.Clash.DefaultSelectors
                         bestVal = tmpVal;
                         bestCard = hc;
                         bestCard.val = tmpVal;
+                        bestCard.missingMana = hc.manacost - p.ownMana;
                     }
                 }
             }
@@ -155,6 +160,7 @@ namespace Robi.Clash.DefaultSelectors
                             dName = hc.card.name;
                             if ((canWait || hc.manacost <= p.ownMana) && aopp.ContainsKey(dName))
                             {
+                                hc.missingMana = hc.manacost - p.ownMana;
                                 if (!allOpposite.ContainsKey(dName)) allOpposite.Add(dName, new opposite(dName, aopp[dName], hc, ad.attacker));
                                 else allOpposite[dName].value += aopp[dName];
                             }
@@ -288,7 +294,7 @@ namespace Robi.Clash.DefaultSelectors
                     }
                     else
                     {
-                        Helpfunctions.Instance.logg("!OppositeDB.ContainsKey");
+                        Logger.Debug("!OppositeDB.ContainsKey");
                     }
                     if (bestOpposite != null)
                     {
