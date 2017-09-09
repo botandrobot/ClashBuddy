@@ -18,7 +18,7 @@ namespace Robi.Clash.DefaultSelectors
 
         public override string ToString()
         {
-            return this.SpellName + " " + this.Position.ToString();
+            return this.SpellName + " " + this.Position?.ToString();
         }
     }
 

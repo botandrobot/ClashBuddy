@@ -1,4 +1,7 @@
-﻿namespace Robi.Clash.DefaultSelectors
+﻿using Robi.Common;
+using Serilog;
+
+namespace Robi.Clash.DefaultSelectors
 {
     using Robi.Clash.DefaultSelectors.Settings;
     using Robi.Engine.Settings;
@@ -8,6 +11,7 @@
 
     public class BoardTester
     {
+	    private static readonly ILogger Logger = LogProvider.CreateLogger<BoardTester>();
         public Playfield btPlayfield;
 
         public BoardTester()
@@ -29,13 +33,11 @@
             try
             {
                 lines = System.IO.File.ReadAllLines(path);
-                Helpfunctions.Instance.ErrorLog("read test.txt " + lines.Length + " lines");
+				Logger.Debug("read test.txt {Length} lines", lines.Length);
             }
             catch
             {
-                Helpfunctions.Instance.ErrorLog("ERROR#################################################");
-                //Helpfunctions.Instance.ErrorLog("cant find test.txt in " + DefaultRoutine.Settings.DatabaseFullpath + @"\data");
-                Helpfunctions.Instance.ErrorLog("or read error");
+				Logger.Error("Read failed.");
                 return null;
             }
 
@@ -113,7 +115,7 @@
                 case 2: kingsLine = 1; break;
             }
             foreach (BoardObj t in p.ownTowers) if (t.Tower > 9) t.Line = kingsLine;
-            Helpfunctions.Instance.ErrorLog("getPlayfield:OK");
+			Logger.Debug("getPlayfield:OK");
 
             return p;
 
