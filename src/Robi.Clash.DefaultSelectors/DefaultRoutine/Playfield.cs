@@ -424,16 +424,16 @@ namespace Robi.Clash.DefaultSelectors
         public void initTowers()
         {
             ownTowers.Add(ownKingsTower);
-            ownTowers.Add(ownPrincessTower1);
-            ownTowers.Add(ownPrincessTower2);
-            ownPrincessTowers.Add(ownPrincessTower1);
-            ownPrincessTowers.Add(ownPrincessTower2);
+            if (ownPrincessTower1.HP > 0) ownTowers.Add(ownPrincessTower1);
+            if (ownPrincessTower2.HP > 0) ownTowers.Add(ownPrincessTower2);
+            if (ownPrincessTower1.HP > 0) ownPrincessTowers.Add(ownPrincessTower1);
+            if (ownPrincessTower2.HP > 0) ownPrincessTowers.Add(ownPrincessTower2);
 
             enemyTowers.Add(enemyKingsTower);
-            enemyTowers.Add(enemyPrincessTower1);
-            enemyTowers.Add(enemyPrincessTower2);
-            enemyPrincessTowers.Add(enemyPrincessTower1);
-            enemyPrincessTowers.Add(enemyPrincessTower2);
+            if (enemyPrincessTower1.HP > 0) enemyTowers.Add(enemyPrincessTower1);
+            if (enemyPrincessTower2.HP > 0) enemyTowers.Add(enemyPrincessTower2);
+            if (enemyPrincessTower1.HP > 0) enemyPrincessTowers.Add(enemyPrincessTower1);
+            if (enemyPrincessTower2.HP > 0) enemyPrincessTowers.Add(enemyPrincessTower2);
         }
 
         public Playfield(Playfield p, int timeShift = 0)
