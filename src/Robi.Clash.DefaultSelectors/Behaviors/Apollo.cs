@@ -83,17 +83,20 @@
         public override Cast GetBestCast(Playfield p)
         {
             Cast bc = null;
-
+            Logger.Debug("Home = {Home}", p.home);
             // Peros: Contains mobs, buildings and towers
             //group ownGroup = p.getGroup(true, 85, boPriority.byTotalNumber, 3000);
 
             #region Apollo Magic
+            Logger.Debug("Part: Get CurrentSituation");
             FightState currentSituation = CurrentFightState(p);
+            Logger.Debug("Part: SpellMagic");
             Handcard hc = SpellMagic(p, currentSituation);
 
             if (hc == null)
                 return null;
 
+            Logger.Debug("Part: GetSpellPosition");
             VectorAI nextPosition = GetNextSpellPosition(currentSituation, hc, p);
             bc = new Cast(hc.name, nextPosition, hc);
 
@@ -218,17 +221,25 @@
         #region Analyse Current Situation
         public static FightState CurrentFightState(Playfield p)
         {
-            switch ((FightStyle)Settings.FightStyle)
+            try
             {
-                case FightStyle.Defensive:
-                    return GetCurrentFightStateDefensive(p);
-                case FightStyle.Balanced:
-                    return GetCurrentFightStateBalanced(p);
-                case FightStyle.Rusher:
-                    return GetCurrentFightStateRusher(p);
-                default:
-                    return FightState.DKT;
+                switch ((FightStyle)Settings.FightStyle)
+                {
+                    case FightStyle.Defensive:
+                        return GetCurrentFightStateDefensive(p);
+                    case FightStyle.Balanced:
+                        return GetCurrentFightStateBalanced(p);
+                    case FightStyle.Rusher:
+                        return GetCurrentFightStateRusher(p);
+                    default:
+                        return FightState.DKT;
+                }
             }
+            catch(Exception e)
+            {
+                return GetCurrentFightStateBalanced(p);
+            }
+
         }
 
         private static FightState GetCurrentFightStateBalanced(Playfield p)
@@ -339,7 +350,19 @@
 
         private static FightState GameBeginningDecision(Playfield p)
         {
-            if (p.ownMana < Settings.ManaTillFirstAttack)
+            bool StartFirstAttack = true;
+
+            try
+            {
+                StartFirstAttack = (p.ownMana < Settings.ManaTillFirstAttack);
+            }
+            catch(Exception e)
+            {
+                
+            }
+
+
+            if (StartFirstAttack)
             {
                 if (!p.noEnemiesOnMySide())
                     GameBeginning = false;
@@ -604,7 +627,7 @@
             VectorAI choosedPosition = new VectorAI(0, 0), nextPosition;
 
             Logger.Debug("AOE");
-            if (hc.card.type == boardObjType.AOE)
+            if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
                 return GetPositionOfTheBestDamagingSpellDeploy(p);
 
             // ToDo: Handle Defense Gamestates
@@ -680,13 +703,13 @@
                     if (GetNearestEnemy(p)?.Line == 2)
                     {
                         //VectorAI v = new VectorAI(p.ownKingsTower.Position.X + 1000, p.enemyKingsTower.Position.Y);
-                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirection.RightUp, 1000);
+                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirection.RightUp, 100);
                         return v;
                     }
                     else
                     {
                         //VectorAI v = new VectorAI(p.ownKingsTower.Position.X - 1000, p.enemyKingsTower.Position.Y);
-                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirection.LeftUp, 1000);
+                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirection.LeftUp, 100);
                         return v;
                     }
                 }
@@ -822,7 +845,7 @@
         {
             // ToDo: Find the best position
             VectorAI betweenBridges = p.getDeployPosition(deployDirection.betweenBridges,0);
-            VectorAI result = p.getDeployPosition(betweenBridges, deployDirection.Down, 2000);
+            VectorAI result = p.getDeployPosition(betweenBridges, deployDirection.Down, 4000);
             return result;
         }
 
@@ -837,12 +860,12 @@
                 if (hc.card.MaxHP >= Settings.MinHealthAsTank)
                 {
                     //position.SubtractYInDirection(p);
-                    return p.getDeployPosition(position, deployDirection.Up, 1000);
+                    return p.getDeployPosition(position, deployDirection.Up, 100);
                 }
                 else
                 {
                     //position.AddYInDirection(p);
-                    return p.getDeployPosition(position, deployDirection.Down, 1000);
+                    return p.getDeployPosition(position, deployDirection.Down, 2000);
                 }
             }
             else if (hc.card.type == boardObjType.BUILDING)
