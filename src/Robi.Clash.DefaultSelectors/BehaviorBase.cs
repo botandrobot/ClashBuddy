@@ -105,8 +105,8 @@ namespace Robi.Clash.DefaultSelectors
 						int lvl = 1;
 						Handcard hc = new Handcard(spell.Name.Value, lvl); //hc.lvl = ??? TODO
 						hc.manacost = spell.ManaCost;
+                        if (hc.card.name == CardDB.cardName.unknown) hc.card = CardDB.Instance.collectNewCards(spell);
 						//hc.position = ??? TODO
-						//TODO:for all objects - if (new name) get actual params
 						ownHandCards.Add(hc);
 					}
 				}
@@ -131,12 +131,13 @@ namespace Robi.Clash.DefaultSelectors
 						bo.own = own;
 						if (own) ownAreaEffects.Add(bo);
 						else enemyAreaEffects.Add(bo);
-						//hc.position = ??? TODO
+                        //hc.position = ??? TODO
 
+                        //if (hc.card.name == CardDB.cardName.unknown) hc.card = CardDB.Instance.collectNewCards(spell); //TODO: same for all objects
 
-					}
+                    }
 
-				}
+                }
 
 				var chars = om.OfType<Clash.Engine.NativeObjects.Logic.GameObjects.Character>();
 				foreach (var @char in chars)
@@ -224,8 +225,10 @@ namespace Robi.Clash.DefaultSelectors
                                 break;
                         }
 					}
-				}
-			}
+                    //if (hc.card.name == CardDB.cardName.unknown) hc.card = CardDB.Instance.collectNewCards(spell); //TODO: same for all objects
+
+                }
+            }
 
 			Playfield p;
 
@@ -293,5 +296,5 @@ namespace Robi.Clash.DefaultSelectors
 				return retval;
 			}
 		}
-	}
+    }
 }

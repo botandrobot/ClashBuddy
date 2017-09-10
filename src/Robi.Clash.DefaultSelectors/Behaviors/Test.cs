@@ -17,7 +17,21 @@
 
 		public override Cast GetBestCast(Playfield p)
 		{
-			Cast bc = null;
+            //if you just need coordinates 
+            //var targetPosition = p.getDeployPosition(deployDirection.betweenBridges);
+            //or p.getDeployPosition(deployDirection.enemyPrincessTowerLine2, 0);
+            // there random - small int value like a human random for click
+            //int deployDistance = hc.card.DamageRadius; //or any value
+            //var MyTroopsPosition = p.getDeployPosition(targetPosition, deployDirection.borderSideDown);
+            //or
+            //BoardObj harmfulEnemyMinion = new BoardObj();
+            //int deployDistance = hc.card.DamageRadius; //or any value
+            //p.getDeployPosition(harmfulEnemyMinion, deployDirection.centerSideUp, deployDistance, random); //for deployDistance you can use hc.card.DamageRadius
+
+
+
+
+            Cast bc = null;
 			group ownGroup = p.getGroup(true, 85, boPriority.byTotalNumber, 3000);
 			if (ownGroup != null)
 			{

@@ -6,8 +6,10 @@ namespace Robi.Clash.DefaultSelectors
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
+    using System.Text;
 
-	public struct targett
+
+    public struct targett
 	{
 		public int target;
 		public int targetEntity;
@@ -600,7 +602,112 @@ namespace Robi.Clash.DefaultSelectors
 		}
 
 
-		public void collectCardInfo(BoardObj bo)
+        public Card collectNewCards(Robi.Clash.Engine.NativeObjects.LogicData.Spell spell)
+        {
+            //try to fill missing data
+            var data = spell.SummonCharacter;
+            StringBuilder sb = new StringBuilder(10000);
+
+            Card c = new Card();
+            c.stringName = spell.Name.Value;
+            c.name = cardNamestringToEnum(c.stringName);
+            sb.Append("name:").Append(c.name).Append(" ");
+            sb.Append("stringName:").Append(c.stringName).Append(" ");
+            sb.Append("type:").Append("-").Append(" ");
+            sb.Append("Transport:").Append("-").Append(" ");
+
+            c.TargetType = targetType.NONE;
+            if (data.IgnorePushback == 1) c.TargetType = targetType.BUILDINGS;
+            else if (data.AttacksAir == 1) c.TargetType = targetType.ALL;
+            else if (data.AttacksGround == 1) c.TargetType = targetType.GROUND;
+            sb.Append("TargetType:").Append(c.TargetType);
+            sb.Append("affectType:").Append(spell.OnlyEnemies).Append("-").Append(spell.OnlyOwnTroops).Append(" ");
+            c.cost = spell.ManaCost;
+            sb.Append("cost:").Append(c.cost).Append(" ");
+            c.DeployTime = data.DeployTime;
+            sb.Append("DeployTime:").Append(data.DeployTime).Append(" ");
+            c.DeployDelay = data.DeployDelay;
+            sb.Append("DeployDelay:").Append(data.DeployDelay).Append(" ");
+            c.MaxHP = 100;
+            c.Atk = 200;
+            sb.Append("MaxHP:").Append("-").Append(" ");
+            sb.Append("Atk:").Append("-").Append(" ");
+            sb.Append("Shield:").Append("-").Append(" ");
+            sb.Append("Speed:").Append("-").Append(" ");
+            c.HitSpeed = data.HitSpeed;
+            sb.Append("HitSpeed:").Append(data.HitSpeed).Append(" ");
+            sb.Append("MinRange:").Append("-").Append(" ");
+            c.MaxRange = data.Range;
+            sb.Append("MaxRange:").Append(data.Range).Append(" ");
+            c.SightRange = data.SightRange;
+            sb.Append("SightRange:").Append(data.SightRange).Append(" ");
+            c.SightClip = data.SightClip;
+            sb.Append("SightClip:").Append(data.SightClip).Append(" ");
+            c.MultipleTargets = data.MultipleTargets;
+            sb.Append("MultipleTargets:").Append(data.MultipleTargets).Append(" ");
+            c.MultipleProjectiles = spell.MultipleProjectiles;
+            sb.Append("MultipleProjectiles:").Append(spell.MultipleProjectiles).Append(" ");
+            sb.Append("DeathEffect:").Append(data.DeathEffect.Name).Append(" ");
+            c.Rarity = spell.Rarity.Name.Value;
+            sb.Append("Rarity:").Append(spell.Rarity).Append(" ");
+            sb.Append("Level:").Append("-").Append(" ");
+            c.DamageRadius = spell.Radius;
+            sb.Append("DamageRadius:").Append(spell.Radius).Append(" ");
+            //c.aoeGround = spell.Projectile.AoeToGround;
+            sb.Append("aoeGround:").Append(spell.Projectile.AoeToGround).Append(" ");
+            //c.aoeAir = spell.Projectile.AoeToAir;
+            sb.Append("aoeAir:").Append(spell.Projectile.AoeToAir).Append(" ");
+            c.CollisionRadius = data.CollisionRadius;
+            sb.Append("CollisionRadius:").Append(data.CollisionRadius).Append(" ");
+            sb.Append("towerDamage:").Append("-").Append(" ");
+            c.LifeTime = data.LifeTime;
+            sb.Append("LifeTime:").Append(data.LifeTime).Append(" ");
+            c.SpawnNumber = data.SpawnNumber;
+            sb.Append("SpawnNumber:").Append(data.SpawnNumber).Append(" ");
+            c.SpawnPause = data.SpawnPauseTime;
+            sb.Append("SpawnPause:").Append(data.SpawnPauseTime).Append(" ");
+            c.SpawnInterval = data.SpawnInterval;
+            sb.Append("SpawnInterval:").Append(data.SpawnInterval).Append(" ");
+            c.SpawnCharacterLevel = data.SpawnCharacterLevelIndex;
+            sb.Append("SpawnCharacterLevel:").Append(data.SpawnCharacterLevelIndex).Append(" ");
+
+            sb.Append("Extra_Spell_Data:").Append("*************** ");
+
+            sb.Append("dataLifeTime:").Append(data.LifeTime).Append(" ");
+            sb.Append("dataDeployTime:").Append(data.DeployTime).Append(" ");
+            sb.Append("dataFlyingHeight:").Append(data.FlyingHeight).Append(" ");
+            sb.Append("CanDeployOnEnemySide:").Append(spell.CanDeployOnEnemySide).Append(" ");
+            sb.Append("CustomDeployTime:").Append(spell.CustomDeployTime).Append(" ");
+            sb.Append("CanDeployOnEnemySide:").Append(spell.CanDeployOnEnemySide).Append(" ");
+            sb.Append("ManaCostFromSummonerMana:").Append(spell.ManaCostFromSummonerMana).Append(" ");
+            sb.Append("SpellAsDeploy:").Append(spell.SpellAsDeploy).Append(" ");
+            sb.Append("CanDeployOnEnemySide:").Append(spell.CanDeployOnEnemySide).Append(" ");
+            sb.Append("CanPlaceOnBuildings:").Append(spell.CanPlaceOnBuildings).Append(" ");
+            sb.Append("ElixirProductionStopTime:").Append(spell.ElixirProductionStopTime).Append(" ");
+            sb.Append("MultipleProjectiles:").Append(spell.MultipleProjectiles).Append(" ");
+            sb.Append("Height:").Append(spell.Height).Append(" ");
+            sb.Append("Radius:").Append(spell.Radius).Append(" ");
+            sb.Append("Pushback:").Append(spell.Pushback).Append(" ");
+            sb.Append("SummonNumber:").Append(spell.SummonNumber).Append(" ");
+            sb.Append("StatsUnderInfo:").Append(spell.StatsUnderInfo).Append(" ");
+            sb.Append("Field80:").Append(spell.Field80).Append(" ");
+            sb.Append("Field84:").Append(spell.Field84).Append(" ");
+            sb.Append("Field88:").Append(spell.Field88).Append(" ");
+            sb.Append("Field50:").Append(spell.Field50).Append(" ");
+            
+            try
+            {
+                using (StreamWriter sw = File.AppendText("_carddb_upd.txt"))
+                {
+                    sw.WriteLine(sb.ToString());
+                }
+            }
+            catch { return c; }
+
+            return c;
+        }
+
+        public void collectCardInfo(BoardObj bo)
 		{
 			if (cardNameToCardList.ContainsKey(bo.Name))
 			{
@@ -639,10 +746,10 @@ namespace Robi.Clash.DefaultSelectors
 				//numDifferences = 0;
 			}
 		}
-
-		public void uploadCardInfo()
+        
+        public void uploadCardInfo()
 		{
-			System.Text.StringBuilder sb = new System.Text.StringBuilder(1000000);
+			StringBuilder sb = new StringBuilder(1000000);
 			foreach (var kvp in cardNameToCardList)
 			{
 				sb.Clear();
