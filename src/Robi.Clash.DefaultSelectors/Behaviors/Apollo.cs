@@ -486,7 +486,7 @@
 
             if (IsAOEAttackNeeded(p))
             {
-                var atkAOE = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB).FirstOrDefault(); // Todo: just AOE-Attack
+                var atkAOE = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB && n.card.aoeGround).FirstOrDefault(); // Todo: just AOE-Attack
                 if (atkAOE == null)
                     atkAOE = p.ownHandCards.Where(n => n.card.TargetType == targetType.GROUND).FirstOrDefault();
 
