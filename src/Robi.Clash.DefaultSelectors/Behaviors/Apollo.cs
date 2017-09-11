@@ -1,5 +1,6 @@
 ﻿namespace Robi.Clash.DefaultSelectors.Behaviors
 {
+<<<<<<< HEAD
 	using Common;
 	using Engine.NativeObjects.Native;
 	using Robi.Engine.Settings;
@@ -79,6 +80,96 @@
 			Balanced,
 			Rusher
 		};
+=======
+    using Common;
+    using Engine.NativeObjects.Native;
+    using Robi.Engine.Settings;
+    using Serilog;
+    using Settings;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+>>>>>>> upstream
+
+    public class Apollo : BehaviorBase
+    {
+        private static readonly ILogger Logger = LogProvider.CreateLogger<Apollo>();
+        public static bool GameBeginning = true;
+
+        #region
+        public override string Name => "Apollo";
+
+        public override string Description => "1vs1; Please lean back and let me Apollo do the work...";
+
+        public override string Author => "Peros_";
+
+        public override Version Version => new Version(1, 4, 0, 0);
+        public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
+        #endregion
+
+        private static ApolloSettings Settings => SettingsManager.GetSetting<ApolloSettings>("Apollo");
+
+        public override void Initialize()
+        {
+<<<<<<< HEAD
+            Cast bc = null;
+            Logger.Debug("Home = {Home}", p.home);
+            // Peros: Contains mobs, buildings and towers
+            //group ownGroup = p.getGroup(true, 85, boPriority.byTotalNumber, 3000);
+=======
+            base.Initialize();
+            SettingsManager.RegisterSettings(Name, new ApolloSettings());
+        }
+
+        public override void Deinitialize()
+        {
+            SettingsManager.UnregisterSettings(Name);
+            base.Deinitialize();
+        }
+>>>>>>> upstream
+
+        public enum FightState
+        {
+            DLPT,       // Defense LeftPrincessTower
+            DKT,        // Defense KingTower
+            DRPT,       // Defense RightPrincessTower
+            UALPT,      // UnderAttack LeftPrincessTower
+            UAKT,       // UnderAttack KingTower
+            UARPT,      // UnderAttack RightPrincessTower
+            ALPT,       // Attack LeftPrincessTower
+            AKT,        // Attack KingTower
+            ARPT,        // Attack RightPrincessTower
+            START,
+            WAIT
+        };
+
+<<<<<<< HEAD
+=======
+        enum CardTypeOld
+        {
+            Defense,
+            All,
+            Troop,
+            Buildings,
+            NONE
+        };
+
+        enum DeployDecision
+        {
+            DamagingSpell,
+            AOEAttack,
+            AttacksFlying,
+            Buildings,
+            CycleSpell,
+            PowerSpell
+        };
+
+        enum FightStyle
+        {
+            Defensive,
+            Balanced,
+            Rusher
+        };
 
         public override Cast GetBestCast(Playfield p)
         {
@@ -93,6 +184,7 @@
             Logger.Debug("Part: SpellMagic");
             Handcard hc = SpellMagic(p, currentSituation);
 
+>>>>>>> upstream
             if (hc == null)
                 return null;
 
@@ -177,7 +269,11 @@
 
             if (spell != null && spell.hc != null)
             {
+<<<<<<< HEAD
                 Logger.Debug("Spell: {Sp} - MissingMana: {MM}",  spell.hc.name, spell.hc.missingMana);
+=======
+                Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
+>>>>>>> upstream
                 if (spell.hc.missingMana > 0)
                     return null;
                 else
@@ -271,7 +367,11 @@
                         return FightState.DKT;
                 }
             }
+<<<<<<< HEAD
             catch(Exception e)
+=======
+            catch (Exception e)
+>>>>>>> upstream
             {
                 return GetCurrentFightStateBalanced(p);
             }
@@ -392,9 +492,9 @@
             {
                 StartFirstAttack = (p.ownMana < Settings.ManaTillFirstAttack);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                
+
             }
 
 
@@ -645,7 +745,7 @@
 
             return false;
         }
-    #endregion
+        #endregion
 
         #region Which Card
 
@@ -667,10 +767,15 @@
 
             VectorAI choosedPosition = new VectorAI(0, 0), nextPosition;
 
+<<<<<<< HEAD
 
             if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
             {
                 Logger.Debug("AOE or PROJECTILE");
+=======
+            Logger.Debug("AOE");
+            if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
+>>>>>>> upstream
                 return GetPositionOfTheBestDamagingSpellDeploy(p);
             }
 
@@ -785,7 +890,11 @@
                 return GetPositionOfTheBestBuildingDeploy(p);
                 //}
             }
+<<<<<<< HEAD
             else if(hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
+=======
+            else if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
+>>>>>>> upstream
                 return GetPositionOfTheBestDamagingSpellDeploy(p);
             else
             {
@@ -822,8 +931,11 @@
         #region Attack
         private static VectorAI AKT(Playfield p)
         {
+<<<<<<< HEAD
             Logger.Debug("AKT");
 
+=======
+>>>>>>> upstream
             if (p.enemyTowers?.Count() > 2)
                 //Logger.Debug("Bug: NoPrincessTowerDown-State in Attack-King-Tower-State!");
                 return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
@@ -893,7 +1005,11 @@
         public static VectorAI GetPositionOfTheBestBuildingDeploy(Playfield p)
         {
             // ToDo: Find the best position
+<<<<<<< HEAD
             VectorAI betweenBridges = p.getDeployPosition(deployDirection.betweenBridges,0);
+=======
+            VectorAI betweenBridges = p.getDeployPosition(deployDirection.betweenBridges, 0);
+>>>>>>> upstream
             VectorAI result = p.getDeployPosition(betweenBridges, deployDirection.Down, 4000);
             return result;
         }
