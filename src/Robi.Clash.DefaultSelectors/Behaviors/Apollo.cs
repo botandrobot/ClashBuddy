@@ -1,84 +1,84 @@
 ﻿namespace Robi.Clash.DefaultSelectors.Behaviors
 {
-	using Common;
-	using Engine.NativeObjects.Native;
-	using Robi.Engine.Settings;
-	using Serilog;
-	using Settings;
-	using System;
-	using System.Collections.Generic;
-	using System.Linq;
+    using Common;
+    using Engine.NativeObjects.Native;
+    using Robi.Engine.Settings;
+    using Serilog;
+    using Settings;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-	public class Apollo : BehaviorBase
-	{
-		private static readonly ILogger Logger = LogProvider.CreateLogger<Apollo>();
-		public static bool GameBeginning = true;
+    public class Apollo : BehaviorBase
+    {
+        private static readonly ILogger Logger = LogProvider.CreateLogger<Apollo>();
+        public static bool GameBeginning = true;
 
-		#region
-		public override string Name => "Apollo";
+        #region
+        public override string Name => "Apollo";
 
-		public override string Description => "1vs1; Please lean back and let me Apollo do the work...";
+        public override string Description => "1vs1; Please lean back and let me Apollo do the work...";
 
-		public override string Author => "Peros_";
+        public override string Author => "Peros_";
 
-		public override Version Version => new Version(1, 3, 0, 0);
-		public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
-		#endregion
+        public override Version Version => new Version(1, 4, 0, 0);
+        public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
+        #endregion
 
-		private static ApolloSettings Settings => SettingsManager.GetSetting<ApolloSettings>("Apollo");
+        private static ApolloSettings Settings => SettingsManager.GetSetting<ApolloSettings>("Apollo");
 
-		public override void Initialize()
-		{
-			base.Initialize();
-			SettingsManager.RegisterSettings(Name, new ApolloSettings());
-		}
+        public override void Initialize()
+        {
+            base.Initialize();
+            SettingsManager.RegisterSettings(Name, new ApolloSettings());
+        }
 
-		public override void Deinitialize()
-		{
-			SettingsManager.UnregisterSettings(Name);
-			base.Deinitialize();
-		}
+        public override void Deinitialize()
+        {
+            SettingsManager.UnregisterSettings(Name);
+            base.Deinitialize();
+        }
 
-		public enum FightState
-		{
-			DLPT,       // Defense LeftPrincessTower
-			DKT,        // Defense KingTower
-			DRPT,       // Defense RightPrincessTower
-			UALPT,      // UnderAttack LeftPrincessTower
-			UAKT,       // UnderAttack KingTower
-			UARPT,      // UnderAttack RightPrincessTower
-			ALPT,       // Attack LeftPrincessTower
-			AKT,        // Attack KingTower
-			ARPT,        // Attack RightPrincessTower
-			START,
-			WAIT
-		};
+        public enum FightState
+        {
+            DLPT,       // Defense LeftPrincessTower
+            DKT,        // Defense KingTower
+            DRPT,       // Defense RightPrincessTower
+            UALPT,      // UnderAttack LeftPrincessTower
+            UAKT,       // UnderAttack KingTower
+            UARPT,      // UnderAttack RightPrincessTower
+            ALPT,       // Attack LeftPrincessTower
+            AKT,        // Attack KingTower
+            ARPT,        // Attack RightPrincessTower
+            START,
+            WAIT
+        };
 
-		enum CardTypeOld
-		{
-			Defense,
-			All,
-			Troop,
-			Buildings,
-			NONE
-		};
+        enum CardTypeOld
+        {
+            Defense,
+            All,
+            Troop,
+            Buildings,
+            NONE
+        };
 
-		enum DeployDecision
-		{
-			DamagingSpell,
-			AOEAttack,
-			AttacksFlying,
-			Buildings,
-			CycleSpell,
-			PowerSpell
-		};
+        enum DeployDecision
+        {
+            DamagingSpell,
+            AOEAttack,
+            AttacksFlying,
+            Buildings,
+            CycleSpell,
+            PowerSpell
+        };
 
-		enum FightStyle
-		{
-			Defensive,
-			Balanced,
-			Rusher
-		};
+        enum FightStyle
+        {
+            Defensive,
+            Balanced,
+            Rusher
+        };
 
         public override Cast GetBestCast(Playfield p)
         {
@@ -141,51 +141,89 @@
             // TODO: Find most important char to counter
             // Priority1: highest atk
 
-            IOrderedEnumerable<BoardObj> enemies = p.enemyMinions.OrderBy(n => n.Atk + ((n.level * 0.1) * n.Atk));
-            BoardObj enemy = enemies.FirstOrDefault();
+            // ## Old
+            //IOrderedEnumerable<BoardObj> enemies = p.enemyMinions.OrderBy(n => n.Atk + ((n.level * 0.1) * n.Atk));
+            //BoardObj enemy = enemies.FirstOrDefault();
 
-            if (enemy != null)
+            //if (enemy != null)
+            //{
+            //    Logger.Debug("Enemy in GetBestUnderAttackCard");
+            //    Logger.Debug(enemy.ToString());
+            //    Handcard spell = KnowledgeBase.Instance.getOppositeCard(p, enemy);
+
+            //    if (spell != null)
+            //    {
+            //        if (spell.missingMana > 0)
+            //            return null;
+            //        else
+            //            return spell;
+            //    }
+            //    else
+            //        return DefenseTroop(p);
+            //}
+            //else
+            //    return DefenseTroop(p);
+
+            Logger.Debug("Path: Spell - GetBestUnderAttackCard");
+            BoardObj defender = GetBestDefender(p);
+
+            if (defender == null)
+                return null;
+            else if (defender.Name.ToString() == "princesstower" || defender.Name.ToString() == "kingtower")
+                return DefenseTroop(p);
+
+            Logger.Debug("BestDefender: {Defender}", defender.Name);
+            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, true);
+
+            if (spell != null && spell.hc != null)
             {
-                Logger.Debug("Enemy in GetBestUnderAttackCard");
-                Logger.Debug(enemy.ToString());
-                Handcard spell = KnowledgeBase.Instance.getOppositeCard(p, enemy);
-
-                if (spell != null)
-                {
-                    if (spell.missingMana > 0)
-                        return null;
-                    else
-                        return spell;
-                }
+                Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
+                if (spell.hc.missingMana > 0)
+                    return null;
                 else
-                    return DefenseTroop(p);
+                    return spell.hc;
             }
             else
                 return DefenseTroop(p);
         }
 
+        private static BoardObj GetBestDefender(Playfield p)
+        {
+            Logger.Debug("Path: Spell - GetBestDefender");
+            int count = 0;
+            BoardObj enemy = EnemyCharacterWithTheMostEnemiesAround(p, out count);
+
+            if (enemy == null)
+                return p.ownKingsTower;
+
+            if (enemy.Line == 2)
+                return p.ownPrincessTower2;
+            else if (enemy.Line == 1)
+                return p.ownPrincessTower1;
+            else
+                return p.ownKingsTower;
+        }
+
         private static Handcard GetBestAttackCard(Playfield p)
         {
+            Logger.Debug("Path: Spell - GetBestAttackCard");
             // TODO: Find most important char to counter
-            IOrderedEnumerable<BoardObj> enemies = p.enemyMinions.OrderBy(n => n.Atk + ((n.level * 0.1) * n.Atk));
-            BoardObj enemy = enemies.FirstOrDefault();
+            BoardObj defender = GetBestDefender(p);
 
-            if (enemy != null)
+            if (defender == null)
+                return null;
+            else if (defender.Name.ToString() == "princesstower" || defender.Name.ToString() == "kingtower")
+                return All(p);
+
+            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, true);
+
+            if (spell != null && spell.hc != null)
             {
-                Logger.Debug("Enemy in GetBestAttackCard");
-                Logger.Debug(enemy.ToString());
-
-                Handcard spell = KnowledgeBase.Instance.getOppositeCard(p, enemy);
-
-                if (spell != null)
-                {
-                    if (spell.missingMana > 0)
-                        return null;
-                    else
-                        return spell;
-                }
+                Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
+                if (spell.hc.missingMana > 0)
+                    return null;
                 else
-                    return All(p);
+                    return spell.hc;
             }
             else
                 return All(p);
@@ -193,25 +231,23 @@
 
         private static Handcard GetBestDefenseCard(Playfield p)
         {
-            // TODO: Find most important char to counter
-            IOrderedEnumerable<BoardObj> enemies = p.enemyMinions.OrderBy(n => n.Atk + ((n.level * 0.1) * n.Atk));
-            BoardObj enemy = enemies.FirstOrDefault();
+            Logger.Debug("Path: Spell - GetBestDefenseCard");
+            BoardObj defender = GetBestDefender(p);
 
-            if (enemy != null)
+            if (defender == null)
+                return null;
+            else if (defender.Name.ToString() == "princesstower" || defender.Name.ToString() == "kingtower")
+                return Defense(p);
+
+            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, true);
+
+            if (spell != null && spell.hc != null)
             {
-                Logger.Debug("Enemy in GetBestDefenseCard");
-                Logger.Debug(enemy.ToString());
-                Handcard spell = KnowledgeBase.Instance.getOppositeCard(p, enemy);
-
-                if (spell != null)
-                {
-                    if (spell.missingMana > 0)
-                        return null;
-                    else
-                        return spell;
-                }
+                Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
+                if (spell.hc.missingMana > 0)
+                    return null;
                 else
-                    return Defense(p);
+                    return spell.hc;
             }
             else
                 return Defense(p);
@@ -235,7 +271,7 @@
                         return FightState.DKT;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return GetCurrentFightStateBalanced(p);
             }
@@ -356,9 +392,9 @@
             {
                 StartFirstAttack = (p.ownMana < Settings.ManaTillFirstAttack);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                
+
             }
 
 
@@ -442,6 +478,7 @@
 
         private static Handcard All(Playfield p)
         {
+            Logger.Debug("Path: Spell - All");
             IOrderedEnumerable<Handcard> troopCycleSpells = cycleCard(p);
             IEnumerable<Handcard> damagingSpells = p.ownHandCards.Where(s => s != null && s.card.type == boardObjType.AOE);
             IEnumerable<Handcard> troopPowerSpells = p.ownHandCards.Where(s => s != null && s.card.type == boardObjType.AOE);
@@ -499,6 +536,8 @@
 
         private static Handcard DefenseTroop(Playfield p)
         {
+            Logger.Debug("Path: Spell - DefenseTroop");
+
             if (IsAOEAttackNeeded(p))
             {
                 var atkAOE = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB).FirstOrDefault(); // Todo: just AOE-Attack
@@ -521,11 +560,12 @@
             if (powerSpell != null)
                 return new Handcard(powerSpell.name, powerSpell.lvl);
 
-            return p.ownHandCards.FirstOrDefault();
+            return cycleCard(p).FirstOrDefault();
         }
 
         private static Handcard Defense(Playfield p)
         {
+            Logger.Debug("Path: Spell - Defense");
             IEnumerable<Handcard> damagingSpells = p.ownHandCards.Where(s => s != null && s.card.type == boardObjType.AOE);
 
             if (DamagingSpellDecision(p))
@@ -565,6 +605,7 @@
 
         private static Handcard Building(Playfield p)
         {
+            Logger.Debug("Path: Spell - Building");
             var buildingCard = p.ownHandCards.Where(n => n.card.type == boardObjType.BUILDING).FirstOrDefault();
             if (buildingCard != null)
                 return new Handcard(buildingCard.name, buildingCard.lvl);
@@ -604,7 +645,7 @@
 
             return false;
         }
-    #endregion
+        #endregion
 
         #region Which Card
 
@@ -703,21 +744,13 @@
                     if (GetNearestEnemy(p)?.Line == 2)
                     {
                         //VectorAI v = new VectorAI(p.ownKingsTower.Position.X + 1000, p.enemyKingsTower.Position.Y);
-<<<<<<< HEAD
-                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirection.RightUp, 1000);
-=======
                         VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirection.RightUp, 100);
->>>>>>> 74e024d388c224ae231e54f872047d91e97c7a18
                         return v;
                     }
                     else
                     {
                         //VectorAI v = new VectorAI(p.ownKingsTower.Position.X - 1000, p.enemyKingsTower.Position.Y);
-<<<<<<< HEAD
-                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirection.LeftUp, 1000);
-=======
                         VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirection.LeftUp, 100);
->>>>>>> 74e024d388c224ae231e54f872047d91e97c7a18
                         return v;
                     }
                 }
@@ -749,7 +782,7 @@
                 return GetPositionOfTheBestBuildingDeploy(p);
                 //}
             }
-            else if(hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
+            else if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
                 return GetPositionOfTheBestDamagingSpellDeploy(p);
             else
             {
@@ -852,7 +885,7 @@
         public static VectorAI GetPositionOfTheBestBuildingDeploy(Playfield p)
         {
             // ToDo: Find the best position
-            VectorAI betweenBridges = p.getDeployPosition(deployDirection.betweenBridges,0);
+            VectorAI betweenBridges = p.getDeployPosition(deployDirection.betweenBridges, 0);
             VectorAI result = p.getDeployPosition(betweenBridges, deployDirection.Down, 4000);
             return result;
         }
@@ -873,11 +906,7 @@
                 else
                 {
                     //position.AddYInDirection(p);
-<<<<<<< HEAD
-                    return p.getDeployPosition(position, deployDirection.Down, 1000);
-=======
                     return p.getDeployPosition(position, deployDirection.Down, 2000);
->>>>>>> 74e024d388c224ae231e54f872047d91e97c7a18
                 }
             }
             else if (hc.card.type == boardObjType.BUILDING)

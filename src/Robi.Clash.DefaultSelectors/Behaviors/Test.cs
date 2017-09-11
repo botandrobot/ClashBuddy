@@ -72,8 +72,8 @@
 						if (hc.card.TargetType == targetType.ALL) tmpval += airDPSBonus;
 						if (hc.card.Transport == transportType.AIR && hc.card.TargetType != targetType.BUILDINGS) tmpval += flyBonus;
 						if (hc.card.MaxHP > 600) tmpval += tankBonus + hc.card.MaxHP / 10;
-						tmpval += hc.card.SpawnNumber * partyBonus;
-						tmpval += hc.card.SpawnNumber * hc.card.Atk;
+						tmpval += hc.card.SummonNumber * partyBonus;
+						tmpval += hc.card.SummonNumber * hc.card.Atk;
 						if (tmpval > val)
 						{
 							val = tmpval;
