@@ -169,11 +169,15 @@
 
             if (defender == null)
                 return null;
+            else if (defender.Name.ToString() == "princesstower" || defender.Name.ToString() == "kingtower")
+                return DefenseTroop(p);
 
-            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender);
+            Logger.Debug("BestDefender: {Defender}", defender.Name);
+            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, true);
 
             if (spell != null && spell.hc != null)
             {
+                Logger.Debug("Spell: {Sp} - MissingMana: {MM}",  spell.hc.name, spell.hc.missingMana);
                 if (spell.hc.missingMana > 0)
                     return null;
                 else
@@ -208,11 +212,14 @@
 
             if (defender == null)
                 return null;
+            else if (defender.Name.ToString() == "princesstower" || defender.Name.ToString() == "kingtower")
+                return All(p);
 
-            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender);
+            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, true);
 
             if (spell != null && spell.hc != null)
             {
+                Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
                 if (spell.hc.missingMana > 0)
                     return null;
                 else
@@ -229,11 +236,14 @@
 
             if (defender == null)
                 return null;
+            else if (defender.Name.ToString() == "princesstower" || defender.Name.ToString() == "kingtower")
+                return Defense(p);
 
-            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender);
+            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, true);
 
             if (spell != null && spell.hc != null)
             {
+                Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
                 if (spell.hc.missingMana > 0)
                     return null;
                 else
@@ -550,7 +560,7 @@
             if (powerSpell != null)
                 return new Handcard(powerSpell.name, powerSpell.lvl);
 
-            return p.ownHandCards.FirstOrDefault();
+            return cycleCard(p).FirstOrDefault();
         }
 
         private static Handcard Defense(Playfield p)
@@ -657,9 +667,12 @@
 
             VectorAI choosedPosition = new VectorAI(0, 0), nextPosition;
 
-            Logger.Debug("AOE");
+
             if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
+            {
+                Logger.Debug("AOE or PROJECTILE");
                 return GetPositionOfTheBestDamagingSpellDeploy(p);
+            }
 
             // ToDo: Handle Defense Gamestates
             switch (gameState)
@@ -809,17 +822,19 @@
         #region Attack
         private static VectorAI AKT(Playfield p)
         {
+            Logger.Debug("AKT");
+
             if (p.enemyTowers?.Count() > 2)
                 //Logger.Debug("Bug: NoPrincessTowerDown-State in Attack-King-Tower-State!");
-                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1, 170);
+                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
 
             if (p.enemyTowers?.Where(n => n.Line == 1).Count() == 0)
                 //Logger.Debug("LPTD");
-                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1, 70);
+                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
 
             if (p.enemyTowers?.Where(n => n.Line == 2).Count() == 0)
                 //Logger.Debug("RPTD");
-                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine2, 15);
+                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine2);
 
             if (p.enemyTowers?.Count() == 1)
                 //Logger.Debug("BPTD");
@@ -847,6 +862,7 @@
         {
             // Prio1: Hit Enemy King Tower if health is low
             // Prio2: Every damaging spell if there is a big group of enemies
+            Logger.Debug("GetPositionOfTheBestDamaingSpellDeploy");
 
             if (p.enemyKingsTower?.HP < Settings.KingTowerSpellDamagingHealth)
                 return p.enemyKingsTower?.Position;
@@ -867,8 +883,10 @@
                         return result;
                     }
                 }
+                Logger.Debug("enemy = null?{enemy} ; enemy.position = null?{position}", enemy == null, enemy.Position == null);
             }
 
+            
             return new VectorAI(0, 0);
         }
 
