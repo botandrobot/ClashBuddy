@@ -21,7 +21,7 @@
 
 		public override string Author => "Peros_";
 
-		public override Version Version => new Version(1, 3, 0, 0);
+		public override Version Version => new Version(1, 4, 0, 0);
 		public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
 		#endregion
 
@@ -141,51 +141,82 @@
             // TODO: Find most important char to counter
             // Priority1: highest atk
 
-            IOrderedEnumerable<BoardObj> enemies = p.enemyMinions.OrderBy(n => n.Atk + ((n.level * 0.1) * n.Atk));
-            BoardObj enemy = enemies.FirstOrDefault();
+            // ## Old
+            //IOrderedEnumerable<BoardObj> enemies = p.enemyMinions.OrderBy(n => n.Atk + ((n.level * 0.1) * n.Atk));
+            //BoardObj enemy = enemies.FirstOrDefault();
 
-            if (enemy != null)
+            //if (enemy != null)
+            //{
+            //    Logger.Debug("Enemy in GetBestUnderAttackCard");
+            //    Logger.Debug(enemy.ToString());
+            //    Handcard spell = KnowledgeBase.Instance.getOppositeCard(p, enemy);
+
+            //    if (spell != null)
+            //    {
+            //        if (spell.missingMana > 0)
+            //            return null;
+            //        else
+            //            return spell;
+            //    }
+            //    else
+            //        return DefenseTroop(p);
+            //}
+            //else
+            //    return DefenseTroop(p);
+
+            Logger.Debug("Path: Spell - GetBestUnderAttackCard");
+            BoardObj defender = GetBestDefender(p);
+
+            if (defender == null)
+                return null;
+
+            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender);
+
+            if (spell != null && spell.hc != null)
             {
-                Logger.Debug("Enemy in GetBestUnderAttackCard");
-                Logger.Debug(enemy.ToString());
-                Handcard spell = KnowledgeBase.Instance.getOppositeCard(p, enemy);
-
-                if (spell != null)
-                {
-                    if (spell.missingMana > 0)
-                        return null;
-                    else
-                        return spell;
-                }
+                if (spell.hc.missingMana > 0)
+                    return null;
                 else
-                    return DefenseTroop(p);
+                    return spell.hc;
             }
             else
                 return DefenseTroop(p);
         }
 
+        private static BoardObj GetBestDefender(Playfield p)
+        {
+            Logger.Debug("Path: Spell - GetBestDefender");
+            int count = 0;
+            BoardObj enemy = EnemyCharacterWithTheMostEnemiesAround(p, out count);
+
+            if (enemy == null)
+                return p.ownKingsTower;
+
+            if (enemy.Line == 2)
+                return p.ownPrincessTower2;
+            else if (enemy.Line == 1)
+                return p.ownPrincessTower1;
+            else
+                return p.ownKingsTower;
+        }
+
         private static Handcard GetBestAttackCard(Playfield p)
         {
+            Logger.Debug("Path: Spell - GetBestAttackCard");
             // TODO: Find most important char to counter
-            IOrderedEnumerable<BoardObj> enemies = p.enemyMinions.OrderBy(n => n.Atk + ((n.level * 0.1) * n.Atk));
-            BoardObj enemy = enemies.FirstOrDefault();
+            BoardObj defender = GetBestDefender(p);
 
-            if (enemy != null)
+            if (defender == null)
+                return null;
+
+            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender);
+
+            if (spell != null && spell.hc != null)
             {
-                Logger.Debug("Enemy in GetBestAttackCard");
-                Logger.Debug(enemy.ToString());
-
-                Handcard spell = KnowledgeBase.Instance.getOppositeCard(p, enemy);
-
-                if (spell != null)
-                {
-                    if (spell.missingMana > 0)
-                        return null;
-                    else
-                        return spell;
-                }
+                if (spell.hc.missingMana > 0)
+                    return null;
                 else
-                    return All(p);
+                    return spell.hc;
             }
             else
                 return All(p);
@@ -193,25 +224,20 @@
 
         private static Handcard GetBestDefenseCard(Playfield p)
         {
-            // TODO: Find most important char to counter
-            IOrderedEnumerable<BoardObj> enemies = p.enemyMinions.OrderBy(n => n.Atk + ((n.level * 0.1) * n.Atk));
-            BoardObj enemy = enemies.FirstOrDefault();
+            Logger.Debug("Path: Spell - GetBestDefenseCard");
+            BoardObj defender = GetBestDefender(p);
 
-            if (enemy != null)
+            if (defender == null)
+                return null;
+
+            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender);
+
+            if (spell != null && spell.hc != null)
             {
-                Logger.Debug("Enemy in GetBestDefenseCard");
-                Logger.Debug(enemy.ToString());
-                Handcard spell = KnowledgeBase.Instance.getOppositeCard(p, enemy);
-
-                if (spell != null)
-                {
-                    if (spell.missingMana > 0)
-                        return null;
-                    else
-                        return spell;
-                }
+                if (spell.hc.missingMana > 0)
+                    return null;
                 else
-                    return Defense(p);
+                    return spell.hc;
             }
             else
                 return Defense(p);
@@ -442,6 +468,7 @@
 
         private static Handcard All(Playfield p)
         {
+            Logger.Debug("Path: Spell - All");
             IOrderedEnumerable<Handcard> troopCycleSpells = cycleCard(p);
             IEnumerable<Handcard> damagingSpells = p.ownHandCards.Where(s => s != null && s.card.type == boardObjType.AOE);
             IEnumerable<Handcard> troopPowerSpells = p.ownHandCards.Where(s => s != null && s.card.type == boardObjType.AOE);
@@ -499,6 +526,8 @@
 
         private static Handcard DefenseTroop(Playfield p)
         {
+            Logger.Debug("Path: Spell - DefenseTroop");
+
             if (IsAOEAttackNeeded(p))
             {
                 var atkAOE = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB).FirstOrDefault(); // Todo: just AOE-Attack
@@ -526,6 +555,7 @@
 
         private static Handcard Defense(Playfield p)
         {
+            Logger.Debug("Path: Spell - Defense");
             IEnumerable<Handcard> damagingSpells = p.ownHandCards.Where(s => s != null && s.card.type == boardObjType.AOE);
 
             if (DamagingSpellDecision(p))
@@ -565,6 +595,7 @@
 
         private static Handcard Building(Playfield p)
         {
+            Logger.Debug("Path: Spell - Building");
             var buildingCard = p.ownHandCards.Where(n => n.card.type == boardObjType.BUILDING).FirstOrDefault();
             if (buildingCard != null)
                 return new Handcard(buildingCard.name, buildingCard.lvl);
