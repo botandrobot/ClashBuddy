@@ -105,8 +105,8 @@ namespace Robi.Clash.DefaultSelectors
 						int lvl = 1;
 						Handcard hc = new Handcard(spell.Name.Value, lvl); //hc.lvl = ??? TODO
 						hc.manacost = spell.ManaCost;
+                        if (hc.card.name == CardDB.cardName.unknown) hc.card = CardDB.Instance.collectNewCards(spell);
 						//hc.position = ??? TODO
-						//TODO:for all objects - if (new name) get actual params
 						ownHandCards.Add(hc);
 					}
 				}
@@ -131,12 +131,13 @@ namespace Robi.Clash.DefaultSelectors
 						bo.own = own;
 						if (own) ownAreaEffects.Add(bo);
 						else enemyAreaEffects.Add(bo);
-						//hc.position = ??? TODO
+                        //hc.position = ??? TODO
 
+                        //if (hc.card.name == CardDB.cardName.unknown) hc.card = CardDB.Instance.collectNewCards(spell); //TODO: same for all objects
 
-					}
+                    }
 
-				}
+                }
 
 				var chars = om.OfType<Clash.Engine.NativeObjects.Logic.GameObjects.Character>();
 				foreach (var @char in chars)
@@ -224,8 +225,10 @@ namespace Robi.Clash.DefaultSelectors
                                 break;
                         }
 					}
-				}
-			}
+                    //if (hc.card.name == CardDB.cardName.unknown) hc.card = CardDB.Instance.collectNewCards(spell); //TODO: same for all objects
+
+                }
+            }
 
 			Playfield p;
 
@@ -255,7 +258,12 @@ namespace Robi.Clash.DefaultSelectors
 
 				p.home = p.ownKingsTower.Position.Y < 15250 ? true : false;
 
-				p.initTowers();
+                if (p.ownPrincessTower1.Position == null) p.ownPrincessTower1.Position = p.getDeployPosition(deployDirection.ownPrincessTowerLine1);
+                if (p.ownPrincessTower2.Position == null) p.ownPrincessTower2.Position = p.getDeployPosition(deployDirection.ownPrincessTowerLine2);
+                if (p.enemyPrincessTower1.Position == null) p.enemyPrincessTower1.Position = p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
+                if (p.enemyPrincessTower2.Position == null) p.enemyPrincessTower2.Position = p.getDeployPosition(deployDirection.enemyPrincessTowerLine2);
+
+                p.initTowers();
 
 				int i = 0;
 				foreach (BoardObj t in p.ownTowers) if (t.Tower < 10) i += t.Line;
@@ -293,5 +301,5 @@ namespace Robi.Clash.DefaultSelectors
 				return retval;
 			}
 		}
-	}
+    }
 }

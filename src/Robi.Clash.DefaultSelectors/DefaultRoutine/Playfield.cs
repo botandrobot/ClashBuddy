@@ -134,16 +134,16 @@ namespace Robi.Clash.DefaultSelectors
         private bool sum = false;
         private int LowHPlimit = 50;
 
-        public List<BoardObj> lowHPbo = new List<BoardObj>();
-        public int lowHPboGroundDPS = 0;
-        public int lowHPboGroundAreaDPS = 0;
-        public int lowHPboAirDPS = 0;
-        public int lowHPboAirAreaDPS = 0;
-        public int lowHPboBuildingsDPS = 0;
-        public int lowHPboAirTransport = 0;
-        public int lowHPboHP = 0;
-
-        public List<BoardObj> avgHPbo = new List<BoardObj>();
+        public List<BoardObj> lowHPbo = new List<BoardObj>(); //list of all units with HP <= LowHPlimit 
+        public int lowHPboGroundDPS = 0; //total DPS on Ground objects from all units with HP <= LowHPlimit
+        public int lowHPboGroundAreaDPS = 0; //total area DPS on Ground troops from units with HP <= LowHPlimit (considers only units with Area Damage)
+        public int lowHPboAirDPS = 0; //total DPS on Air troops from all units with HP <= LowHPlimit
+        public int lowHPboAirAreaDPS = 0; //total area DPS on Air troops from units with HP <= LowHPlimit (considers only units with Area Damage)
+        public int lowHPboBuildingsDPS = 0; //total DPS on Buildings from all units with HP <= LowHPlimit
+        public int lowHPboAirTransport = 0; //num units with HP <= LowHPlimit who can fly (transportType.AIR)
+        public int lowHPboHP = 0; //average HP per 1 unit from units with HP <= LowHPlimit
+                
+        public List<BoardObj> avgHPbo = new List<BoardObj>(); //hp: LowHPlimit < averageUnits < 550
         public int avgHPboGroundDPS = 0;
         public int avgHPboGroundAreaDPS = 0;
         public int avgHPboAirDPS = 0;
@@ -151,8 +151,8 @@ namespace Robi.Clash.DefaultSelectors
         public int avgHPboBuildingsDPS = 0;
         public int avgHPboAirTransport = 0;
         public int avgHPboHP = 0;
-
-        public List<BoardObj> hiHPbo = new List<BoardObj>();
+                
+        public List<BoardObj> hiHPbo = new List<BoardObj>(); //units with hp > 550
         public int hiHPboGroundDPS = 0;
         public int hiHPboGroundAreaDPS = 0;
         public int hiHPboAirDPS = 0;
@@ -803,7 +803,7 @@ namespace Robi.Clash.DefaultSelectors
                         }
                         else
                         {
-                            if (list[i].card.SpawnNumber > retval.card.SpawnNumber ||
+                            if (list[i].card.SpawnNumber > retval.card.SpawnNumber || list[i].card.SummonNumber > retval.card.SummonNumber ||
                                 list[i].card.DamageRadius > retval.card.DamageRadius) retval = list[i]; //TODO: check this val for troops like minionhorde
                         }
                     }
