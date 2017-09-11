@@ -10,7 +10,7 @@
 		<PackageTags>engine bot ClashBuddy DefaultSelectors</PackageTags>
 
 		<PackageVersion Condition="'$(PackageVersion)' == ''">1.0.0</PackageVersion>
-		<Copyright Condition="'$(Copyright)' == ''">Copyright 2017 (c) Bossland GmbH. All rights reserved.</Copyright>
+		<Copyright Condition="'$(Copyright)' == ''">Copyright 2017 (c) Bot and Robot Entertainment GmbH. All rights reserved.</Copyright>
 
 		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 
@@ -47,9 +47,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="Serilog" Version="2.5.0" />
-		<PackageReference Include="Robi.Common" Version="1.0.162" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
-		<PackageReference Include="Robi.Engine" Version="1.0.162" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
-		<PackageReference Include="Robi.Clash.Engine" Version="1.229.192" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Robi.Common" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Robi.Engine" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Robi.Clash.Engine" Version="*" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
 		<PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
 	</ItemGroup>
 	<ItemGroup>
