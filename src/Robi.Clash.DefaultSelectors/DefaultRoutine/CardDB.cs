@@ -6,8 +6,10 @@ namespace Robi.Clash.DefaultSelectors
 	using System;
 	using System.Collections.Generic;
 	using System.IO;
+    using System.Text;
 
-	public struct targett
+
+    public struct targett
 	{
 		public int target;
 		public int targetEntity;
@@ -52,62 +54,69 @@ namespace Robi.Clash.DefaultSelectors
 		public enum cardName //-replace " ", ".", lower case
 		{
 			unknown,
-			//Troops
-			angrybarbarian,
-			archer,
-			assassin, //bandit
-			axeman, //executioner
-			babydragon,
-			balloon,
-			barbarian,
-			bat,
-			battleram,
-			blowdartgoblin,
-			bomber,
-			bowler,
-			brokencannon,
-			darkprince,
-			darkwitch,
-			dartbarrell,
-			electrowizard,
-			firespirits,
-			giant,
-			giantskeleton,
-			goblin,
-			golem,
-			golemite,
-			hogrider,
-			icegolemite,
-			icespirits,
-			icewizard,
-			infernodragon,
-			knight,
-			lavahound,
-			lavapups,
-			megaknight,
-			megaminion,
-			miner,
-			minion,
-			minipekka,
-			movingcannon,
-			musketeer,
-			pekka,
-			prince,
-			princess,
-			ragebarbarian,
-			royalgiant,
-			skeleton,
-			skeletonballoon,
-			skeletonwarrior,
-			speargoblin,
-			towerprincess,
-			valkyrie,
-			witch,
-			wizard,
-			zapmachine,
+            //Troops
+            angrybarbarian,
+            archer,
+            assassin, //bandit
+            axeman, //executioner
+            babydragon,
+            balloon,
+            barbarian,
+            barbarians,
+            bat,
+            battleram,
+            blowdartgoblin,
+            bomber,
+            bowler,
+            brokencannon,
+            darkprince,
+            darkwitch,
+            dartbarrell,
+            electrowizard,
+            firespirits,
+            giant,
+            giantskeleton,
+            goblin,
+            goblins,
+            golem,
+            golemite,
+            hogrider,
+            icegolemite,
+            icespirits,
+            icewizard,
+            infernodragon,
+            knight,
+            lavahound,
+            lavapups,
+            megaknight,
+            megaminion,
+            miner,
+            minion,
+            minionhorde,
+            minions,
+            minipekka,
+            movingcannon,
+            musketeer,
+            pekka,
+            prince,
+            princess,
+            ragebarbarian,
+            royalgiant,
+            skeleton,
+            skeletonarmy,
+            skeletonballoon,
+            skeletons,
+            skeletonwarrior,
+            speargoblin,
+            speargoblins,
+            towerprincess,
+            valkyrie,
+            witch,
+            wizard,
+            zapmachine,
 
-			//-Buildings
-			balloonbomb,
+            //-Buildings
+            balloonbomb,
 			barbarianhut,
 			bombtower,
 			cannon,
@@ -202,10 +211,8 @@ namespace Robi.Clash.DefaultSelectors
 			icegolem,
 			icespirit,
 			lumberjack,
-			minionhorde,
-			//nightwitch,
-			skeletonarmy,
-			sparky,
+            //nightwitch,            
+            sparky,
 			threemusketeers,
 			//-Spels
 			clonespell,
@@ -259,16 +266,16 @@ namespace Robi.Clash.DefaultSelectors
 			public int towerDamage = 0; //aoe
 
 			public int LifeTime = 0; //-Buildings; AreaEffect=LifeDuration
-			public int SpawnNumber = 0; //-Mobs+Buildings
+            public int SummonNumber = 0;
+            public int SpawnNumber = 0; //-Mobs+Buildings
 			public int SpawnPause = 0; //-Mobs+Buildings
 			public int SpawnInterval = 0; //-Mobs+Buildings
 			public int SpawnCharacterLevel = 0;
 
-
-			public bool needUpdate = true;
-			public int numDuplicates = 0;
-			public int numDifferences = 0;
-			public List<cardtrigers> trigers;
+            //Internal use
+            public bool needUpdate = true;
+            public int numDuplicates = 0;
+            public int numDifferences = 0;
 
 
 
@@ -279,12 +286,45 @@ namespace Robi.Clash.DefaultSelectors
 
 			public Card(Card c)
 			{
-				//this.entityID = c.entityID;
-				this.Rarity = c.Rarity;
-				//TODO
-			}
+                this.name = c.name;
+                this.stringName = c.stringName;
+                this.type = c.type;
+                this.Transport = c.Transport;
+                this.TargetType = c.TargetType;
+                this.affectType = c.affectType;
 
-			public int getManaCost(Playfield p, int currentcost)//-calculates mana from current mana
+                this.cost = c.cost;
+                this.DeployTime = c.DeployTime;
+                this.DeployDelay = c.DeployDelay;
+                this.MaxHP = c.MaxHP;
+                this.Atk = c.Atk;
+                this.Shield = c.Shield;
+                this.Speed = c.Speed;
+                this.HitSpeed = c.HitSpeed;
+                this.MinRange = c.MinRange;
+                this.MaxRange = c.MaxRange;
+                this.SightRange = c.SightRange;
+                this.SightClip = c.SightClip;
+                this.MultipleTargets = c.MultipleTargets;
+                this.MultipleProjectiles = c.MultipleProjectiles;
+                this.DeathEffect = c.DeathEffect;
+                this.Rarity = c.Rarity;
+                this.Level = c.Level;
+                this.DamageRadius = c.DamageRadius;
+                this.aoeGround = c.aoeGround;
+                this.aoeAir = c.aoeAir;
+                this.CollisionRadius = c.CollisionRadius;
+                this.towerDamage = c.towerDamage;
+
+                this.LifeTime = c.LifeTime;
+                this.SummonNumber = c.SummonNumber;
+                this.SpawnNumber = c.SpawnNumber;
+                this.SpawnPause = c.SpawnPause;
+                this.SpawnInterval = c.SpawnInterval;
+                this.SpawnCharacterLevel = c.SpawnCharacterLevel;
+            }
+
+            public int getManaCost(Playfield p, int currentcost)//-calculates mana from current mana
 			{
 				int retval = currentcost;
 
@@ -362,7 +402,8 @@ namespace Robi.Clash.DefaultSelectors
 				if (e.CollisionRadius != null) c.CollisionRadius = (int)e.CollisionRadius; //-Mobs+Buildings          
 				if (e.LifeTime != null) c.LifeTime = (int)e.LifeTime; //-Buildings; AreaEffect=LifeDuration
 				if (e.SpawnPauseTime != null) c.SpawnPause = (int)e.SpawnPauseTime; //-Mobs+Buildings DataTime
-				if (e.SpawnNumber != null) c.SpawnNumber = (int)e.SpawnNumber; //-Mobs+Buildings
+                //TODO:find somewhere SummonNumber
+                if (e.SpawnNumber != null) c.SpawnNumber = (int)e.SpawnNumber; //-Mobs+Buildings
 				if (e.SpawnInterval != null) c.SpawnInterval = (int)e.SpawnInterval; //-Mobs+Buildings > 0 if SpawnNumber > 1
 				if (e.SpawnCharacterLevelIndex != null) c.SpawnCharacterLevel = (int)e.SpawnCharacterLevelIndex;
 
@@ -470,7 +511,7 @@ namespace Robi.Clash.DefaultSelectors
 					case cardName.tornado: c.Atk = 44; break;
 					case cardName.heal: c.Atk = -100; break;
 					case cardName.zap: c.Atk = 75; c.towerDamage = 30; break;
-					case cardName.graveyard: c.SpawnNumber = 15; break;
+					case cardName.graveyard: c.SummonNumber = 15; break;
 					case cardName.lightning: c.Atk = 650; c.towerDamage = 260; break;
 
 
@@ -517,14 +558,14 @@ namespace Robi.Clash.DefaultSelectors
 				if (e.AoeToAir != null) c.aoeAir = (bool)e.AoeToAir; //-projectile
 				if (e.SpawnCharacterCount != null) c.SpawnNumber = (int)e.SpawnCharacterCount; //-Mobs+Buildings
 				if (e.SpawnCharacterLevelIndex != null) c.SpawnCharacterLevel = (int)e.SpawnCharacterLevelIndex;
-
-				/*//TODO:explore real value on field for below
+                
+                /*//TODO:explore real value on field for below
                  * ProjectileRange don't use, just set val to Log
                 BowlerProjectile 6000 - Bowler 4500
                 LogProjectileRolling 11100
                 AxeManProjectile 6000 axeman 4500*/
 
-				string tmp = "";
+                string tmp = "";
 				switch (c.stringName)
 				{
 					case "DartBarrellProjectile": if (cardNameToCardList.ContainsKey(cardName.dartbarrell)) { cardNameToCardList[cardName.dartbarrell].Atk = c.Atk; cardNameToCardList[cardName.dartbarrell].DamageRadius = c.DamageRadius; } break;
@@ -568,7 +609,84 @@ namespace Robi.Clash.DefaultSelectors
 				}
 			}
 
-			Logger.Debug("CardList: {Count}", cardNameToCardList.Count);
+            //add groups
+            if (cardNameToCardList.ContainsKey(cardName.skeleton))
+            {
+                cardNameToCardList[cardName.skeleton].SightClip = 1000;
+                c = new Card(cardNameToCardList[cardName.skeleton]);
+                c.stringName = "SkeletonArmy";
+                c.name = cardNamestringToEnum(c.stringName);
+                c.cost = 3;
+                c.SummonNumber = 14;
+                if (!cardNameToCardList.ContainsKey(c.name)) cardNameToCardList.Add(c.name, c);
+                else Logger.Error("#####ERR. Duplicate name: {name}", c.name);
+                
+                c = new Card(cardNameToCardList[cardName.skeleton]);
+                c.stringName = "Skeletons";
+                c.name = cardNamestringToEnum(c.stringName);
+                c.cost = 1;
+                c.SummonNumber = 3;
+                if (!cardNameToCardList.ContainsKey(c.name)) cardNameToCardList.Add(c.name, c);
+                else Logger.Error("#####ERR. Duplicate name: {name}", c.name);
+            }
+
+            if (cardNameToCardList.ContainsKey(cardName.goblin))
+            {
+                cardNameToCardList[cardName.goblin].SightClip = 1000;
+                c = new Card(cardNameToCardList[cardName.goblin]);
+                c.stringName = "Goblins";
+                c.name = cardNamestringToEnum(c.stringName);
+                c.cost = 2;
+                c.SummonNumber = 3;
+                if (!cardNameToCardList.ContainsKey(c.name)) cardNameToCardList.Add(c.name, c);
+                else Logger.Error("#####ERR. Duplicate name: {name}", c.name);
+            }
+
+            if (cardNameToCardList.ContainsKey(cardName.speargoblin))
+            {
+                cardNameToCardList[cardName.speargoblin].SightClip = 1000;
+                c = new Card(cardNameToCardList[cardName.speargoblin]);
+                c.stringName = "SpearGoblins";
+                c.name = cardNamestringToEnum(c.stringName);
+                c.cost = 2;
+                c.SummonNumber = 3;
+                if (!cardNameToCardList.ContainsKey(c.name)) cardNameToCardList.Add(c.name, c);
+                else Logger.Error("#####ERR. Duplicate name: {name}", c.name);
+            }
+
+            if (cardNameToCardList.ContainsKey(cardName.barbarian))
+            {
+                cardNameToCardList[cardName.barbarian].SightClip = 1000;
+                c = new Card(cardNameToCardList[cardName.barbarian]);
+                c.stringName = "Barbarians";
+                c.name = cardNamestringToEnum(c.stringName);
+                c.cost = 5;
+                c.SummonNumber = 4;
+                if (!cardNameToCardList.ContainsKey(c.name)) cardNameToCardList.Add(c.name, c);
+                else Logger.Error("#####ERR. Duplicate name: {name}", c.name);
+            }
+
+            if (cardNameToCardList.ContainsKey(cardName.minion))
+            {
+                cardNameToCardList[cardName.minion].SightClip = 1000;
+                c = new Card(cardNameToCardList[cardName.minion]);
+                c.stringName = "MinionHorde";
+                c.name = cardNamestringToEnum(c.stringName);
+                c.cost = 5;
+                c.SummonNumber = 6;
+                if (!cardNameToCardList.ContainsKey(c.name)) cardNameToCardList.Add(c.name, c);
+                else Logger.Error("#####ERR. Duplicate name: {name}", c.name);
+
+                c = new Card(cardNameToCardList[cardName.minion]);
+                c.stringName = "Minions";
+                c.name = cardNamestringToEnum(c.stringName);
+                c.cost = 3;
+                c.SummonNumber = 3;
+                if (!cardNameToCardList.ContainsKey(c.name)) cardNameToCardList.Add(c.name, c);
+                else Logger.Error("#####ERR. Duplicate name: {name}", c.name);
+            }
+            
+            Logger.Debug("CardList: {Count}", cardNameToCardList.Count);
 		}
 
 		public affectType stringToAffectType(string s)
@@ -600,7 +718,220 @@ namespace Robi.Clash.DefaultSelectors
 		}
 
 
-		public void collectCardInfo(BoardObj bo)
+        public Card collectNewCards(Robi.Clash.Engine.NativeObjects.LogicData.Spell spell)
+        {
+            //try to fill missing data
+            var data = spell.SummonCharacter;
+            StringBuilder sb = new StringBuilder(10000);
+
+            Card c = new Card();
+            c.stringName = spell.Name.Value;
+            c.name = cardNamestringToEnum(c.stringName);
+            sb.Append("name:").Append(c.name).Append(" ");
+            sb.Append("stringName:").Append(c.stringName).Append(" ");
+            sb.Append("type:").Append("-").Append(" ");
+            sb.Append("Transport:").Append("-").Append(" ");
+
+            c.TargetType = targetType.NONE;
+            if (data.IgnorePushback == 1) c.TargetType = targetType.BUILDINGS;
+            else if (data.AttacksAir == 1) c.TargetType = targetType.ALL;
+            else if (data.AttacksGround == 1) c.TargetType = targetType.GROUND;
+            sb.Append("TargetType:").Append(c.TargetType).Append(" ");
+            sb.Append("affectType:").Append(spell.OnlyEnemies).Append("-").Append(spell.OnlyOwnTroops).Append(" ");
+            c.cost = spell.ManaCost;
+            sb.Append("cost:").Append(c.cost).Append(" ");
+            c.DeployTime = data.DeployTime;
+            sb.Append("DeployTime:").Append(data.DeployTime).Append(" ");
+            c.DeployDelay = data.DeployDelay;
+            sb.Append("DeployDelay:").Append(data.DeployDelay).Append(" ");
+            c.MaxHP = 100;
+            c.Atk = 200;
+            sb.Append("MaxHP:").Append("-").Append(" ");
+            sb.Append("Atk:").Append("-").Append(" ");
+            sb.Append("Shield:").Append("-").Append(" ");
+            sb.Append("Speed:").Append("-").Append(" ");
+            c.HitSpeed = data.HitSpeed;
+            sb.Append("HitSpeed:").Append(data.HitSpeed).Append(" ");
+            sb.Append("MinRange:").Append("-").Append(" ");
+            c.MaxRange = data.Range;
+            sb.Append("MaxRange:").Append(data.Range).Append(" ");
+            c.SightRange = data.SightRange;
+            sb.Append("SightRange:").Append(data.SightRange).Append(" ");
+            c.SightClip = data.SightClip;
+            sb.Append("SightClip:").Append(data.SightClip).Append(" ");
+            c.MultipleTargets = data.MultipleTargets;
+            sb.Append("MultipleTargets:").Append(data.MultipleTargets).Append(" ");
+            c.MultipleProjectiles = spell.MultipleProjectiles;
+            sb.Append("MultipleProjectiles:").Append(spell.MultipleProjectiles).Append(" ");
+            sb.Append("DeathEffect:").Append(data.DeathEffect.Name).Append(" ");
+            c.Rarity = spell.Rarity.Name.Value;
+            sb.Append("Rarity:").Append(spell.Rarity).Append(" ");
+            sb.Append("Level:").Append("-").Append(" ");
+            c.DamageRadius = spell.Radius;
+            sb.Append("DamageRadius:").Append(spell.Radius).Append(" ");
+            //c.aoeGround = spell.Projectile.AoeToGround;
+            sb.Append("aoeGround:").Append(spell.Projectile.AoeToGround).Append(" ");
+            //c.aoeAir = spell.Projectile.AoeToAir;
+            sb.Append("aoeAir:").Append(spell.Projectile.AoeToAir).Append(" ");
+            c.CollisionRadius = data.CollisionRadius;
+            sb.Append("CollisionRadius:").Append(data.CollisionRadius).Append(" ");
+            sb.Append("towerDamage:").Append("-").Append(" ");
+            c.LifeTime = data.LifeTime;
+            sb.Append("LifeTime:").Append(data.LifeTime).Append(" ");
+            c.SummonNumber = spell.SummonNumber;
+            sb.Append("SummonNumber:").Append(spell.SummonNumber).Append(" ");
+            c.SpawnNumber = data.SpawnNumber;
+            sb.Append("SpawnNumber:").Append(data.SpawnNumber).Append(" ");
+            c.SpawnPause = data.SpawnPauseTime;
+            sb.Append("SpawnPause:").Append(data.SpawnPauseTime).Append(" ");
+            c.SpawnInterval = data.SpawnInterval;
+            sb.Append("SpawnInterval:").Append(data.SpawnInterval).Append(" ");
+            c.SpawnCharacterLevel = data.SpawnCharacterLevelIndex;
+            sb.Append("SpawnCharacterLevel:").Append(data.SpawnCharacterLevelIndex).Append(" ");
+
+            sb.Append("Extra_Spell_Data:").Append("*************** ");
+
+            sb.Append("dataLifeTime:").Append(data.LifeTime).Append(" ");
+            sb.Append("dataDeployTime:").Append(data.DeployTime).Append(" ");
+            sb.Append("dataFlyingHeight:").Append(data.FlyingHeight).Append(" ");
+            sb.Append("CanDeployOnEnemySide:").Append(spell.CanDeployOnEnemySide).Append(" ");
+            sb.Append("CustomDeployTime:").Append(spell.CustomDeployTime).Append(" ");
+            sb.Append("CanDeployOnEnemySide:").Append(spell.CanDeployOnEnemySide).Append(" ");
+            sb.Append("ManaCostFromSummonerMana:").Append(spell.ManaCostFromSummonerMana).Append(" ");
+            sb.Append("SpellAsDeploy:").Append(spell.SpellAsDeploy).Append(" ");
+            sb.Append("CanDeployOnEnemySide:").Append(spell.CanDeployOnEnemySide).Append(" ");
+            sb.Append("CanPlaceOnBuildings:").Append(spell.CanPlaceOnBuildings).Append(" ");
+            sb.Append("ElixirProductionStopTime:").Append(spell.ElixirProductionStopTime).Append(" ");
+            sb.Append("MultipleProjectiles:").Append(spell.MultipleProjectiles).Append(" ");
+            sb.Append("Height:").Append(spell.Height).Append(" ");
+            sb.Append("Radius:").Append(spell.Radius).Append(" ");
+            sb.Append("Pushback:").Append(spell.Pushback).Append(" ");
+            sb.Append("StatsUnderInfo:").Append(spell.StatsUnderInfo).Append(" ");
+            sb.Append("Field80:").Append(spell.Field80).Append(" ");
+            sb.Append("Field84:").Append(spell.Field84).Append(" ");
+            sb.Append("Field88:").Append(spell.Field88).Append(" ");
+            sb.Append("Field50:").Append(spell.Field50).Append(" ");
+            
+            try
+            {
+                using (StreamWriter sw = File.AppendText(Path.Combine("DefaultRoutine", "_carddb_upd.txt")))
+                {
+                    sw.WriteLine(sb.ToString());
+                }
+            }
+            catch { return c; }
+
+            return c;
+        }
+
+
+        /*
+        public Card collectNewCards(Robi.Clash.Engine.NativeObjects.Logic.GameObjects.Character @char)
+        {
+            //try to fill missing data
+            var data = spell.SummonCharacter;
+            StringBuilder sb = new StringBuilder(10000);
+
+            Card c = new Card();
+            c.stringName = spell.Name.Value;
+            c.name = cardNamestringToEnum(c.stringName);
+            sb.Append("name:").Append(c.name).Append(" ");
+            sb.Append("stringName:").Append(c.stringName).Append(" ");
+            sb.Append("type:").Append("-").Append(" ");
+            sb.Append("Transport:").Append("-").Append(" ");
+
+            c.TargetType = targetType.NONE;
+            if (data.IgnorePushback == 1) c.TargetType = targetType.BUILDINGS;
+            else if (data.AttacksAir == 1) c.TargetType = targetType.ALL;
+            else if (data.AttacksGround == 1) c.TargetType = targetType.GROUND;
+            sb.Append("TargetType:").Append(c.TargetType).Append(" ");
+            sb.Append("affectType:").Append(spell.OnlyEnemies).Append("-").Append(spell.OnlyOwnTroops).Append(" ");
+            c.cost = spell.ManaCost;
+            sb.Append("cost:").Append(c.cost).Append(" ");
+            c.DeployTime = data.DeployTime;
+            sb.Append("DeployTime:").Append(data.DeployTime).Append(" ");
+            c.DeployDelay = data.DeployDelay;
+            sb.Append("DeployDelay:").Append(data.DeployDelay).Append(" ");
+            c.MaxHP = 100;
+            c.Atk = 200;
+            sb.Append("MaxHP:").Append("-").Append(" ");
+            sb.Append("Atk:").Append("-").Append(" ");
+            sb.Append("Shield:").Append("-").Append(" ");
+            sb.Append("Speed:").Append("-").Append(" ");
+            c.HitSpeed = data.HitSpeed;
+            sb.Append("HitSpeed:").Append(data.HitSpeed).Append(" ");
+            sb.Append("MinRange:").Append("-").Append(" ");
+            c.MaxRange = data.Range;
+            sb.Append("MaxRange:").Append(data.Range).Append(" ");
+            c.SightRange = data.SightRange;
+            sb.Append("SightRange:").Append(data.SightRange).Append(" ");
+            c.SightClip = data.SightClip;
+            sb.Append("SightClip:").Append(data.SightClip).Append(" ");
+            c.MultipleTargets = data.MultipleTargets;
+            sb.Append("MultipleTargets:").Append(data.MultipleTargets).Append(" ");
+            c.MultipleProjectiles = spell.MultipleProjectiles;
+            sb.Append("MultipleProjectiles:").Append(spell.MultipleProjectiles).Append(" ");
+            sb.Append("DeathEffect:").Append(data.DeathEffect.Name).Append(" ");
+            c.Rarity = spell.Rarity.Name.Value;
+            sb.Append("Rarity:").Append(spell.Rarity).Append(" ");
+            sb.Append("Level:").Append("-").Append(" ");
+            c.DamageRadius = spell.Radius;
+            sb.Append("DamageRadius:").Append(spell.Radius).Append(" ");
+            //c.aoeGround = spell.Projectile.AoeToGround;
+            sb.Append("aoeGround:").Append(spell.Projectile.AoeToGround).Append(" ");
+            //c.aoeAir = spell.Projectile.AoeToAir;
+            sb.Append("aoeAir:").Append(spell.Projectile.AoeToAir).Append(" ");
+            c.CollisionRadius = data.CollisionRadius;
+            sb.Append("CollisionRadius:").Append(data.CollisionRadius).Append(" ");
+            sb.Append("towerDamage:").Append("-").Append(" ");
+            c.LifeTime = data.LifeTime;
+            sb.Append("LifeTime:").Append(data.LifeTime).Append(" ");
+            c.SpawnNumber = data.SpawnNumber;
+            sb.Append("SpawnNumber:").Append(spell.SummonNumber).Append(" ");
+            c.SpawnPause = data.SpawnPauseTime;
+            sb.Append("SpawnPause:").Append(data.SpawnPauseTime).Append(" ");
+            c.SpawnInterval = data.SpawnInterval;
+            sb.Append("SpawnInterval:").Append(data.SpawnInterval).Append(" ");
+            c.SpawnCharacterLevel = data.SpawnCharacterLevelIndex;
+            sb.Append("SpawnCharacterLevel:").Append(data.SpawnCharacterLevelIndex).Append(" ");
+
+            sb.Append("Extra_Spell_Data:").Append("*************** ");
+
+            sb.Append("dataLifeTime:").Append(data.LifeTime).Append(" ");
+            sb.Append("dataDeployTime:").Append(data.DeployTime).Append(" ");
+            sb.Append("dataFlyingHeight:").Append(data.FlyingHeight).Append(" ");
+            sb.Append("CanDeployOnEnemySide:").Append(spell.CanDeployOnEnemySide).Append(" ");
+            sb.Append("CustomDeployTime:").Append(spell.CustomDeployTime).Append(" ");
+            sb.Append("CanDeployOnEnemySide:").Append(spell.CanDeployOnEnemySide).Append(" ");
+            sb.Append("ManaCostFromSummonerMana:").Append(spell.ManaCostFromSummonerMana).Append(" ");
+            sb.Append("SpellAsDeploy:").Append(spell.SpellAsDeploy).Append(" ");
+            sb.Append("CanDeployOnEnemySide:").Append(spell.CanDeployOnEnemySide).Append(" ");
+            sb.Append("CanPlaceOnBuildings:").Append(spell.CanPlaceOnBuildings).Append(" ");
+            sb.Append("ElixirProductionStopTime:").Append(spell.ElixirProductionStopTime).Append(" ");
+            sb.Append("MultipleProjectiles:").Append(spell.MultipleProjectiles).Append(" ");
+            sb.Append("Height:").Append(spell.Height).Append(" ");
+            sb.Append("Radius:").Append(spell.Radius).Append(" ");
+            sb.Append("Pushback:").Append(spell.Pushback).Append(" ");
+            sb.Append("dataSpawnNumber:").Append(data.SpawnNumber).Append(" ");
+            sb.Append("StatsUnderInfo:").Append(spell.StatsUnderInfo).Append(" ");
+            sb.Append("Field80:").Append(spell.Field80).Append(" ");
+            sb.Append("Field84:").Append(spell.Field84).Append(" ");
+            sb.Append("Field88:").Append(spell.Field88).Append(" ");
+            sb.Append("Field50:").Append(spell.Field50).Append(" ");
+
+            try
+            {
+                using (StreamWriter sw = File.AppendText("_carddb_upd.txt"))
+                {
+                    sw.WriteLine(sb.ToString());
+                }
+            }
+            catch { return c; }
+
+            return c;
+        }
+        */
+        public void collectCardInfo(BoardObj bo)
 		{
 			if (cardNameToCardList.ContainsKey(bo.Name))
 			{
@@ -639,10 +970,10 @@ namespace Robi.Clash.DefaultSelectors
 				//numDifferences = 0;
 			}
 		}
-
-		public void uploadCardInfo()
+        
+        public void uploadCardInfo()
 		{
-			System.Text.StringBuilder sb = new System.Text.StringBuilder(1000000);
+			StringBuilder sb = new StringBuilder(1000000);
 			foreach (var kvp in cardNameToCardList)
 			{
 				sb.Clear();
@@ -676,7 +1007,8 @@ namespace Robi.Clash.DefaultSelectors
 				sb.Append("CollisionRadius:").Append(c.CollisionRadius).Append(" ");
 				sb.Append("towerDamage:").Append(c.towerDamage).Append(" ");
 				sb.Append("LifeTime:").Append(c.LifeTime).Append(" ");
-				sb.Append("SpawnNumber:").Append(c.SpawnNumber).Append(" ");
+                sb.Append("SummonNumber:").Append(c.SummonNumber).Append(" ");
+                sb.Append("SpawnNumber:").Append(c.SpawnNumber).Append(" ");
 				sb.Append("SpawnPause:").Append(c.SpawnPause).Append(" ");
 				sb.Append("SpawnInterval:").Append(c.SpawnInterval).Append(" ");
 				sb.Append("SpawnCharacterLevel:").Append(c.SpawnCharacterLevel).Append(" ");
