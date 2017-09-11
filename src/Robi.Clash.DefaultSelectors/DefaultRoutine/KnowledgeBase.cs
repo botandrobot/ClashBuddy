@@ -285,7 +285,7 @@ namespace Robi.Clash.DefaultSelectors
                         }
                     }
                     if (tmp == null && p.ownMana >= 9) tmp = p.getCheapestCard(boardObjType.NONE, targetType.NONE);
-                    if (tmp != null)
+                    if (tmp != null && !allOpposite.ContainsKey(tmp.card.name))
                     {
                         tmp.missingMana = tmp.manacost - p.ownMana;
                         allOpposite.Add(tmp.card.name, new opposite(tmp.card.name, 10, tmp, ad.attacker));
