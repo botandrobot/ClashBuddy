@@ -176,21 +176,24 @@ namespace Robi.Clash.DefaultSelectors
                     {
                         foreach (Handcard hc in p.ownHandCards)
                         {
-                            if (hc.card.TargetType == targetType.ALL)
+                            if (canWait || hc.manacost <= p.ownMana)
                             {
-                                if (ad.attacker.card.DamageRadius > 1000)
+                                if (hc.card.TargetType == targetType.ALL)
                                 {
-                                    if (hc.card.MaxHP > ad.attacker.Atk)
+                                    if (ad.attacker.card.DamageRadius > 1000)
                                     {
-                                        if (tmp == null || tmp.card.MaxHP < hc.card.MaxHP) tmp = hc;
+                                        if (hc.card.MaxHP > ad.attacker.Atk)
+                                        {
+                                            if (tmp == null || tmp.card.MaxHP < hc.card.MaxHP) tmp = hc;
+                                        }
                                     }
-                                }
-                                else
-                                {
-                                    if (hc.card.MaxHP > ad.attacker.Atk * 4 || hc.card.SpawnNumber > 3)
+                                    else
                                     {
-                                        tmp = hc;
-                                        break;
+                                        if (hc.card.MaxHP > ad.attacker.Atk * 4 || hc.card.SpawnNumber > 3 || hc.card.SummonNumber > 3)
+                                        {
+                                            tmp = hc;
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -202,16 +205,19 @@ namespace Robi.Clash.DefaultSelectors
                         {
                             foreach (Handcard hc in p.ownHandCards)
                             {
-                                if (ad.attacker.card.DamageRadius > 1000 && hc.card.MaxHP > ad.attacker.Atk)
+                                if (canWait || hc.manacost <= p.ownMana)
                                 {
-                                    if (tmp == null || tmp.card.MaxHP < hc.card.MaxHP) tmp = hc;
-                                }
-                                else
-                                {
-                                    if (hc.card.MaxHP > ad.attacker.Atk * 4 || hc.card.SpawnNumber > 3)
+                                    if (ad.attacker.card.DamageRadius > 1000 && hc.card.MaxHP > ad.attacker.Atk)
                                     {
-                                        tmp = hc;
-                                        break;
+                                        if (tmp == null || tmp.card.MaxHP < hc.card.MaxHP) tmp = hc;
+                                    }
+                                    else
+                                    {
+                                        if (hc.card.MaxHP > ad.attacker.Atk * 4 || hc.card.SpawnNumber > 3 || hc.card.SummonNumber > 3)
+                                        {
+                                            tmp = hc;
+                                            break;
+                                        }
                                     }
                                 }
                             }
@@ -220,10 +226,13 @@ namespace Robi.Clash.DefaultSelectors
                         {
                             foreach (Handcard hc in p.ownHandCards)
                             {
-                                if (hc.card.Atk > ad.attacker.HP * 5 || hc.card.SpawnNumber > 3)
+                                if (canWait || hc.manacost <= p.ownMana)
                                 {
-                                    tmp = hc;
-                                    break;
+                                    if (hc.card.Atk > ad.attacker.HP * 5 || hc.card.SpawnNumber > 3)
+                                    {
+                                        tmp = hc;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -231,28 +240,34 @@ namespace Robi.Clash.DefaultSelectors
                         {
                             foreach (Handcard hc in p.ownHandCards)
                             {
-                                if (hc.card.Transport == transportType.AIR)
+                                if (canWait || hc.manacost <= p.ownMana)
                                 {
-                                    if (tmp == null || tmp.card.SpawnNumber < hc.card.SpawnNumber) tmp = hc;
+                                    if (hc.card.Transport == transportType.AIR)
+                                    {
+                                        if (tmp == null || tmp.card.SpawnNumber < hc.card.SpawnNumber || tmp.card.SummonNumber < hc.card.SummonNumber) tmp = hc;
+                                    }
                                 }
                             }
                             if (tmp == null)
                             {
                                 foreach (Handcard hc in p.ownHandCards)
                                 {
-                                    if (ad.attacker.card.DamageRadius > 1000)
+                                    if (canWait || hc.manacost <= p.ownMana)
                                     {
-                                        if (hc.card.MaxHP > ad.attacker.Atk)
+                                        if (ad.attacker.card.DamageRadius > 1000)
                                         {
-                                            if (tmp == null || tmp.card.MaxHP < hc.card.MaxHP) tmp = hc;
+                                            if (hc.card.MaxHP > ad.attacker.Atk)
+                                            {
+                                                if (tmp == null || tmp.card.MaxHP < hc.card.MaxHP) tmp = hc;
+                                            }
                                         }
-                                    }
-                                    else
-                                    {
-                                        if (hc.card.MaxHP > ad.attacker.Atk * 4 || hc.card.SpawnNumber > 3)
+                                        else
                                         {
-                                            tmp = hc;
-                                            break;
+                                            if (hc.card.MaxHP > ad.attacker.Atk * 4 || hc.card.SpawnNumber > 3 || hc.card.SummonNumber > 3)
+                                            {
+                                                tmp = hc;
+                                                break;
+                                            }
                                         }
                                     }
                                 }
@@ -271,7 +286,10 @@ namespace Robi.Clash.DefaultSelectors
                     }
                     if (tmp == null && p.ownMana >= 9) tmp = p.getCheapestCard(boardObjType.NONE, targetType.NONE);
                     if (tmp != null && !allOpposite.ContainsKey(tmp.card.name))
+                    {
+                        tmp.missingMana = tmp.manacost - p.ownMana;
                         allOpposite.Add(tmp.card.name, new opposite(tmp.card.name, 10, tmp, ad.attacker));
+                    }
                 }
             }
 
