@@ -1,84 +1,84 @@
 ﻿namespace Robi.Clash.DefaultSelectors.Behaviors
 {
-    using Common;
-    using Engine.NativeObjects.Native;
-    using Robi.Engine.Settings;
-    using Serilog;
-    using Settings;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+	using Common;
+	using Engine.NativeObjects.Native;
+	using Robi.Engine.Settings;
+	using Serilog;
+	using Settings;
+	using System;
+	using System.Collections.Generic;
+	using System.Linq;
 
-    public class Apollo : BehaviorBase
-    {
-        private static readonly ILogger Logger = LogProvider.CreateLogger<Apollo>();
-        public static bool GameBeginning = true;
+	public class Apollo : BehaviorBase
+	{
+		private static readonly ILogger Logger = LogProvider.CreateLogger<Apollo>();
+		public static bool GameBeginning = true;
 
-        #region
-        public override string Name => "Apollo";
+		#region
+		public override string Name => "Apollo";
 
-        public override string Description => "1vs1; Please lean back and let me Apollo do the work...";
+		public override string Description => "1vs1; Please lean back and let me Apollo do the work...";
 
-        public override string Author => "Peros_";
+		public override string Author => "Peros_";
 
-        public override Version Version => new Version(1, 4, 0, 0);
-        public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
-        #endregion
+		public override Version Version => new Version(1, 4, 0, 0);
+		public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
+		#endregion
 
-        private static ApolloSettings Settings => SettingsManager.GetSetting<ApolloSettings>("Apollo");
+		private static ApolloSettings Settings => SettingsManager.GetSetting<ApolloSettings>("Apollo");
 
-        public override void Initialize()
-        {
-            base.Initialize();
-            SettingsManager.RegisterSettings(Name, new ApolloSettings());
-        }
+		public override void Initialize()
+		{
+			base.Initialize();
+			SettingsManager.RegisterSettings(Name, new ApolloSettings());
+		}
 
-        public override void Deinitialize()
-        {
-            SettingsManager.UnregisterSettings(Name);
-            base.Deinitialize();
-        }
+		public override void Deinitialize()
+		{
+			SettingsManager.UnregisterSettings(Name);
+			base.Deinitialize();
+		}
 
-        public enum FightState
-        {
-            DLPT,       // Defense LeftPrincessTower
-            DKT,        // Defense KingTower
-            DRPT,       // Defense RightPrincessTower
-            UALPT,      // UnderAttack LeftPrincessTower
-            UAKT,       // UnderAttack KingTower
-            UARPT,      // UnderAttack RightPrincessTower
-            ALPT,       // Attack LeftPrincessTower
-            AKT,        // Attack KingTower
-            ARPT,        // Attack RightPrincessTower
-            START,
-            WAIT
-        };
+		public enum FightState
+		{
+			DLPT,       // Defense LeftPrincessTower
+			DKT,        // Defense KingTower
+			DRPT,       // Defense RightPrincessTower
+			UALPT,      // UnderAttack LeftPrincessTower
+			UAKT,       // UnderAttack KingTower
+			UARPT,      // UnderAttack RightPrincessTower
+			ALPT,       // Attack LeftPrincessTower
+			AKT,        // Attack KingTower
+			ARPT,        // Attack RightPrincessTower
+			START,
+			WAIT
+		};
 
-        enum CardTypeOld
-        {
-            Defense,
-            All,
-            Troop,
-            Buildings,
-            NONE
-        };
+		enum CardTypeOld
+		{
+			Defense,
+			All,
+			Troop,
+			Buildings,
+			NONE
+		};
 
-        enum DeployDecision
-        {
-            DamagingSpell,
-            AOEAttack,
-            AttacksFlying,
-            Buildings,
-            CycleSpell,
-            PowerSpell
-        };
+		enum DeployDecision
+		{
+			DamagingSpell,
+			AOEAttack,
+			AttacksFlying,
+			Buildings,
+			CycleSpell,
+			PowerSpell
+		};
 
-        enum FightStyle
-        {
-            Defensive,
-            Balanced,
-            Rusher
-        };
+		enum FightStyle
+		{
+			Defensive,
+			Balanced,
+			Rusher
+		};
 
         public override Cast GetBestCast(Playfield p)
         {
@@ -177,7 +177,7 @@
 
             if (spell != null && spell.hc != null)
             {
-                Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
+                Logger.Debug("Spell: {Sp} - MissingMana: {MM}",  spell.hc.name, spell.hc.missingMana);
                 if (spell.hc.missingMana > 0)
                     return null;
                 else
@@ -271,7 +271,7 @@
                         return FightState.DKT;
                 }
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 return GetCurrentFightStateBalanced(p);
             }
@@ -392,9 +392,9 @@
             {
                 StartFirstAttack = (p.ownMana < Settings.ManaTillFirstAttack);
             }
-            catch (Exception e)
+            catch(Exception e)
             {
-
+                
             }
 
 
@@ -496,7 +496,7 @@
 
             if (IsAOEAttackNeeded(p))
             {
-                var atkAOE = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB).FirstOrDefault(); // Todo: just AOE-Attack
+                var atkAOE = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB && n.card.aoeGround).FirstOrDefault(); // Todo: just AOE-Attack
                 if (atkAOE == null)
                     atkAOE = p.ownHandCards.Where(n => n.card.TargetType == targetType.GROUND).FirstOrDefault();
 
@@ -645,7 +645,7 @@
 
             return false;
         }
-        #endregion
+    #endregion
 
         #region Which Card
 
@@ -667,9 +667,12 @@
 
             VectorAI choosedPosition = new VectorAI(0, 0), nextPosition;
 
-            Logger.Debug("AOE");
+
             if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
+            {
+                Logger.Debug("AOE or PROJECTILE");
                 return GetPositionOfTheBestDamagingSpellDeploy(p);
+            }
 
             // ToDo: Handle Defense Gamestates
             switch (gameState)
@@ -782,7 +785,7 @@
                 return GetPositionOfTheBestBuildingDeploy(p);
                 //}
             }
-            else if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
+            else if(hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
                 return GetPositionOfTheBestDamagingSpellDeploy(p);
             else
             {
@@ -819,17 +822,19 @@
         #region Attack
         private static VectorAI AKT(Playfield p)
         {
+            Logger.Debug("AKT");
+
             if (p.enemyTowers?.Count() > 2)
                 //Logger.Debug("Bug: NoPrincessTowerDown-State in Attack-King-Tower-State!");
-                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1, 170);
+                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
 
             if (p.enemyTowers?.Where(n => n.Line == 1).Count() == 0)
                 //Logger.Debug("LPTD");
-                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1, 70);
+                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
 
             if (p.enemyTowers?.Where(n => n.Line == 2).Count() == 0)
                 //Logger.Debug("RPTD");
-                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine2, 15);
+                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine2);
 
             if (p.enemyTowers?.Count() == 1)
                 //Logger.Debug("BPTD");
@@ -857,6 +862,7 @@
         {
             // Prio1: Hit Enemy King Tower if health is low
             // Prio2: Every damaging spell if there is a big group of enemies
+            Logger.Debug("GetPositionOfTheBestDamaingSpellDeploy");
 
             if (p.enemyKingsTower?.HP < Settings.KingTowerSpellDamagingHealth)
                 return p.enemyKingsTower?.Position;
@@ -877,15 +883,17 @@
                         return result;
                     }
                 }
+                Logger.Debug("enemy = null?{enemy} ; enemy.position = null?{position}", enemy == null, enemy.Position == null);
             }
 
+            
             return new VectorAI(0, 0);
         }
 
         public static VectorAI GetPositionOfTheBestBuildingDeploy(Playfield p)
         {
             // ToDo: Find the best position
-            VectorAI betweenBridges = p.getDeployPosition(deployDirection.betweenBridges, 0);
+            VectorAI betweenBridges = p.getDeployPosition(deployDirection.betweenBridges,0);
             VectorAI result = p.getDeployPosition(betweenBridges, deployDirection.Down, 4000);
             return result;
         }
