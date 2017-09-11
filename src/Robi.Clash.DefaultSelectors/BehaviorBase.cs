@@ -258,7 +258,12 @@ namespace Robi.Clash.DefaultSelectors
 
 				p.home = p.ownKingsTower.Position.Y < 15250 ? true : false;
 
-				p.initTowers();
+                if (p.ownPrincessTower1.Position == null) p.ownPrincessTower1.Position = p.getDeployPosition(deployDirection.ownPrincessTowerLine1);
+                if (p.ownPrincessTower2.Position == null) p.ownPrincessTower2.Position = p.getDeployPosition(deployDirection.ownPrincessTowerLine2);
+                if (p.enemyPrincessTower1.Position == null) p.enemyPrincessTower1.Position = p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
+                if (p.enemyPrincessTower2.Position == null) p.enemyPrincessTower2.Position = p.getDeployPosition(deployDirection.enemyPrincessTowerLine2);
+
+                p.initTowers();
 
 				int i = 0;
 				foreach (BoardObj t in p.ownTowers) if (t.Tower < 10) i += t.Line;
