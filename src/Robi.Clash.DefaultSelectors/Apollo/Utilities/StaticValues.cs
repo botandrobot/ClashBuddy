@@ -6,8 +6,6 @@ namespace Robi.Clash.DefaultSelectors.Utilities
 {
     class StaticValues
     {
-        public static Random rnd = new Random();
-
         public static Engine.NativeObjects.Logic.GameObjects.Player Player
         {
             get{ return ClashEngine.Instance.LocalPlayer; }

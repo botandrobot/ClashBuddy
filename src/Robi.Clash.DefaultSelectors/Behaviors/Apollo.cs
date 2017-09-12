@@ -12,7 +12,6 @@
     public class Apollo : BehaviorBase
     {
         private static readonly ILogger Logger = LogProvider.CreateLogger<Apollo>();
-        public static bool GameBeginning = true;
 
         #region
         public override string Name => "Apollo";
@@ -39,6 +38,9 @@
             base.Deinitialize();
         }
 
+        private static bool StartLoadedDeploy = false;
+
+        #region enums
         public enum FightState
         {
             DLPT,       // Defense LeftPrincessTower
@@ -79,17 +81,20 @@
             Balanced,
             Rusher
         };
+        #endregion enums
+
+        private static FightState currentSituation;
 
         public override Cast GetBestCast(Playfield p)
         {
+            DebugThings(p);
+
             Cast bc = null;
             Logger.Debug("Home = {Home}", p.home);
-            // Peros: Contains mobs, buildings and towers
-            //group ownGroup = p.getGroup(true, 85, boPriority.byTotalNumber, 3000);
 
             #region Apollo Magic
             Logger.Debug("Part: Get CurrentSituation");
-            FightState currentSituation = CurrentFightState(p);
+            currentSituation = CurrentFightState(p);
             Logger.Debug("Part: SpellMagic");
             Handcard hc = SpellMagic(p, currentSituation);
 
@@ -99,7 +104,6 @@
             Logger.Debug("Part: GetSpellPosition");
             VectorAI nextPosition = GetNextSpellPosition(currentSituation, hc, p);
             bc = new Cast(hc.name, nextPosition, hc);
-
             #endregion
 
             if (bc != null) Logger.Debug("BestCast:" + bc.SpellName + " " + bc.Position.ToString());
@@ -108,10 +112,30 @@
             return bc;
         }
 
+        private static void DebugThings(Playfield p)
+        {
+            //List<BoardObj> enemies = p.enemyMinions;
+            //group testGroup1 = p.getGroup(false, 200, boPriority.byLowHpNumber, 3000);
+            //group testGroup2 = p.getGroup(false, 200, boPriority.byAvgHpNumber, 3000);
+            //group testGroup3 = p.getGroup(false, 200, boPriority.byHiHpNumber, 3000);
+            //int a = 0;
+
+            //int l = testGroup1.lowHPboBuildingsDPS;
+        }
+
         private static Handcard SpellMagic(Playfield p, FightState currentSituation)
         {
             //opposite oppo = KnowledgeBase.Instance.getOppositeCardToAll(p, myObj);
             //Handcard opposite = KnowledgeBase.Instance.getOppositeCard(Playfield p, BoardObj attacker, bool canWait = true);
+
+            if (p.enemyKingsTower.HP < Settings.KingTowerSpellDamagingHealth)
+            {
+                Handcard hc = AttackKingTowerWithSpell(p);
+
+                if (hc != null)
+                    return hc;
+            }
+
             switch (currentSituation)
             {
                 case FightState.UAKT:
@@ -169,16 +193,18 @@
 
             if (defender == null)
                 return null;
-            else if (defender.Name.ToString() == "princesstower" || defender.Name.ToString() == "kingtower")
-                return DefenseTroop(p);
+            //else if (defender.Name.ToString() == "princesstower" || defender.Name.ToString() == "kingtower")
+            //    return DefenseTroop(p);
 
             Logger.Debug("BestDefender: {Defender}", defender.Name);
-            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, true);
+            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, canWaitDecision(p));
 
             if (spell != null && spell.hc != null)
             {
                 Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
-                if (spell.hc.missingMana > 0)
+                if (spell.hc.missingMana == 100) // Oposite-Card is already on the field
+                    return DefenseTroop(p);
+                else if (spell.hc.missingMana > 0)
                     return null;
                 else
                     return spell.hc;
@@ -212,15 +238,15 @@
 
             if (defender == null)
                 return null;
-            else if (defender.Name.ToString() == "princesstower" || defender.Name.ToString() == "kingtower")
-                return All(p);
 
-            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, true);
+            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, canWaitDecision(p));
 
             if (spell != null && spell.hc != null)
             {
                 Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
-                if (spell.hc.missingMana > 0)
+                if (spell.hc.missingMana == 100) // Oposite-Card is already on the field
+                    return All(p);
+                else if (spell.hc.missingMana > 0)
                     return null;
                 else
                     return spell.hc;
@@ -232,25 +258,74 @@
         private static Handcard GetBestDefenseCard(Playfield p)
         {
             Logger.Debug("Path: Spell - GetBestDefenseCard");
+
             BoardObj defender = GetBestDefender(p);
 
             if (defender == null)
                 return null;
-            else if (defender.Name.ToString() == "princesstower" || defender.Name.ToString() == "kingtower")
-                return Defense(p);
 
-            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, true);
+            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, canWaitDecision(p));
 
             if (spell != null && spell.hc != null)
             {
                 Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
-                if (spell.hc.missingMana > 0)
+                if (spell.hc.missingMana == 100) // Oposite-Card is already on the field
+                    return Defense(p);
+                else if (spell.hc.missingMana > 0)
                     return null;
                 else
                     return spell.hc;
             }
             else
                 return Defense(p);
+        }
+
+        private static bool canWaitDecision(Playfield p)
+        {
+            if (p.noEnemiesOnMySide())
+            {
+                switch (currentSituation)
+                {
+                    //case FightState.DLPT:
+                    //case FightState.DRPT:
+                    //    break;
+                    //case FightState.DKT:
+                    //    break;
+                    case FightState.ALPT:
+                        {
+                            if (p.BattleTime.TotalSeconds < 20)
+                                return false;
+                            else if (p.enemyPrincessTower1.HP < 300)
+                                return false;
+                            break;
+                        }
+                    case FightState.ARPT:
+                        {
+                            if (p.BattleTime.TotalSeconds < 20)
+                                return false;
+                            else if (p.enemyPrincessTower2.HP < 300)
+                                return false;
+                            break;
+                        }
+                    case FightState.AKT:
+                        {
+                            if (p.BattleTime.TotalSeconds < 30)
+                                return false;
+                            else if (p.enemyKingsTower.HP < 300)
+                                return false;
+                            break;
+                        }
+                }
+            }
+            else
+            {
+                if (p.BattleTime.TotalSeconds < 20)
+                    return false;
+                if (p.ownKingsTower.HP < 1000)
+                    return false;
+            }
+
+            return true;
         }
         #endregion
 
@@ -280,20 +355,38 @@
 
         private static FightState GetCurrentFightStateBalanced(Playfield p)
         {
+
             FightState fightState = FightState.WAIT;
 
             if (GameBeginning)
+            {
+                StartLoadedDeploy = false;
                 return GameBeginningDecision(p);
+            }
 
             if (!p.noEnemiesOnMySide())
-                fightState = EnemyIsOnOurSideDecision(p);
-            else if (p.ownMana >= Settings.ManaTillAttack || (p.ownMinions.Count > 0))
             {
-                if (p.enemyMinions.Count > 2) // ToDo: CHeck more (Health, Damage etc) 
-                    fightState = EnemyHasCharsOnTheFieldDecision(p);
-                else
-                    fightState = AttackDecision(p);
+                StartLoadedDeploy = false;
+                fightState = EnemyIsOnOurSideDecision(p);
             }
+            else if (Danger(p))
+            {
+                Logger.Debug("Danger");
+                fightState = EnemyHasCharsOnTheFieldDecision(p);
+            }
+            else if (Chance(p)) // ToDo: CHeck more (Health, Damage etc) 
+            {
+                Logger.Debug("Chance");
+                StartLoadedDeploy = false;
+                fightState = AttackDecision(p);
+            }
+            else if (p.ownMana >= Settings.ManaTillDeploy)
+            {
+                StartLoadedDeploy = true;
+                fightState = DefenseDecision(p);
+            }
+            else if (StartLoadedDeploy)
+                fightState = DefenseDecision(p);
 
             //Logger.Debug("FightSate = {0}", fightState.ToString());
             return fightState;
@@ -322,13 +415,54 @@
 
         #endregion
 
+        private static bool Chance(Playfield p)
+        {
+            // Check on Minions at the playfield
+            // Check enemies minions at the playfield
+            List<BoardObj> ownMinions = p.ownMinions;
+
+            int atkSumL1 = ownMinions.Where(n => n.Line == 1).Sum(n => n.Atk);
+            int healthSumL1 = ownMinions.Where(n => n.Line == 1).Sum(n => n.HP);
+            int atkSumL2 = ownMinions.Where(n => n.Line == 2).Sum(n => n.Atk);
+            int healthSumL2 = ownMinions.Where(n => n.Line == 2).Sum(n => n.HP);
+
+
+            if (healthSumL1 > 300 || atkSumL1 > 150)
+                return true;
+            if (healthSumL2 > 300 || atkSumL2 > 150)
+                return true;
+
+            return false;
+        }
+
+        private static bool Danger(Playfield p)
+        {
+            // Check on Minions at the playfield
+            // Check enemies minions at the playfield
+            List<BoardObj> enemyMinions = p.enemyMinions;
+
+            int atkSumL1 = enemyMinions.Where(n => n.Line == 1).Sum(n => n.Atk);
+            int healthSumL1 = enemyMinions.Where(n => n.Line == 1).Sum(n => n.HP);
+            int atkSumL2 = enemyMinions.Where(n => n.Line == 2).Sum(n => n.Atk);
+            int healthSumL2 = enemyMinions.Where(n => n.Line == 2).Sum(n => n.HP);
+
+
+            if (healthSumL1 > 300 || atkSumL1 > 150)
+                return true;
+            if (healthSumL2 > 300 || atkSumL2 > 150)
+                return true;
+
+
+            return false;
+        }
+
         #region Decisions
         private static FightState DefenseDecision(Playfield p)
         {
             if (p.ownTowers.Count < 3)
                 return FightState.DKT;
 
-            BoardObj princessTower = p.enemyTowers.OrderBy(n => n.HP).FirstOrDefault();
+            BoardObj princessTower = p.enemyTowers.OrderBy(n => n.HP).FirstOrDefault(); // Because they are going to attack this tower
 
             if (princessTower.Line == 2)
                 return FightState.DRPT;
@@ -338,11 +472,23 @@
 
         private static FightState EnemyHasCharsOnTheFieldDecision(Playfield p)
         {
-            if (p.enemyTowers.Count > 2)
+            if (p.ownTowers.Count > 2)
             {
-                BoardObj obj = GetNearestEnemy(p);
+                //BoardObj obj = GetNearestEnemy(p);
 
-                if (obj.Line == 2)
+                // ToDo: Get most dangeroust group
+                group mostDangeroustGroup = p.getGroup(false, 200, boPriority.byTotalBuildingsDPS, 3000);
+
+                if (mostDangeroustGroup == null)
+                {
+                    Logger.Debug("mostDangeroustGroup = null");
+                    return FightState.DKT;
+                }
+                int line = mostDangeroustGroup.Position.X > 8700 ? 2 : 1;
+                Logger.Debug("mostDangeroustGroup.Position.X = {0} ; line = {1}", mostDangeroustGroup?.Position?.X, line);
+
+
+                if (line == 2)
                     return FightState.DRPT;
                 else
                     return FightState.DLPT;
@@ -355,11 +501,12 @@
 
         private static FightState EnemyIsOnOurSideDecision(Playfield p)
         {
+            Logger.Debug("Enemy is on our Side!!");
             if (p.ownTowers.Count > 2) // Question: If in ownTowers the KT is not included change to > 1
             {
                 BoardObj obj = GetNearestEnemy(p);
 
-                if (obj.Line == 2)
+                if (obj != null && obj.Line == 2)
                     return FightState.UARPT;
                 else
                     return FightState.UALPT;
@@ -476,6 +623,17 @@
             return p.ownHandCards.Where(s => s != null && s.manacost > 3 && s.card.type == boardObjType.MOB).OrderBy(s => s.manacost);
         }
 
+        private static Handcard AttackKingTowerWithSpell(Playfield p)
+        {
+            IEnumerable<Handcard> spells = p.ownHandCards.Where(n => n.card.type == boardObjType.AOE || n.card.type == boardObjType.PROJECTILE);
+
+            if (spells != null)
+                return spells.FirstOrDefault();
+
+            return null;
+        }
+
+
         private static Handcard All(Playfield p)
         {
             Logger.Debug("Path: Spell - All");
@@ -496,7 +654,7 @@
 
             if (IsAOEAttackNeeded(p))
             {
-                var atkAOE = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB).FirstOrDefault(); // Todo: just AOE-Attack
+                var atkAOE = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB && n.card.aoeGround).FirstOrDefault(); // Todo: just AOE-Attack
                 if (atkAOE == null)
                     atkAOE = p.ownHandCards.Where(n => n.card.TargetType == targetType.GROUND).FirstOrDefault();
 
@@ -616,15 +774,16 @@
 
         public static bool DamagingSpellDecision(Playfield p)
         {
+            // TODO: Better condition
             int count = 0;
             EnemyCharacterWithTheMostEnemiesAround(p, out count);
 
-            /*
-            Logger.Debug("enemyWhithTheMostEnemiesAround-Count: {count} enemy-Name {name}", count
-                         , enemy.LogicGameObjectData.Name.Value);
-                         */
             if (count > Settings.SpellDeployConditionCharCount)
                 return true;
+
+
+
+
 
             return false;
         }
@@ -655,21 +814,17 @@
 
         public static VectorAI GetNextSpellPosition(FightState gameState, Handcard hc, Playfield p)
         {
-            #region Randomise
-            Random rnd = new Random();
-            int rndX = rnd.Next(-Settings.RandomDeploymentValue, Settings.RandomDeploymentValue);
-            int rndY = rnd.Next(-Settings.RandomDeploymentValue, Settings.RandomDeploymentValue);
-            VectorAI rndAddVector = new VectorAI(rndX, rndY);
-            #endregion
-
             if (hc == null || hc.card == null)
                 return null;
 
             VectorAI choosedPosition = new VectorAI(0, 0), nextPosition;
 
-            Logger.Debug("AOE");
+
             if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
+            {
+                Logger.Debug("AOE or PROJECTILE");
                 return GetPositionOfTheBestDamagingSpellDeploy(p);
+            }
 
             // ToDo: Handle Defense Gamestates
             switch (gameState)
@@ -710,11 +865,9 @@
                 return null;
 
             //Logger.Debug("GameState: {GameState}", gameState.ToString());
-            Vector2 v = (choosedPosition.ToVector2() + rndAddVector.ToVector2());
-            nextPosition = new VectorAI(v.X, v.Y);
             //Logger.Debug("nextPosition: " + nextPosition);
 
-            return nextPosition;
+            return choosedPosition;
         }
 
         #region UnderAttack
@@ -743,12 +896,14 @@
                     //Logger.Debug("DKT Troop-Name {0} ; CartType GroundAttack, Flying or Tank", cardToDeploy.Name);
                     if (GetNearestEnemy(p)?.Line == 2)
                     {
+                        Logger.Debug("KT RightUp");
                         //VectorAI v = new VectorAI(p.ownKingsTower.Position.X + 1000, p.enemyKingsTower.Position.Y);
                         VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirection.RightUp, 100);
                         return v;
                     }
                     else
                     {
+                        Logger.Debug("KT LeftUp");
                         //VectorAI v = new VectorAI(p.ownKingsTower.Position.X - 1000, p.enemyKingsTower.Position.Y);
                         VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirection.LeftUp, 100);
                         return v;
@@ -761,12 +916,14 @@
 
                     if (GetNearestEnemy(p)?.Line == 2)
                     {
+                        Logger.Debug("BehindKT: Line2");
                         //VectorAI position = new VectorAI(position.X + 300, position.Y);
                         VectorAI position = p.getDeployPosition(deployDirection.behindKingsTowerLine2);
                         return position;
                     }
                     else
                     {
+                        Logger.Debug("BehindKT: Line1");
                         //VectorAI position = new VectorAI(position.X - 300, position.Y);
                         VectorAI position = p.getDeployPosition(deployDirection.behindKingsTowerLine1);
                         return position;
@@ -819,17 +976,19 @@
         #region Attack
         private static VectorAI AKT(Playfield p)
         {
+            Logger.Debug("AKT");
+
             if (p.enemyTowers?.Count() > 2)
                 //Logger.Debug("Bug: NoPrincessTowerDown-State in Attack-King-Tower-State!");
-                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1, 170);
+                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
 
             if (p.enemyTowers?.Where(n => n.Line == 1).Count() == 0)
                 //Logger.Debug("LPTD");
-                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1, 70);
+                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
 
             if (p.enemyTowers?.Where(n => n.Line == 2).Count() == 0)
                 //Logger.Debug("RPTD");
-                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine2, 15);
+                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine2);
 
             if (p.enemyTowers?.Count() == 1)
                 //Logger.Debug("BPTD");
@@ -841,14 +1000,14 @@
         {
             Logger.Debug("ALPT");
 
-            VectorAI lPT = p.getDeployPosition(deployDirection.enemyPrincessTowerLine1, 70);
+            VectorAI lPT = p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
             return lPT;
         }
         private static VectorAI ARPT(Playfield p)
         {
             Logger.Debug("ARPT");
 
-            VectorAI rPT = p.getDeployPosition(deployDirection.enemyPrincessTowerLine2, 70);
+            VectorAI rPT = p.getDeployPosition(deployDirection.enemyPrincessTowerLine2);
             return rPT;
         }
         #endregion
@@ -857,8 +1016,9 @@
         {
             // Prio1: Hit Enemy King Tower if health is low
             // Prio2: Every damaging spell if there is a big group of enemies
+            Logger.Debug("GetPositionOfTheBestDamaingSpellDeploy");
 
-            if (p.enemyKingsTower?.HP < Settings.KingTowerSpellDamagingHealth)
+            if (p.enemyKingsTower?.HP < Settings.KingTowerSpellDamagingHealth || (p.enemyMinions.Count + p.enemyBuildings.Count) < 1)
                 return p.enemyKingsTower?.Position;
             else
             {
@@ -869,23 +1029,35 @@
                 {
                     //LC: also you can try group Group = new group(false, enemy.Position, p.enemyMinions, lowHPlimit, false, radius); and get the full characteristics of the group for deciding whether the spell will be effective against this group or not (hint: set lowHPlimit = hc.card.Atk, radius = hc.card.DamageRadius)
                     if (HowManyCharactersAroundCharacter(p, enemy) >= Settings.SpellCorrectionConditionCharCount)
+                    {
+                        Logger.Debug("enemy.Name = {Name}", enemy.Name);
+                        if (enemy.Position != null) Logger.Debug("enemy.Position = {position}", enemy.Position);
+
                         return enemy.Position;
+                    }
                     else
                     {
                         //enemy.Position.AddYInDirection(p, 3000); // Position Correction
-                        VectorAI result = p.getDeployPosition(enemy.Position, deployDirection.Down, 2000); // TODO: Have to look about target speed and dircetion
+                        VectorAI result = p.getDeployPosition(enemy.Position, deployDirection.Down, 500);
+
+                        Logger.Debug("enemy.Name = {Name}", enemy.Name);
+                        if (enemy.Position != null) Logger.Debug("enemy.Position = {position}", enemy.Position);
+                        Logger.Debug("result = {position}", result);
+
                         return result;
                     }
                 }
+                Logger.Debug("enemy = null?{enemy} ; enemy.position = null?{position}", enemy == null, enemy.Position == null);
             }
 
+            Logger.Debug("Error: 0/0");
             return new VectorAI(0, 0);
         }
 
         public static VectorAI GetPositionOfTheBestBuildingDeploy(Playfield p)
         {
             // ToDo: Find the best position
-            VectorAI betweenBridges = p.getDeployPosition(deployDirection.betweenBridges, 0);
+            VectorAI betweenBridges = p.getDeployPosition(deployDirection.betweenBridges);
             VectorAI result = p.getDeployPosition(betweenBridges, deployDirection.Down, 4000);
             return result;
         }

@@ -87,7 +87,7 @@ namespace Robi.Clash.DefaultSelectors
         public BoardObj bo = null;
         public Handcard hc = null;
         public BoardObj target = null; //TODO: leave target or targetPosition
-        //public VectorAI targetPosition;
+                                       //public VectorAI targetPosition;
 
         public opposite()
         {
@@ -142,7 +142,7 @@ namespace Robi.Clash.DefaultSelectors
         public int lowHPboBuildingsDPS = 0; //total DPS on Buildings from all units with HP <= LowHPlimit
         public int lowHPboAirTransport = 0; //num units with HP <= LowHPlimit who can fly (transportType.AIR)
         public int lowHPboHP = 0; //average HP per 1 unit from units with HP <= LowHPlimit
-                
+
         public List<BoardObj> avgHPbo = new List<BoardObj>(); //hp: LowHPlimit < averageUnits < 550
         public int avgHPboGroundDPS = 0;
         public int avgHPboGroundAreaDPS = 0;
@@ -151,7 +151,7 @@ namespace Robi.Clash.DefaultSelectors
         public int avgHPboBuildingsDPS = 0;
         public int avgHPboAirTransport = 0;
         public int avgHPboHP = 0;
-                
+
         public List<BoardObj> hiHPbo = new List<BoardObj>(); //units with hp > 550
         public int hiHPboGroundDPS = 0;
         public int hiHPboGroundAreaDPS = 0;
@@ -321,8 +321,8 @@ namespace Robi.Clash.DefaultSelectors
 
     public class Playfield
     {
-	    private static readonly ILogger Logger = LogProvider.CreateLogger<Playfield>();
-        
+        private static readonly ILogger Logger = LogProvider.CreateLogger<Playfield>();
+
         public List<Handcard> ownHandCards = new List<Handcard>();
         public Handcard nextCard = new Handcard();
         public List<CardDB.cardName> ownDeck = new List<CardDB.cardName>();
@@ -348,7 +348,7 @@ namespace Robi.Clash.DefaultSelectors
         public List<BoardObj> ownPrincessTowers = new List<BoardObj>();
         public List<BoardObj> enemyTowers = new List<BoardObj>();
         public List<BoardObj> enemyPrincessTowers = new List<BoardObj>();
-        
+
 
         public group ownGroup = null;
         public group enemyGroup = null;
@@ -375,7 +375,7 @@ namespace Robi.Clash.DefaultSelectors
         //public int guessingKingTowerHP = 30;                
         public List<Action> playactions = new List<Action>();
         public List<int> pIdHistory = new List<int>();
-        
+
         private void addTower(BoardObj tower)
         {
             //maybe add duplicate check (todo) - depending on the performance
@@ -418,7 +418,7 @@ namespace Robi.Clash.DefaultSelectors
             this.nextEntity = 1000;
             this.evaluatePenality = 0;
             this.ruleWeight = 0;
-            this.rulesUsed = "";  
+            this.rulesUsed = "";
         }
 
         public void initTowers()
@@ -458,7 +458,7 @@ namespace Robi.Clash.DefaultSelectors
 
             copyBoardObj(p.ownTowers, this.ownTowers);
             copyBoardObj(p.enemyTowers, this.enemyTowers);
-            
+
             this.ownKingsTower = new BoardObj(p.ownKingsTower);
             this.ownPrincessTower1 = new BoardObj(p.ownPrincessTower1);
             this.ownPrincessTower2 = new BoardObj(p.ownPrincessTower2);
@@ -521,7 +521,7 @@ namespace Robi.Clash.DefaultSelectors
             for (int i = 0; i < count; i++)
             {
                 bo = listMobs[i];
-                Group = new group(true, bo.Position, listMobs, lowHPlimit, false, radius);
+                Group = new group(own, bo.Position, listMobs, lowHPlimit, false, radius);
                 Group.addToGroup(listBuildings, false);
                 Group.addToGroup(listTowers, true);
                 switch (priority)
@@ -620,32 +620,32 @@ namespace Robi.Clash.DefaultSelectors
 
         }
 
-        public VectorAI getDeployPosition(deployDirection direction = deployDirection.none, int random = 30)
+        public VectorAI getDeployPosition(deployDirection direction = deployDirection.none)
         {
             //Absolute directions
             int sign = this.home ? 1 : -1;
             switch (direction)
             {
-                case deployDirection.behindKingsTowerCenter: return home ? new VectorAI(9500, 1100, random) : new VectorAI(9500, 30900, random); //TODO: test !home
-                case deployDirection.behindKingsTowerLine1: return home ? new VectorAI(8300, 1200, random) : new VectorAI(8700, 30950, random);
-                case deployDirection.behindKingsTowerLine2: return home ? new VectorAI(10400, 1250, random) : new VectorAI(10300, 31000, random);
-                case deployDirection.cornerLine1: return home ? new VectorAI(800, 2200, random) : new VectorAI(550, 30050, random);
-                case deployDirection.cornerLine2: return home ? new VectorAI(17000, 2500, random) : new VectorAI(17450, 30080, random);
-                case deployDirection.bridgeLine1: return home ? new VectorAI(3500, 14900, random) : new VectorAI(3500, 17200, random);
-                case deployDirection.bridgeLine2: return home ? new VectorAI(14100, 15100, random) : new VectorAI(14100, 17000, random);
-                case deployDirection.betweenBridges: return new VectorAI(9500, 16000, random); //TODO test
-                case deployDirection.borderBridgeLine1: return home ? new VectorAI(600, 14900, random) : new VectorAI(550, 17200, random); //TODO: test
-                case deployDirection.borderBridgeLine2: return home ? new VectorAI(17000, 16700, random) : new VectorAI(17100, 17000, random); //TODO: test
-                case deployDirection.ownPrincessTowerLine1: return home ? new VectorAI(3500, 6500, random) : new VectorAI(3500, 25500, random);
-                case deployDirection.ownPrincessTowerLine2: return home ? new VectorAI(14500, 6500, random) : new VectorAI(14500, 25500, random);
-                case deployDirection.enemyPrincessTowerLine1: return home ? new VectorAI(3500, 25500, random) : new VectorAI(3500, 6500, random);
-                case deployDirection.enemyPrincessTowerLine2: return home ? new VectorAI(14500, 25500, random) : new VectorAI(14500, 6500, random);
+                case deployDirection.behindKingsTowerCenter: return home ? new VectorAI(9500, 1100) : new VectorAI(9500, 30900); //TODO: test !home
+                case deployDirection.behindKingsTowerLine1: return home ? new VectorAI(8300, 1200) : new VectorAI(8700, 30950);
+                case deployDirection.behindKingsTowerLine2: return home ? new VectorAI(10400, 1250) : new VectorAI(10300, 31000);
+                case deployDirection.cornerLine1: return home ? new VectorAI(800, 2200) : new VectorAI(550, 30050);
+                case deployDirection.cornerLine2: return home ? new VectorAI(17000, 2500) : new VectorAI(17450, 30080);
+                case deployDirection.bridgeLine1: return home ? new VectorAI(3500, 14900) : new VectorAI(3500, 17200);
+                case deployDirection.bridgeLine2: return home ? new VectorAI(14100, 15100) : new VectorAI(14100, 17000);
+                case deployDirection.betweenBridges: return new VectorAI(9500, 16000); //TODO test
+                case deployDirection.borderBridgeLine1: return home ? new VectorAI(600, 14900) : new VectorAI(550, 17200); //TODO: test
+                case deployDirection.borderBridgeLine2: return home ? new VectorAI(17000, 16700) : new VectorAI(17100, 17000); //TODO: test
+                case deployDirection.ownPrincessTowerLine1: return home ? new VectorAI(3500, 6500) : new VectorAI(3500, 25500);
+                case deployDirection.ownPrincessTowerLine2: return home ? new VectorAI(14500, 6500) : new VectorAI(14500, 25500);
+                case deployDirection.enemyPrincessTowerLine1: return home ? new VectorAI(3500, 25500) : new VectorAI(3500, 6500);
+                case deployDirection.enemyPrincessTowerLine2: return home ? new VectorAI(14500, 25500) : new VectorAI(14500, 6500);
             }
             Logger.Information("!!![getDeployPosition]Error: Absolute directions unhandled: " + direction);
             return new VectorAI(0, 0);
         }
 
-        public VectorAI getDeployPosition(VectorAI targetPosition, deployDirection direction = deployDirection.none, int deployDistance = 0, int random = 30) //for deployDistance you can use hc.card.DamageRadius; we random use only for Absolute directions
+        public VectorAI getDeployPosition(VectorAI targetPosition, deployDirection direction = deployDirection.none, int deployDistance = 0) //for deployDistance you can use hc.card.DamageRadius; we  use only for Absolute directions
         {
             //Relative directions
             int sign = this.home ? 1 : -1;
@@ -676,20 +676,20 @@ namespace Robi.Clash.DefaultSelectors
                 case deployDirection.centerSideMiddle: return new VectorAI(targetPosition.X - lineSign * (1000 + deployDistance), targetPosition.Y);
                 case deployDirection.centerSideDown: return new VectorAI(targetPosition.X - lineSign * (1000 + 7071 / 10000 * deployDistance), targetPosition.Y - sign * (1000 + 7071 / 10000 * deployDistance));
 
-                case deployDirection.lineCorner: return (lineSign > 0) ? (home ? new VectorAI(17000, 2500, random) : new VectorAI(17450, 30080, random)) : (home ? new VectorAI(800, 2200, random) : new VectorAI(550, 30050, random));
+                case deployDirection.lineCorner: return (lineSign > 0) ? (home ? new VectorAI(17000, 2500) : new VectorAI(17450, 30080)) : (home ? new VectorAI(800, 2200) : new VectorAI(550, 30050));
                 default:
                     return new VectorAI(targetPosition);
             }
         }
 
-        public VectorAI getDeployPosition(BoardObj bo, deployDirection direction = deployDirection.none, int deployDistance = 0, int random = 35) //for deployDistance you can use hc.card.DamageRadius
+        public VectorAI getDeployPosition(BoardObj bo, deployDirection direction = deployDirection.none, int deployDistance = 0) //for deployDistance you can use hc.card.DamageRadius
         {
             if (bo == null)
             {
                 Logger.Information("!!![getDeployPosition]Error:BoardObj == NULL");
                 return new VectorAI(0, 0);
             }
-            else return getDeployPosition(bo.Position, direction, deployDistance, random);
+            else return getDeployPosition(bo.Position, direction, deployDistance);
         }
 
         public int getDistanceToPointFromBorder(VectorAI Position) //TODO: get actual size fom game for Battlefield + bool CanDeploy
@@ -863,13 +863,13 @@ namespace Robi.Clash.DefaultSelectors
         }
 
         /*
-        public int getNextEntity()
-        {
-            //i dont trust return this.nextEntity++; !!!
-            int retval = this.nextEntity;
-            this.nextEntity++;
-            return retval;
-        }*/
+		public int getNextEntity()
+		{
+			//i dont trust return this.nextEntity++; !!!
+			int retval = this.nextEntity;
+			this.nextEntity++;
+			return retval;
+		}*/
 
 
         public void guessObjDamage() //TODO
@@ -880,21 +880,21 @@ namespace Robi.Clash.DefaultSelectors
 
         //TODO allCharsInAreaGetDamage
 
-	    private void LogBoardObject(BoardObj bo)
-	    {
+        private void LogBoardObject(BoardObj bo)
+        {
             string extrainfo = (bo.frozen ? " frozen:" + bo.startFrozen : "") + (bo.LifeTime > 0 ? " LifeTime:" + bo.LifeTime : "") + (bo.extraData != "" ? " " + bo.extraData : "");
             Logger.Information("{type} {ownerIndex} {Name} {GId} {Position:l} {level} {Atk} {HP} {Shield}{extrainfo:l}", bo.type, bo.ownerIndex, bo.Name, bo.GId, bo.Position, bo.level, bo.Atk, bo.HP, bo.Shield, extrainfo);
-		}
+        }
 
-	    private void LogHandCard(Handcard hc)
-	    {
-		    Logger.Information("Hand {position} {name} {lvl} {manacost}", hc.position, hc.card.name, hc.lvl, hc.manacost);
-	    }
+        private void LogHandCard(Handcard hc)
+        {
+            Logger.Information("Hand {position} {name} {lvl} {manacost}", hc.position, hc.card.name, hc.lvl, hc.manacost);
+        }
 
         public void print()
         {
-			Logger.Information("Data bt:{BattleTime} owner:{ownerIndex} mana:{ownMana} nxtc:{name:l}:{lvl}", BattleTime, ownerIndex, ownMana, nextCard.name, nextCard.lvl);
-            
+            Logger.Information("Data bt:{BattleTime} owner:{ownerIndex} mana:{ownMana} nxtc:{name:l}:{lvl}", BattleTime, ownerIndex, ownMana, nextCard.name, nextCard.lvl);
+
             //help.logg("ownCards");
             foreach (Handcard hc in ownHandCards) LogHandCard(hc);
             //help.logg("ownTowers");

@@ -6,9 +6,9 @@ namespace Robi.Clash.DefaultSelectors
     using System;
     using System.Collections.Generic;
 
-	public class KnowledgeBase
-	{
-		private static readonly ILogger Logger = LogProvider.CreateLogger<KnowledgeBase>();
+    public class KnowledgeBase
+    {
+        private static readonly ILogger Logger = LogProvider.CreateLogger<KnowledgeBase>();
         Dictionary<CardDB.cardName, Dictionary<CardDB.cardName, int>> OppositeDB = new Dictionary<CardDB.cardName, Dictionary<CardDB.cardName, int>>();
 
         private static KnowledgeBase instance;
@@ -322,25 +322,25 @@ namespace Robi.Clash.DefaultSelectors
                     else bestOpposite = opp;
                 }
 
-                if (bestOpposite != null && bestOpposite.target != null)
+                if (bestOpposite != null && bestOpposite.target != null && bestOpposite.hc != null && bestOpposite.hc.card != null)
                 {
                     bestOpposite.target.attacker = new BoardObj(bestOpposite.hc.card.name, bestOpposite.hc.lvl);
                 }
             }
             return bestOpposite;
         }
-        
+
         private void setupOppositeDB()
         {
-//archers
-            
+            //archers
+
             OppositeDB.Add(CardDB.cardName.babydragon, new Dictionary<CardDB.cardName, int>(){
                 { CardDB.cardName.tesla, 100 },
                 { CardDB.cardName.threemusketeers, 100 },
                 { CardDB.cardName.minionhorde, 95 },
                 { CardDB.cardName.musketeer, 90 },
                 { CardDB.cardName.archer, 90 }
-            });            
+            });
             OppositeDB.Add(CardDB.cardName.balloon, new Dictionary<CardDB.cardName, int>(){
                 { CardDB.cardName.minionhorde, 100 },
                 { CardDB.cardName.babydragon, 95 },
@@ -367,9 +367,9 @@ namespace Robi.Clash.DefaultSelectors
                 { CardDB.cardName.minion, 85 }
             });
 
-//battleram
-//bomber
-//bowler
+            //battleram
+            //bomber
+            //bowler
 
             OppositeDB.Add(CardDB.cardName.darkprince, new Dictionary<CardDB.cardName, int>(){
                 { CardDB.cardName.minionhorde, 100 },
@@ -381,11 +381,11 @@ namespace Robi.Clash.DefaultSelectors
                 { CardDB.cardName.tesla, 90 }
             });
 
-//dartgoblin
-//electrowizard
-//elitebarbarians
-//executioner
-//firespirits
+            //dartgoblin
+            //electrowizard
+            //elitebarbarians
+            //executioner
+            //firespirits
             OppositeDB.Add(CardDB.cardName.giant, new Dictionary<CardDB.cardName, int>(){
                 { CardDB.cardName.infernotower, 100 },
                 { CardDB.cardName.skeletonarmy, 100 },
@@ -414,9 +414,9 @@ namespace Robi.Clash.DefaultSelectors
                 { CardDB.cardName.skeleton, 50 }
             });
 
-//goblingang
-//goblins
-                
+            //goblingang
+            //goblins
+
             OppositeDB.Add(CardDB.cardName.goblinbarrel, new Dictionary<CardDB.cardName, int>(){
                 { CardDB.cardName.arrows, 100 },
                 { CardDB.cardName.fireball, 100 },
@@ -440,7 +440,7 @@ namespace Robi.Clash.DefaultSelectors
                 { CardDB.cardName.goblin, 50 }
             });
 
-//guards
+            //guards
 
             OppositeDB.Add(CardDB.cardName.hogrider, new Dictionary<CardDB.cardName, int>(){
                 { CardDB.cardName.barbarian, 100 },
@@ -451,11 +451,11 @@ namespace Robi.Clash.DefaultSelectors
                 { CardDB.cardName.cannon, 90 },
             });
 
-//icegolem
-//icespirit
-//icewizard
-//infernodragon
-//knight
+            //icegolem
+            //icespirit
+            //icewizard
+            //infernodragon
+            //knight
 
             OppositeDB.Add(CardDB.cardName.lavahound, new Dictionary<CardDB.cardName, int>(){
                 { CardDB.cardName.infernotower, 100 },
@@ -471,8 +471,8 @@ namespace Robi.Clash.DefaultSelectors
                 { CardDB.cardName.rocket, 80 }
             });
 
-//lumberjack
-//megaminion
+            //lumberjack
+            //megaminion
 
             OppositeDB.Add(CardDB.cardName.miner, new Dictionary<CardDB.cardName, int>(){
                 { CardDB.cardName.archer, 100 },
@@ -493,7 +493,7 @@ namespace Robi.Clash.DefaultSelectors
                 { CardDB.cardName.minionhorde, 90 }
             });
 
-//minions
+            //minions
 
             OppositeDB.Add(CardDB.cardName.minipekka, new Dictionary<CardDB.cardName, int>(){
                 { CardDB.cardName.tombstone, 100 },
@@ -532,8 +532,8 @@ namespace Robi.Clash.DefaultSelectors
                     { CardDB.cardName.babydragon, 95 }
                 });
 
-//musketeer
-//nightwitch
+            //musketeer
+            //nightwitch
 
             OppositeDB.Add(CardDB.cardName.pekka, new Dictionary<CardDB.cardName, int>(){
                 { CardDB.cardName.infernotower, 100 },
@@ -562,7 +562,7 @@ namespace Robi.Clash.DefaultSelectors
                 { CardDB.cardName.prince, 30 }
             });
 
-//princess
+            //princess
 
             OppositeDB.Add(CardDB.cardName.royalgiant, new Dictionary<CardDB.cardName, int>(){
                 { CardDB.cardName.infernotower, 100 },
@@ -587,7 +587,7 @@ namespace Robi.Clash.DefaultSelectors
                 { CardDB.cardName.witch, 90 }
             });
 
-//skeletons
+            //skeletons
 
             OppositeDB.Add(CardDB.cardName.sparky, new Dictionary<CardDB.cardName, int>(){
                 { CardDB.cardName.infernotower, 100 },
@@ -605,7 +605,7 @@ namespace Robi.Clash.DefaultSelectors
                 { CardDB.cardName.goblin, 50 }
             });
 
-//speargoblin
+            //speargoblin
 
             OppositeDB.Add(CardDB.cardName.threemusketeers, new Dictionary<CardDB.cardName, int>(){
                 { CardDB.cardName.fireball, 100 },
@@ -657,8 +657,8 @@ namespace Robi.Clash.DefaultSelectors
                 { CardDB.cardName.pekka, 85 },
                 { CardDB.cardName.minipekka, 85 }
             });
-            
+
         }
 
-	}
+    }
 }
