@@ -20,13 +20,13 @@
             //if you just need coordinates 
             //var targetPosition = p.getDeployPosition(deployDirection.betweenBridges);
             //or p.getDeployPosition(deployDirection.enemyPrincessTowerLine2, 0);
-            // there random - small int value like a human random for click
+            // there  - small int value like a human  for click
             //int deployDistance = hc.card.DamageRadius; //or any value
             //var MyTroopsPosition = p.getDeployPosition(targetPosition, deployDirection.borderSideDown);
             //or
             //BoardObj harmfulEnemyMinion = new BoardObj();
             //int deployDistance = hc.card.DamageRadius; //or any value
-            //p.getDeployPosition(harmfulEnemyMinion, deployDirection.centerSideUp, deployDistance, random); //for deployDistance you can use hc.card.DamageRadius
+            //p.getDeployPosition(harmfulEnemyMinion, deployDirection.centerSideUp, deployDistance, ); //for deployDistance you can use hc.card.DamageRadius
 
 
 

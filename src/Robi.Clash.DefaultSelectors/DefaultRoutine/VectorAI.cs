@@ -56,13 +56,6 @@ namespace Robi.Clash.DefaultSelectors
             y = pos.Y;
         }
 
-        public VectorAI(int X, int Y, int random)
-        {
-            Random rnd = new Random();
-            x = X + (random / 2 - rnd.Next(random));
-            y = Y + (random / 2 - rnd.Next(random));
-        }
-
         public VectorAI(string s) //{3500/25500}
         {
             s = s.Substring(1, s.Length - 2);
