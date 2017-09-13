@@ -26,7 +26,8 @@ namespace Robi.Clash.DefaultSelectors
 		public abstract int GetBoValue(BoardObj bo, Playfield p);
 		public abstract int GetPlayCardPenalty(CardDB.Card card, Playfield p);
 
-		private static BehaviorBaseSettings Settings { get; } = new BehaviorBaseSettings();
+        private static BehaviorBaseSettings Settings { get; } = new BehaviorBaseSettings();
+		public static bool GameBeginning = false;
 
 		private ILogEventSink _battleLogger;
 		public override void BattleStart()
@@ -43,6 +44,9 @@ namespace Robi.Clash.DefaultSelectors
 					return !(ctx.StartsWith("Robi.Clash.DefaultSelectors") || ctx.StartsWith("Robi.Engine.PerformanceTimer"));
 				}).WriteTo.File(battleLogName,  outputTemplate: "{Message}{NewLine}{Exception}").CreateLogger();
 			LogProvider.AttachSink(_battleLogger);
+
+			GameBeginning = true;
+
 		}
 
 		public override void BattleEnd()
@@ -105,7 +109,7 @@ namespace Robi.Clash.DefaultSelectors
 						int lvl = 1;
 						Handcard hc = new Handcard(spell.Name.Value, lvl); //hc.lvl = ??? TODO
 						hc.manacost = spell.ManaCost;
-                        if (hc.card.name == CardDB.cardName.unknown) hc.card = CardDB.Instance.collectNewCards(spell);
+						if (hc.card.name == CardDB.cardName.unknown) hc.card = CardDB.Instance.collectNewCards(spell);
 						//hc.position = ??? TODO
 						ownHandCards.Add(hc);
 					}
@@ -131,13 +135,13 @@ namespace Robi.Clash.DefaultSelectors
 						bo.own = own;
 						if (own) ownAreaEffects.Add(bo);
 						else enemyAreaEffects.Add(bo);
-                        //hc.position = ??? TODO
+						//hc.position = ??? TODO
 
-                        //if (hc.card.name == CardDB.cardName.unknown) hc.card = CardDB.Instance.collectNewCards(spell); //TODO: same for all objects
+						//if (hc.card.name == CardDB.cardName.unknown) hc.card = CardDB.Instance.collectNewCards(spell); //TODO: same for all objects
 
-                    }
+					}
 
-                }
+				}
 
 				var chars = om.OfType<Clash.Engine.NativeObjects.Logic.GameObjects.Character>();
 				foreach (var @char in chars)
@@ -169,8 +173,8 @@ namespace Robi.Clash.DefaultSelectors
 						bo.ownerIndex = (int)@char.OwnerIndex;
 						bool own = bo.ownerIndex == lp.OwnerIndex ? true : false; //TODO: replace it on Friendly (for 2x2 mode)
 
-                        bo.own = own;
-                        int tower = 0;
+						bo.own = own;
+						int tower = 0;
 						switch (bo.Name)
 						{
 							case CardDB.cardName.princesstower:
@@ -197,44 +201,46 @@ namespace Robi.Clash.DefaultSelectors
 							case CardDB.cardName.kingtowermiddle:
 								tower = 100;
 								break;
-                            default:
-                                if (own)
-                                {
-                                    switch (bo.type)
-                                    {
-                                        case boardObjType.MOB:
-                                            ownMinions.Add(bo);
-                                            break;
-                                        case boardObjType.BUILDING:
-                                            ownBuildings.Add(bo);
-                                            break;
-                                    }
-                                }
-                                else
-                                {
-                                    switch (bo.type)
-                                    {
-                                        case boardObjType.MOB:
-                                            enemyMinions.Add(bo);
-                                            break;
-                                        case boardObjType.BUILDING:
-                                            enemyBuildings.Add(bo);
-                                            break;
-                                    }
-                                }
-                                break;
-                        }
+							default:
+								if (own)
+								{
+									switch (bo.type)
+									{
+										case boardObjType.MOB:
+											ownMinions.Add(bo);
+											break;
+										case boardObjType.BUILDING:
+											ownBuildings.Add(bo);
+											break;
+									}
+								}
+								else
+								{
+									switch (bo.type)
+									{
+										case boardObjType.MOB:
+											enemyMinions.Add(bo);
+											break;
+										case boardObjType.BUILDING:
+											enemyBuildings.Add(bo);
+											break;
+									}
+								}
+								break;
+						}
 					}
-                    //if (hc.card.name == CardDB.cardName.unknown) hc.card = CardDB.Instance.collectNewCards(spell); //TODO: same for all objects
+					//if (hc.card.name == CardDB.cardName.unknown) hc.card = CardDB.Instance.collectNewCards(spell); //TODO: same for all objects
 
-                }
-            }
+				}
+			}
 
 			Playfield p;
 
 			using (new PerformanceTimer("Initialize playfield."))
 			{
-				p = new Playfield
+                Logger.Information("");
+                Logger.Information("################################Routine v.0.7.1 Behavior:");
+                p = new Playfield
 				{
 					BattleTime = ClashEngine.Instance.Battle.BattleTime,
 					ownerIndex = (int)lp.OwnerIndex,
@@ -258,12 +264,12 @@ namespace Robi.Clash.DefaultSelectors
 
 				p.home = p.ownKingsTower.Position.Y < 15250 ? true : false;
 
-                if (p.ownPrincessTower1.Position == null) p.ownPrincessTower1.Position = p.getDeployPosition(deployDirection.ownPrincessTowerLine1);
-                if (p.ownPrincessTower2.Position == null) p.ownPrincessTower2.Position = p.getDeployPosition(deployDirection.ownPrincessTowerLine2);
-                if (p.enemyPrincessTower1.Position == null) p.enemyPrincessTower1.Position = p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
-                if (p.enemyPrincessTower2.Position == null) p.enemyPrincessTower2.Position = p.getDeployPosition(deployDirection.enemyPrincessTowerLine2);
+				if (p.ownPrincessTower1.Position == null) p.ownPrincessTower1.Position = p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine1);
+				if (p.ownPrincessTower2.Position == null) p.ownPrincessTower2.Position = p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine2);
+				if (p.enemyPrincessTower1.Position == null) p.enemyPrincessTower1.Position = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
+				if (p.enemyPrincessTower2.Position == null) p.enemyPrincessTower2.Position = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
 
-                p.initTowers();
+				p.initTowers();
 
 				int i = 0;
 				foreach (BoardObj t in p.ownTowers) if (t.Tower < 10) i += t.Line;
@@ -301,5 +307,5 @@ namespace Robi.Clash.DefaultSelectors
 				return retval;
 			}
 		}
-    }
+	}
 }
