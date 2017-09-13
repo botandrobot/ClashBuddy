@@ -23,11 +23,7 @@ namespace Robi.Clash.DefaultSelectors.Logic
         public static Vector2f GetNextSpellPosition(FightState gameState, ICard card)
         {
             cardToDeploy = card;
-            Random rnd = StaticValues.rnd;
-            float rndX = rnd.Next(-GameHandling.Settings.RandomDeploymentValue, GameHandling.Settings.RandomDeploymentValue);
-            float rndY = rnd.Next(-GameHandling.Settings.RandomDeploymentValue, GameHandling.Settings.RandomDeploymentValue);
 
-            Vector2f rndAddVector = new Vector2f(rndX, rndY);
             Vector2f choosedPosition = Vector2f.Zero, nextPosition;
 
             if (cardToDeploy is CardSpell)
@@ -68,7 +64,7 @@ namespace Robi.Clash.DefaultSelectors.Logic
                     break;
             }
             Logger.Debug("GameState: {GameState}", gameState.ToString());
-            nextPosition = (choosedPosition + rndAddVector);
+            nextPosition = choosedPosition;
             //Logger.Debug("nextPosition: " + nextPosition);
 
             return nextPosition;

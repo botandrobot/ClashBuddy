@@ -94,7 +94,7 @@ namespace Robi.Clash.DefaultSelectors.Logic
 
             if (EnemyCharacterHandling.IsAnEnemyOnOurSide())
                 fightState = EnemyIsOnOurSideDecision();
-            else if(StaticValues.Player.Mana >= GameHandling.Settings.ManaTillAttack || AttackMode)
+            else if(StaticValues.Player.Mana >= GameHandling.Settings.ManaTillDeploy || AttackMode)
             {
                 if (EnemyCharacterHandling.EnemiesWithoutTower.Count() > 2) // ToDo: CHeck more (Health, Damage etc) 
                     fightState = EnemyHasCharsOnTheFieldDecision();
