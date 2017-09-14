@@ -920,14 +920,14 @@
                     {
                         Logger.Debug("KT RightUp");
                         //VectorAI v = new VectorAI(p.ownKingsTower.Position.X + 1000, p.enemyKingsTower.Position.Y);
-                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirection.RightUp, 100);
+                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirectionRelative.RightUp, 100);
                         return v;
                     }
                     else
                     {
                         Logger.Debug("KT LeftUp");
                         //VectorAI v = new VectorAI(p.ownKingsTower.Position.X - 1000, p.enemyKingsTower.Position.Y);
-                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirection.LeftUp, 100);
+                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirectionRelative.LeftUp, 100);
                         return v;
                     }
                 }
@@ -940,14 +940,14 @@
                     {
                         Logger.Debug("BehindKT: Line2");
                         //VectorAI position = new VectorAI(position.X + 300, position.Y);
-                        VectorAI position = p.getDeployPosition(deployDirection.behindKingsTowerLine2);
+                        VectorAI position = p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine2);
                         return position;
                     }
                     else
                     {
                         Logger.Debug("BehindKT: Line1");
                         //VectorAI position = new VectorAI(position.X - 300, position.Y);
-                        VectorAI position = p.getDeployPosition(deployDirection.behindKingsTowerLine1);
+                        VectorAI position = p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine1);
                         return position;
                     }
                 }
@@ -1002,15 +1002,15 @@
 
             if (p.enemyTowers?.Count() > 2)
                 //Logger.Debug("Bug: NoPrincessTowerDown-State in Attack-King-Tower-State!");
-                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
+                return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
 
             if (p.enemyTowers?.Where(n => n.Line == 1).Count() == 0)
                 //Logger.Debug("LPTD");
-                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
+                return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
 
             if (p.enemyTowers?.Where(n => n.Line == 2).Count() == 0)
                 //Logger.Debug("RPTD");
-                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine2);
+                return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
 
             if (p.enemyTowers?.Count() == 1)
                 //Logger.Debug("BPTD");
@@ -1022,14 +1022,14 @@
         {
             Logger.Debug("ALPT");
 
-            VectorAI lPT = p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
+            VectorAI lPT = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
             return lPT;
         }
         private static VectorAI ARPT(Playfield p)
         {
             Logger.Debug("ARPT");
 
-            VectorAI rPT = p.getDeployPosition(deployDirection.enemyPrincessTowerLine2);
+            VectorAI rPT = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
             return rPT;
         }
         #endregion
@@ -1060,7 +1060,7 @@
                     else
                     {
                         //enemy.Position.AddYInDirection(p, 3000); // Position Correction
-                        VectorAI result = p.getDeployPosition(enemy.Position, deployDirection.Down, 500);
+                        VectorAI result = p.getDeployPosition(enemy.Position, deployDirectionRelative.Down, 500);
 
                         Logger.Debug("enemy.Name = {Name}", enemy.Name);
                         if (enemy.Position != null) Logger.Debug("enemy.Position = {position}", enemy.Position);
@@ -1079,8 +1079,8 @@
         public static VectorAI GetPositionOfTheBestBuildingDeploy(Playfield p)
         {
             // ToDo: Find the best position
-            VectorAI betweenBridges = p.getDeployPosition(deployDirection.betweenBridges);
-            VectorAI result = p.getDeployPosition(betweenBridges, deployDirection.Down, 4000);
+            VectorAI betweenBridges = p.getDeployPosition(deployDirectionAbsolute.betweenBridges);
+            VectorAI result = p.getDeployPosition(betweenBridges, deployDirectionRelative.Down, 4000);
             return result;
         }
 
@@ -1095,12 +1095,12 @@
                 if (hc.card.MaxHP >= Settings.MinHealthAsTank)
                 {
                     //position.SubtractYInDirection(p);
-                    return p.getDeployPosition(position, deployDirection.Up, 100);
+                    return p.getDeployPosition(position, deployDirectionRelative.Up, 100);
                 }
                 else
                 {
                     //position.AddYInDirection(p);
-                    return p.getDeployPosition(position, deployDirection.Down, 2000);
+                    return p.getDeployPosition(position, deployDirectionRelative.Down, 2000);
                 }
             }
             else if (hc.card.type == boardObjType.BUILDING)
