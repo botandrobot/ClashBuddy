@@ -36,7 +36,27 @@ namespace Robi.Clash.DefaultSelectors
         ONLY_ENEMIES
     }
 
-    public enum deployDirection
+    public enum deployDirectionAbsolute
+    {
+        none, //the position of the object itself
+        //Absolute directions:
+        behindKingsTowerCenter, //the Archers will be divided in to the different directions in this position
+        behindKingsTowerLine1, //troops will go in the specified direction (Line 1)
+        behindKingsTowerLine2, //troops will go in the specified direction (Line 2)
+        cornerLine1, //corner on the board on Line 1
+        cornerLine2, //corner on the board on Line 2
+        bridgeLine1,
+        bridgeLine2,
+        betweenBridges, //on my side, the Archers will be divided in to the different directions in this position
+        borderBridgeLine1, //border near the bridge on my side
+        borderBridgeLine2, //border near the bridge on my side
+        ownPrincessTowerLine1,
+        ownPrincessTowerLine2,
+        enemyPrincessTowerLine1,
+        enemyPrincessTowerLine2,
+    }
+
+    public enum deployDirectionRelative
     {
         none, //the position of the object itself
 
@@ -57,22 +77,6 @@ namespace Robi.Clash.DefaultSelectors
         centerSideDown, //angle 135 or 225 closer to the center
         lineCorner, //bottom left or right corner on the board
         //customAngle, TODO if it is needed
-
-        //Absolute directions:
-        behindKingsTowerCenter, //the Archers will be divided in to the different directions in this position
-        behindKingsTowerLine1, //troops will go in the specified direction (Line 1)
-        behindKingsTowerLine2, //troops will go in the specified direction (Line 2)
-        cornerLine1, //corner on the board on Line 1
-        cornerLine2, //corner on the board on Line 2
-        bridgeLine1,
-        bridgeLine2,
-        betweenBridges, //on my side, the Archers will be divided in to the different directions in this position
-        borderBridgeLine1, //border near the bridge on my side
-        borderBridgeLine2, //border near the bridge on my side
-        ownPrincessTowerLine1,
-        ownPrincessTowerLine2,
-        enemyPrincessTowerLine1,
-        enemyPrincessTowerLine2,
     }
 
 }

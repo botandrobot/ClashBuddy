@@ -87,7 +87,7 @@
 
         public override Cast GetBestCast(Playfield p)
         {
-            DebugThings(p);
+            //DebugThings(p);
 
             Cast bc = null;
             Logger.Debug("Home = {Home}", p.home);
@@ -97,7 +97,7 @@
             currentSituation = CurrentFightState(p);
             Logger.Debug("Part: SpellMagic");
             Handcard hc = SpellMagic(p, currentSituation);
-
+            
             if (hc == null)
                 return null;
 
@@ -114,13 +114,10 @@
 
         private static void DebugThings(Playfield p)
         {
-            //List<BoardObj> enemies = p.enemyMinions;
-            //group testGroup1 = p.getGroup(false, 200, boPriority.byLowHpNumber, 3000);
-            //group testGroup2 = p.getGroup(false, 200, boPriority.byAvgHpNumber, 3000);
-            //group testGroup3 = p.getGroup(false, 200, boPriority.byHiHpNumber, 3000);
-            //int a = 0;
-
-            //int l = testGroup1.lowHPboBuildingsDPS;
+            List<BoardObj> enemies = p.enemyMinions;
+            group testGroup1 = p.getGroup(false, 200, boPriority.byLowHpNumber, 3000);
+            group testGroup2 = p.getGroup(false, 200, boPriority.byAvgHpNumber, 3000);
+            group testGroup3 = p.getGroup(false, 200, boPriority.byHiHpNumber, 3000);
         }
 
         private static Handcard SpellMagic(Playfield p, FightState currentSituation)
@@ -128,7 +125,7 @@
             //opposite oppo = KnowledgeBase.Instance.getOppositeCardToAll(p, myObj);
             //Handcard opposite = KnowledgeBase.Instance.getOppositeCard(Playfield p, BoardObj attacker, bool canWait = true);
 
-            if (p.enemyKingsTower.HP < Settings.KingTowerSpellDamagingHealth)
+            if(p.enemyKingsTower.HP < Settings.KingTowerSpellDamagingHealth)
             {
                 Handcard hc = AttackKingTowerWithSpell(p);
 
@@ -201,10 +198,10 @@
 
             if (spell != null && spell.hc != null)
             {
-                Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
+                Logger.Debug("Spell: {Sp} - MissingMana: {MM}",  spell.hc.name, spell.hc.missingMana);
                 if (spell.hc.missingMana == 100) // Oposite-Card is already on the field
                     return DefenseTroop(p);
-                else if (spell.hc.missingMana > 0)
+                else if(spell.hc.missingMana > 0)
                     return null;
                 else
                     return spell.hc;
@@ -279,7 +276,136 @@
             else
                 return Defense(p);
         }
+        #endregion
 
+        #region Analyse Current Situation
+        public static FightState CurrentFightState(Playfield p)
+        {
+            try
+            {
+                switch ((FightStyle)Settings.FightStyle)
+                {
+                    case FightStyle.Defensive:
+                        return GetCurrentFightStateDefensive(p);
+                    case FightStyle.Balanced:
+                        return GetCurrentFightStateBalanced(p);
+                    case FightStyle.Rusher:
+                        return GetCurrentFightStateRusher(p);
+                    default:
+                        return FightState.DKT;
+                }
+            }
+            catch(Exception e)
+            {
+                return GetCurrentFightStateBalanced(p);
+            }
+
+        }
+
+        private static FightState GetCurrentFightStateBalanced(Playfield p)
+        {
+
+            FightState fightState = FightState.WAIT;
+
+            if (GameBeginning)
+            {
+                StartLoadedDeploy = false;
+                return GameBeginningDecision(p);
+            }
+
+            if (!p.noEnemiesOnMySide())
+            {
+                StartLoadedDeploy = false;
+                fightState = EnemyIsOnOurSideDecision(p);
+            }
+
+            int dangerLine = GetDangerLine(p); // if line 0 no dangerous situation
+            int attackLine = GetBestAlreadyAttackingLine(p);
+
+            if (dangerLine > 0)
+            {
+                Logger.Debug("Danger");
+                fightState = DangerousSituationDecision(p, dangerLine);
+            }
+            else if (attackLine > 0)
+            {
+                Logger.Debug("Chance");
+                StartLoadedDeploy = false;
+                fightState = AlreadyAttackingDecision(p, attackLine);
+            }
+            else if (p.ownMana >= Settings.ManaTillDeploy)
+            {
+                StartLoadedDeploy = true;
+                fightState = DefenseDecision(p);
+            }
+            else if (StartLoadedDeploy)
+                fightState = DefenseDecision(p);
+
+            //Logger.Debug("FightSate = {0}", fightState.ToString());
+            return fightState;
+        }
+
+        private static FightState GetCurrentFightStateDefensive(Playfield p)
+        {
+            if (GameBeginning)
+                return GameBeginningDecision(p);
+
+            if (!p.noEnemiesOnMySide())
+                return EnemyIsOnOurSideDecision(p);
+            else if (p.enemyMinions.Count > 1)
+                return EnemyHasCharsOnTheFieldDecision(p);
+            else
+                return DefenseDecision(p);
+        }
+
+        private static FightState GetCurrentFightStateRusher(Playfield p)
+        {
+            if (!p.noEnemiesOnMySide())
+                return EnemyIsOnOurSideDecision(p);
+            else
+                return AttackDecision(p);
+        }
+
+        #endregion
+
+        private static int GetBestAlreadyAttackingLine(Playfield p) // Good chance for an attack?
+        {
+            List<BoardObj> ownMinions = p.ownMinions;
+
+            int atkSumL1 = ownMinions.Where(n => n.Line == 1).Sum(n => n.Atk);
+            int healthSumL1 = ownMinions.Where(n => n.Line == 1).Sum(n => n.HP);
+            int atkSumL2 = ownMinions.Where(n => n.Line == 2).Sum(n => n.Atk);
+            int healthSumL2 = ownMinions.Where(n => n.Line == 2).Sum(n => n.HP);
+
+
+            if (healthSumL1 > 300 || atkSumL1 > 150)
+                return 1;
+            if (healthSumL2 > 300 || atkSumL2 > 150)
+                return 2;
+
+            return 0;
+        }
+
+        private static int GetDangerLine(Playfield p) // Can this be a dangerous situation?
+        {
+            List<BoardObj> enemyMinions = p.enemyMinions;
+
+            int atkSumL1 = enemyMinions.Where(n => n.Line == 1).Sum(n => n.Atk);
+            int healthSumL1 = enemyMinions.Where(n => n.Line == 1).Sum(n => n.HP);
+            int atkSumL2 = enemyMinions.Where(n => n.Line == 2).Sum(n => n.Atk);
+            int healthSumL2 = enemyMinions.Where(n => n.Line == 2).Sum(n => n.HP);
+
+
+            if (healthSumL1 > 300 || atkSumL1 > 150)
+                return 1;
+            if (healthSumL2 > 300 || atkSumL2 > 150)
+                return 2;
+
+
+            return 0;
+        }
+
+        #region Decisions
         private static bool canWaitDecision(Playfield p)
         {
             if (p.noEnemiesOnMySide())
@@ -327,136 +453,6 @@
 
             return true;
         }
-        #endregion
-
-        #region Analyse Current Situation
-        public static FightState CurrentFightState(Playfield p)
-        {
-            try
-            {
-                switch ((FightStyle)Settings.FightStyle)
-                {
-                    case FightStyle.Defensive:
-                        return GetCurrentFightStateDefensive(p);
-                    case FightStyle.Balanced:
-                        return GetCurrentFightStateBalanced(p);
-                    case FightStyle.Rusher:
-                        return GetCurrentFightStateRusher(p);
-                    default:
-                        return FightState.DKT;
-                }
-            }
-            catch (Exception e)
-            {
-                return GetCurrentFightStateBalanced(p);
-            }
-
-        }
-
-        private static FightState GetCurrentFightStateBalanced(Playfield p)
-        {
-
-            FightState fightState = FightState.WAIT;
-
-            if (GameBeginning)
-            {
-                StartLoadedDeploy = false;
-                return GameBeginningDecision(p);
-            }
-
-            if (!p.noEnemiesOnMySide())
-            {
-                StartLoadedDeploy = false;
-                fightState = EnemyIsOnOurSideDecision(p);
-            }
-            else if (Danger(p))
-            {
-                Logger.Debug("Danger");
-                fightState = EnemyHasCharsOnTheFieldDecision(p);
-            }
-            else if (Chance(p)) // ToDo: CHeck more (Health, Damage etc) 
-            {
-                Logger.Debug("Chance");
-                StartLoadedDeploy = false;
-                fightState = AttackDecision(p);
-            }
-            else if (p.ownMana >= Settings.ManaTillDeploy)
-            {
-                StartLoadedDeploy = true;
-                fightState = DefenseDecision(p);
-            }
-            else if (StartLoadedDeploy)
-                fightState = DefenseDecision(p);
-
-            //Logger.Debug("FightSate = {0}", fightState.ToString());
-            return fightState;
-        }
-
-        private static FightState GetCurrentFightStateDefensive(Playfield p)
-        {
-            if (GameBeginning)
-                return GameBeginningDecision(p);
-
-            if (!p.noEnemiesOnMySide())
-                return EnemyIsOnOurSideDecision(p);
-            else if (p.enemyMinions.Count > 1)
-                return EnemyHasCharsOnTheFieldDecision(p);
-            else
-                return DefenseDecision(p);
-        }
-
-        private static FightState GetCurrentFightStateRusher(Playfield p)
-        {
-            if (!p.noEnemiesOnMySide())
-                return EnemyIsOnOurSideDecision(p);
-            else
-                return AttackDecision(p);
-        }
-
-        #endregion
-
-        private static bool Chance(Playfield p)
-        {
-            // Check on Minions at the playfield
-            // Check enemies minions at the playfield
-            List<BoardObj> ownMinions = p.ownMinions;
-
-            int atkSumL1 = ownMinions.Where(n => n.Line == 1).Sum(n => n.Atk);
-            int healthSumL1 = ownMinions.Where(n => n.Line == 1).Sum(n => n.HP);
-            int atkSumL2 = ownMinions.Where(n => n.Line == 2).Sum(n => n.Atk);
-            int healthSumL2 = ownMinions.Where(n => n.Line == 2).Sum(n => n.HP);
-
-
-            if (healthSumL1 > 300 || atkSumL1 > 150)
-                return true;
-            if (healthSumL2 > 300 || atkSumL2 > 150)
-                return true;
-
-            return false;
-        }
-
-        private static bool Danger(Playfield p)
-        {
-            // Check on Minions at the playfield
-            // Check enemies minions at the playfield
-            List<BoardObj> enemyMinions = p.enemyMinions;
-
-            int atkSumL1 = enemyMinions.Where(n => n.Line == 1).Sum(n => n.Atk);
-            int healthSumL1 = enemyMinions.Where(n => n.Line == 1).Sum(n => n.HP);
-            int atkSumL2 = enemyMinions.Where(n => n.Line == 2).Sum(n => n.Atk);
-            int healthSumL2 = enemyMinions.Where(n => n.Line == 2).Sum(n => n.HP);
-
-
-            if (healthSumL1 > 300 || atkSumL1 > 150)
-                return true;
-            if (healthSumL2 > 300 || atkSumL2 > 150)
-                return true;
-
-
-            return false;
-        }
-
-        #region Decisions
         private static FightState DefenseDecision(Playfield p)
         {
             if (p.ownTowers.Count < 3)
@@ -479,7 +475,7 @@
                 // ToDo: Get most dangeroust group
                 group mostDangeroustGroup = p.getGroup(false, 200, boPriority.byTotalBuildingsDPS, 3000);
 
-                if (mostDangeroustGroup == null)
+                if(mostDangeroustGroup == null)
                 {
                     Logger.Debug("mostDangeroustGroup = null");
                     return FightState.DKT;
@@ -488,6 +484,21 @@
                 Logger.Debug("mostDangeroustGroup.Position.X = {0} ; line = {1}", mostDangeroustGroup?.Position?.X, line);
 
 
+                if (line == 2)
+                    return FightState.DRPT;
+                else
+                    return FightState.DLPT;
+            }
+            else
+            {
+                return FightState.DKT;
+            }
+        }
+
+        private static FightState DangerousSituationDecision(Playfield p, int line)
+        {
+            if (p.ownTowers.Count > 2)
+            {
                 if (line == 2)
                     return FightState.DRPT;
                 else
@@ -531,6 +542,17 @@
                 return FightState.ALPT;
         }
 
+        private static FightState AlreadyAttackingDecision(Playfield p, int line)
+        {
+            if (p.enemyTowers.Count < 3)
+                return FightState.AKT;
+
+            if (line == 2)
+                return FightState.ARPT;
+            else
+                return FightState.ALPT;
+        }
+
         private static FightState GameBeginningDecision(Playfield p)
         {
             bool StartFirstAttack = true;
@@ -539,9 +561,9 @@
             {
                 StartFirstAttack = (p.ownMana < Settings.ManaTillFirstAttack);
             }
-            catch (Exception e)
+            catch(Exception e)
             {
-
+                
             }
 
 
@@ -782,7 +804,7 @@
                 return true;
 
 
-
+            
 
 
             return false;
@@ -804,7 +826,7 @@
 
             return false;
         }
-        #endregion
+    #endregion
 
         #region Which Card
 
@@ -898,14 +920,14 @@
                     {
                         Logger.Debug("KT RightUp");
                         //VectorAI v = new VectorAI(p.ownKingsTower.Position.X + 1000, p.enemyKingsTower.Position.Y);
-                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirection.RightUp, 100);
+                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirectionRelative.RightUp, 100);
                         return v;
                     }
                     else
                     {
                         Logger.Debug("KT LeftUp");
                         //VectorAI v = new VectorAI(p.ownKingsTower.Position.X - 1000, p.enemyKingsTower.Position.Y);
-                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirection.LeftUp, 100);
+                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirectionRelative.LeftUp, 100);
                         return v;
                     }
                 }
@@ -918,14 +940,14 @@
                     {
                         Logger.Debug("BehindKT: Line2");
                         //VectorAI position = new VectorAI(position.X + 300, position.Y);
-                        VectorAI position = p.getDeployPosition(deployDirection.behindKingsTowerLine2);
+                        VectorAI position = p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine2);
                         return position;
                     }
                     else
                     {
                         Logger.Debug("BehindKT: Line1");
                         //VectorAI position = new VectorAI(position.X - 300, position.Y);
-                        VectorAI position = p.getDeployPosition(deployDirection.behindKingsTowerLine1);
+                        VectorAI position = p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine1);
                         return position;
                     }
                 }
@@ -939,7 +961,7 @@
                 return GetPositionOfTheBestBuildingDeploy(p);
                 //}
             }
-            else if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
+            else if(hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
                 return GetPositionOfTheBestDamagingSpellDeploy(p);
             else
             {
@@ -980,15 +1002,15 @@
 
             if (p.enemyTowers?.Count() > 2)
                 //Logger.Debug("Bug: NoPrincessTowerDown-State in Attack-King-Tower-State!");
-                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
+                return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
 
             if (p.enemyTowers?.Where(n => n.Line == 1).Count() == 0)
                 //Logger.Debug("LPTD");
-                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
+                return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
 
             if (p.enemyTowers?.Where(n => n.Line == 2).Count() == 0)
                 //Logger.Debug("RPTD");
-                return p.getDeployPosition(deployDirection.enemyPrincessTowerLine2);
+                return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
 
             if (p.enemyTowers?.Count() == 1)
                 //Logger.Debug("BPTD");
@@ -1000,14 +1022,14 @@
         {
             Logger.Debug("ALPT");
 
-            VectorAI lPT = p.getDeployPosition(deployDirection.enemyPrincessTowerLine1);
+            VectorAI lPT = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
             return lPT;
         }
         private static VectorAI ARPT(Playfield p)
         {
             Logger.Debug("ARPT");
 
-            VectorAI rPT = p.getDeployPosition(deployDirection.enemyPrincessTowerLine2);
+            VectorAI rPT = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
             return rPT;
         }
         #endregion
@@ -1038,7 +1060,7 @@
                     else
                     {
                         //enemy.Position.AddYInDirection(p, 3000); // Position Correction
-                        VectorAI result = p.getDeployPosition(enemy.Position, deployDirection.Down, 500);
+                        VectorAI result = p.getDeployPosition(enemy.Position, deployDirectionRelative.Down, 500);
 
                         Logger.Debug("enemy.Name = {Name}", enemy.Name);
                         if (enemy.Position != null) Logger.Debug("enemy.Position = {position}", enemy.Position);
@@ -1057,8 +1079,8 @@
         public static VectorAI GetPositionOfTheBestBuildingDeploy(Playfield p)
         {
             // ToDo: Find the best position
-            VectorAI betweenBridges = p.getDeployPosition(deployDirection.betweenBridges);
-            VectorAI result = p.getDeployPosition(betweenBridges, deployDirection.Down, 4000);
+            VectorAI betweenBridges = p.getDeployPosition(deployDirectionAbsolute.betweenBridges);
+            VectorAI result = p.getDeployPosition(betweenBridges, deployDirectionRelative.Down, 4000);
             return result;
         }
 
@@ -1073,12 +1095,12 @@
                 if (hc.card.MaxHP >= Settings.MinHealthAsTank)
                 {
                     //position.SubtractYInDirection(p);
-                    return p.getDeployPosition(position, deployDirection.Up, 100);
+                    return p.getDeployPosition(position, deployDirectionRelative.Up, 100);
                 }
                 else
                 {
                     //position.AddYInDirection(p);
-                    return p.getDeployPosition(position, deployDirection.Down, 2000);
+                    return p.getDeployPosition(position, deployDirectionRelative.Down, 2000);
                 }
             }
             else if (hc.card.type == boardObjType.BUILDING)

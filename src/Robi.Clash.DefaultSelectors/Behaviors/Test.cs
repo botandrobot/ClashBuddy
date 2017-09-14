@@ -9,9 +9,9 @@
 	{
 		private static readonly ILogger Logger = LogProvider.CreateLogger<Test>();
 
-		public override string Name { get; } = "Control";
-		public override string Description { get; } = "<Add useful description here>";
-		public override string Author { get; } = "vlad";
+		public override string Name { get; } = "Test";
+		public override string Description { get; } = "<Test stuff>";
+		public override string Author { get; } = "Test stuff";
 		public override Version Version { get; } = new Version(1, 0, 0, 0);
 		public override Guid Identifier { get; } = new Guid("{AB3140D8-7E73-4DBB-81C8-6187DBF64EF8}");
 
@@ -20,16 +20,13 @@
             //if you just need coordinates 
             //var targetPosition = p.getDeployPosition(deployDirection.betweenBridges);
             //or p.getDeployPosition(deployDirection.enemyPrincessTowerLine2, 0);
-            // there  - small int value like a human  for click
+            // there random - small int value like a human random for click
             //int deployDistance = hc.card.DamageRadius; //or any value
             //var MyTroopsPosition = p.getDeployPosition(targetPosition, deployDirection.borderSideDown);
             //or
             //BoardObj harmfulEnemyMinion = new BoardObj();
             //int deployDistance = hc.card.DamageRadius; //or any value
-            //p.getDeployPosition(harmfulEnemyMinion, deployDirection.centerSideUp, deployDistance, ); //for deployDistance you can use hc.card.DamageRadius
-
-
-
+            //p.getDeployPosition(harmfulEnemyMinion, deployDirection.centerSideUp, deployDistance); //for deployDistance you can use hc.card.DamageRadius
 
             Cast bc = null;
 			group ownGroup = p.getGroup(true, 85, boPriority.byTotalNumber, 3000);
