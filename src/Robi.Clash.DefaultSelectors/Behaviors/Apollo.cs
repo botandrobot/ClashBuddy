@@ -458,7 +458,7 @@
             if (p.ownTowers.Count < 3)
                 return FightState.DKT;
 
-            BoardObj princessTower = p.enemyTowers.OrderBy(n => n.HP).FirstOrDefault(); // Because they are going to attack this tower
+            BoardObj princessTower = p.enemyPrincessTowers.OrderBy(n => n.HP).FirstOrDefault(); // Because they are going to attack this tower
 
             if (princessTower.Line == 2)
                 return FightState.DRPT;
@@ -534,7 +534,7 @@
                 return FightState.AKT;
 
 
-            BoardObj princessTower = p.enemyTowers.OrderBy(n => n.HP).FirstOrDefault();
+            BoardObj princessTower = p.enemyPrincessTowers.OrderBy(n => n.HP).FirstOrDefault();
 
             if (princessTower.Line == 2)
                 return FightState.ARPT;
@@ -1000,20 +1000,21 @@
         {
             Logger.Debug("AKT");
 
-            if (p.enemyTowers?.Count() > 2)
-                //Logger.Debug("Bug: NoPrincessTowerDown-State in Attack-King-Tower-State!");
+            if (p.enemyPrincessTowers.Count == 2)
+            {
+                if(p.enemyPrincessTower1.HP < p.enemyPrincessTower2.HP)
+                    return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
+                else
+                    return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
+            }
+
+            if (p.enemyPrincessTower1.HP == 0)
                 return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
 
-            if (p.enemyTowers?.Where(n => n.Line == 1).Count() == 0)
-                //Logger.Debug("LPTD");
-                return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
-
-            if (p.enemyTowers?.Where(n => n.Line == 2).Count() == 0)
-                //Logger.Debug("RPTD");
+            if (p.enemyPrincessTower2.HP == 0)
                 return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
 
-            if (p.enemyTowers?.Count() == 1)
-                //Logger.Debug("BPTD");
+            if (p.enemyPrincessTowers.Count == 0)
                 return p.enemyKingsTower?.Position;
 
             return p.enemyKingsTower?.Position;
