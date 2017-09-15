@@ -34,7 +34,7 @@ namespace Robi.Clash.DefaultSelectors
 		{
 			base.BattleStart();
 			var battleLogName = Path.Combine(LogProvider.LogPath, "BattleLog", $"battle-{DateTime.Now:yyyyMMddHHmmss}.log");
-			Logger.Information($"BattleLog: {battleLogName}");
+			Logger.Debug($"BattleLog: {battleLogName}");
 			_battleLogger = new LoggerConfiguration()
 				.Filter.ByExcluding(e =>
 				{
@@ -66,7 +66,6 @@ namespace Robi.Clash.DefaultSelectors
 		public override void Deinitialize()
 		{
 			SettingsManager.UnregisterSettings("Base Behavior");
-			CardDB.Instance.uploadCardInfo();
 		}
 
 		public sealed override CastRequest GetNextCast()
@@ -238,12 +237,13 @@ namespace Robi.Clash.DefaultSelectors
 
 			using (new PerformanceTimer("Initialize playfield."))
 			{
-                Logger.Information("");
-                Logger.Information("################################Routine v.0.7.1 Behavior:");
+                Logger.Debug("");
+                Logger.Debug("################################Routine v.0.7.1 Behavior:");
                 p = new Playfield
-				{
-					BattleTime = ClashEngine.Instance.Battle.BattleTime,
-					ownerIndex = (int)lp.OwnerIndex,
+                {
+                    BattleTime = ClashEngine.Instance.Battle.BattleTime,
+                    suddenDeath = ClashEngine.Instance.Battle.BattleTime.TotalSeconds > 180,
+                    ownerIndex = (int)lp.OwnerIndex,
 					ownMana = (int)lp.Mana,
 					ownHandCards = ownHandCards,
 					ownAreaEffects = ownAreaEffects,
@@ -299,10 +299,10 @@ namespace Robi.Clash.DefaultSelectors
 				CastRequest retval = null;
 				if (bc != null && bc.Position != null)
 				{
-					Logger.Information("Cast {bc}", bc.ToString());
+					Logger.Debug("Cast {bc}", bc.ToString());
 					retval = new CastRequest(bc.SpellName, bc.Position.ToVector2());
 				}
-				else Logger.Information("Waiting for cast, maybe next tick...");
+				else Logger.Debug("Waiting for cast, maybe next tick...");
 
 				return retval;
 			}

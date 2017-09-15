@@ -364,9 +364,10 @@ namespace Robi.Clash.DefaultSelectors
 		public int pID = 0;
 		public int timeShift = 0;
 		public Cast bestCast = null;
+        public bool suddenDeath = false;
 
-		//public Hrtprozis prozis = Hrtprozis.Instance;
-		public int evaluatePenality = 0;
+        //public Hrtprozis prozis = Hrtprozis.Instance;
+        public int evaluatePenality = 0;
 		public int ruleWeight = 0;
 		public string rulesUsed = "";
 		public bool needPrint = false;
@@ -483,8 +484,10 @@ namespace Robi.Clash.DefaultSelectors
 				this.pIdHistory.Add(pID);
 			}
 			this.nextEntity = p.nextEntity;
+            this.suddenDeath = p.suddenDeath;
 
-			this.evaluatePenality = p.evaluatePenality;
+
+            this.evaluatePenality = p.evaluatePenality;
 			this.ruleWeight = p.ruleWeight;
 			this.rulesUsed = p.rulesUsed;
 
@@ -641,7 +644,7 @@ namespace Robi.Clash.DefaultSelectors
 				case deployDirectionAbsolute.enemyPrincessTowerLine1: return home ? new VectorAI(3500, 25500) : new VectorAI(3500, 6500);
 				case deployDirectionAbsolute.enemyPrincessTowerLine2: return home ? new VectorAI(14500, 25500) : new VectorAI(14500, 6500);
 			}
-			Logger.Information("!!![getDeployPosition]Error: Absolute directions unhandled: " + absoluteDirection);
+			Logger.Debug("!!![getDeployPosition]Error: Absolute directions unhandled: " + absoluteDirection);
 			return new VectorAI(0, 0);
 		}
 
@@ -653,7 +656,7 @@ namespace Robi.Clash.DefaultSelectors
 
 			if (targetPosition == null)
 			{
-				Logger.Information("!!![getDeployPosition]Error: Relative targetPosition == NULL");
+				Logger.Debug("!!![getDeployPosition]Error: Relative targetPosition == NULL");
 				return new VectorAI(0, 0);
 			}
 
@@ -686,7 +689,7 @@ namespace Robi.Clash.DefaultSelectors
 		{
 			if (bo == null)
 			{
-				Logger.Information("!!![getDeployPosition]Error:BoardObj == NULL");
+				Logger.Debug("!!![getDeployPosition]Error:BoardObj == NULL");
 				return new VectorAI(0, 0);
 			}
 			else return getDeployPosition(bo.Position, relativeDirection, deployDistance);
@@ -786,7 +789,84 @@ namespace Robi.Clash.DefaultSelectors
 			return retval;
 		}
 
-		private Handcard getMobCardByCondition(List<Handcard> list, bool needDamager) //!needDamager mean needTank
+        /*
+        private Handcard getFinisher(BoardObj bo, bool canWait) //useful for Towers
+        {
+            Handcard retval = null;
+            Handcard hc;
+
+            Handcard projectile = null;
+            Handcard aoe = null;
+            Handcard mob = null;
+            int count = this.ownHandCards.Count;
+            for (int i = 1; i < count; i++)
+            {
+                hc = ownHandCards[i];
+                switch (hc.card.type)
+                {
+                    case boardObjType.PROJECTILE:
+                        if (bo.HP <= hc.card.Atk)
+                        {
+                            if (projectile == null || hc.card.Atk > projectile.card.Atk) projectile = hc;
+                        }
+                        continue;
+                    case boardObjType.AOE:
+                        int towerDmg = hc.card.towerDamage;
+                        if (hc.card.name == CardDB.cardName.poison) towerDmg *= 8;
+                        if (bo.HP <= towerDmg)
+                        {
+                            if (aoe == null || towerDmg > aoe.extraVal)
+                            {
+                                aoe = hc;
+                                aoe.extraVal = towerDmg;
+                            }
+                        }
+                        continue;
+                    case boardObjType.MOB:
+                        if (bo.type == boardObjType.BUILDING)
+                        {
+                            if (KnowledgeBase.Instance.)
+                            //TODO: calc online
+                            if (hc.card.TargetType == targetType.BUILDINGS)
+                            {
+                                int val;
+                                if (bo.HP <= hc.card.Atk)
+                                {
+
+                                }
+                                else
+                                {
+                                    int dmg = hc.card.Atk * hc.card.SummonNumber;
+                                    int restHp = bo.HP - dmg;
+                                    double timeForDestroy = restHp / (dmg * 1000 / hc.card.HitSpeed);
+                                    double timeToDestruction = hc.card.MaxHP / (bo.Atk * 1000 / bo.card.HitSpeed);
+                                    double delta = timeToDestruction - timeForDestroy;
+                                    if (hc.card.SummonNumber > 1)
+                                    {
+                                        double hitPerMob = Math.Ceiling((double)hc.card.MaxHP / bo.Atk);
+                                        timeToDestruction = hc.card.SummonNumber * hitPerMob * 1000 / bo.card.HitSpeed;
+
+                                    }
+                                    if (delta > 0)
+                                    {
+                                        if (mob == null || hc.card.Atk > mob.card.Atk)
+                                        {
+                                            mob = hc;
+                                            mob.extraVal = delta;
+                                        }
+                                    }
+                                }
+                            }
+
+
+                        }
+                }
+                if (ownHandCards[i].card.MaxHP > retval.card.MaxHP) retval = ownHandCards[i];
+            }
+            return retval;
+        }*/
+
+        private Handcard getMobCardByCondition(List<Handcard> list, bool needDamager) //!needDamager mean needTank
 		{
 			Handcard retval = null;
 			int mobsCount = list.Count;
@@ -883,17 +963,17 @@ namespace Robi.Clash.DefaultSelectors
 		private void LogBoardObject(BoardObj bo)
 		{
 			string extrainfo = (bo.frozen ? " frozen:" + bo.startFrozen : "") + (bo.LifeTime > 0 ? " LifeTime:" + bo.LifeTime : "") + (bo.extraData != "" ? " " + bo.extraData : "");
-			Logger.Information("{type} {ownerIndex} {Name} {GId} {Position:l} {level} {Atk} {HP} {Shield}{extrainfo:l}", bo.type, bo.ownerIndex, bo.Name, bo.GId, bo.Position, bo.level, bo.Atk, bo.HP, bo.Shield, extrainfo);
+			Logger.Debug("{type} {ownerIndex} {Name} {GId} {Position:l} {level} {Atk} {HP} {Shield}{extrainfo:l}", bo.type, bo.ownerIndex, bo.Name, bo.GId, bo.Position, bo.level, bo.Atk, bo.HP, bo.Shield, extrainfo);
 		}
 
 		private void LogHandCard(Handcard hc)
 		{
-			Logger.Information("Hand {position} {name} {lvl} {manacost}", hc.position, hc.card.name, hc.lvl, hc.manacost);
+			Logger.Debug("Hand {position} {name} {lvl} {manacost}", hc.position, hc.card.name, hc.lvl, hc.manacost);
 		}
 
 		public void print()
 		{
-			Logger.Information("Data bt:{BattleTime} owner:{ownerIndex} mana:{ownMana} nxtc:{name:l}:{lvl}", BattleTime, ownerIndex, ownMana, nextCard.name, nextCard.lvl);
+			Logger.Debug("Data bt:{BattleTime} owner:{ownerIndex} mana:{ownMana} nxtc:{name:l}:{lvl}", BattleTime, ownerIndex, ownMana, nextCard.name, nextCard.lvl);
 			
 			//help.logg("ownCards");
 			foreach (Handcard hc in ownHandCards) LogHandCard(hc);

@@ -1031,7 +1031,7 @@ namespace Robi.Clash.DefaultSelectors
 			if (this.cardNameToCardList.ContainsKey(cardname)) return this.cardNameToCardList[cardname];
 			else
 			{
-				Logger.Information("!!!NEW CardName: {cardname}", cardname);
+				Logger.Debug("!!!NEW CardName: {cardname}", cardname);
 				return this.unknownCard;
 			}
 		}
