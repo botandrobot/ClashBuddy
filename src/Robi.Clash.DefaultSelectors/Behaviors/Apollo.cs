@@ -97,7 +97,7 @@
             currentSituation = CurrentFightState(p);
             Logger.Debug("Part: SpellMagic");
             Handcard hc = SpellMagic(p, currentSituation);
-
+            
             if (hc == null)
                 return null;
 
@@ -125,7 +125,7 @@
             //opposite oppo = KnowledgeBase.Instance.getOppositeCardToAll(p, myObj);
             //Handcard opposite = KnowledgeBase.Instance.getOppositeCard(Playfield p, BoardObj attacker, bool canWait = true);
 
-            if (p.enemyKingsTower.HP < Settings.KingTowerSpellDamagingHealth)
+            if(p.enemyKingsTower.HP < Settings.KingTowerSpellDamagingHealth)
             {
                 Handcard hc = AttackKingTowerWithSpell(p);
 
@@ -198,10 +198,10 @@
 
             if (spell != null && spell.hc != null)
             {
-                Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
+                Logger.Debug("Spell: {Sp} - MissingMana: {MM}",  spell.hc.name, spell.hc.missingMana);
                 if (spell.hc.missingMana == 100) // Oposite-Card is already on the field
                     return DefenseTroop(p);
-                else if (spell.hc.missingMana > 0)
+                else if(spell.hc.missingMana > 0)
                     return null;
                 else
                     return spell.hc;
@@ -295,7 +295,7 @@
                         return FightState.DKT;
                 }
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 return GetCurrentFightStateBalanced(p);
             }
@@ -475,7 +475,7 @@
                 // ToDo: Get most dangeroust group
                 group mostDangeroustGroup = p.getGroup(false, 200, boPriority.byTotalBuildingsDPS, 3000);
 
-                if (mostDangeroustGroup == null)
+                if(mostDangeroustGroup == null)
                 {
                     Logger.Debug("mostDangeroustGroup = null");
                     return FightState.DKT;
@@ -561,9 +561,9 @@
             {
                 StartFirstAttack = (p.ownMana < Settings.ManaTillFirstAttack);
             }
-            catch (Exception e)
+            catch(Exception e)
             {
-
+                
             }
 
 
@@ -804,7 +804,7 @@
                 return true;
 
 
-
+            
 
 
             return false;
@@ -826,7 +826,7 @@
 
             return false;
         }
-        #endregion
+    #endregion
 
         #region Which Card
 
@@ -961,7 +961,7 @@
                 return GetPositionOfTheBestBuildingDeploy(p);
                 //}
             }
-            else if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
+            else if(hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
                 return GetPositionOfTheBestDamagingSpellDeploy(p);
             else
             {
@@ -1002,7 +1002,7 @@
 
             if (p.enemyPrincessTowers.Count == 2)
             {
-                if (p.enemyPrincessTower1.HP < p.enemyPrincessTower2.HP)
+                if(p.enemyPrincessTower1.HP < p.enemyPrincessTower2.HP)
                     return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
                 else
                     return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
