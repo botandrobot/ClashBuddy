@@ -11,7 +11,7 @@ namespace Robi.Clash.DefaultSelectors
 
     public class BoardTester
     {
-	    private static readonly ILogger Logger = LogProvider.CreateLogger<BoardTester>();
+        private static readonly ILogger Logger = LogProvider.CreateLogger<BoardTester>();
         public Playfield btPlayfield;
 
         public BoardTester()
@@ -33,11 +33,11 @@ namespace Robi.Clash.DefaultSelectors
             try
             {
                 lines = System.IO.File.ReadAllLines(path);
-				Logger.Debug("read test.txt {Length} lines", lines.Length);
+                Logger.Debug("read test.txt {Length} lines", lines.Length);
             }
             catch
             {
-				Logger.Error("Read failed.");
+                Logger.Error("Read failed.");
                 return null;
             }
 
@@ -115,7 +115,7 @@ namespace Robi.Clash.DefaultSelectors
                 case 2: kingsLine = 1; break;
             }
             foreach (BoardObj t in p.ownTowers) if (t.Tower > 9) t.Line = kingsLine;
-			Logger.Debug("getPlayfield:OK");
+            Logger.Debug("getPlayfield:OK");
 
             return p;
 
@@ -125,7 +125,7 @@ namespace Robi.Clash.DefaultSelectors
             //save data
 
         }
-        
+
         private void getBattleData(string[] line, Playfield p)
         {
             foreach (string s in line)

@@ -1,9 +1,9 @@
 namespace Robi.Clash.DefaultSelectors.Tests
 {
-	using Behaviors;
-	using Xunit;
+    using Behaviors;
+    using Xunit;
 
-	public class TestHarness
+    public class TestHarness
     {
         [Fact]
         public void ControlTest()
@@ -19,18 +19,18 @@ namespace Robi.Clash.DefaultSelectors.Tests
             //Assert.Equal(0, bc.Position.Y);
         }
 
-	    [Fact]
-	    public void ApolloTest()
-	    {
-		    CardDB.Initialize();
-		    BoardTester bt = new BoardTester();
-		    Apollo behave = new Apollo();
+        [Fact]
+        public void ApolloTest()
+        {
+            CardDB.Initialize();
+            BoardTester bt = new BoardTester();
+            Apollo behave = new Apollo();
 
-		    Cast bc = behave.GetBestCast(bt.btPlayfield);
+            Cast bc = behave.GetBestCast(bt.btPlayfield);
             bt.btPlayfield.print();
 
             //Assert.Equal(0, bc.Position.X);
-		    //Assert.Equal(0, bc.Position.Y);
-		}
+            //Assert.Equal(0, bc.Position.Y);
+        }
     }
 }

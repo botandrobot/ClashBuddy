@@ -81,6 +81,30 @@
             Balanced,
             Rusher
         };
+
+        enum SpecificCardType
+        {
+            All,
+
+
+            // Mobs
+            Tank,
+            DamageDealer,
+            BuildingAttacker,
+            Ranger,
+            AOEGround,
+            AOEAll,
+
+            // Buildings
+            Defense,
+            Attack,
+            Spawning,
+            Mana,
+
+            // Spells
+            Damaging,
+            NonDamaging
+        };
         #endregion enums
 
         private static FightState currentSituation;
@@ -97,7 +121,7 @@
             currentSituation = CurrentFightState(p);
             Logger.Debug("Part: SpellMagic");
             Handcard hc = SpellMagic(p, currentSituation);
-            
+
             if (hc == null)
                 return null;
 
@@ -125,7 +149,7 @@
             //opposite oppo = KnowledgeBase.Instance.getOppositeCardToAll(p, myObj);
             //Handcard opposite = KnowledgeBase.Instance.getOppositeCard(Playfield p, BoardObj attacker, bool canWait = true);
 
-            if(p.enemyKingsTower.HP < Settings.KingTowerSpellDamagingHealth)
+            if (p.enemyKingsTower.HP < Settings.KingTowerSpellDamagingHealth)
             {
                 Handcard hc = AttackKingTowerWithSpell(p);
 
@@ -198,10 +222,10 @@
 
             if (spell != null && spell.hc != null)
             {
-                Logger.Debug("Spell: {Sp} - MissingMana: {MM}",  spell.hc.name, spell.hc.missingMana);
+                Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
                 if (spell.hc.missingMana == 100) // Oposite-Card is already on the field
                     return DefenseTroop(p);
-                else if(spell.hc.missingMana > 0)
+                else if (spell.hc.missingMana > 0)
                     return null;
                 else
                     return spell.hc;
@@ -295,7 +319,7 @@
                         return FightState.DKT;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return GetCurrentFightStateBalanced(p);
             }
@@ -320,7 +344,7 @@
             }
 
             int dangerLine = GetDangerLine(p); // if line 0 no dangerous situation
-            int attackLine = GetBestAlreadyAttackingLine(p);
+            int attackLine = GetBestAttackingLine(p);
 
             if (dangerLine > 0)
             {
@@ -331,7 +355,7 @@
             {
                 Logger.Debug("Chance");
                 StartLoadedDeploy = false;
-                fightState = AlreadyAttackingDecision(p, attackLine);
+                fightState = GoodAttackChanceDecision(p, attackLine);
             }
             else if (p.ownMana >= Settings.ManaTillDeploy)
             {
@@ -368,10 +392,56 @@
 
         #endregion
 
-        private static int GetBestAlreadyAttackingLine(Playfield p) // Good chance for an attack?
+        private static int GetBestAttackingLine(Playfield p) // Good chance for an attack?
         {
             List<BoardObj> ownMinions = p.ownMinions;
 
+
+            #region KingTower
+            if (p.enemyKingsTower.Line == 1) // PT with line 1 is down
+            {
+                // Analyse own HandCards
+                IEnumerable<Handcard> mobCards = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB);
+                IEnumerable<Handcard> tankCards = mobCards.Where(n => n.card.MaxHP > Settings.MinHealthAsTank);
+                IEnumerable<Handcard> destroyerCard = mobCards.OrderBy(n => (n.card.Atk * n.card.SummonNumber) > 100);  // use n.card.SummonNumber
+
+                if (p.enemyKingsTower.HP < 1000)
+                {
+                    // Destroyer Card
+                    if (destroyerCard.FirstOrDefault() != null && destroyerCard.FirstOrDefault().missingMana <= 0)
+                        return 1;
+                }
+
+                if (tankCards.FirstOrDefault() != null && tankCards.FirstOrDefault().missingMana <= 0)
+                {
+                    if (mobCards.Where(n => n.manacost <= 0).Count() > 0)
+                        return 1;
+                }
+
+            }
+            else if (p.enemyKingsTower.Line == 2) // PT with line 2 is down
+            {
+                // Analyse own HandCards
+                IEnumerable<Handcard> mobCards = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB);
+                IEnumerable<Handcard> tankCards = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.Tank);
+                IEnumerable<Handcard> destroyerCard = mobCards.OrderBy(n => (n.card.Atk * n.card.SummonNumber) > 100);  // use n.card.SummonNumber
+
+                if (p.enemyKingsTower.HP < 1000)
+                {
+                    // Destroyer Card
+                    if (destroyerCard.FirstOrDefault() != null && destroyerCard.FirstOrDefault().missingMana <= 0)
+                        return 1;
+                }
+
+                if (tankCards.FirstOrDefault() != null && tankCards.FirstOrDefault().missingMana <= 0)
+                {
+                    if (mobCards.Where(n => n.manacost <= 0).Count() > 0)
+                        return 1;
+                }
+            }
+            #endregion
+
+            #region Minions
             int atkSumL1 = ownMinions.Where(n => n.Line == 1).Sum(n => n.Atk);
             int healthSumL1 = ownMinions.Where(n => n.Line == 1).Sum(n => n.HP);
             int atkSumL2 = ownMinions.Where(n => n.Line == 2).Sum(n => n.Atk);
@@ -382,6 +452,8 @@
                 return 1;
             if (healthSumL2 > 300 || atkSumL2 > 150)
                 return 2;
+
+            #endregion
 
             return 0;
         }
@@ -475,7 +547,7 @@
                 // ToDo: Get most dangeroust group
                 group mostDangeroustGroup = p.getGroup(false, 200, boPriority.byTotalBuildingsDPS, 3000);
 
-                if(mostDangeroustGroup == null)
+                if (mostDangeroustGroup == null)
                 {
                     Logger.Debug("mostDangeroustGroup = null");
                     return FightState.DKT;
@@ -542,7 +614,7 @@
                 return FightState.ALPT;
         }
 
-        private static FightState AlreadyAttackingDecision(Playfield p, int line)
+        private static FightState GoodAttackChanceDecision(Playfield p, int line)
         {
             if (p.enemyTowers.Count < 3)
                 return FightState.AKT;
@@ -561,9 +633,9 @@
             {
                 StartFirstAttack = (p.ownMana < Settings.ManaTillFirstAttack);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                
+
             }
 
 
@@ -804,7 +876,7 @@
                 return true;
 
 
-            
+
 
 
             return false;
@@ -826,7 +898,7 @@
 
             return false;
         }
-    #endregion
+        #endregion
 
         #region Which Card
 
@@ -961,7 +1033,7 @@
                 return GetPositionOfTheBestBuildingDeploy(p);
                 //}
             }
-            else if(hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
+            else if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
                 return GetPositionOfTheBestDamagingSpellDeploy(p);
             else
             {
@@ -1002,7 +1074,7 @@
 
             if (p.enemyPrincessTowers.Count == 2)
             {
-                if(p.enemyPrincessTower1.HP < p.enemyPrincessTower2.HP)
+                if (p.enemyPrincessTower1.HP < p.enemyPrincessTower2.HP)
                     return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
                 else
                     return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
@@ -1114,6 +1186,7 @@
         #endregion
 
 
+        #region Helper
         public static int? HowManyCharactersAroundCharacter(Playfield p, BoardObj obj)
         {
             int boarderX = 1000;
@@ -1169,6 +1242,56 @@
             else
                 return orderedChar.LastOrDefault();
         }
+        #endregion
+
+        #region Classification
+        private static IEnumerable<Handcard> GetOwnHandCards(Playfield p, boardObjType cardType, SpecificCardType sCardType)
+        {
+            IEnumerable<Handcard> cardsOfType = p.ownHandCards.Where(n => n.card.type == cardType);
+
+
+            switch (sCardType)
+            {
+                case SpecificCardType.All:
+                    return cardsOfType;
+
+                // Mobs
+                case SpecificCardType.Tank:
+                    return cardsOfType.Where(n => n.card.MaxHP >= Settings.MinHealthAsTank);
+                case SpecificCardType.DamageDealer:
+                    return cardsOfType.Where(n => (n.card.Atk * n.card.SummonNumber) > 100);
+                case SpecificCardType.BuildingAttacker:
+                    return cardsOfType.Where(n => n.card.TargetType == targetType.BUILDINGS);
+
+                case SpecificCardType.Ranger:
+                    return cardsOfType.Where(n => n.card.MaxRange >= 3);
+                case SpecificCardType.AOEGround:
+                    return cardsOfType.Where(n => n.card.aoeGround);
+                case SpecificCardType.AOEAll:
+                    return cardsOfType.Where(n => n.card.aoeAir);
+
+                // Buildings
+                case SpecificCardType.Defense:
+                    return cardsOfType.Where(n => n.card.Atk > 0); // TODO: Define
+                case SpecificCardType.Attack:
+                    return cardsOfType.Where(n => n.card.Atk > 0); // TODO: Define
+                case SpecificCardType.Spawning:
+                    return cardsOfType.Where(n => n.card.SpawnNumber > 0);
+                case SpecificCardType.Mana:
+                    break; // TODO: ManaProduction
+
+
+                // Spells
+                case SpecificCardType.Damaging:
+                    return cardsOfType.Where(n => n.card.DamageRadius > 0);
+                case SpecificCardType.NonDamaging:
+                    return cardsOfType.Where(n => n.card.DamageRadius == 0);
+
+            }
+
+            return null;
+        }
+        #endregion
 
         // Question: For what is this?
         public override float GetPlayfieldValue(Playfield p)
