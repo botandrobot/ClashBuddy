@@ -2,10 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
-    
+
     public class BoardObj
     {
-        public boardObjType type = boardObjType.NONE;        
+        public boardObjType type = boardObjType.NONE;
         public transportType Transport = transportType.NONE; //-Mob (Air, Ground)
         public targetType TargetType = targetType.NONE; //-AttacksAir, TargetOnlyBuildings
         public affectType affectOn = affectType.NONE;
@@ -15,7 +15,7 @@
         public int ownerIndex = -1;
         public int pID = 0;
         public int Line = 0; //1-left, 2-right
-        
+
         public CardDB.cardName Name = CardDB.cardName.unknown;
         public CardDB.Card card = CardDB.Instance.unknownCard;
         public uint GId = 0; //-All
@@ -299,8 +299,8 @@
                     break;
             }
         }*/
-        
-        
+
+
 
     }
 

@@ -121,7 +121,7 @@
             currentSituation = CurrentFightState(p);
             Logger.Debug("Part: SpellMagic");
             Handcard hc = SpellMagic(p, currentSituation);
-            
+
             if (hc == null)
                 return null;
 
@@ -149,7 +149,7 @@
             //opposite oppo = KnowledgeBase.Instance.getOppositeCardToAll(p, myObj);
             //Handcard opposite = KnowledgeBase.Instance.getOppositeCard(Playfield p, BoardObj attacker, bool canWait = true);
 
-            if(p.enemyKingsTower.HP < Settings.KingTowerSpellDamagingHealth)
+            if (p.enemyKingsTower.HP < Settings.KingTowerSpellDamagingHealth)
             {
                 Handcard hc = AttackKingTowerWithSpell(p);
 
@@ -222,10 +222,10 @@
 
             if (spell != null && spell.hc != null)
             {
-                Logger.Debug("Spell: {Sp} - MissingMana: {MM}",  spell.hc.name, spell.hc.missingMana);
+                Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
                 if (spell.hc.missingMana == 100) // Oposite-Card is already on the field
                     return DefenseTroop(p);
-                else if(spell.hc.missingMana > 0)
+                else if (spell.hc.missingMana > 0)
                     return null;
                 else
                     return spell.hc;
@@ -319,7 +319,7 @@
                         return FightState.DKT;
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return GetCurrentFightStateBalanced(p);
             }
@@ -398,7 +398,7 @@
 
 
             #region KingTower
-            if(p.enemyKingsTower.Line == 1) // PT with line 1 is down
+            if (p.enemyKingsTower.Line == 1) // PT with line 1 is down
             {
                 // Analyse own HandCards
                 IEnumerable<Handcard> mobCards = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB);
@@ -412,14 +412,14 @@
                         return 1;
                 }
 
-                if(tankCards.FirstOrDefault() != null && tankCards.FirstOrDefault().missingMana <= 0)
+                if (tankCards.FirstOrDefault() != null && tankCards.FirstOrDefault().missingMana <= 0)
                 {
                     if (mobCards.Where(n => n.manacost <= 0).Count() > 0)
                         return 1;
                 }
 
-            } 
-            else if(p.enemyKingsTower.Line == 2) // PT with line 2 is down
+            }
+            else if (p.enemyKingsTower.Line == 2) // PT with line 2 is down
             {
                 // Analyse own HandCards
                 IEnumerable<Handcard> mobCards = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB);
@@ -447,7 +447,7 @@
             int atkSumL2 = ownMinions.Where(n => n.Line == 2).Sum(n => n.Atk);
             int healthSumL2 = ownMinions.Where(n => n.Line == 2).Sum(n => n.HP);
 
-            
+
             if (healthSumL1 > 300 || atkSumL1 > 150)
                 return 1;
             if (healthSumL2 > 300 || atkSumL2 > 150)
@@ -547,7 +547,7 @@
                 // ToDo: Get most dangeroust group
                 group mostDangeroustGroup = p.getGroup(false, 200, boPriority.byTotalBuildingsDPS, 3000);
 
-                if(mostDangeroustGroup == null)
+                if (mostDangeroustGroup == null)
                 {
                     Logger.Debug("mostDangeroustGroup = null");
                     return FightState.DKT;
@@ -633,9 +633,9 @@
             {
                 StartFirstAttack = (p.ownMana < Settings.ManaTillFirstAttack);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                
+
             }
 
 
@@ -876,7 +876,7 @@
                 return true;
 
 
-            
+
 
 
             return false;
@@ -1033,7 +1033,7 @@
                 return GetPositionOfTheBestBuildingDeploy(p);
                 //}
             }
-            else if(hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
+            else if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
                 return GetPositionOfTheBestDamagingSpellDeploy(p);
             else
             {
@@ -1074,7 +1074,7 @@
 
             if (p.enemyPrincessTowers.Count == 2)
             {
-                if(p.enemyPrincessTower1.HP < p.enemyPrincessTower2.HP)
+                if (p.enemyPrincessTower1.HP < p.enemyPrincessTower2.HP)
                     return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
                 else
                     return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
@@ -1245,7 +1245,7 @@
         #endregion
 
         #region Classification
-        private static IEnumerable<Handcard> GetOwnHandCards(Playfield p, boardObjType cardType ,SpecificCardType sCardType)
+        private static IEnumerable<Handcard> GetOwnHandCards(Playfield p, boardObjType cardType, SpecificCardType sCardType)
         {
             IEnumerable<Handcard> cardsOfType = p.ownHandCards.Where(n => n.card.type == cardType);
 
