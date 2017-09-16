@@ -18,15 +18,15 @@ namespace Robi.Clash.DefaultSelectors
 
         private TimeMachine()
         {
-            
+
         }
-        
+
         public void setTimeShift(Playfield p, int timeShift)
         {
             /*
              тут пересчитываем положение всех минионов согласно скорости движения и тому чем они занимаются
              */
-             //getTimeFor1stCollision
+            //getTimeFor1stCollision
 
             /*List<BoardObj> enemies = this.own ? p.enemyMinions : p.ownMinions;
             foreach (BoardObj bo in p.ownMinions)
@@ -58,7 +58,7 @@ namespace Robi.Clash.DefaultSelectors
                 else if (bo2ad.time != int.MaxValue) attackersList.Add(bo2ad);
             }*/
         }
-        
+
 
     }
 }

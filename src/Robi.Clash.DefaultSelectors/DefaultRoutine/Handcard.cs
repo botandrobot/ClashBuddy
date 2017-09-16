@@ -9,6 +9,7 @@
         public string name = "";
         public int missingMana = 100;
         public int val = int.MinValue;
+        public double extraVal = 0;
 
         public Handcard()
         {
