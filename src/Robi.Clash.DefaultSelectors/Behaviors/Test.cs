@@ -27,7 +27,6 @@
             //BoardObj harmfulEnemyMinion = new BoardObj();
             //int deployDistance = hc.card.DamageRadius; //or any value
             //p.getDeployPosition(harmfulEnemyMinion, deployDirection.centerSideUp, deployDistance); //for deployDistance you can use hc.card.DamageRadius
-            
 
             Cast bc = null;
 			group ownGroup = p.getGroup(true, 85, boPriority.byTotalNumber, 3000);
@@ -152,7 +151,7 @@
 				bc = p.bestCast;
 			}
 
-			Logger.Debug("BestCast: {SpellName} {Position}", bc?.SpellName, bc?.Position);
+			Logger.Information("BestCast: {SpellName} {Position}", bc?.SpellName, bc?.Position);
 			
 			return bc;
 		}
