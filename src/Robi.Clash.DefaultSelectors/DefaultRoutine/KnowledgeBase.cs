@@ -332,691 +332,538 @@ namespace Robi.Clash.DefaultSelectors
 
         private void setupOppositeDB()
         {
-            try
-            {
+            //archers
 
-                //archers
-                if (!OppositeDB.ContainsKey(CardDB.cardName.babydragon))
-                {
-                    OppositeDB.Add(CardDB.cardName.babydragon, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.tesla, 100 },
-                    { CardDB.cardName.threemusketeers, 100 },
-                    { CardDB.cardName.minionhorde, 95 },
-                    { CardDB.cardName.musketeer, 90 },
-                    { CardDB.cardName.archer, 90 }
-                });
-                }
+            OppositeDB.Add(CardDB.cardName.babydragon, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.tesla, 100 },
+                { CardDB.cardName.threemusketeers, 100 },
+                { CardDB.cardName.minionhorde, 95 },
+                { CardDB.cardName.musketeer, 90 },
+                { CardDB.cardName.archer, 90 }
+            });
+            OppositeDB.Add(CardDB.cardName.balloon, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.minionhorde, 100 },
+                { CardDB.cardName.babydragon, 95 },
+                { CardDB.cardName.wizard, 95 },
+                { CardDB.cardName.infernotower, 90 },
+                { CardDB.cardName.tesla, 90 },
+                { CardDB.cardName.minion, 50 },
+                { CardDB.cardName.musketeer, 50 }
+            });
 
-                if (!OppositeDB.ContainsKey(CardDB.cardName.balloon))
-                {
-                    OppositeDB.Add(CardDB.cardName.balloon, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.babydragon, 95 },
-                    { CardDB.cardName.wizard, 95 },
-                    { CardDB.cardName.infernotower, 90 },
-                    { CardDB.cardName.tesla, 90 },
-                    { CardDB.cardName.minion, 50 },
-                    { CardDB.cardName.musketeer, 50 }
-                });
-                }
+            //assassin(bandit)
 
-                //assassin(bandit)
-                if (!OppositeDB.ContainsKey(CardDB.cardName.barbarian))
-                {
-                    OppositeDB.Add(CardDB.cardName.barbarian, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.fireball, 100 },
-                    { CardDB.cardName.babydragon, 95 },
-                    { CardDB.cardName.bomber, 95 },
-                    { CardDB.cardName.minionhorde, 95 },
-                    { CardDB.cardName.skeletonarmy, 95 },
-                    { CardDB.cardName.barbarian, 90 },
-                    { CardDB.cardName.wizard, 90 },
-                    { CardDB.cardName.witch, 90 },
-                    { CardDB.cardName.valkyrie, 90 },
-                    { CardDB.cardName.bombtower, 90 },
-                    { CardDB.cardName.minion, 85 }
-                });
-                }
+            OppositeDB.Add(CardDB.cardName.barbarian, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.fireball, 100 },
+                { CardDB.cardName.babydragon, 95 },
+                { CardDB.cardName.bomber, 95 },
+                { CardDB.cardName.minionhorde, 95 },
+                { CardDB.cardName.skeletonarmy, 95 },
+                { CardDB.cardName.barbarian, 90 },
+                { CardDB.cardName.wizard, 90 },
+                { CardDB.cardName.witch, 90 },
+                { CardDB.cardName.valkyrie, 90 },
+                { CardDB.cardName.bombtower, 90 },
+                { CardDB.cardName.minion, 85 }
+            });
 
-                //battleram
-                //bomber
-                //bowler
-                if (!OppositeDB.ContainsKey(CardDB.cardName.darkprince))
-                {
-                    OppositeDB.Add(CardDB.cardName.darkprince, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.prince, 100 },
-                    { CardDB.cardName.darkprince, 95 },
-                    { CardDB.cardName.minipekka, 95 },
-                    { CardDB.cardName.tombstone, 95 },
-                    { CardDB.cardName.cannon, 90 },
-                    { CardDB.cardName.tesla, 90 }
-                });
-                }
+            //battleram
+            //bomber
+            //bowler
 
-                //dartgoblin
-                //electrowizard
-                //elitebarbarians
-                //executioner
-                //firespirits
+            OppositeDB.Add(CardDB.cardName.darkprince, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.minionhorde, 100 },
+                { CardDB.cardName.prince, 100 },
+                { CardDB.cardName.darkprince, 95 },
+                { CardDB.cardName.minipekka, 95 },
+                { CardDB.cardName.tombstone, 95 },
+                { CardDB.cardName.cannon, 90 },
+                { CardDB.cardName.tesla, 90 }
+            });
 
-                if (!OppositeDB.ContainsKey(CardDB.cardName.giant))
-                {
-                    OppositeDB.Add(CardDB.cardName.giant, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.infernotower, 100 },
-                    { CardDB.cardName.skeletonarmy, 100 },
-                    { CardDB.cardName.tesla, 95 },
-                    { CardDB.cardName.tombstone, 95 },
-                    { CardDB.cardName.cannon, 90 },
-                    { CardDB.cardName.guards, 90 },
-                    { CardDB.cardName.barbarian, 85 },
-                    { CardDB.cardName.minionhorde, 85 },
-                    { CardDB.cardName.goblingang, 80 },
-                    { CardDB.cardName.witch, 80 },
-                    { CardDB.cardName.goblin, 50 },
-                    { CardDB.cardName.skeleton, 50 },
-                    { CardDB.cardName.speargoblin, 50 }
-                });
-                }
+            //dartgoblin
+            //electrowizard
+            //elitebarbarians
+            //executioner
+            //firespirits
+            OppositeDB.Add(CardDB.cardName.giant, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.infernotower, 100 },
+                { CardDB.cardName.skeletonarmy, 100 },
+                { CardDB.cardName.tesla, 95 },
+                { CardDB.cardName.tombstone, 95 },
+                { CardDB.cardName.cannon, 90 },
+                { CardDB.cardName.guards, 90 },
+                { CardDB.cardName.barbarian, 85 },
+                { CardDB.cardName.minionhorde, 85 },
+                { CardDB.cardName.goblingang, 80 },
+                { CardDB.cardName.witch, 80 },
+                { CardDB.cardName.goblin, 50 },
+                { CardDB.cardName.skeleton, 50 },
+                { CardDB.cardName.speargoblin, 50 }
+            });
+            OppositeDB.Add(CardDB.cardName.giantskeleton, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.infernotower, 100 },
+                { CardDB.cardName.skeletonarmy, 100 },
+                { CardDB.cardName.minionhorde, 90 },
+                { CardDB.cardName.witch, 90 },
+                { CardDB.cardName.barbarian, 90 },
+                { CardDB.cardName.minipekka, 90 },
+                { CardDB.cardName.rocket, 90 },
+                { CardDB.cardName.guards, 80 },
+                { CardDB.cardName.goblin, 50 },
+                { CardDB.cardName.skeleton, 50 }
+            });
 
-                if (!OppositeDB.ContainsKey(CardDB.cardName.giantskeleton))
-                {
-                    OppositeDB.Add(CardDB.cardName.giantskeleton, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.infernotower, 100 },
-                    { CardDB.cardName.skeletonarmy, 100 },
-                    { CardDB.cardName.minionhorde, 90 },
-                    { CardDB.cardName.witch, 90 },
-                    { CardDB.cardName.barbarian, 90 },
-                    { CardDB.cardName.minipekka, 90 },
-                    { CardDB.cardName.rocket, 90 },
-                    { CardDB.cardName.guards, 80 },
-                    { CardDB.cardName.goblin, 50 },
-                    { CardDB.cardName.skeleton, 50 }
-                });
-                }
+            //goblingang
+            //goblins
 
-                //goblingang
-                //goblins
+            OppositeDB.Add(CardDB.cardName.goblinbarrel, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.arrows, 100 },
+                { CardDB.cardName.fireball, 100 },
+                { CardDB.cardName.valkyrie, 100 },
+                { CardDB.cardName.bomber, 100 },
+                { CardDB.cardName.archer, 95 },
+                { CardDB.cardName.zap, 95 },
+                { CardDB.cardName.minion, 90 },
+                { CardDB.cardName.speargoblin, 90 }
+            });
+            OppositeDB.Add(CardDB.cardName.golem, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.barbarian, 100 },
+                { CardDB.cardName.minionhorde, 100 },
+                { CardDB.cardName.infernotower, 100 },
+                { CardDB.cardName.skeletonarmy, 100 },
+                { CardDB.cardName.prince, 90 },
+                { CardDB.cardName.goblingang, 80 },
+                { CardDB.cardName.witch, 50 },
+                { CardDB.cardName.cannon, 50 },
+                { CardDB.cardName.skeleton, 50 },
+                { CardDB.cardName.goblin, 50 }
+            });
 
-                if (!OppositeDB.ContainsKey(CardDB.cardName.goblinbarrel))
-                {
-                    OppositeDB.Add(CardDB.cardName.goblinbarrel, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.arrows, 100 },
-                    { CardDB.cardName.fireball, 100 },
-                    { CardDB.cardName.valkyrie, 100 },
-                    { CardDB.cardName.bomber, 100 },
-                    { CardDB.cardName.archer, 95 },
-                    { CardDB.cardName.zap, 95 },
-                    { CardDB.cardName.minion, 90 },
-                    { CardDB.cardName.speargoblin, 90 }
-                });
-                }
+            //guards
 
-                if (!OppositeDB.ContainsKey(CardDB.cardName.golem))
-                {
-                    OppositeDB.Add(CardDB.cardName.golem, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.barbarian, 100 },
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.infernotower, 100 },
-                    { CardDB.cardName.skeletonarmy, 100 },
-                    { CardDB.cardName.prince, 90 },
-                    { CardDB.cardName.goblingang, 80 },
-                    { CardDB.cardName.witch, 50 },
-                    { CardDB.cardName.cannon, 50 },
-                    { CardDB.cardName.skeleton, 50 },
-                    { CardDB.cardName.goblin, 50 }
-                });
-                }
+            OppositeDB.Add(CardDB.cardName.hogrider, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.barbarian, 100 },
+                { CardDB.cardName.skeletonarmy, 100 },
+                { CardDB.cardName.minionhorde, 100 },
+                { CardDB.cardName.tombstone, 100 },
+                { CardDB.cardName.goblingang, 95 },
+                { CardDB.cardName.cannon, 90 },
+            });
 
-                //guards
-                if (!OppositeDB.ContainsKey(CardDB.cardName.hogrider))
-                {
-                    OppositeDB.Add(CardDB.cardName.hogrider, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.barbarian, 100 },
-                    { CardDB.cardName.skeletonarmy, 100 },
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.tombstone, 100 },
-                    { CardDB.cardName.goblingang, 95 },
-                    { CardDB.cardName.cannon, 90 },
-                });
-                }
+            //icegolem
+            //icespirit
+            //icewizard
+            //infernodragon
+            //knight
 
-                //icegolem
-                //icespirit
-                //icewizard
-                //infernodragon
-                //knight
-                if (!OppositeDB.ContainsKey(CardDB.cardName.lavahound))
-                {
-                    OppositeDB.Add(CardDB.cardName.lavahound, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.infernotower, 100 },
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.babydragon, 100 },
-                    { CardDB.cardName.minion, 95 },
-                    { CardDB.cardName.wizard, 95 },
-                    { CardDB.cardName.threemusketeers, 95 },
-                    { CardDB.cardName.musketeer, 95 },
-                    { CardDB.cardName.icewizard, 95 },
-                    { CardDB.cardName.archer, 90 },
-                    { CardDB.cardName.speargoblin, 80 },
-                    { CardDB.cardName.rocket, 80 }
-                });
-                }
+            OppositeDB.Add(CardDB.cardName.lavahound, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.infernotower, 100 },
+                { CardDB.cardName.minionhorde, 100 },
+                { CardDB.cardName.babydragon, 100 },
+                { CardDB.cardName.minion, 95 },
+                { CardDB.cardName.wizard, 95 },
+                { CardDB.cardName.threemusketeers, 95 },
+                { CardDB.cardName.musketeer, 95 },
+                { CardDB.cardName.icewizard, 95 },
+                { CardDB.cardName.archer, 90 },
+                { CardDB.cardName.speargoblin, 80 },
+                { CardDB.cardName.rocket, 80 }
+            });
 
-                //lumberjack
-                //megaminion
-                if (!OppositeDB.ContainsKey(CardDB.cardName.miner))
-                {
-                    OppositeDB.Add(CardDB.cardName.miner, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.archer, 100 },
-                    { CardDB.cardName.speargoblin, 100 },
-                    { CardDB.cardName.goblin, 100 },
-                    { CardDB.cardName.skeleton, 100 },
-                    { CardDB.cardName.knight, 100 },
-                    { CardDB.cardName.icewizard, 95 },
-                    { CardDB.cardName.minion, 100 },
-                    { CardDB.cardName.guards, 100 },
-                    { CardDB.cardName.barbarian, 100 },
-                });
-                }
+            //lumberjack
+            //megaminion
 
-                if (!OppositeDB.ContainsKey(CardDB.cardName.minionhorde))
-                {
-                    OppositeDB.Add(CardDB.cardName.minionhorde, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.arrows, 100 },
-                    { CardDB.cardName.zap, 100 },
-                    { CardDB.cardName.wizard, 100 },
-                    { CardDB.cardName.fireball, 90 },
-                    { CardDB.cardName.minionhorde, 90 }
-                });
-                }
+            OppositeDB.Add(CardDB.cardName.miner, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.archer, 100 },
+                { CardDB.cardName.speargoblin, 100 },
+                { CardDB.cardName.goblin, 100 },
+                { CardDB.cardName.skeleton, 100 },
+                { CardDB.cardName.knight, 100 },
+                { CardDB.cardName.icewizard, 95 },
+                { CardDB.cardName.minion, 100 },
+                { CardDB.cardName.guards, 100 },
+                { CardDB.cardName.barbarian, 100 },
+            });
+            OppositeDB.Add(CardDB.cardName.minionhorde, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.arrows, 100 },
+                { CardDB.cardName.zap, 100 },
+                { CardDB.cardName.wizard, 100 },
+                { CardDB.cardName.fireball, 90 },
+                { CardDB.cardName.minionhorde, 90 }
+            });
 
-                //minions
-                if (!OppositeDB.ContainsKey(CardDB.cardName.minipekka))
-                {
-                    OppositeDB.Add(CardDB.cardName.minipekka, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.tombstone, 100 },
-                    { CardDB.cardName.skeletonarmy, 95 },
-                    { CardDB.cardName.minionhorde, 95 },
-                    { CardDB.cardName.guards, 95 },
-                    { CardDB.cardName.freeze, 90 },
-                    { CardDB.cardName.babydragon, 90 },
-                    { CardDB.cardName.barbarian, 90 },
-                    { CardDB.cardName.goblingang, 90 },
-                    { CardDB.cardName.witch, 90 },
-                    { CardDB.cardName.cannon, 60 },
-                    { CardDB.cardName.goblin, 50 },
-                    { CardDB.cardName.skeleton, 50 },
-                    { CardDB.cardName.speargoblin, 50 },
-                    { CardDB.cardName.minion, 30 }
-                });
-                }
+            //minions
 
-                if (!OppositeDB.ContainsKey(CardDB.cardName.mortar))
-                {
-                    OppositeDB.Add(CardDB.cardName.mortar, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.minipekka, 100 },
-                    { CardDB.cardName.goblinbarrel, 100 },
-                    { CardDB.cardName.prince, 100 },
-                    { CardDB.cardName.skeletonarmy, 100 },
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.balloon, 100 },
-                    { CardDB.cardName.goblingang, 95 },
-                    { CardDB.cardName.babydragon, 95 },
-                    { CardDB.cardName.goblin, 90 }
-                });
-                }
+            OppositeDB.Add(CardDB.cardName.minipekka, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.tombstone, 100 },
+                { CardDB.cardName.skeletonarmy, 95 },
+                { CardDB.cardName.minionhorde, 95 },
+                { CardDB.cardName.guards, 95 },
+                { CardDB.cardName.freeze, 90 },
+                { CardDB.cardName.babydragon, 90 },
+                { CardDB.cardName.barbarian, 90 },
+                { CardDB.cardName.goblingang, 90 },
+                { CardDB.cardName.witch, 90 },
+                { CardDB.cardName.cannon, 60 },
+                { CardDB.cardName.goblin, 50 },
+                { CardDB.cardName.skeleton, 50 },
+                { CardDB.cardName.speargoblin, 50 },
+                { CardDB.cardName.minion, 30 }
+            });
 
-                if (!OppositeDB.ContainsKey(CardDB.cardName.xbow))
-                {
-                    OppositeDB.Add(CardDB.cardName.xbow, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.prince, 100 },
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.skeletonarmy, 100 },
-                    { CardDB.cardName.balloon, 100 },
-                    { CardDB.cardName.goblinbarrel, 95 },
-                    { CardDB.cardName.hogrider, 95 },
-                    { CardDB.cardName.babydragon, 95 }
-                });
-                }
+            //musketeer
+            //nightwitch
 
-                //musketeer
-                //nightwitch
+            OppositeDB.Add(CardDB.cardName.pekka, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.infernotower, 100 },
+                { CardDB.cardName.skeletonarmy, 100 },
+                { CardDB.cardName.minionhorde, 100 },
+                { CardDB.cardName.barbarian, 80 },
+                { CardDB.cardName.witch, 80 },
+                { CardDB.cardName.graveyard, 80 },
+                { CardDB.cardName.goblin, 50 },
+                { CardDB.cardName.skeleton, 50 },
+                { CardDB.cardName.guards, 50 }
+            });
+            OppositeDB.Add(CardDB.cardName.prince, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.tombstone, 100 },
+                { CardDB.cardName.freeze, 95 },
+                { CardDB.cardName.guards, 95 },
+                { CardDB.cardName.skeletonarmy, 90 },
+                { CardDB.cardName.infernotower, 90 },
+                { CardDB.cardName.barbarian, 90 },
+                { CardDB.cardName.goblingang, 90 },
+                { CardDB.cardName.minionhorde, 85 },
+                { CardDB.cardName.witch, 80 },
+                { CardDB.cardName.goblin, 50 },
+                { CardDB.cardName.skeleton, 50 },
+                { CardDB.cardName.speargoblin, 50 },
+                { CardDB.cardName.prince, 30 }
+            });
 
-                if (!OppositeDB.ContainsKey(CardDB.cardName.pekka))
-                {
-                    OppositeDB.Add(CardDB.cardName.pekka, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.infernotower, 100 },
-                    { CardDB.cardName.skeletonarmy, 100 },
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.barbarian, 80 },
-                    { CardDB.cardName.witch, 80 },
-                    { CardDB.cardName.graveyard, 80 },
-                    { CardDB.cardName.goblin, 50 },
-                    { CardDB.cardName.skeleton, 50 },
-                    { CardDB.cardName.guards, 50 }
-                });
-                }
+            //princess
 
-                if (!OppositeDB.ContainsKey(CardDB.cardName.prince))
-                {
-                    OppositeDB.Add(CardDB.cardName.prince, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.tombstone, 100 },
-                    { CardDB.cardName.freeze, 95 },
-                    { CardDB.cardName.guards, 95 },
-                    { CardDB.cardName.skeletonarmy, 90 },
-                    { CardDB.cardName.infernotower, 90 },
-                    { CardDB.cardName.barbarian, 90 },
-                    { CardDB.cardName.goblingang, 90 },
-                    { CardDB.cardName.minionhorde, 85 },
-                    { CardDB.cardName.witch, 80 },
-                    { CardDB.cardName.goblin, 50 },
-                    { CardDB.cardName.skeleton, 50 },
-                    { CardDB.cardName.speargoblin, 50 },
-                    { CardDB.cardName.prince, 30 }
-                });
-                }
+            OppositeDB.Add(CardDB.cardName.royalgiant, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.infernotower, 100 },
+                { CardDB.cardName.skeletonarmy, 100 },
+                { CardDB.cardName.minionhorde, 100 },
+                { CardDB.cardName.goblingang, 95 },
+                { CardDB.cardName.tombstone, 95 },
+                { CardDB.cardName.witch, 95 },
+                { CardDB.cardName.musketeer, 90 },
+                { CardDB.cardName.minipekka, 90 },
+                { CardDB.cardName.guards, 90 },
+                { CardDB.cardName.barbarian, 90 },
+                { CardDB.cardName.goblin, 50 },
+                { CardDB.cardName.skeleton, 50 },
+                { CardDB.cardName.speargoblin, 50 },
+            });
+            OppositeDB.Add(CardDB.cardName.skeletonarmy, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.arrows, 100 },
+                { CardDB.cardName.valkyrie, 100 },
+                { CardDB.cardName.bomber, 95 },
+                { CardDB.cardName.fireball, 90 },
+                { CardDB.cardName.witch, 90 }
+            });
 
-                //princess
+            //skeletons
 
-                if (!OppositeDB.ContainsKey(CardDB.cardName.royalgiant))
-                {
-                    OppositeDB.Add(CardDB.cardName.royalgiant, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.infernotower, 100 },
-                    { CardDB.cardName.skeletonarmy, 100 },
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.goblingang, 95 },
-                    { CardDB.cardName.tombstone, 95 },
-                    { CardDB.cardName.witch, 95 },
-                    { CardDB.cardName.musketeer, 90 },
-                    { CardDB.cardName.minipekka, 90 },
-                    { CardDB.cardName.guards, 90 },
-                    { CardDB.cardName.barbarian, 90 },
-                    { CardDB.cardName.goblin, 50 },
-                    { CardDB.cardName.skeleton, 50 },
-                    { CardDB.cardName.speargoblin, 50 },
-                });
-                }
+            OppositeDB.Add(CardDB.cardName.sparky, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.infernotower, 100 },
+                { CardDB.cardName.prince, 100 },
+                { CardDB.cardName.darkprince, 100 },
+                { CardDB.cardName.skeletonarmy, 100 },
+                { CardDB.cardName.minionhorde, 95 },
+                { CardDB.cardName.minion, 95 },
+                { CardDB.cardName.guards, 95 },
+                { CardDB.cardName.zap, 95 },
+                { CardDB.cardName.rocket, 90 },
+                { CardDB.cardName.barbarian, 90 },
+                { CardDB.cardName.goblingang, 90 },
+                { CardDB.cardName.skeleton, 50 },
+                { CardDB.cardName.goblin, 50 }
+            });
 
-                if (!OppositeDB.ContainsKey(CardDB.cardName.skeletonarmy))
-                {
-                    OppositeDB.Add(CardDB.cardName.skeletonarmy, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.arrows, 100 },
-                    { CardDB.cardName.valkyrie, 100 },
-                    { CardDB.cardName.bomber, 95 },
-                    { CardDB.cardName.fireball, 90 },
-                    { CardDB.cardName.witch, 90 }
-                });
-                }
+            //speargoblin
 
-                //skeletons
-
-                if (!OppositeDB.ContainsKey(CardDB.cardName.sparky))
-                {
-                    OppositeDB.Add(CardDB.cardName.sparky, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.infernotower, 100 },
-                    { CardDB.cardName.prince, 100 },
-                    { CardDB.cardName.darkprince, 100 },
-                    { CardDB.cardName.skeletonarmy, 100 },
-                    { CardDB.cardName.minionhorde, 95 },
-                    { CardDB.cardName.minion, 95 },
-                    { CardDB.cardName.guards, 95 },
-                    { CardDB.cardName.zap, 95 },
-                    { CardDB.cardName.rocket, 90 },
-                    { CardDB.cardName.barbarian, 90 },
-                    { CardDB.cardName.goblingang, 90 },
-                    { CardDB.cardName.skeleton, 50 },
-                    { CardDB.cardName.goblin, 50 }
-                });
-                }
-
-                //speargoblin
-
-                if (!OppositeDB.ContainsKey(CardDB.cardName.threemusketeers))
-                {
-                    OppositeDB.Add(CardDB.cardName.threemusketeers, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.fireball, 100 },
-                    { CardDB.cardName.barbarian, 100 },
-                    { CardDB.cardName.rocket, 100 },
-                    { CardDB.cardName.skeletonarmy, 100 },
-                    { CardDB.cardName.lightning, 100 },
-                    { CardDB.cardName.minionhorde, 95 },
-                    { CardDB.cardName.pekka, 90 },
-                    { CardDB.cardName.giantskeleton, 90 },
-                    { CardDB.cardName.freeze, 60 },
-                    { CardDB.cardName.zap, 50 },
-                });
-                }
-
-                if (!OppositeDB.ContainsKey(CardDB.cardName.valkyrie))
-                {
-                    OppositeDB.Add(CardDB.cardName.valkyrie, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.babydragon, 95 },
-                    { CardDB.cardName.wizard, 95 },
-                    { CardDB.cardName.infernotower, 90 },
-                    { CardDB.cardName.tesla, 90 },
-                    { CardDB.cardName.minion, 50 },
-                    { CardDB.cardName.musketeer, 50 }
-                });
-                }
-
-                if (!OppositeDB.ContainsKey(CardDB.cardName.witch))
-                {
-                    OppositeDB.Add(CardDB.cardName.witch, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.valkyrie, 100 },
-                    { CardDB.cardName.lightning, 100 },
-                    { CardDB.cardName.fireball, 100 },
-                    { CardDB.cardName.babydragon, 95 },
-                    { CardDB.cardName.bomber, 95 },
-                    { CardDB.cardName.wizard, 95 },
-                    { CardDB.cardName.guards, 90 },
-                    { CardDB.cardName.barbarian, 90 },
-                    { CardDB.cardName.bombtower, 90 },
-                    { CardDB.cardName.knight, 90 },
-                    { CardDB.cardName.tesla, 90 },
-                    { CardDB.cardName.witch, 85 }
-                });
-                }
-
-                if (!OppositeDB.ContainsKey(CardDB.cardName.wizard))
-                {
-                    OppositeDB.Add(CardDB.cardName.wizard, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.valkyrie, 100 },
-                    { CardDB.cardName.lightning, 100 },
-                    { CardDB.cardName.fireball, 100 },
-                    { CardDB.cardName.babydragon, 95 },
-                    { CardDB.cardName.barbarian, 100 },
-                    { CardDB.cardName.bomber, 95 },
-                    { CardDB.cardName.wizard, 95 },
-                    { CardDB.cardName.guards, 90 },
-                    { CardDB.cardName.bombtower, 90 },
-                    { CardDB.cardName.knight, 90 },
-                    { CardDB.cardName.tesla, 90 },
-                    { CardDB.cardName.pekka, 85 },
-                    { CardDB.cardName.minipekka, 85 }
-                });
-                }
+            OppositeDB.Add(CardDB.cardName.threemusketeers, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.fireball, 100 },
+                { CardDB.cardName.barbarian, 100 },
+                { CardDB.cardName.rocket, 100 },
+                { CardDB.cardName.skeletonarmy, 100 },
+                { CardDB.cardName.lightning, 100 },
+                { CardDB.cardName.minionhorde, 95 },
+                { CardDB.cardName.pekka, 90 },
+                { CardDB.cardName.giantskeleton, 90 },
+                { CardDB.cardName.freeze, 60 },
+                { CardDB.cardName.zap, 50 },
+            });
+            OppositeDB.Add(CardDB.cardName.valkyrie, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.minionhorde, 100 },
+                { CardDB.cardName.babydragon, 95 },
+                { CardDB.cardName.wizard, 95 },
+                { CardDB.cardName.infernotower, 90 },
+                { CardDB.cardName.tesla, 90 },
+                { CardDB.cardName.minion, 50 },
+                { CardDB.cardName.musketeer, 50 }
+            });
+            OppositeDB.Add(CardDB.cardName.witch, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.valkyrie, 100 },
+                { CardDB.cardName.lightning, 100 },
+                { CardDB.cardName.fireball, 100 },
+                { CardDB.cardName.babydragon, 95 },
+                { CardDB.cardName.bomber, 95 },
+                { CardDB.cardName.wizard, 95 },
+                { CardDB.cardName.guards, 90 },
+                { CardDB.cardName.barbarian, 90 },
+                { CardDB.cardName.bombtower, 90 },
+                { CardDB.cardName.knight, 90 },
+                { CardDB.cardName.tesla, 90 },
+                { CardDB.cardName.witch, 85 }
+            });
+            OppositeDB.Add(CardDB.cardName.wizard, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.valkyrie, 100 },
+                { CardDB.cardName.lightning, 100 },
+                { CardDB.cardName.fireball, 100 },
+                { CardDB.cardName.babydragon, 95 },
+                { CardDB.cardName.barbarian, 100 },
+                { CardDB.cardName.bomber, 95 },
+                { CardDB.cardName.wizard, 95 },
+                { CardDB.cardName.guards, 90 },
+                { CardDB.cardName.bombtower, 90 },
+                { CardDB.cardName.knight, 90 },
+                { CardDB.cardName.tesla, 90 },
+                { CardDB.cardName.pekka, 85 },
+                { CardDB.cardName.minipekka, 85 }
+            });
 
 
 
-                //Buildings
-                //balloonbomb,
-                if (!OppositeDB.ContainsKey(CardDB.cardName.barbarianhut))
-                {
-                    OppositeDB.Add(CardDB.cardName.barbarianhut, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.babydragon, 100 },
-                    { CardDB.cardName.rocket, 100 },
-                    { CardDB.cardName.lightning, 100 },
-                    { CardDB.cardName.minions, 95 },
-                    { CardDB.cardName.balloon, 95 },
-                    { CardDB.cardName.prince, 95 },
-                    { CardDB.cardName.giantskeleton, 95 },
-                    { CardDB.cardName.infernodragon, 90 },
-                    { CardDB.cardName.megaminion, 90 },
-                    { CardDB.cardName.poison, 50 },
-                });
-                }
+            //Buildings
+            //balloonbomb,
+            OppositeDB.Add(CardDB.cardName.barbarianhut, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.minionhorde, 100 },
+                { CardDB.cardName.babydragon, 100 },
+                { CardDB.cardName.rocket, 100 },
+                { CardDB.cardName.lightning, 100 },
+                { CardDB.cardName.minions, 95 },
+                { CardDB.cardName.balloon, 95 },
+                { CardDB.cardName.prince, 95 },
+                { CardDB.cardName.giantskeleton, 95 },
+                { CardDB.cardName.infernodragon, 90 },
+                { CardDB.cardName.megaminion, 90 },
+                { CardDB.cardName.poison, 50 },
+            });
+            OppositeDB.Add(CardDB.cardName.bombtower, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.minionhorde, 100 },
+                { CardDB.cardName.princess, 95 },
+                { CardDB.cardName.babydragon, 95 },
+                { CardDB.cardName.balloon, 95 },
+                { CardDB.cardName.minions, 90 },
+                { CardDB.cardName.royalgiant, 90 },
+                { CardDB.cardName.infernodragon, 90 },
+                { CardDB.cardName.megaminion, 90 },
+                { CardDB.cardName.musketeer, 85 },
+                { CardDB.cardName.blowdartgoblin, 85 },
+                { CardDB.cardName.hogrider, 80 },
+                { CardDB.cardName.golem, 80 },
+            });
+            OppositeDB.Add(CardDB.cardName.cannon, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.minionhorde, 100 },
+                { CardDB.cardName.princess, 100 },
+                { CardDB.cardName.blowdartgoblin, 100 },
+                { CardDB.cardName.balloon, 100 },
+                { CardDB.cardName.musketeer, 100 },
+                { CardDB.cardName.babydragon, 95 },
+                { CardDB.cardName.minions, 95 },
+                { CardDB.cardName.skeletonarmy, 95 },
+                { CardDB.cardName.fireball, 95 },
+                { CardDB.cardName.lightning, 90 },
+                { CardDB.cardName.barbarians, 90 },
+                { CardDB.cardName.infernodragon, 90 },
+                { CardDB.cardName.megaminion, 90 },
+                { CardDB.cardName.poison, 85 },
+                { CardDB.cardName.hogrider, 85 },
+                { CardDB.cardName.golem, 80 },
+                { CardDB.cardName.giant, 80 },
+                { CardDB.cardName.royalgiant, 80 },
+            });
+            OppositeDB.Add(CardDB.cardName.elixircollector, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.hogrider, 100 },
+                { CardDB.cardName.giant, 100 },
+                { CardDB.cardName.balloon, 100 },
+                { CardDB.cardName.royalgiant, 100 },
+                { CardDB.cardName.golem, 100 },
+                { CardDB.cardName.musketeer, 100 },
+                { CardDB.cardName.barbarian, 100 },
+                { CardDB.cardName.babydragon, 100 },
+                { CardDB.cardName.minions, 100 },
+                { CardDB.cardName.minionhorde, 100 },
+                { CardDB.cardName.skeletonarmy, 90 },
+                { CardDB.cardName.goblinbarrel, 90 },
+                { CardDB.cardName.rocket, 85 },
+                { CardDB.cardName.lightning, 85 },
+                { CardDB.cardName.fireball, 85 },
+                { CardDB.cardName.poison, 70 },
+                { CardDB.cardName.arrows, 50 },
+            });
+            OppositeDB.Add(CardDB.cardName.firespirithut, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.rocket, 100 },
+                { CardDB.cardName.lightning, 100 },
+                { CardDB.cardName.bomber, 100 },
+                { CardDB.cardName.royalgiant, 90 },
+                { CardDB.cardName.giant, 90 },
+                { CardDB.cardName.battleram, 90 },
+                { CardDB.cardName.golem, 85 },
+                { CardDB.cardName.giantskeleton, 80 },
+                { CardDB.cardName.pekka, 80 },
+                { CardDB.cardName.fireball, 80 },
+                { CardDB.cardName.poison, 80 },
+                { CardDB.cardName.princess, 50 },
+                { CardDB.cardName.barbarians, 50 },
+            });
+            //giantskeletonbomb,
+            OppositeDB.Add(CardDB.cardName.goblinhut, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.hogrider, 100 },
+                { CardDB.cardName.giant, 100 },
+                { CardDB.cardName.royalgiant, 100 },
+                { CardDB.cardName.golem, 100 },
+                { CardDB.cardName.musketeer, 100 },
+                { CardDB.cardName.barbarian, 100 },
+                { CardDB.cardName.skeletonarmy, 100 },
+                { CardDB.cardName.rocket, 90 },
+                { CardDB.cardName.lightning, 90 },
+                { CardDB.cardName.fireball, 85 },
+                { CardDB.cardName.poison, 50 },
+            });
+            OppositeDB.Add(CardDB.cardName.infernotower, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.rocket, 100 },
+                { CardDB.cardName.lightning, 100 },
+                { CardDB.cardName.skeletonarmy, 100 },
+                { CardDB.cardName.minionhorde, 95 },
+                { CardDB.cardName.goblingang, 95 },
+                { CardDB.cardName.blowdartgoblin, 95 },
+                { CardDB.cardName.princess, 95 },
+                { CardDB.cardName.barbarians, 90 },
+                { CardDB.cardName.speargoblins, 85 },
+                { CardDB.cardName.fireball, 50 },
+                { CardDB.cardName.poison, 50 },
+            });
+            //kingtowermiddle,
+            OppositeDB.Add(CardDB.cardName.kingtower, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.balloon, 100 },
+                { CardDB.cardName.hogrider, 100 },
+                { CardDB.cardName.golem, 100 },
+                { CardDB.cardName.goblinbarrel, 100 },
+                { CardDB.cardName.pekka, 100 },
+                { CardDB.cardName.minipekka, 100 },
+                { CardDB.cardName.rocket, 100 },
+                { CardDB.cardName.royalgiant, 95 },
+                { CardDB.cardName.infernodragon, 95 },
+                { CardDB.cardName.fireball, 95 },
+                { CardDB.cardName.giant, 90 },
+                { CardDB.cardName.battleram, 90 },
+                { CardDB.cardName.poison, 90 },
+                { CardDB.cardName.lightning, 90 },
+                { CardDB.cardName.giantskeleton, 85 },
+                { CardDB.cardName.skeletonarmy, 50 },
+            });
+            OppositeDB.Add(CardDB.cardName.mortar, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.minionhorde, 100 },
+                { CardDB.cardName.balloon, 100 },
+                { CardDB.cardName.lightning, 100 },
+                { CardDB.cardName.goblinbarrel, 100 },
+                { CardDB.cardName.hogrider, 95 },
+                { CardDB.cardName.babydragon, 95 },
+                { CardDB.cardName.barbarians, 95 },
+                { CardDB.cardName.minipekka, 95 },
+                { CardDB.cardName.prince, 95 },
+                { CardDB.cardName.minions, 90 },
+                { CardDB.cardName.royalgiant, 90 },
+                { CardDB.cardName.goblingang, 90 },
+                { CardDB.cardName.skeletonarmy, 85 },
+                { CardDB.cardName.goblins, 85 },
+                { CardDB.cardName.megaminion, 85 },
+                { CardDB.cardName.golem, 85 },
+                { CardDB.cardName.poison, 85 },
+            });
+            OppositeDB.Add(CardDB.cardName.princesstower, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.balloon, 100 },
+                { CardDB.cardName.hogrider, 100 },
+                { CardDB.cardName.golem, 100 },
+                { CardDB.cardName.goblinbarrel, 100 },
+                { CardDB.cardName.pekka, 100 },
+                { CardDB.cardName.minipekka, 100 },
+                { CardDB.cardName.rocket, 100 },
+                { CardDB.cardName.royalgiant, 95 },
+                { CardDB.cardName.infernodragon, 95 },
+                { CardDB.cardName.fireball, 95 },
+                { CardDB.cardName.giant, 90 },
+                { CardDB.cardName.battleram, 90 },
+                { CardDB.cardName.poison, 90 },
+                { CardDB.cardName.lightning, 90 },
+                { CardDB.cardName.giantskeleton, 85 },
+                { CardDB.cardName.skeletonarmy, 50 },
+            });
+            //ragebarbarianbottle,
+            //skeletoncontainer,
+            OppositeDB.Add(CardDB.cardName.tesla, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.giant, 100 },
+                { CardDB.cardName.golem, 100 },
+                { CardDB.cardName.princess, 100 },
+                { CardDB.cardName.blowdartgoblin, 100 },
+                { CardDB.cardName.balloon, 100 },
+                { CardDB.cardName.hogrider, 100 },
+                { CardDB.cardName.musketeer, 100 },
+                { CardDB.cardName.skeletonarmy, 95 },
+                { CardDB.cardName.rocket, 95 },
+                { CardDB.cardName.fireball, 95 },
+                { CardDB.cardName.lightning, 90 },
+                { CardDB.cardName.barbarians, 90 },
+                { CardDB.cardName.royalgiant, 90 },
+                { CardDB.cardName.infernodragon, 90 },
+                { CardDB.cardName.megaminion, 90 },
+                { CardDB.cardName.poison, 85 },
+            });
+            OppositeDB.Add(CardDB.cardName.tombstone, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.hogrider, 100 },
+                { CardDB.cardName.giant, 100 },
+                { CardDB.cardName.balloon, 100 },
+                { CardDB.cardName.royalgiant, 100 },
+                { CardDB.cardName.golem, 100 },
+                { CardDB.cardName.musketeer, 100 },
+                { CardDB.cardName.barbarian, 100 },
+                { CardDB.cardName.babydragon, 100 },
+                { CardDB.cardName.minions, 100 },
+                { CardDB.cardName.minionhorde, 100 },
+                { CardDB.cardName.skeletonarmy, 90 },
+                { CardDB.cardName.rocket, 85 },
+                { CardDB.cardName.lightning, 85 },
+                { CardDB.cardName.fireball, 85 },
+                { CardDB.cardName.poison, 70 },
+                { CardDB.cardName.arrows, 50 },
+            });
+            OppositeDB.Add(CardDB.cardName.xbow, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.minionhorde, 100 },
+                { CardDB.cardName.balloon, 100 },
+                { CardDB.cardName.lightning, 100 },
+                { CardDB.cardName.hogrider, 95 },
+                { CardDB.cardName.babydragon, 95 },
+                { CardDB.cardName.minions, 95 },
+                { CardDB.cardName.barbarians, 95 },
+                { CardDB.cardName.barbarianhut, 95 },
+                { CardDB.cardName.infernodragon, 90 },
+                { CardDB.cardName.megaminion, 85 },
+                { CardDB.cardName.poison, 85 },
+                { CardDB.cardName.prince, 85 },
+                { CardDB.cardName.royalgiant, 80 },
+                { CardDB.cardName.golem, 80 },
+                { CardDB.cardName.fireball, 50 },
+            });
 
-                if (!OppositeDB.ContainsKey(CardDB.cardName.bombtower))
-                {
-                    OppositeDB.Add(CardDB.cardName.bombtower, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.princess, 95 },
-                    { CardDB.cardName.babydragon, 95 },
-                    { CardDB.cardName.balloon, 95 },
-                    { CardDB.cardName.minions, 90 },
-                    { CardDB.cardName.royalgiant, 90 },
-                    { CardDB.cardName.infernodragon, 90 },
-                    { CardDB.cardName.megaminion, 90 },
-                    { CardDB.cardName.musketeer, 85 },
-                    { CardDB.cardName.blowdartgoblin, 85 },
-                    { CardDB.cardName.hogrider, 80 },
-                    { CardDB.cardName.golem, 80 },
-                });
-                }
 
-                if (!OppositeDB.ContainsKey(CardDB.cardName.cannon))
-                {
-                    OppositeDB.Add(CardDB.cardName.cannon, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.princess, 100 },
-                    { CardDB.cardName.blowdartgoblin, 100 },
-                    { CardDB.cardName.balloon, 100 },
-                    { CardDB.cardName.musketeer, 100 },
-                    { CardDB.cardName.babydragon, 95 },
-                    { CardDB.cardName.minions, 95 },
-                    { CardDB.cardName.skeletonarmy, 95 },
-                    { CardDB.cardName.fireball, 95 },
-                    { CardDB.cardName.lightning, 90 },
-                    { CardDB.cardName.barbarians, 90 },
-                    { CardDB.cardName.royalgiant, 90 },
-                    { CardDB.cardName.infernodragon, 90 },
-                    { CardDB.cardName.megaminion, 90 },
-                    { CardDB.cardName.poison, 85 },
-                    { CardDB.cardName.hogrider, 85 },
-                    { CardDB.cardName.golem, 80 },
-                    { CardDB.cardName.giant, 80 },
-                    { CardDB.cardName.royalgiant, 80 },
-                });
-                }
-
-                if (!OppositeDB.ContainsKey(CardDB.cardName.elixircollector))
-                {
-                    OppositeDB.Add(CardDB.cardName.elixircollector, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.hogrider, 100 },
-                    { CardDB.cardName.giant, 100 },
-                    { CardDB.cardName.balloon, 100 },
-                    { CardDB.cardName.royalgiant, 100 },
-                    { CardDB.cardName.golem, 100 },
-                    { CardDB.cardName.musketeer, 100 },
-                    { CardDB.cardName.barbarian, 100 },
-                    { CardDB.cardName.babydragon, 100 },
-                    { CardDB.cardName.minions, 100 },
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.skeletonarmy, 90 },
-                    { CardDB.cardName.goblinbarrel, 90 },
-                    { CardDB.cardName.rocket, 85 },
-                    { CardDB.cardName.lightning, 85 },
-                    { CardDB.cardName.fireball, 85 },
-                    { CardDB.cardName.poison, 70 },
-                    { CardDB.cardName.arrows, 50 },
-                });
-                }
-
-                if (!OppositeDB.ContainsKey(CardDB.cardName.firespirithut))
-                {
-                    OppositeDB.Add(CardDB.cardName.firespirithut, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.rocket, 100 },
-                    { CardDB.cardName.lightning, 100 },
-                    { CardDB.cardName.bomber, 100 },
-                    { CardDB.cardName.royalgiant, 90 },
-                    { CardDB.cardName.giant, 90 },
-                    { CardDB.cardName.battleram, 90 },
-                    { CardDB.cardName.golem, 85 },
-                    { CardDB.cardName.giantskeleton, 80 },
-                    { CardDB.cardName.pekka, 80 },
-                    { CardDB.cardName.fireball, 80 },
-                    { CardDB.cardName.poison, 80 },
-                    { CardDB.cardName.princess, 50 },
-                    { CardDB.cardName.barbarians, 50 },
-                });
-                }
-                //giantskeletonbomb,
-                if (!OppositeDB.ContainsKey(CardDB.cardName.goblinhut))
-                {
-                    OppositeDB.Add(CardDB.cardName.goblinhut, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.hogrider, 100 },
-                    { CardDB.cardName.giant, 100 },
-                    { CardDB.cardName.royalgiant, 100 },
-                    { CardDB.cardName.golem, 100 },
-                    { CardDB.cardName.musketeer, 100 },
-                    { CardDB.cardName.barbarian, 100 },
-                    { CardDB.cardName.skeletonarmy, 100 },
-                    { CardDB.cardName.rocket, 90 },
-                    { CardDB.cardName.lightning, 90 },
-                    { CardDB.cardName.fireball, 85 },
-                    { CardDB.cardName.poison, 50 },
-                });
-                }
-
-                if (!OppositeDB.ContainsKey(CardDB.cardName.infernotower))
-                {
-                    OppositeDB.Add(CardDB.cardName.infernotower, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.rocket, 100 },
-                    { CardDB.cardName.lightning, 100 },
-                    { CardDB.cardName.skeletonarmy, 100 },
-                    { CardDB.cardName.minionhorde, 95 },
-                    { CardDB.cardName.goblingang, 95 },
-                    { CardDB.cardName.blowdartgoblin, 95 },
-                    { CardDB.cardName.princess, 95 },
-                    { CardDB.cardName.barbarians, 90 },
-                    { CardDB.cardName.speargoblins, 85 },
-                    { CardDB.cardName.fireball, 50 },
-                    { CardDB.cardName.poison, 50 },
-                });
-                }
-                //kingtowermiddle,
-
-                if (!OppositeDB.ContainsKey(CardDB.cardName.kingtower))
-                {
-                    OppositeDB.Add(CardDB.cardName.kingtower, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.balloon, 100 },
-                    { CardDB.cardName.hogrider, 100 },
-                    { CardDB.cardName.golem, 100 },
-                    { CardDB.cardName.goblinbarrel, 100 },
-                    { CardDB.cardName.pekka, 100 },
-                    { CardDB.cardName.minipekka, 100 },
-                    { CardDB.cardName.rocket, 100 },
-                    { CardDB.cardName.royalgiant, 95 },
-                    { CardDB.cardName.infernodragon, 95 },
-                    { CardDB.cardName.fireball, 95 },
-                    { CardDB.cardName.giant, 90 },
-                    { CardDB.cardName.battleram, 90 },
-                    { CardDB.cardName.poison, 90 },
-                    { CardDB.cardName.lightning, 90 },
-                    { CardDB.cardName.giantskeleton, 85 },
-                    { CardDB.cardName.skeletonarmy, 50 },
-                });
-                }
-
-                if (!OppositeDB.ContainsKey(CardDB.cardName.mortar))
-                {
-                    OppositeDB.Add(CardDB.cardName.mortar, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.balloon, 100 },
-                    { CardDB.cardName.lightning, 100 },
-                    { CardDB.cardName.goblinbarrel, 100 },
-                    { CardDB.cardName.hogrider, 95 },
-                    { CardDB.cardName.babydragon, 95 },
-                    { CardDB.cardName.barbarians, 95 },
-                    { CardDB.cardName.minipekka, 95 },
-                    { CardDB.cardName.prince, 95 },
-                    { CardDB.cardName.minions, 90 },
-                    { CardDB.cardName.royalgiant, 90 },
-                    { CardDB.cardName.skeletonarmy, 85 },
-                    { CardDB.cardName.goblins, 85 },
-                    { CardDB.cardName.megaminion, 85 },
-                    { CardDB.cardName.golem, 85 },
-                    { CardDB.cardName.poison, 85 },
-                });
-                }
-
-                if (!OppositeDB.ContainsKey(CardDB.cardName.princesstower))
-                {
-                    OppositeDB.Add(CardDB.cardName.princesstower, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.balloon, 100 },
-                    { CardDB.cardName.hogrider, 100 },
-                    { CardDB.cardName.golem, 100 },
-                    { CardDB.cardName.goblinbarrel, 100 },
-                    { CardDB.cardName.pekka, 100 },
-                    { CardDB.cardName.minipekka, 100 },
-                    { CardDB.cardName.rocket, 100 },
-                    { CardDB.cardName.royalgiant, 95 },
-                    { CardDB.cardName.infernodragon, 95 },
-                    { CardDB.cardName.fireball, 95 },
-                    { CardDB.cardName.giant, 90 },
-                    { CardDB.cardName.battleram, 90 },
-                    { CardDB.cardName.poison, 90 },
-                    { CardDB.cardName.lightning, 90 },
-                    { CardDB.cardName.giantskeleton, 85 },
-                    { CardDB.cardName.skeletonarmy, 50 },
-                });
-                }
-                //ragebarbarianbottle,
-                //skeletoncontainer,
-                if (!OppositeDB.ContainsKey(CardDB.cardName.tesla))
-                {
-                    OppositeDB.Add(CardDB.cardName.tesla, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.giant, 100 },
-                    { CardDB.cardName.golem, 100 },
-                    { CardDB.cardName.princess, 100 },
-                    { CardDB.cardName.blowdartgoblin, 100 },
-                    { CardDB.cardName.balloon, 100 },
-                    { CardDB.cardName.hogrider, 100 },
-                    { CardDB.cardName.musketeer, 100 },
-                    { CardDB.cardName.skeletonarmy, 95 },
-                    { CardDB.cardName.rocket, 95 },
-                    { CardDB.cardName.fireball, 95 },
-                    { CardDB.cardName.lightning, 90 },
-                    { CardDB.cardName.barbarians, 90 },
-                    { CardDB.cardName.royalgiant, 90 },
-                    { CardDB.cardName.infernodragon, 90 },
-                    { CardDB.cardName.megaminion, 90 },
-                    { CardDB.cardName.poison, 85 },
-                });
-                }
-
-                if (!OppositeDB.ContainsKey(CardDB.cardName.tombstone))
-                {
-                    OppositeDB.Add(CardDB.cardName.tombstone, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.hogrider, 100 },
-                    { CardDB.cardName.giant, 100 },
-                    { CardDB.cardName.balloon, 100 },
-                    { CardDB.cardName.royalgiant, 100 },
-                    { CardDB.cardName.golem, 100 },
-                    { CardDB.cardName.musketeer, 100 },
-                    { CardDB.cardName.barbarian, 100 },
-                    { CardDB.cardName.babydragon, 100 },
-                    { CardDB.cardName.minions, 100 },
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.skeletonarmy, 90 },
-                    { CardDB.cardName.rocket, 85 },
-                    { CardDB.cardName.lightning, 85 },
-                    { CardDB.cardName.fireball, 85 },
-                    { CardDB.cardName.poison, 70 },
-                    { CardDB.cardName.arrows, 50 },
-                });
-                }
-
-                if (!OppositeDB.ContainsKey(CardDB.cardName.xbow))
-                {
-                    OppositeDB.Add(CardDB.cardName.xbow, new Dictionary<CardDB.cardName, int>(){
-                    { CardDB.cardName.minionhorde, 100 },
-                    { CardDB.cardName.balloon, 100 },
-                    { CardDB.cardName.lightning, 100 },
-                    { CardDB.cardName.hogrider, 95 },
-                    { CardDB.cardName.babydragon, 95 },
-                    { CardDB.cardName.minions, 95 },
-                    { CardDB.cardName.barbarians, 95 },
-                    { CardDB.cardName.barbarianhut, 95 },
-                    { CardDB.cardName.infernodragon, 90 },
-                    { CardDB.cardName.megaminion, 85 },
-                    { CardDB.cardName.poison, 85 },
-                    { CardDB.cardName.prince, 85 },
-                    { CardDB.cardName.royalgiant, 80 },
-                    { CardDB.cardName.golem, 80 },
-                    { CardDB.cardName.fireball, 50 },
-                });
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.Debug("Exception in setupOppositeDB");
-                Logger.Debug(e.Message);
-                Logger.Debug("############################");
-            }
         }
+
     }
 }
