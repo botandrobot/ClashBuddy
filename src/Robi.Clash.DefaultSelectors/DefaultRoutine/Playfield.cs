@@ -789,6 +789,83 @@ namespace Robi.Clash.DefaultSelectors
             return retval;
         }
 
+        /*
+        private Handcard getFinisher(BoardObj bo, bool canWait) //useful for Towers
+        {
+            Handcard retval = null;
+            Handcard hc;
+
+            Handcard projectile = null;
+            Handcard aoe = null;
+            Handcard mob = null;
+            int count = this.ownHandCards.Count;
+            for (int i = 1; i < count; i++)
+            {
+                hc = ownHandCards[i];
+                switch (hc.card.type)
+                {
+                    case boardObjType.PROJECTILE:
+                        if (bo.HP <= hc.card.Atk)
+                        {
+                            if (projectile == null || hc.card.Atk > projectile.card.Atk) projectile = hc;
+                        }
+                        continue;
+                    case boardObjType.AOE:
+                        int towerDmg = hc.card.towerDamage;
+                        if (hc.card.name == CardDB.cardName.poison) towerDmg *= 8;
+                        if (bo.HP <= towerDmg)
+                        {
+                            if (aoe == null || towerDmg > aoe.extraVal)
+                            {
+                                aoe = hc;
+                                aoe.extraVal = towerDmg;
+                            }
+                        }
+                        continue;
+                    case boardObjType.MOB:
+                        if (bo.type == boardObjType.BUILDING)
+                        {
+                            if (KnowledgeBase.Instance.)
+                            //TODO: calc online
+                            if (hc.card.TargetType == targetType.BUILDINGS)
+                            {
+                                int val;
+                                if (bo.HP <= hc.card.Atk)
+                                {
+
+                                }
+                                else
+                                {
+                                    int dmg = hc.card.Atk * hc.card.SummonNumber;
+                                    int restHp = bo.HP - dmg;
+                                    double timeForDestroy = restHp / (dmg * 1000 / hc.card.HitSpeed);
+                                    double timeToDestruction = hc.card.MaxHP / (bo.Atk * 1000 / bo.card.HitSpeed);
+                                    double delta = timeToDestruction - timeForDestroy;
+                                    if (hc.card.SummonNumber > 1)
+                                    {
+                                        double hitPerMob = Math.Ceiling((double)hc.card.MaxHP / bo.Atk);
+                                        timeToDestruction = hc.card.SummonNumber * hitPerMob * 1000 / bo.card.HitSpeed;
+
+                                    }
+                                    if (delta > 0)
+                                    {
+                                        if (mob == null || hc.card.Atk > mob.card.Atk)
+                                        {
+                                            mob = hc;
+                                            mob.extraVal = delta;
+                                        }
+                                    }
+                                }
+                            }
+
+
+                        }
+                }
+                if (ownHandCards[i].card.MaxHP > retval.card.MaxHP) retval = ownHandCards[i];
+            }
+            return retval;
+        }*/
+
         private Handcard getMobCardByCondition(List<Handcard> list, bool needDamager) //!needDamager mean needTank
         {
             Handcard retval = null;

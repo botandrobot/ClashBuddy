@@ -281,7 +281,6 @@
             Logger.Debug("Path: Spell - GetBestDefenseCard");
 
             BoardObj defender = GetBestDefender(p);
-
             if (defender == null)
                 return null;
 
@@ -337,11 +336,11 @@
                 return GameBeginningDecision(p);
             }
 
-            if (!p.noEnemiesOnMySide())
-            {
-                StartLoadedDeploy = false;
-                fightState = EnemyIsOnOurSideDecision(p);
-            }
+            //if (!p.noEnemiesOnMySide())
+            //{
+            //    StartLoadedDeploy = false;
+            //    fightState = EnemyIsOnOurSideDecision(p);
+            //}
 
             int dangerLine = GetDangerLine(p); // if line 0 no dangerous situation
             int attackLine = GetBestAttackingLine(p);
@@ -349,6 +348,7 @@
             if (dangerLine > 0)
             {
                 Logger.Debug("Danger");
+                StartLoadedDeploy = false;
                 fightState = DangerousSituationDecision(p, dangerLine);
             }
             else if (attackLine > 0)
@@ -462,15 +462,33 @@
         {
             List<BoardObj> enemyMinions = p.enemyMinions;
 
-            int atkSumL1 = enemyMinions.Where(n => n.Line == 1).Sum(n => n.Atk);
-            int healthSumL1 = enemyMinions.Where(n => n.Line == 1).Sum(n => n.HP);
-            int atkSumL2 = enemyMinions.Where(n => n.Line == 2).Sum(n => n.Atk);
-            int healthSumL2 = enemyMinions.Where(n => n.Line == 2).Sum(n => n.HP);
+            List<attackDef> attacker = p.ownKingsTower.getImmediateAttackers(p);
+            int atkSum = attacker.Sum(n => n.attacker.Atk);
+            int hpSum = attacker.Sum(n => n.attacker.HP);
 
 
-            if (healthSumL1 > 300 || atkSumL1 > 150)
+            IEnumerable<BoardObj> enemyMinionsL1 = enemyMinions.Where(n => n.Line == 1);
+            IEnumerable<BoardObj> enemyMinionsL2 = enemyMinions.Where(n => n.Line == 2);
+
+            int atkSumL1 = enemyMinionsL1.Sum(n => n.Atk);
+            int healthSumL1 = enemyMinionsL1.Sum(n => n.HP);
+
+
+            int atkSumL2 = enemyMinionsL2.Sum(n => n.Atk);
+            int healthSumL2 = enemyMinionsL2.Sum(n => n.HP);
+
+
+
+            if (hpSum > p.ownKingsTower.Atk * 2)
+                return 3;
+            if (healthSumL1 > p.ownPrincessTower1.Atk * 2 && atkSumL1 > p.ownPrincessTower1.MaxHP/10
+                || healthSumL1 > p.ownPrincessTower1.Atk * 4
+                || enemyMinionsL1.Count() > 5)
                 return 1;
-            if (healthSumL2 > 300 || atkSumL2 > 150)
+            if (healthSumL2 > p.ownPrincessTower2.Atk * 2  && atkSumL2 > p.ownPrincessTower2.MaxHP / 10
+                || healthSumL2 > p.ownPrincessTower2.Atk * 4
+                || enemyMinionsL2.Count() > 5)
+                
                 return 2;
 
 
@@ -573,8 +591,10 @@
             {
                 if (line == 2)
                     return FightState.DRPT;
-                else
+                else if (line == 1)
                     return FightState.DLPT;
+                else
+                    return FightState.DKT;
             }
             else
             {
@@ -764,7 +784,7 @@
                     return new Handcard(atkFlying.name, atkFlying.lvl);
             }
 
-            if (DeployBuildingDecision())
+            if (DeployBuildingDecision(p))
             {
                 // ToDo: Take right building and set right Building-Type
                 var buildingCard = p.ownHandCards.Where(n => n.card.type == boardObjType.BUILDING).FirstOrDefault();
@@ -882,10 +902,10 @@
             return false;
         }
 
-        public static bool DeployBuildingDecision()
+        public static bool DeployBuildingDecision(Playfield p)
         {
-            // ToDo: Find gut conditions
-            return true;
+            VectorAI buildingPosition = p.getDeployPosition(p.ownKingsTower, deployDirectionRelative.Up, 5000);
+            return IsEnemyInArea(p, buildingPosition, 3000);
         }
 
         private static bool IsAOEAttackNeeded(Playfield p)
@@ -900,6 +920,17 @@
         }
         #endregion
 
+
+        private static bool IsEnemyInArea(Playfield p, VectorAI position, int areaSize)
+        {
+            if (p.home)
+                return p.enemyMinions.Where(n => p.ownPrincessTower2.Position.X < n.Position.X
+                                        && n.Position.X < p.ownPrincessTower1.Position.X).Count() > 0;
+
+            else
+                return p.enemyMinions.Where(n => p.ownPrincessTower1.Position.X < n.Position.X
+                                        && n.Position.X < p.ownPrincessTower2.Position.X).Count() > 0;
+        }
         #region Which Card
 
         #endregion
@@ -1123,7 +1154,7 @@
                 if (enemy != null && enemy.Position != null)
                 {
                     //LC: also you can try group Group = new group(false, enemy.Position, p.enemyMinions, lowHPlimit, false, radius); and get the full characteristics of the group for deciding whether the spell will be effective against this group or not (hint: set lowHPlimit = hc.card.Atk, radius = hc.card.DamageRadius)
-                    if (HowManyCharactersAroundCharacter(p, enemy) >= Settings.SpellCorrectionConditionCharCount)
+                    if (HowManyNFCharactersAroundCharacter(p, enemy) >= Settings.SpellCorrectionConditionCharCount)
                     {
                         Logger.Debug("enemy.Name = {Name}", enemy.Name);
                         if (enemy.Position != null) Logger.Debug("enemy.Position = {position}", enemy.Position);
@@ -1198,6 +1229,25 @@
                                             && n.Position.X < obj.Position.X + boarderX &&
                                             n.Position.Y > obj.Position.Y - boarderY &&
                                             n.Position.Y < obj.Position.Y + boarderY);
+
+            if (characterAround == null)
+                return null;
+
+            return characterAround.Count();
+        }
+
+        // NF = not flying
+        public static int? HowManyNFCharactersAroundCharacter(Playfield p, BoardObj obj)
+        {
+            int boarderX = 1000;
+            int boarderY = 1000;
+            IEnumerable<BoardObj> playerCharacter = p.ownMinions;
+            IEnumerable<BoardObj> characterAround;
+
+            characterAround = playerCharacter.Where(n => n.Position.X > obj.Position.X - boarderX
+                                            && n.Position.X < obj.Position.X + boarderX &&
+                                            n.Position.Y > obj.Position.Y - boarderY &&
+                                            n.Position.Y < obj.Position.Y + boarderY && n.card.Transport == transportType.GROUND);
 
             if (characterAround == null)
                 return null;
