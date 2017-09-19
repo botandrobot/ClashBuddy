@@ -20,7 +20,7 @@
 
         public override string Author => "Peros_";
 
-        public override Version Version => new Version(1, 4, 0, 0);
+        public override Version Version => new Version(1, 5, 0, 0);
         public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
         #endregion
 
@@ -88,22 +88,23 @@
 
 
             // Mobs
-            Tank,
-            DamageDealer,
-            BuildingAttacker,
-            Ranger,
-            AOEGround,
-            AOEAll,
+            MobsTank,
+            MobsDamageDealer,
+            MobsBuildingAttacker,
+            MobsRanger,
+            MobsAOEGround,
+            MobsAOEAll,
+            MobsFlyingAttack,
 
             // Buildings
-            Defense,
-            Attack,
-            Spawning,
-            Mana,
+            BuildingsDefense,
+            BuildingsAttack,
+            BuildingsSpawning,
+            BuildingsMana,
 
             // Spells
-            Damaging,
-            NonDamaging
+            SpellsDamaging,
+            SpellsNonDamaging
         };
         #endregion enums
 
@@ -111,16 +112,31 @@
 
         public override Cast GetBestCast(Playfield p)
         {
-            //DebugThings(p);
-
+            DebugThings(p);
             Cast bc = null;
             Logger.Debug("Home = {Home}", p.home);
 
             #region Apollo Magic
             Logger.Debug("Part: Get CurrentSituation");
             currentSituation = CurrentFightState(p);
-            Logger.Debug("Part: SpellMagic");
-            Handcard hc = SpellMagic(p, currentSituation);
+            Logger.Debug("Part: GetOppositeCard");
+            Handcard hc = GetOppositeCard(p, currentSituation);
+
+            if (hc == null)
+            {
+                Logger.Debug("Part: SpellApolloWay");
+                VectorAI choosedPosition;
+                Handcard hcApollo = SpellMagic(p, currentSituation, out choosedPosition);
+
+                if (hcApollo != null)
+                {
+                    hc = hcApollo;
+
+                    if (choosedPosition != null)
+                        return new Cast(hcApollo.name, choosedPosition, hcApollo);
+                }
+
+            }
 
             if (hc == null)
                 return null;
@@ -138,17 +154,25 @@
 
         private static void DebugThings(Playfield p)
         {
-            List<BoardObj> enemies = p.enemyMinions;
-            group testGroup1 = p.getGroup(false, 200, boPriority.byLowHpNumber, 3000);
-            group testGroup2 = p.getGroup(false, 200, boPriority.byAvgHpNumber, 3000);
-            group testGroup3 = p.getGroup(false, 200, boPriority.byHiHpNumber, 3000);
+            Logger.Debug("Name: " + p.ownKingsTower.Name);
+            Logger.Debug("Name: " + p.ownPrincessTower1.Name);
+            Logger.Debug("Name: " + p.ownPrincessTower2.Name);
+
+            int i1 = p.ownKingsTower.HP;
+            int i2 = p.ownPrincessTower1.HP;
+            int i3 = p.ownPrincessTower2.HP;
+
+            IEnumerable<Handcard> damagingSpells = GetOwnHandCards(p, boardObjType.AOE, SpecificCardType.SpellsDamaging);
+            IOrderedEnumerable<Handcard> radiusOrderedDS = damagingSpells.OrderBy(n => n.card.DamageRadius);
+            group Group = p.getGroup(false, 200, boPriority.byTotalNumber, radiusOrderedDS.FirstOrDefault().card.DamageRadius);
+            int abc = 10;
+            Logger.Debug("test");
         }
 
-        private static Handcard SpellMagic(Playfield p, FightState currentSituation)
-        {
-            //opposite oppo = KnowledgeBase.Instance.getOppositeCardToAll(p, myObj);
-            //Handcard opposite = KnowledgeBase.Instance.getOppositeCard(Playfield p, BoardObj attacker, bool canWait = true);
 
+
+        private static Handcard GetOppositeCard(Playfield p, FightState currentSituation)
+        {
             if (p.enemyKingsTower.HP < Settings.KingTowerSpellDamagingHealth)
             {
                 Handcard hc = AttackKingTowerWithSpell(p);
@@ -162,83 +186,67 @@
                 case FightState.UAKT:
                 case FightState.UALPT:
                 case FightState.UARPT:
-                    return GetBestUnderAttackCard(p);
                 case FightState.AKT:
                 case FightState.ALPT:
                 case FightState.ARPT:
-                    return GetBestAttackCard(p);
                 case FightState.DKT:
                 case FightState.DLPT:
                 case FightState.DRPT:
-                    return GetBestDefenseCard(p);
+                {
+                        BoardObj defender = GetBestDefender(p);
+
+                        if (defender == null)
+                            return null;
+
+                        Logger.Debug("BestDefender: {Defender}", defender.ToString());
+                        opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, canWaitDecision(p));
+
+                        if (spell != null && spell.hc != null)
+                        {
+                            Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
+                            if (spell.hc.missingMana == 100) // Oposite-Card is already on the field
+                                return null;
+                            else if (spell.hc.missingMana > 0)
+                                return null;
+                            else
+                                return spell.hc;
+                        }
+                }
+                break; 
+            }
+            return null;
+        }
+
+        private static Handcard SpellMagic(Playfield p, FightState currentSituation, out VectorAI choosedPosition)
+        {
+            choosedPosition = null;
+            switch (currentSituation)
+            {
+                case FightState.UAKT:
+                case FightState.UALPT:
+                case FightState.UARPT:
+                case FightState.DKT:
+                case FightState.DLPT:
+                case FightState.DRPT:
+                case FightState.AKT:
+                case FightState.ALPT:
+                case FightState.ARPT:
+                    return All(p, currentSituation, out choosedPosition);
                 case FightState.START:
                     return null;
                 case FightState.WAIT:
                     return null;
                 default:
-                    return GetBestAttackCard(p);
+                    return All(p, currentSituation, out choosedPosition);
             }
-        }
-
-        #region Get Best Card To Deploy
-        private static Handcard GetBestUnderAttackCard(Playfield p)
-        {
-            // TODO: Find most important char to counter
-            // Priority1: highest atk
-
-            // ## Old
-            //IOrderedEnumerable<BoardObj> enemies = p.enemyMinions.OrderBy(n => n.Atk + ((n.level * 0.1) * n.Atk));
-            //BoardObj enemy = enemies.FirstOrDefault();
-
-            //if (enemy != null)
-            //{
-            //    Logger.Debug("Enemy in GetBestUnderAttackCard");
-            //    Logger.Debug(enemy.ToString());
-            //    Handcard spell = KnowledgeBase.Instance.getOppositeCard(p, enemy);
-
-            //    if (spell != null)
-            //    {
-            //        if (spell.missingMana > 0)
-            //            return null;
-            //        else
-            //            return spell;
-            //    }
-            //    else
-            //        return DefenseTroop(p);
-            //}
-            //else
-            //    return DefenseTroop(p);
-
-            Logger.Debug("Path: Spell - GetBestUnderAttackCard");
-            BoardObj defender = GetBestDefender(p);
-
-            if (defender == null)
-                return null;
-            //else if (defender.Name.ToString() == "princesstower" || defender.Name.ToString() == "kingtower")
-            //    return DefenseTroop(p);
-
-            Logger.Debug("BestDefender: {Defender}", defender.Name);
-            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, canWaitDecision(p));
-
-            if (spell != null && spell.hc != null)
-            {
-                Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
-                if (spell.hc.missingMana == 100) // Oposite-Card is already on the field
-                    return DefenseTroop(p);
-                else if (spell.hc.missingMana > 0)
-                    return null;
-                else
-                    return spell.hc;
-            }
-            else
-                return DefenseTroop(p);
         }
 
         private static BoardObj GetBestDefender(Playfield p)
         {
+            // TODO: Find better condition
             Logger.Debug("Path: Spell - GetBestDefender");
             int count = 0;
-            BoardObj enemy = EnemyCharacterWithTheMostEnemiesAround(p, out count);
+            BoardObj enemy = EnemyCharacterWithTheMostEnemiesAround(p, out count, transportType.NONE);
 
             if (enemy == null)
                 return p.ownKingsTower;
@@ -249,57 +257,8 @@
                 return p.ownPrincessTower1;
             else
                 return p.ownKingsTower;
+
         }
-
-        private static Handcard GetBestAttackCard(Playfield p)
-        {
-            Logger.Debug("Path: Spell - GetBestAttackCard");
-            // TODO: Find most important char to counter
-            BoardObj defender = GetBestDefender(p);
-
-            if (defender == null)
-                return null;
-
-            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, canWaitDecision(p));
-
-            if (spell != null && spell.hc != null)
-            {
-                Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
-                if (spell.hc.missingMana == 100) // Oposite-Card is already on the field
-                    return All(p);
-                else if (spell.hc.missingMana > 0)
-                    return null;
-                else
-                    return spell.hc;
-            }
-            else
-                return All(p);
-        }
-
-        private static Handcard GetBestDefenseCard(Playfield p)
-        {
-            Logger.Debug("Path: Spell - GetBestDefenseCard");
-
-            BoardObj defender = GetBestDefender(p);
-            if (defender == null)
-                return null;
-
-            opposite spell = KnowledgeBase.Instance.getOppositeToAll(p, defender, canWaitDecision(p));
-
-            if (spell != null && spell.hc != null)
-            {
-                Logger.Debug("Spell: {Sp} - MissingMana: {MM}", spell.hc.name, spell.hc.missingMana);
-                if (spell.hc.missingMana == 100) // Oposite-Card is already on the field
-                    return Defense(p);
-                else if (spell.hc.missingMana > 0)
-                    return null;
-                else
-                    return spell.hc;
-            }
-            else
-                return Defense(p);
-        }
-        #endregion
 
         #region Analyse Current Situation
         public static FightState CurrentFightState(Playfield p)
@@ -423,7 +382,7 @@
             {
                 // Analyse own HandCards
                 IEnumerable<Handcard> mobCards = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB);
-                IEnumerable<Handcard> tankCards = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.Tank);
+                IEnumerable<Handcard> tankCards = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsTank);
                 IEnumerable<Handcard> destroyerCard = mobCards.OrderBy(n => (n.card.Atk * n.card.SummonNumber) > 100);  // use n.card.SummonNumber
 
                 if (p.enemyKingsTower.HP < 1000)
@@ -460,12 +419,13 @@
 
         private static int GetDangerLine(Playfield p) // Can this be a dangerous situation?
         {
+            // TODO: Maybe make a difference between on our side and not
+
             List<BoardObj> enemyMinions = p.enemyMinions;
 
-            List<attackDef> attacker = p.ownKingsTower.getImmediateAttackers(p);
+            List<attackDef> attacker = p.ownKingsTower.getPossibleAttackers(p);
             int atkSum = attacker.Sum(n => n.attacker.Atk);
             int hpSum = attacker.Sum(n => n.attacker.HP);
-
 
             IEnumerable<BoardObj> enemyMinionsL1 = enemyMinions.Where(n => n.Line == 1);
             IEnumerable<BoardObj> enemyMinionsL2 = enemyMinions.Where(n => n.Line == 2);
@@ -473,14 +433,9 @@
             int atkSumL1 = enemyMinionsL1.Sum(n => n.Atk);
             int healthSumL1 = enemyMinionsL1.Sum(n => n.HP);
 
-
             int atkSumL2 = enemyMinionsL2.Sum(n => n.Atk);
             int healthSumL2 = enemyMinionsL2.Sum(n => n.HP);
 
-
-
-            if (hpSum > p.ownKingsTower.Atk * 2)
-                return 3;
             if (healthSumL1 > p.ownPrincessTower1.Atk * 2 && atkSumL1 > p.ownPrincessTower1.MaxHP/10
                 || healthSumL1 > p.ownPrincessTower1.Atk * 4
                 || enemyMinionsL1.Count() > 5)
@@ -488,9 +443,9 @@
             if (healthSumL2 > p.ownPrincessTower2.Atk * 2  && atkSumL2 > p.ownPrincessTower2.MaxHP / 10
                 || healthSumL2 > p.ownPrincessTower2.Atk * 4
                 || enemyMinionsL2.Count() > 5)
-                
                 return 2;
-
+            if (hpSum > p.ownKingsTower.Atk * 3 && atkSum > p.ownKingsTower.MaxHP / 20)
+                return 3;
 
             return 0;
         }
@@ -538,6 +493,8 @@
                 if (p.BattleTime.TotalSeconds < 20)
                     return false;
                 if (p.ownKingsTower.HP < 1000)
+                    return false;
+                if (p.ownKingsTower.attacked)
                     return false;
             }
 
@@ -748,131 +705,109 @@
         }
 
 
-        private static Handcard All(Playfield p)
+        private static Handcard All(Playfield p, FightState currentSituation, out VectorAI choosedPosition)
         {
+            // TODO: Use more current situation
             Logger.Debug("Path: Spell - All");
-            IOrderedEnumerable<Handcard> troopCycleSpells = cycleCard(p);
-            IEnumerable<Handcard> damagingSpells = p.ownHandCards.Where(s => s != null && s.card.type == boardObjType.AOE);
-            IEnumerable<Handcard> troopPowerSpells = p.ownHandCards.Where(s => s != null && s.card.type == boardObjType.AOE);
 
-            Handcard resultHC = new Handcard();
+            Handcard damagingSpell = DamagingSpellDecision(p, out choosedPosition);
+            if (damagingSpell != null)
+                return damagingSpell;
 
-            if (DamagingSpellDecision(p))
-            {
-                var damagingSpell = damagingSpells.FirstOrDefault();
-
-                if (damagingSpell != null)
-                    //return new CardSpell(damagingSpell.Name.Value, SpellType.SpellDamaging);
-                    return new Handcard(damagingSpell.name, damagingSpell.lvl);
-            }
-
-            if (IsAOEAttackNeeded(p))
-            {
-                var atkAOE = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB && n.card.aoeGround).FirstOrDefault(); // Todo: just AOE-Attack
-                if (atkAOE == null)
-                    atkAOE = p.ownHandCards.Where(n => n.card.TargetType == targetType.GROUND).FirstOrDefault();
-
-                if (atkAOE != null)
-                    //return new CardCharacter(spell.Name.Value, TroopType.AOEAttackGround);
-                    return new Handcard(atkAOE.name, atkAOE.lvl);
-            }
+            Handcard aoeCard = AOEDecision(p, out choosedPosition ,currentSituation);
+            if (aoeCard != null)
+                return aoeCard;
 
             if (p.enemyMinions.Where(n => n.Transport == transportType.AIR).Count() > 0)
             {
-                var atkFlying = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB && n.card.TargetType == targetType.ALL).FirstOrDefault(); // Peros: Not sure if targetType.All is right
+                Logger.Debug("AttackFlying Needed");
+                Handcard atkFlying = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsFlyingAttack).FirstOrDefault();
                 if (atkFlying != null)
-                    return new Handcard(atkFlying.name, atkFlying.lvl);
+                    return atkFlying;
             }
 
-            if (DeployBuildingDecision(p))
+            if (DeployBuildingDecision(p, out choosedPosition))
             {
                 // ToDo: Take right building and set right Building-Type
                 var buildingCard = p.ownHandCards.Where(n => n.card.type == boardObjType.BUILDING).FirstOrDefault();
                 if (buildingCard != null)
                     return new Handcard(buildingCard.name, buildingCard.lvl);
             }
+            choosedPosition = null;
 
-            if (cycleCard(p).Count() > 1)
+            var tank = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsTank).OrderBy(n => n.card.MaxHP);
+            if (tank.LastOrDefault() != null && tank.LastOrDefault().missingMana <= 0)
+                return tank.LastOrDefault();
+
+            var powerSpell = powerCard(p).LastOrDefault();
+            if (powerSpell != null && powerSpell.missingMana <= 0)
+                return powerSpell;
+
+            IOrderedEnumerable<Handcard> troopCycleSpells = cycleCard(p);
+            if (troopCycleSpells.Count() > 1)
             {
                 var troopCycle = troopCycleSpells.FirstOrDefault();
                 if (troopCycle != null)
-                    return new Handcard(troopCycle.name, troopCycle.lvl);
+                    return troopCycle;
             }
-
-            var powerSpell = powerCard(p).FirstOrDefault();
-            if (powerSpell != null)
-                return new Handcard(powerSpell.name, powerSpell.lvl);
 
             return p.ownHandCards.FirstOrDefault();
         }
 
-        private static Handcard DefenseTroop(Playfield p)
-        {
-            Logger.Debug("Path: Spell - DefenseTroop");
+        //private static Handcard DefenseTroop(Playfield p)
+        //{
+        //    Logger.Debug("Path: Spell - DefenseTroop");
 
-            if (IsAOEAttackNeeded(p))
-            {
-                var atkAOE = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB).FirstOrDefault(); // Todo: just AOE-Attack
-                if (atkAOE == null)
-                    atkAOE = p.ownHandCards.Where(n => n.card.TargetType == targetType.GROUND).FirstOrDefault();
+        //    if (IsAOEAttackNeeded(p))
+        //    {
+        //        var atkAOE = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEGround).FirstOrDefault(); // Todo: just AOE-Attack
 
-                if (atkAOE != null)
-                    //return new CardCharacter(spell.Name.Value, TroopType.AOEAttackGround);
-                    return new Handcard(atkAOE.name, atkAOE.lvl);
-            }
+        //        if (atkAOE != null)
+        //            return new Handcard(atkAOE.name, atkAOE.lvl);
+        //    }
 
-            if (p.enemyMinions.Where(n => n.Transport == transportType.AIR).Count() > 0)
-            {
-                var atkFlying = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB && n.card.TargetType == targetType.ALL).FirstOrDefault(); // Peros: Not sure if targetType.All is right
-                if (atkFlying != null)
-                    return new Handcard(atkFlying.name, atkFlying.lvl);
-            }
+        //    if (p.enemyMinions.Where(n => n.Transport == transportType.AIR).Count() > 0)
+        //    {
+        //        var atkFlying = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsFlyingAttack).FirstOrDefault();
+        //        if (atkFlying != null)
+        //            return new Handcard(atkFlying.name, atkFlying.lvl);
+        //    }
 
-            var powerSpell = powerCard(p).FirstOrDefault();
-            if (powerSpell != null)
-                return new Handcard(powerSpell.name, powerSpell.lvl);
+        //    var powerSpell = powerCard(p).FirstOrDefault();
+        //    if (powerSpell != null)
+        //        return new Handcard(powerSpell.name, powerSpell.lvl);
 
-            return cycleCard(p).FirstOrDefault();
-        }
+        //    return cycleCard(p).FirstOrDefault();
+        //}
 
-        private static Handcard Defense(Playfield p)
-        {
-            Logger.Debug("Path: Spell - Defense");
-            IEnumerable<Handcard> damagingSpells = p.ownHandCards.Where(s => s != null && s.card.type == boardObjType.AOE);
+        //private static Handcard Defense(Playfield p, FightState currentSituation, out VectorAI choosedPosition)
+        //{
+        //    Logger.Debug("Path: Spell - Defense");
+        //    choosedPosition = null;
+        //    IEnumerable<Handcard> damagingSpells = GetOwnHandCards(p, boardObjType.AOE, SpecificCardType.SpellsDamaging);
 
-            if (DamagingSpellDecision(p))
-            {
-                var damagingSpell = damagingSpells.FirstOrDefault();
 
-                if (damagingSpell != null)
-                    //return new CardSpell(damagingSpell.Name.Value, SpellType.SpellDamaging);
-                    return new Handcard(damagingSpell.name, damagingSpell.lvl);
-            }
+        //    Handcard damagingSpell = DamagingSpellDecision(p, out choosedPosition);
+        //    if (damagingSpell != null)
+        //        return new Handcard(damagingSpell.name, damagingSpell.lvl);
 
-            if (IsAOEAttackNeeded(p))
-            {
-                var atkAOE = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB).FirstOrDefault(); // Todo: just AOE-Attack
-                if (atkAOE == null)
-                    atkAOE = p.ownHandCards.Where(n => n.card.TargetType == targetType.GROUND).FirstOrDefault();
+        //    Handcard aoeCard = AOEDecision(p, out choosedPosition, currentSituation);
+        //    if (aoeCard != null)
+        //        return aoeCard;
 
-                if (atkAOE != null)
-                    //return new CardCharacter(spell.Name.Value, TroopType.AOEAttackGround);
-                    return new Handcard(atkAOE.name, atkAOE.lvl);
-            }
+        //    if (p.enemyMinions.Where(n => n.Transport == transportType.AIR).Count() > 0)
+        //    {
+        //        Handcard atkFlying = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsFlyingAttack).FirstOrDefault();
+        //        if (atkFlying != null)
+        //            return atkFlying;
+        //    }
 
-            if (p.enemyMinions.Where(n => n.Transport == transportType.AIR).Count() > 0)
-            {
-                var atkFlying = p.ownHandCards.Where(n => n.card.type == boardObjType.MOB && n.card.TargetType == targetType.ALL).FirstOrDefault(); // Peros: Not sure if targetType.All is right
-                if (atkFlying != null)
-                    return new Handcard(atkFlying.name, atkFlying.lvl);
-            }
+        //    var powerSpell = powerCard(p).FirstOrDefault();
+        //    if (powerSpell != null)
+        //        return new Handcard(powerSpell.name, powerSpell.lvl);
 
-            var cycleSpell = cycleCard(p).FirstOrDefault();
-            if (cycleSpell != null)
-                return new Handcard(cycleSpell.name, cycleSpell.lvl);
-
-            return p.ownHandCards.FirstOrDefault();
-        }
+        //    return p.ownHandCards.FirstOrDefault();
+        //}
 
 
         private static Handcard Building(Playfield p)
@@ -886,37 +821,152 @@
         }
 
 
-        public static bool DamagingSpellDecision(Playfield p)
+        public static Handcard DamagingSpellDecision(Playfield p, out VectorAI choosedPosition)
         {
-            // TODO: Better condition
-            int count = 0;
-            EnemyCharacterWithTheMostEnemiesAround(p, out count);
+            choosedPosition = null;
 
-            if (count > Settings.SpellDeployConditionCharCount)
-                return true;
-
-
+            IEnumerable<Handcard> damagingSpells = GetOwnHandCards(p, boardObjType.AOE, SpecificCardType.SpellsDamaging);
+            
+            if(damagingSpells.FirstOrDefault() == null)
+                return null;
 
 
+            if (p.suddenDeath)
+            {
+                IEnumerable<Handcard> ds3 = damagingSpells.Where(n => (n.card.towerDamage >= p.enemyPrincessTower1.HP));
+                IEnumerable<Handcard> ds4 = damagingSpells.Where(n => (n.card.towerDamage >= p.enemyPrincessTower2.HP));
+                IEnumerable<Handcard> ds5 = damagingSpells.Where(n => (n.card.towerDamage >= p.enemyKingsTower.HP));
 
-            return false;
+
+                if (ds3.FirstOrDefault() != null)
+                {
+                    Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds3.FirstOrDefault().card.towerDamage, 
+                        p.enemyPrincessTower1.HP);
+                    choosedPosition = p.enemyPrincessTower1.Position;
+                    return ds3.FirstOrDefault();
+                }
+
+                if (ds4.FirstOrDefault() != null)
+                {
+                    Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds4.FirstOrDefault().card.towerDamage, 
+                        p.enemyPrincessTower2.HP);
+                    choosedPosition = p.enemyPrincessTower2.Position;
+                    return ds4.FirstOrDefault();
+                }
+
+                if (ds5.FirstOrDefault() != null)
+                {
+                    Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds5.FirstOrDefault().card.towerDamage, 
+                        p.enemyKingsTower.HP);
+                    choosedPosition = p.enemyKingsTower.Position;
+                    return ds5.FirstOrDefault();
+                }
+            }
+
+            IOrderedEnumerable<Handcard> radiusOrderedDS = damagingSpells.OrderBy(n => n.card.DamageRadius);
+
+            group Group = p.getGroup(false, 200, boPriority.byTotalNumber, radiusOrderedDS.LastOrDefault().card.DamageRadius);
+            int hpSum = (Group.lowHPboHP + Group.avgHPboHP + Group.hiHPboHP);
+            IEnumerable<Handcard> ds1 = damagingSpells.Where(n => n.card.DamageRadius > 3 && n.card.Atk * 5 <= hpSum);
+
+            if (ds1.FirstOrDefault() != null)
+            {
+                choosedPosition = p.getDeployPosition(Group.Position, deployDirectionRelative.Down, 1000);
+                return ds1.FirstOrDefault();
+            }
+
+            IEnumerable<Handcard> ds2 = damagingSpells.Where(n => n.card.Atk * 4 <= hpSum);
+
+            if (ds2.FirstOrDefault() != null)
+            {
+                choosedPosition = p.getDeployPosition(Group.Position, deployDirectionRelative.Down, 1000);
+                return ds2.FirstOrDefault();
+            }
+
+            return null;
+
+            
         }
 
-        public static bool DeployBuildingDecision(Playfield p)
+        public static bool DeployBuildingDecision(Playfield p, out VectorAI choosedPosition)
         {
-            VectorAI buildingPosition = p.getDeployPosition(p.ownKingsTower, deployDirectionRelative.Up, 5000);
-            return IsEnemyInArea(p, buildingPosition, 3000);
+            choosedPosition = p.getDeployPosition(p.ownKingsTower, deployDirectionRelative.Up, 5000);
+            return IsEnemyInArea(p, choosedPosition, 3000);
         }
 
-        private static bool IsAOEAttackNeeded(Playfield p)
+
+        private static Handcard AOEDecision(Playfield p, out VectorAI choosedPosition, FightState currentSituation)
         {
             int biggestEnemieGroupCount;
-            BoardObj obj = EnemyCharacterWithTheMostEnemiesAround(p, out biggestEnemieGroupCount);
+            choosedPosition = null;
+            Handcard aoeGround = null, aoeAir = null;
 
+            BoardObj objGround = EnemyCharacterWithTheMostEnemiesAround(p, out biggestEnemieGroupCount, transportType.GROUND);
             if (biggestEnemieGroupCount > 3)
-                return true;
+                aoeGround = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEGround).FirstOrDefault();
 
-            return false;
+            BoardObj objAir = EnemyCharacterWithTheMostEnemiesAround(p, out biggestEnemieGroupCount, transportType.AIR);
+            if (biggestEnemieGroupCount >= 3)
+                aoeAir = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEGround).FirstOrDefault();
+
+            switch (currentSituation)
+            {
+                case FightState.DLPT:
+                case FightState.UALPT:
+                    choosedPosition = p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine1);
+                    if (aoeAir != null)
+                        return aoeAir;
+
+                    return aoeGround;
+                case FightState.ALPT:
+                    choosedPosition = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
+                    if (aoeAir != null)
+                        return aoeAir;
+
+                    return aoeGround;
+                case FightState.DRPT:
+                case FightState.UARPT:
+                    choosedPosition = p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine2);
+                    if (aoeAir != null)
+                        return aoeAir;
+
+                    return aoeGround;
+                case FightState.ARPT:
+                    choosedPosition = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
+
+
+                    if (aoeAir != null)
+                        return aoeAir;
+
+                    return aoeGround;
+
+                case FightState.DKT:
+                case FightState.UAKT:
+                    if (aoeAir != null)
+                    {
+                        choosedPosition = objAir.Line == 1 ? p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine1) 
+                            : p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine2);
+                        return aoeAir;
+
+                    }
+
+                    if (aoeGround != null)
+                    {
+                        choosedPosition = objGround.Line == 1 ? p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine1)
+                            : p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine2);
+                    }
+                    return aoeGround;
+                case FightState.AKT:
+                    choosedPosition = p.enemyKingsTower.Line == 3 ? p.enemyKingsTower.Position
+                        : p.enemyKingsTower.Line == 1 ? p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1)
+                        : p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
+
+                    if (aoeAir != null)
+                        return aoeAir;
+
+                    return aoeGround;
+            }
+            return null;
         }
         #endregion
 
@@ -942,7 +992,7 @@
             if (hc == null || hc.card == null)
                 return null;
 
-            VectorAI choosedPosition = new VectorAI(0, 0), nextPosition;
+            VectorAI choosedPosition = null;
 
 
             if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
@@ -1149,7 +1199,7 @@
             else
             {
                 int count;
-                BoardObj enemy = EnemyCharacterWithTheMostEnemiesAround(p, out count);
+                BoardObj enemy = EnemyCharacterWithTheMostEnemiesAround(p, out count, transportType.NONE);
 
                 if (enemy != null && enemy.Position != null)
                 {
@@ -1255,7 +1305,7 @@
             return characterAround.Count();
         }
 
-        public static BoardObj EnemyCharacterWithTheMostEnemiesAround(Playfield p, out int count)
+        public static BoardObj EnemyCharacterWithTheMostEnemiesAround(Playfield p, out int count, transportType tP)
         {
             int boarderX = 1000;
             int boarderY = 1000;
@@ -1266,10 +1316,19 @@
 
             foreach (var item in enemies)
             {
-                enemiesAroundTemp = enemies.Where(n => n.Position.X > item.Position.X - boarderX
-                                                && n.Position.X < item.Position.X + boarderX &&
-                                                n.Position.Y > item.Position.Y - boarderY &&
-                                                n.Position.Y < item.Position.Y + boarderY);
+                if (tP != transportType.NONE)
+                {
+                    enemiesAroundTemp = enemies.Where(n => n.Position.X > item.Position.X - boarderX
+                                                    && n.Position.X < item.Position.X + boarderX &&
+                                                    n.Position.Y > item.Position.Y - boarderY &&
+                                                    n.Position.Y < item.Position.Y + boarderY && n.Transport == tP);
+                }else
+                {
+                    enemiesAroundTemp = enemies.Where(n => n.Position.X > item.Position.X - boarderX
+                                && n.Position.X < item.Position.X + boarderX &&
+                                n.Position.Y > item.Position.Y - boarderY &&
+                                n.Position.Y < item.Position.Y + boarderY);
+                }
 
                 if (enemiesAroundTemp?.Count() > count)
                 {
@@ -1306,35 +1365,37 @@
                     return cardsOfType;
 
                 // Mobs
-                case SpecificCardType.Tank:
+                case SpecificCardType.MobsTank:
                     return cardsOfType.Where(n => n.card.MaxHP >= Settings.MinHealthAsTank);
-                case SpecificCardType.DamageDealer:
+                case SpecificCardType.MobsDamageDealer:
                     return cardsOfType.Where(n => (n.card.Atk * n.card.SummonNumber) > 100);
-                case SpecificCardType.BuildingAttacker:
+                case SpecificCardType.MobsBuildingAttacker:
                     return cardsOfType.Where(n => n.card.TargetType == targetType.BUILDINGS);
 
-                case SpecificCardType.Ranger:
+                case SpecificCardType.MobsRanger:
                     return cardsOfType.Where(n => n.card.MaxRange >= 3);
-                case SpecificCardType.AOEGround:
+                case SpecificCardType.MobsAOEGround:
                     return cardsOfType.Where(n => n.card.aoeGround);
-                case SpecificCardType.AOEAll:
+                case SpecificCardType.MobsAOEAll:
                     return cardsOfType.Where(n => n.card.aoeAir);
+                case SpecificCardType.MobsFlyingAttack:
+                    return cardsOfType.Where(n => n.card.TargetType == targetType.ALL);
 
                 // Buildings
-                case SpecificCardType.Defense:
+                case SpecificCardType.BuildingsDefense:
                     return cardsOfType.Where(n => n.card.Atk > 0); // TODO: Define
-                case SpecificCardType.Attack:
+                case SpecificCardType.BuildingsAttack:
                     return cardsOfType.Where(n => n.card.Atk > 0); // TODO: Define
-                case SpecificCardType.Spawning:
+                case SpecificCardType.BuildingsSpawning:
                     return cardsOfType.Where(n => n.card.SpawnNumber > 0);
-                case SpecificCardType.Mana:
+                case SpecificCardType.BuildingsMana:
                     break; // TODO: ManaProduction
 
 
                 // Spells
-                case SpecificCardType.Damaging:
+                case SpecificCardType.SpellsDamaging:
                     return cardsOfType.Where(n => n.card.DamageRadius > 0);
-                case SpecificCardType.NonDamaging:
+                case SpecificCardType.SpellsNonDamaging:
                     return cardsOfType.Where(n => n.card.DamageRadius == 0);
 
             }
