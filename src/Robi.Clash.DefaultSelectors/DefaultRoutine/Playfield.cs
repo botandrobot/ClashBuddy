@@ -788,9 +788,8 @@ namespace Robi.Clash.DefaultSelectors
             if ((needAir && retval == null) || !needAir) retval = getMobCardByCondition(troops, needDamager);
             return retval;
         }
-
-        /*
-        private Handcard getFinisher(BoardObj bo, bool canWait) //useful for Towers
+                /*
+        private Handcard getFinisher(BoardObj target, bool canWait) //for Towers in 1st place
         {
             Handcard retval = null;
             Handcard hc;
@@ -805,7 +804,7 @@ namespace Robi.Clash.DefaultSelectors
                 switch (hc.card.type)
                 {
                     case boardObjType.PROJECTILE:
-                        if (bo.HP <= hc.card.Atk)
+                        if (target.HP <= hc.card.Atk)
                         {
                             if (projectile == null || hc.card.Atk > projectile.card.Atk) projectile = hc;
                         }
@@ -813,7 +812,7 @@ namespace Robi.Clash.DefaultSelectors
                     case boardObjType.AOE:
                         int towerDmg = hc.card.towerDamage;
                         if (hc.card.name == CardDB.cardName.poison) towerDmg *= 8;
-                        if (bo.HP <= towerDmg)
+                        if (target.HP <= towerDmg)
                         {
                             if (aoe == null || towerDmg > aoe.extraVal)
                             {
@@ -823,28 +822,34 @@ namespace Robi.Clash.DefaultSelectors
                         }
                         continue;
                     case boardObjType.MOB:
-                        if (bo.type == boardObjType.BUILDING)
+                        if (target.type == boardObjType.BUILDING)
                         {
-                            if (KnowledgeBase.Instance.)
+                            //if (KnowledgeBase.Instance.)
                             //TODO: calc online
+                            double hitPerMob = Math.Ceiling((double)hc.card.MaxHP / target.Atk);
+                            double timePerMob = hitPerMob * target.HitSpeed / 1000;
+                            double dmg = hc.card.Atk * 1 * timePerMob / hc.card.HitSpeed;
+
                             if (hc.card.TargetType == targetType.BUILDINGS)
                             {
+
+
                                 int val;
-                                if (bo.HP <= hc.card.Atk)
+                                if (target.HP <= hc.card.Atk)
                                 {
 
                                 }
                                 else
                                 {
-                                    int dmg = hc.card.Atk * hc.card.SummonNumber;
-                                    int restHp = bo.HP - dmg;
+                                    //int dmg = hc.card.Atk * hc.card.SummonNumber;
+                                    int restHp = target.HP - dmg;
                                     double timeForDestroy = restHp / (dmg * 1000 / hc.card.HitSpeed);
-                                    double timeToDestruction = hc.card.MaxHP / (bo.Atk * 1000 / bo.card.HitSpeed);
+                                    double timeToDestruction = hc.card.MaxHP / (target.Atk * 1000 / target.card.HitSpeed);
                                     double delta = timeToDestruction - timeForDestroy;
                                     if (hc.card.SummonNumber > 1)
                                     {
-                                        double hitPerMob = Math.Ceiling((double)hc.card.MaxHP / bo.Atk);
-                                        timeToDestruction = hc.card.SummonNumber * hitPerMob * 1000 / bo.card.HitSpeed;
+                                        double hitPerMob = Math.Ceiling((double)hc.card.MaxHP / target.Atk);
+                                        timeToDestruction = hc.card.SummonNumber * hitPerMob * 1000 / target.card.HitSpeed;
 
                                     }
                                     if (delta > 0)
