@@ -112,7 +112,7 @@
 
         public override Cast GetBestCast(Playfield p)
         {
-            DebugThings(p);
+            //DebugThings(p);
             Cast bc = null;
             Logger.Debug("Home = {Home}", p.home);
 
@@ -154,6 +154,14 @@
 
         private static void DebugThings(Playfield p)
         {
+
+            IEnumerable<Handcard> damagingSpells = GetOwnHandCards(p, boardObjType.AOE, SpecificCardType.SpellsDamaging);
+            if (damagingSpells != null)
+            {
+                IOrderedEnumerable<Handcard> radiusOrderedDS = damagingSpells.OrderBy(n => n.card.DamageRadius);
+                group Group = p.getGroup(false, 200, boPriority.byTotalNumber, radiusOrderedDS.FirstOrDefault().card.DamageRadius);
+            }
+
             Logger.Debug("Name: " + p.ownKingsTower.Name);
             Logger.Debug("Name: " + p.ownPrincessTower1.Name);
             Logger.Debug("Name: " + p.ownPrincessTower2.Name);
@@ -162,9 +170,6 @@
             int i2 = p.ownPrincessTower1.HP;
             int i3 = p.ownPrincessTower2.HP;
 
-            IEnumerable<Handcard> damagingSpells = GetOwnHandCards(p, boardObjType.AOE, SpecificCardType.SpellsDamaging);
-            IOrderedEnumerable<Handcard> radiusOrderedDS = damagingSpells.OrderBy(n => n.card.DamageRadius);
-            group Group = p.getGroup(false, 200, boPriority.byTotalNumber, radiusOrderedDS.FirstOrDefault().card.DamageRadius);
             int abc = 10;
             Logger.Debug("test");
         }
@@ -301,8 +306,9 @@
             //    fightState = EnemyIsOnOurSideDecision(p);
             //}
 
-            int dangerLine = GetDangerLine(p); // if line 0 no dangerous situation
+            
             int attackLine = GetBestAttackingLine(p);
+            int dangerLine = GetDangerLine(p); // if line 0 no dangerous situation
 
             if (dangerLine > 0)
             {
@@ -353,6 +359,7 @@
 
         private static int GetBestAttackingLine(Playfield p) // Good chance for an attack?
         {
+            // TODO: Make a fusion of this and GetDangerLine
             List<BoardObj> ownMinions = p.ownMinions;
 
 
@@ -389,13 +396,13 @@
                 {
                     // Destroyer Card
                     if (destroyerCard.FirstOrDefault() != null && destroyerCard.FirstOrDefault().missingMana <= 0)
-                        return 1;
+                        return 2;
                 }
 
                 if (tankCards.FirstOrDefault() != null && tankCards.FirstOrDefault().missingMana <= 0)
                 {
                     if (mobCards.Where(n => n.manacost <= 0).Count() > 0)
-                        return 1;
+                        return 2;
                 }
             }
             #endregion
@@ -421,33 +428,53 @@
         {
             // TODO: Maybe make a difference between on our side and not
 
-            List<BoardObj> enemyMinions = p.enemyMinions;
+                List<BoardObj> enemyMinions = p.enemyMinions;
 
-            List<attackDef> attacker = p.ownKingsTower.getPossibleAttackers(p);
-            int atkSum = attacker.Sum(n => n.attacker.Atk);
-            int hpSum = attacker.Sum(n => n.attacker.HP);
+                List<attackDef> attacker = p.ownKingsTower.getPossibleAttackers(p);
+                int atkSum = attacker.Sum(n => n.attacker.Atk);
+                int hpSum = attacker.Sum(n => n.attacker.HP);
 
-            IEnumerable<BoardObj> enemyMinionsL1 = enemyMinions.Where(n => n.Line == 1);
-            IEnumerable<BoardObj> enemyMinionsL2 = enemyMinions.Where(n => n.Line == 2);
+                List<attackDef> attackerImmediate = p.ownKingsTower.getImmediateAttackers(p);
+                int atkSumImmediate = attackerImmediate.Sum(n => n.attacker.Atk);
+                int hpSumImmediate = attackerImmediate.Sum(n => n.attacker.HP);
 
-            int atkSumL1 = enemyMinionsL1.Sum(n => n.Atk);
-            int healthSumL1 = enemyMinionsL1.Sum(n => n.HP);
+                IEnumerable<BoardObj> enemyMinionsL1 = enemyMinions.Where(n => n.Line == 1);
+                IEnumerable<BoardObj> enemyMinionsL2 = enemyMinions.Where(n => n.Line == 2);
 
-            int atkSumL2 = enemyMinionsL2.Sum(n => n.Atk);
-            int healthSumL2 = enemyMinionsL2.Sum(n => n.HP);
+                int atkSumL1 = enemyMinionsL1.Sum(n => n.Atk);
+                int healthSumL1 = enemyMinionsL1.Sum(n => n.HP);
 
-            if (healthSumL1 > p.ownPrincessTower1.Atk * 2 && atkSumL1 > p.ownPrincessTower1.MaxHP/10
-                || healthSumL1 > p.ownPrincessTower1.Atk * 4
-                || enemyMinionsL1.Count() > 5)
-                return 1;
-            if (healthSumL2 > p.ownPrincessTower2.Atk * 2  && atkSumL2 > p.ownPrincessTower2.MaxHP / 10
-                || healthSumL2 > p.ownPrincessTower2.Atk * 4
-                || enemyMinionsL2.Count() > 5)
-                return 2;
-            if (hpSum > p.ownKingsTower.Atk * 3 && atkSum > p.ownKingsTower.MaxHP / 20)
-                return 3;
+                int atkSumL2 = enemyMinionsL2.Sum(n => n.Atk);
+                int healthSumL2 = enemyMinionsL2.Sum(n => n.HP);
 
-            return 0;
+                if (hpSum > p.ownKingsTower.Atk * 2 && atkSum > (p.ownKingsTower.MaxHP / 20)
+                    || hpSumImmediate > p.ownKingsTower.Atk * 2 && atkSumImmediate > (p.ownKingsTower.MaxHP / 20))
+                    return 3;
+                if (healthSumL1 > p.ownPrincessTower1.Atk * 2 && atkSumL1 > p.ownPrincessTower1.MaxHP / 10
+                    || healthSumL1 > p.ownPrincessTower1.Atk * 4
+                    || enemyMinionsL1.Count() > 5)
+                    return 1;
+                if (healthSumL2 > p.ownPrincessTower2.Atk * 2 && atkSumL2 > p.ownPrincessTower2.MaxHP / 10
+                    || healthSumL2 > p.ownPrincessTower2.Atk * 4
+                    || enemyMinionsL2.Count() > 5)
+                    return 2;
+
+
+            // Check if building attacks Tower (.attacker is not implemented atm)
+            //if (p.ownKingsTower?.attacker?.type == boardObjType.BUILDING)
+            //    return 3;
+            //if (p.ownPrincessTower1?.attacker?.type == boardObjType.BUILDING)
+            //    return 1;
+            //if (p.ownPrincessTower2?.attacker?.type == boardObjType.BUILDING)
+            //    return 2;
+
+
+            // TODO: Check if building is attacking towers
+            //IEnumerable<Handcard> buildingsAttack = GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsAttack);
+
+            //if(buildingsAttack.Where(n => n.card.DamageRadius ))
+
+                return 0;
         }
 
         #region Decisions
@@ -736,22 +763,19 @@
             choosedPosition = null;
 
             var tank = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsTank).OrderBy(n => n.card.MaxHP);
-            if (tank.LastOrDefault() != null && tank.LastOrDefault().missingMana <= 0)
+            if (tank.LastOrDefault() != null && tank.LastOrDefault().manacost <= p.ownMana)
                 return tank.LastOrDefault();
 
-            var powerSpell = powerCard(p).LastOrDefault();
-            if (powerSpell != null && powerSpell.missingMana <= 0)
-                return powerSpell;
+            var rangerCard = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsRanger).FirstOrDefault();
+            if (rangerCard != null && rangerCard.manacost <= p.ownMana)
+                return rangerCard;
 
-            IOrderedEnumerable<Handcard> troopCycleSpells = cycleCard(p);
-            if (troopCycleSpells.Count() > 1)
-            {
-                var troopCycle = troopCycleSpells.FirstOrDefault();
-                if (troopCycle != null)
-                    return troopCycle;
-            }
+            var damageDealerCard = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsDamageDealer).FirstOrDefault();    
+            if(damageDealerCard != null && damageDealerCard.manacost <= p.ownMana)
+                return damageDealerCard;
 
-            return p.ownHandCards.FirstOrDefault();
+            Logger.Debug("Null");
+            return null;
         }
 
         //private static Handcard DefenseTroop(Playfield p)
@@ -906,7 +930,7 @@
                 aoeGround = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEGround).FirstOrDefault();
 
             BoardObj objAir = EnemyCharacterWithTheMostEnemiesAround(p, out biggestEnemieGroupCount, transportType.AIR);
-            if (biggestEnemieGroupCount >= 3)
+            if (biggestEnemieGroupCount > 3)
                 aoeAir = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEGround).FirstOrDefault();
 
             switch (currentSituation)
@@ -933,13 +957,10 @@
                     return aoeGround;
                 case FightState.ARPT:
                     choosedPosition = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
-
-
                     if (aoeAir != null)
                         return aoeAir;
 
                     return aoeGround;
-
                 case FightState.DKT:
                 case FightState.UAKT:
                     if (aoeAir != null)
@@ -1068,38 +1089,37 @@
             {
                 if (hc.card.MaxHP >= Settings.MinHealthAsTank)
                 {
-                    //Logger.Debug("DKT Troop-Name {0} ; CartType GroundAttack, Flying or Tank", cardToDeploy.Name);
                     if (GetNearestEnemy(p)?.Line == 2)
                     {
                         Logger.Debug("KT RightUp");
-                        //VectorAI v = new VectorAI(p.ownKingsTower.Position.X + 1000, p.enemyKingsTower.Position.Y);
                         VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirectionRelative.RightUp, 100);
                         return v;
                     }
                     else
                     {
                         Logger.Debug("KT LeftUp");
-                        //VectorAI v = new VectorAI(p.ownKingsTower.Position.X - 1000, p.enemyKingsTower.Position.Y);
                         VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirectionRelative.LeftUp, 100);
                         return v;
                     }
                 }
+                else if(hc.card.Transport == transportType.AIR)
+                {
+                    if (GetNearestEnemy(p)?.Line == 2)
+                        return p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine2);
+                    else
+                        return p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine1);
+                }
                 else
                 {
-                    //p.ownKingsTower.Position.AddYInDirection(p);
-                    //VectorAI position = p.getDeployPosition(p.ownKingsTower.Position, deployDirection.Down, 1000);
-
                     if (GetNearestEnemy(p)?.Line == 2)
                     {
                         Logger.Debug("BehindKT: Line2");
-                        //VectorAI position = new VectorAI(position.X + 300, position.Y);
                         VectorAI position = p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine2);
                         return position;
                     }
                     else
                     {
                         Logger.Debug("BehindKT: Line1");
-                        //VectorAI position = new VectorAI(position.X - 300, position.Y);
                         VectorAI position = p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine1);
                         return position;
                     }
@@ -1130,7 +1150,6 @@
             if (lPT == null || lPT.Position == null)
                 return DKT(p, hc);
 
-            //Logger.Debug("DLPT: LeftPrincessTower = " + lPT.ToString());
             VectorAI lPTP = lPT.Position;
             VectorAI correctedPosition = PrincessTowerCharacterDeploymentCorrection(lPTP, p, hc);
             return correctedPosition;
@@ -1357,7 +1376,12 @@
         private static IEnumerable<Handcard> GetOwnHandCards(Playfield p, boardObjType cardType, SpecificCardType sCardType)
         {
             IEnumerable<Handcard> cardsOfType = p.ownHandCards.Where(n => n.card.type == cardType);
+            foreach (var item in p.ownHandCards)
+            {
+                Logger.Debug("Handcard: " + item.card.name + "missingMana: "+ item.missingMana);
+            }
 
+            
 
             switch (sCardType)
             {
