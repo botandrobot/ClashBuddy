@@ -8,6 +8,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Linq.Expressions;
 
     public class Apollo : BehaviorBase
     {
@@ -20,7 +21,7 @@
 
         public override string Author => "Peros_";
 
-        public override Version Version => new Version(1, 5, 0, 0);
+        public override Version Version => new Version(1, 6, 0, 0);
         public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
         #endregion
 
@@ -307,20 +308,19 @@
             //}
 
             
-            int attackLine = GetBestAttackingLine(p);
-            int dangerLine = GetDangerLine(p); // if line 0 no dangerous situation
+            int dangerOrAttackLine = GetDangerOrBestAttackingLine(p);
 
-            if (dangerLine > 0)
+            if (dangerOrAttackLine > 0)
             {
                 Logger.Debug("Danger");
                 StartLoadedDeploy = false;
-                fightState = DangerousSituationDecision(p, dangerLine);
+                fightState = DangerousSituationDecision(p, dangerOrAttackLine);
             }
-            else if (attackLine > 0)
+            else if (dangerOrAttackLine < 0)
             {
                 Logger.Debug("Chance");
                 StartLoadedDeploy = false;
-                fightState = GoodAttackChanceDecision(p, attackLine);
+                fightState = GoodAttackChanceDecision(p, dangerOrAttackLine * (-1));
             }
             else if (p.ownMana >= Settings.ManaTillDeploy)
             {
@@ -357,13 +357,67 @@
 
         #endregion
 
-        private static int GetBestAttackingLine(Playfield p) // Good chance for an attack?
+        private static int GetDangerOrBestAttackingLine(Playfield p) // Good chance for an attack?
         {
             // TODO: Make a fusion of this and GetDangerLine
-            List<BoardObj> ownMinions = p.ownMinions;
 
+            #region Danger analyses
+            IEnumerable<BoardObj> enemyMinionsL1 = p.enemyMinions.Where(n => n.Line == 1);
+            IEnumerable<BoardObj> enemyMinionsL2 = p.enemyMinions.Where(n => n.Line == 2);
 
-            #region KingTower
+            #region enemy sums (atk and health; Line 1 and 2)
+            int atkSumL1 = enemyMinionsL1.Sum(n => n.Atk);
+            int healthSumL1 = enemyMinionsL1.Sum(n => n.HP);
+            int atkSumL2 = enemyMinionsL2.Sum(n => n.Atk);
+            int healthSumL2 = enemyMinionsL2.Sum(n => n.HP);
+            #endregion
+
+            if (p.ownKingsTower.Line == 1 && healthSumL1 > p.ownKingsTower.Atk * 2 && atkSumL1 > (p.ownKingsTower.MaxHP / 20))
+                return 3;
+            if (p.ownKingsTower.Line == 2 && healthSumL2 > p.ownKingsTower.Atk * 2 && atkSumL2 > (p.ownKingsTower.MaxHP / 20))
+                return 3;
+            if (healthSumL1 > p.ownPrincessTower1.Atk * 2 && atkSumL1 > p.ownPrincessTower1.MaxHP / 10
+                || healthSumL1 > p.ownPrincessTower1.Atk * 4
+                || enemyMinionsL1.Count() > 5)
+                return 1;
+            if (healthSumL2 > p.ownPrincessTower2.Atk * 2 && atkSumL2 > p.ownPrincessTower2.MaxHP / 10
+                || healthSumL2 > p.ownPrincessTower2.Atk * 4
+                || enemyMinionsL2.Count() > 5)
+                return 2;
+
+            #region just as comments (.attacker is not implemented atm)
+            // Check if building attacks Tower (.attacker is not implemented atm)
+            //if (p.ownKingsTower?.attacker?.type == boardObjType.BUILDING)
+            //    return 3;
+            //if (p.ownPrincessTower1?.attacker?.type == boardObjType.BUILDING)
+            //    return 1;
+            //if (p.ownPrincessTower2?.attacker?.type == boardObjType.BUILDING)
+            //    return 2;
+            #endregion
+
+            #region check if buildings can attack own towers
+            List<BoardObj> enemyBuildings = p.enemyBuildings;
+
+            if (enemyBuildings?.Count() > 0)
+            {
+                BoardObj bKT = enemyBuildings.Where(n => n.IsPositionInArea(p, p.ownKingsTower.Position)).FirstOrDefault();
+                BoardObj bPT1 = enemyBuildings.Where(n => n.IsPositionInArea(p, p.ownPrincessTower1.Position)).FirstOrDefault();
+                BoardObj bPT2 = enemyBuildings.Where(n => n.IsPositionInArea(p, p.ownPrincessTower2.Position)).FirstOrDefault();
+
+                if (bKT != null)
+                    return 3;
+
+                if (bPT1 != null)
+                    return 1;
+
+                if (bPT2 != null)
+                    return 2;
+            }
+            #endregion
+            #endregion
+
+            #region Chance for good attack analyses
+            #region check which tower is down and which cards are playable
             if (p.enemyKingsTower.Line == 1) // PT with line 1 is down
             {
                 // Analyse own HandCards
@@ -374,14 +428,14 @@
                 if (p.enemyKingsTower.HP < 1000)
                 {
                     // Destroyer Card
-                    if (destroyerCard.FirstOrDefault() != null && destroyerCard.FirstOrDefault().missingMana <= 0)
-                        return 1;
+                    if (destroyerCard.FirstOrDefault() != null && destroyerCard.FirstOrDefault().manacost -p.ownMana <= 0)
+                        return -1;
                 }
 
-                if (tankCards.FirstOrDefault() != null && tankCards.FirstOrDefault().missingMana <= 0)
+                if (tankCards.FirstOrDefault() != null && tankCards.FirstOrDefault().manacost -p.ownMana <= 0)
                 {
-                    if (mobCards.Where(n => n.manacost <= 0).Count() > 0)
-                        return 1;
+                    if (mobCards.Where(n => n.manacost - p.ownMana <= 0).Count() > 0)
+                        return -1;
                 }
 
             }
@@ -395,86 +449,36 @@
                 if (p.enemyKingsTower.HP < 1000)
                 {
                     // Destroyer Card
-                    if (destroyerCard.FirstOrDefault() != null && destroyerCard.FirstOrDefault().missingMana <= 0)
-                        return 2;
+                    if (destroyerCard.FirstOrDefault() != null && destroyerCard.FirstOrDefault().manacost - p.ownMana <= 0)
+                        return -2;
                 }
 
-                if (tankCards.FirstOrDefault() != null && tankCards.FirstOrDefault().missingMana <= 0)
+                if (tankCards.FirstOrDefault() != null && tankCards.FirstOrDefault().manacost - p.ownMana <= 0)
                 {
-                    if (mobCards.Where(n => n.manacost <= 0).Count() > 0)
-                        return 2;
+                    if (mobCards.Where(n => n.manacost - p.ownMana <= 0).Count() > 0)
+                        return -2;
                 }
             }
             #endregion
 
-            #region Minions
-            int atkSumL1 = ownMinions.Where(n => n.Line == 1).Sum(n => n.Atk);
-            int healthSumL1 = ownMinions.Where(n => n.Line == 1).Sum(n => n.HP);
-            int atkSumL2 = ownMinions.Where(n => n.Line == 2).Sum(n => n.Atk);
-            int healthSumL2 = ownMinions.Where(n => n.Line == 2).Sum(n => n.HP);
+            #region Own Minions
+            IEnumerable<BoardObj> ownMinionsL1 = p.ownMinions.Where(n => n.Line == 1);
+            IEnumerable<BoardObj> ownMinionsL2 = p.ownMinions.Where(n => n.Line == 2);
 
+            int healthSumOwnL1 = ownMinionsL1.Sum(n => n.HP);
+            int atkSumOwnL1 = ownMinionsL1.Sum(n => n.Atk);
 
-            if (healthSumL1 > 300 || atkSumL1 > 150)
-                return 1;
-            if (healthSumL2 > 300 || atkSumL2 > 150)
-                return 2;
+            int healthSumOwnL2 = ownMinionsL2.Sum(n => n.HP);
+            int atkSumOwnL2 = ownMinionsL2.Sum(n => n.Atk);
+
+            if (healthSumOwnL1 > 300 || atkSumOwnL1 > 150)
+                return -1;
+            if (healthSumOwnL2 > 300 || atkSumOwnL2 > 150)
+                return -2;
 
             #endregion
-
+            #endregion
             return 0;
-        }
-
-        private static int GetDangerLine(Playfield p) // Can this be a dangerous situation?
-        {
-            // TODO: Maybe make a difference between on our side and not
-
-                List<BoardObj> enemyMinions = p.enemyMinions;
-
-                List<attackDef> attacker = p.ownKingsTower.getPossibleAttackers(p);
-                int atkSum = attacker.Sum(n => n.attacker.Atk);
-                int hpSum = attacker.Sum(n => n.attacker.HP);
-
-                List<attackDef> attackerImmediate = p.ownKingsTower.getImmediateAttackers(p);
-                int atkSumImmediate = attackerImmediate.Sum(n => n.attacker.Atk);
-                int hpSumImmediate = attackerImmediate.Sum(n => n.attacker.HP);
-
-                IEnumerable<BoardObj> enemyMinionsL1 = enemyMinions.Where(n => n.Line == 1);
-                IEnumerable<BoardObj> enemyMinionsL2 = enemyMinions.Where(n => n.Line == 2);
-
-                int atkSumL1 = enemyMinionsL1.Sum(n => n.Atk);
-                int healthSumL1 = enemyMinionsL1.Sum(n => n.HP);
-
-                int atkSumL2 = enemyMinionsL2.Sum(n => n.Atk);
-                int healthSumL2 = enemyMinionsL2.Sum(n => n.HP);
-
-                if (hpSum > p.ownKingsTower.Atk * 2 && atkSum > (p.ownKingsTower.MaxHP / 20)
-                    || hpSumImmediate > p.ownKingsTower.Atk * 2 && atkSumImmediate > (p.ownKingsTower.MaxHP / 20))
-                    return 3;
-                if (healthSumL1 > p.ownPrincessTower1.Atk * 2 && atkSumL1 > p.ownPrincessTower1.MaxHP / 10
-                    || healthSumL1 > p.ownPrincessTower1.Atk * 4
-                    || enemyMinionsL1.Count() > 5)
-                    return 1;
-                if (healthSumL2 > p.ownPrincessTower2.Atk * 2 && atkSumL2 > p.ownPrincessTower2.MaxHP / 10
-                    || healthSumL2 > p.ownPrincessTower2.Atk * 4
-                    || enemyMinionsL2.Count() > 5)
-                    return 2;
-
-
-            // Check if building attacks Tower (.attacker is not implemented atm)
-            //if (p.ownKingsTower?.attacker?.type == boardObjType.BUILDING)
-            //    return 3;
-            //if (p.ownPrincessTower1?.attacker?.type == boardObjType.BUILDING)
-            //    return 1;
-            //if (p.ownPrincessTower2?.attacker?.type == boardObjType.BUILDING)
-            //    return 2;
-
-
-            // TODO: Check if building is attacking towers
-            //IEnumerable<Handcard> buildingsAttack = GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsAttack);
-
-            //if(buildingsAttack.Where(n => n.card.DamageRadius ))
-
-                return 0;
         }
 
         #region Decisions
@@ -914,8 +918,8 @@
 
         public static bool DeployBuildingDecision(Playfield p, out VectorAI choosedPosition)
         {
-            choosedPosition = p.getDeployPosition(p.ownKingsTower, deployDirectionRelative.Up, 5000);
-            return IsEnemyInArea(p, choosedPosition, 3000);
+            choosedPosition = p.getDeployPosition(p.ownKingsTower, deployDirectionRelative.Up, 4000);
+            return IsAnEnemyObjectInArea(p, choosedPosition, 3000, boardObjType.MOB);
         }
 
 
@@ -992,15 +996,20 @@
         #endregion
 
 
-        private static bool IsEnemyInArea(Playfield p, VectorAI position, int areaSize)
+        private static bool IsAnEnemyObjectInArea(Playfield p, VectorAI position, int areaSize, boardObjType type)
         {
-            if (p.home)
-                return p.enemyMinions.Where(n => p.ownPrincessTower2.Position.X < n.Position.X
-                                        && n.Position.X < p.ownPrincessTower1.Position.X).Count() > 0;
+            Func<BoardObj, bool> whereClause = n => n.Position.X >= position.X - areaSize && n.Position.X <= position.X + areaSize &&
+                                                    n.Position.Y >= position.Y - areaSize && n.Position.Y <= position.Y + areaSize;
 
-            else
-                return p.enemyMinions.Where(n => p.ownPrincessTower1.Position.X < n.Position.X
-                                        && n.Position.X < p.ownPrincessTower2.Position.X).Count() > 0;
+
+            if(type == boardObjType.MOB)
+                return p.enemyMinions.Where(whereClause).Count() > 0;
+            else if(type == boardObjType.BUILDING)
+                return p.enemyBuildings.Where(whereClause).Count() > 0;
+            else if (type == boardObjType.AOE)
+                return p.enemyAreaEffects.Where(whereClause).Count() > 0;
+
+            return false;
         }
         #region Which Card
 
@@ -1447,6 +1456,19 @@
         public override int GetPlayCardPenalty(CardDB.Card card, Playfield p)
         {
             return 0;
+        }
+    }
+
+    public static class BoardObjExtension
+    {
+        public static bool IsPositionInArea(this BoardObj bo, Playfield p, VectorAI position)
+        {
+            bool isInArea = position.X >= bo.Position.X - bo.Range * 500 &&
+                            position.X <= bo.Position.X + bo.Range * 500 &&
+                            position.Y >= bo.Position.Y - bo.Range * 500 &&
+                            position.Y <= bo.Position.Y + bo.Range * 500;
+
+            return isInArea;
         }
     }
 }
