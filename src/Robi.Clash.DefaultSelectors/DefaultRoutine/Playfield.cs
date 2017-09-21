@@ -424,17 +424,63 @@ namespace Robi.Clash.DefaultSelectors
 
         public void initTowers()
         {
+            int i = 0;
+            int kingsLine = 0;
             ownTowers.Add(ownKingsTower);
-            if (ownPrincessTower1.HP > 0) ownTowers.Add(ownPrincessTower1);
-            if (ownPrincessTower2.HP > 0) ownTowers.Add(ownPrincessTower2);
-            if (ownPrincessTower1.HP > 0) ownPrincessTowers.Add(ownPrincessTower1);
-            if (ownPrincessTower2.HP > 0) ownPrincessTowers.Add(ownPrincessTower2);
-
+            if (ownPrincessTower1.HP > 0)
+            {
+                i += ownPrincessTower1.Line;
+                ownTowers.Add(ownPrincessTower1);
+                ownPrincessTowers.Add(ownPrincessTower1);
+            }
+            if (ownPrincessTower2.HP > 0)
+            {
+                i += ownPrincessTower2.Line;
+                ownTowers.Add(ownPrincessTower2);
+                ownPrincessTowers.Add(ownPrincessTower2);
+            }
+            switch (i)
+            {
+                case 0:
+                    kingsLine = 3;
+                    break;
+                case 1:
+                    kingsLine = 2;
+                    break;
+                case 2:
+                    kingsLine = 1;
+                    break;
+            }
+            ownKingsTower.Line = kingsLine;
+            
+            i = 0;
+            kingsLine = 0;
             enemyTowers.Add(enemyKingsTower);
-            if (enemyPrincessTower1.HP > 0) enemyTowers.Add(enemyPrincessTower1);
-            if (enemyPrincessTower2.HP > 0) enemyTowers.Add(enemyPrincessTower2);
-            if (enemyPrincessTower1.HP > 0) enemyPrincessTowers.Add(enemyPrincessTower1);
-            if (enemyPrincessTower2.HP > 0) enemyPrincessTowers.Add(enemyPrincessTower2);
+            if (enemyPrincessTower1.HP > 0)
+            {
+                i += enemyPrincessTower1.Line;
+                enemyTowers.Add(enemyPrincessTower1);
+                enemyPrincessTowers.Add(enemyPrincessTower1);
+            }
+            if (enemyPrincessTower2.HP > 0)
+            {
+                i += enemyPrincessTower2.Line;
+                enemyTowers.Add(enemyPrincessTower2);
+                enemyPrincessTowers.Add(enemyPrincessTower2);
+            }
+            switch (i)
+            {
+                case 0:
+                    kingsLine = 3;
+                    break;
+                case 1:
+                    kingsLine = 2;
+                    break;
+                case 2:
+                    kingsLine = 1;
+                    break;
+            }
+            enemyKingsTower.Line = kingsLine;
         }
 
         public Playfield(Playfield p, int timeShift = 0)
@@ -788,8 +834,9 @@ namespace Robi.Clash.DefaultSelectors
             if ((needAir && retval == null) || !needAir) retval = getMobCardByCondition(troops, needDamager);
             return retval;
         }
-                /*
-        private Handcard getFinisher(BoardObj target, bool canWait) //for Towers in 1st place
+
+        /*
+        private Handcard getFinisher(BoardObj bo, bool canWait) //useful for Towers
         {
             Handcard retval = null;
             Handcard hc;
@@ -804,7 +851,7 @@ namespace Robi.Clash.DefaultSelectors
                 switch (hc.card.type)
                 {
                     case boardObjType.PROJECTILE:
-                        if (target.HP <= hc.card.Atk)
+                        if (bo.HP <= hc.card.Atk)
                         {
                             if (projectile == null || hc.card.Atk > projectile.card.Atk) projectile = hc;
                         }
@@ -812,7 +859,7 @@ namespace Robi.Clash.DefaultSelectors
                     case boardObjType.AOE:
                         int towerDmg = hc.card.towerDamage;
                         if (hc.card.name == CardDB.cardName.poison) towerDmg *= 8;
-                        if (target.HP <= towerDmg)
+                        if (bo.HP <= towerDmg)
                         {
                             if (aoe == null || towerDmg > aoe.extraVal)
                             {
@@ -822,34 +869,28 @@ namespace Robi.Clash.DefaultSelectors
                         }
                         continue;
                     case boardObjType.MOB:
-                        if (target.type == boardObjType.BUILDING)
+                        if (bo.type == boardObjType.BUILDING)
                         {
-                            //if (KnowledgeBase.Instance.)
+                            if (KnowledgeBase.Instance.)
                             //TODO: calc online
-                            double hitPerMob = Math.Ceiling((double)hc.card.MaxHP / target.Atk);
-                            double timePerMob = hitPerMob * target.HitSpeed / 1000;
-                            double dmg = hc.card.Atk * 1 * timePerMob / hc.card.HitSpeed;
-
                             if (hc.card.TargetType == targetType.BUILDINGS)
                             {
-
-
                                 int val;
-                                if (target.HP <= hc.card.Atk)
+                                if (bo.HP <= hc.card.Atk)
                                 {
 
                                 }
                                 else
                                 {
-                                    //int dmg = hc.card.Atk * hc.card.SummonNumber;
-                                    int restHp = target.HP - dmg;
+                                    int dmg = hc.card.Atk * hc.card.SummonNumber;
+                                    int restHp = bo.HP - dmg;
                                     double timeForDestroy = restHp / (dmg * 1000 / hc.card.HitSpeed);
-                                    double timeToDestruction = hc.card.MaxHP / (target.Atk * 1000 / target.card.HitSpeed);
+                                    double timeToDestruction = hc.card.MaxHP / (bo.Atk * 1000 / bo.card.HitSpeed);
                                     double delta = timeToDestruction - timeForDestroy;
                                     if (hc.card.SummonNumber > 1)
                                     {
-                                        double hitPerMob = Math.Ceiling((double)hc.card.MaxHP / target.Atk);
-                                        timeToDestruction = hc.card.SummonNumber * hitPerMob * 1000 / target.card.HitSpeed;
+                                        double hitPerMob = Math.Ceiling((double)hc.card.MaxHP / bo.Atk);
+                                        timeToDestruction = hc.card.SummonNumber * hitPerMob * 1000 / bo.card.HitSpeed;
 
                                     }
                                     if (delta > 0)
