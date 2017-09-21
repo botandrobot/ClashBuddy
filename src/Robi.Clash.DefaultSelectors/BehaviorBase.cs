@@ -134,7 +134,6 @@ namespace Robi.Clash.DefaultSelectors
                         bo.own = own;
                         if (own) ownAreaEffects.Add(bo);
                         else enemyAreaEffects.Add(bo);
-                        //hc.position = ??? TODO
 
                         //if (hc.card.name == CardDB.cardName.unknown) hc.card = CardDB.Instance.collectNewCards(spell); //TODO: same for all objects
 
@@ -171,8 +170,8 @@ namespace Robi.Clash.DefaultSelectors
 
                         bo.ownerIndex = (int)@char.OwnerIndex;
                         bool own = bo.ownerIndex == lp.OwnerIndex ? true : false; //TODO: replace it on Friendly (for 2x2 mode)
-
                         bo.own = own;
+                        
                         int tower = 0;
                         switch (bo.Name)
                         {
@@ -269,28 +268,11 @@ namespace Robi.Clash.DefaultSelectors
                 if (p.enemyPrincessTower1.Position == null) p.enemyPrincessTower1.Position = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
                 if (p.enemyPrincessTower2.Position == null) p.enemyPrincessTower2.Position = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
 
-                p.initTowers();
-
-                int i = 0;
-                foreach (BoardObj t in p.ownTowers) if (t.Tower < 10) i += t.Line;
-                int kingsLine = 0;
-                switch (i)
-                {
-                    case 0:
-                        kingsLine = 3;
-                        break;
-                    case 1:
-                        kingsLine = 2;
-                        break;
-                    case 2:
-                        kingsLine = 1;
-                        break;
-                }
-                foreach (BoardObj t in p.ownTowers) if (t.Tower > 9) t.Line = kingsLine;
+                p.initTowers();                
 
                 p.print();
             }
-
+            
             Cast bc;
             using (new PerformanceTimer("GetBestCast"))
             {
