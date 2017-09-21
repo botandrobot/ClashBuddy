@@ -48,10 +48,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="Serilog" Version="2.5.0" />
-		<PackageReference Include="Robi.Common" Version="1.0.0-develop176" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
-		<PackageReference Include="Robi.Engine" Version="1.0.0-develop176" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Robi.Common" Version="1.0.0-develop-205" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
+		<PackageReference Include="Robi.Engine" Version="1.0.0-develop-205" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
 		<PackageReference Include="Robi.Clash.Engine" Version="$(PackageVersion)" Condition="'$(PackageVersion)' != '1.0.0' AND ('$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true')" />
-		<PackageReference Include="Robi.Clash.Engine" Version="1.0.192-develop273" Condition="'$(PackageVersion)' == '1.0.0' AND ('$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true')" />
+		<PackageReference Include="Robi.Clash.Engine" Version="1.0.192-develop-304" Condition="'$(PackageVersion)' == '1.0.0' AND ('$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true')" />
 		<PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
 	</ItemGroup>
 	<ItemGroup>
@@ -61,4 +61,3 @@
 	</ItemGroup>
 
 </Project>
-© 2017 GitHub, Inc.
