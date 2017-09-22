@@ -315,17 +315,17 @@
             int dangerOrAttackLine = GetDangerOrBestAttackingLine(p);
 
 
-            if (dangerOrAttackLine > 0)
+            if (dangerOrAttackLine < 0)
             {
                 Logger.Debug("Danger");
                 StartLoadedDeploy = false;
-                fightState = DangerousSituationDecision(p, dangerOrAttackLine);
+                fightState = DangerousSituationDecision(p, dangerOrAttackLine * (-1));
             }
-            else if (dangerOrAttackLine < 0)
+            else if (dangerOrAttackLine > 0)
             {
                 Logger.Debug("Chance");
                 StartLoadedDeploy = false;
-                fightState = GoodAttackChanceDecision(p, dangerOrAttackLine * (-1));
+                fightState = GoodAttackChanceDecision(p, dangerOrAttackLine);
             }
             else
             {
@@ -380,15 +380,6 @@
             int ePtHpL1 = p.enemyPrincessTower1.HP; 
             int ePtHpL2 = p.enemyPrincessTower2.HP; 
             int eKtHp = p.enemyKingsTower.HP;
-
-            bool oPtL1Down = (oPtHpL1 == 0);
-            bool oPtL2Down = (oPtHpL2 == 0);
-            bool oKtDown = (oKtHp == 0);
-
-            bool ePtL1Down = (ePtHpL1 == 0);
-            bool ePtL2Down = (ePtHpL2 == 0);
-            bool eKtDown = (eKtHp == 0);
-            int eTowerDown = Convert.ToInt32(ePtL1Down) + Convert.ToInt32(ePtL2Down);
             #endregion
 
 
@@ -411,82 +402,238 @@
             #endregion
 
 
-            #region minion check coniditions
-
             // comparison
             int compHpL1 = ownHealthSumL1 - enemyHealthSumL1;
             int compHpL2 = ownHealthSumL2 - enemyHealthSumL2;
             int compAtkL1 = ownAtkSumL1 - enemyAtkSumL1;
             int compAtkL2 = ownAtkSumL2 - enemyAtkSumL2;
 
+            Logger.Debug("GetDangerOrBestAttackingLine");
+            //int multipli = 0;
 
-            if(p.suddenDeath)
+
+            // basic line
+            //if ((compHpL1 + compHpL2 + compAtkL1 + compAtkL2) > 0)
+            //    multipli = 1;
+            //else
+            //    multipli = -1;
+
+
+            // Enemy Line
+            int enemyLine = p.enemyKingsTower.Line;
+
+            // TODO: Also use attack
+            if(enemyLine == 0)
             {
-                if(eTowerDown == 2)
-                {
-                    // Target = enemyKingTower
-                }
-
-                if(ePtL1Down)
-                {
-                    if(p.enemyKingsTower.HP - p.enemyPrincessTower2.HP > 0)
-                    {
-                        // Target = enemyPrincessTower2
-                    }
-                    else
-                    {
-                        // Target = enemyKingTower
-
-                    }
-                }
-
-                if (ePtL2Down)
-                {
-                    if (p.enemyKingsTower.HP - p.enemyPrincessTower1.HP > 0)
-                    {
-                        // Target = enemyPrincessTower1
-                    }
-                    else
-                    {
-                        // Target = enemyKingTower
-
-                    }
-                }
-
+                if (p.enemyPrincessTower1.HP + (-1 * compHpL1) < p.enemyPrincessTower2.HP + (-1 * compHpL2))
+                    enemyLine = 1;
+                else
+                    enemyLine = 2;
             }
-            else
+            else if(enemyLine == 1)
             {
-                if (eTowerDown == 2)
-                {
-                    // Target = enemyKingTower
-                }
-
-                if (ePtL1Down)
-                {
-                    if (p.enemyKingsTower.HP - p.enemyPrincessTower2.HP > 0)
-                    {
-                        // Target = enemyPrincessTower2
-                    }
-                    else
-                    {
-                        // Target = enemyKingTower
-
-                    }
-                }
-
-                if (ePtL2Down)
-                {
-                    if (p.enemyKingsTower.HP - p.enemyPrincessTower1.HP > 0)
-                    {
-                        // Target = enemyPrincessTower1
-                    }
-                    else
-                    {
-                        // Target = enemyKingTower
-
-                    }
-                }
+                if (p.enemyKingsTower.HP + (-1 * compHpL1) < p.enemyPrincessTower2.HP + (-1 * compHpL2))
+                    enemyLine = 1;
+                else
+                    enemyLine = 2;
             }
+            else if(enemyLine == 2)
+            {
+                if (p.enemyKingsTower.HP + (-1 * compHpL2) < p.enemyPrincessTower1.HP + (-1 * compHpL1))
+                    enemyLine = 2;
+                else
+                    enemyLine = 1;
+            }
+
+            // Own Line
+            int ownLine = p.ownKingsTower.Line;
+
+            // TODO: Also use attack
+            if (ownLine == 0)
+            {
+                if (p.ownPrincessTower1.HP + (compHpL1) < p.ownPrincessTower2.HP + (compHpL2))
+                    ownLine = 1;
+                else
+                    ownLine = 2;
+            }
+            else if (ownLine == 1)
+            {
+                if (p.ownKingsTower.HP + (compHpL1) < p.ownPrincessTower2.HP + (compHpL2))
+                    ownLine = 1;
+                else
+                    ownLine = 2;
+            }
+            else if (ownLine == 2)
+            {
+                if (p.ownKingsTower.HP + (compHpL2) < p.ownPrincessTower1.HP + (compHpL1))
+                    ownLine = 2;
+                else
+                    ownLine = 1;
+            }
+
+            BoardObj enemyTower = p.enemyTowers.Where(n => n.Line == enemyLine).FirstOrDefault();
+            BoardObj ownTower = p.ownTowers.Where(n => n.Line == ownLine).FirstOrDefault();
+
+            if(enemyTower != null && ownTower != null)
+            {
+                int towerHpDiff = ownTower.HP - enemyTower.HP;
+
+                int val;
+
+                if(ownLine == 1)
+                    val = towerHpDiff + compHpL1 + compAtkL1;
+                else
+                    val = towerHpDiff + compHpL2 + compAtkL2;
+
+
+                if (val > 0 && (ownHealthSumL1 > 300 || ownHealthSumL2 > 300))
+                    return enemyLine;
+                else if(enemyHealthSumL1 > 300 || enemyHealthSumL2 > 300)
+                    return -ownLine;
+            }
+
+
+            #region outcommented
+            //if(p.suddenDeath)
+            //{
+            //    #region sudden death
+            //    #region both enemy tower down
+            //    if(p.enemyKingsTower.Line == 3)
+            //    {
+            //        // Target = EnemyKingsTower
+
+            //        if (p.enemyKingsTower.HP < p.enemyKingsTower.MaxHP / 2)
+            //        {
+            //            if (multipli * compHpL1 > multipli * compHpL2)
+            //                return multipli * 1;
+            //            else
+            //                return multipli * 2;
+            //        }
+            //        else
+            //        {
+            //            if (compHpL1 + compHpL2 > 0 && p.enemyKingsTower.HP < p.ownKingsTower.HP ||
+            //                compHpL1 + compHpL2 > 0 && compAtkL1 + compAtkL2 > 0)
+            //            {
+            //                if (compHpL1 > compHpL2)
+            //                    return -1;
+            //                else
+            //                    return -2;
+            //            }
+            //            else
+            //            {
+            //                if (compHpL1 < compHpL2)
+            //                    return 1;
+            //                else
+            //                    return 2;
+            //            }
+            //        }
+            //    }
+            //    #endregion
+
+            //    #region enemy tower line 1 down
+            //    if(p.enemyKingsTower.Line == 1)
+            //    {
+            //        if (p.enemyKingsTower.HP < p.enemyPrincessTower2.HP)
+            //        {
+            //            if (multipli * compHpL1 > multipli * compHpL2)
+            //                return multipli * 1;
+            //            else
+            //                return multipli * 2;
+            //        }
+            //        else
+            //        {
+            //            if (multipli * compHpL1 > multipli * compHpL2)
+            //                return multipli * 1;
+            //            else
+            //                return multipli * 2;
+            //        }
+            //    }
+            //    #endregion
+
+            //    #region enemy tower line 2 down
+            //    if (p.enemyKingsTower.Line == 2)
+            //    {
+            //        if (p.enemyKingsTower.HP < p.enemyPrincessTower1.HP)
+            //        {
+            //            if (multipli * compHpL1 > multipli * compHpL2)
+            //                return multipli * 1;
+            //            else
+            //                return multipli * 2;
+            //        }
+            //        else
+            //        {
+            //            if (multipli * compHpL1 > multipli * compHpL2)
+            //                return multipli * 1;
+            //            else
+            //                return multipli * 2;
+            //        }
+            //    }
+            //    #endregion
+
+            //    #region no enemy tower down
+            //    if(p.enemyKingsTower.Line == 0)
+            //    {
+            //        if (multipli * compHpL1 > multipli * compHpL2)
+            //            return multipli * 1;
+            //        else
+            //            return multipli * 2;
+            //    }
+            //    #endregion
+            //    #endregion
+            //}
+            //else
+            //{
+            //    #region normal play time
+            //    #region both enemy towers down
+            //    if (p.enemyKingsTower.Line == 3)
+            //    {
+            //        if (p.enemyKingsTower.HP < p.enemyKingsTower.MaxHP / 2)
+            //        {
+            //            if (multipli * compHpL1 > multipli * compHpL2)
+            //                return multipli * 1;
+            //            else
+            //                return multipli * 2;
+            //        }
+            //        else
+            //        {
+            //            if (multipli * compHpL1 > multipli * compHpL2)
+            //                return multipli * 1;
+            //            else
+            //                return multipli * 2;
+            //        }
+            //    }
+            //    #endregion
+
+            //    #region enemy tower line 1 down
+            //    if (p.enemyKingsTower.Line == 1)
+            //    {
+            //        if (multipli * compHpL1 > multipli * compHpL2)
+            //            return multipli * 1;
+            //        else
+            //            return multipli * 2;
+            //    }
+            //    #endregion
+
+            //    #region enemy tower line 2 down
+            //    if (p.enemyKingsTower.Line == 2)
+            //    {
+            //        if (multipli * compHpL1 > multipli * compHpL2)
+            //            return multipli * 1;
+            //        else
+            //            return multipli * 2;
+            //    }
+            //    #endregion
+
+            //    #region no enemy tower down
+            //    if(p.enemyKingsTower.Line == 0)
+            //    {
+            //        if (multipli * compHpL1 > multipli * compHpL2)
+            //            return multipli * 1;
+            //        else
+            //            return multipli * 2;
+            //    }
+            //    #endregion
+            //}
 
 
 
