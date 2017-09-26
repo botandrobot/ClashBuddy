@@ -101,6 +101,5 @@ namespace Robi.Clash.DefaultSelectors
             else
                 this.Y -= y;
         }
-
     }
 }
