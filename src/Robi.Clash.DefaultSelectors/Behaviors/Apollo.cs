@@ -21,7 +21,7 @@
 
         public override string Author => "Peros_";
 
-        public override Version Version => new Version(1, 6, 0, 0);
+        public override Version Version => new Version(1, 7, 0, 0);
         public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
         #endregion
 
@@ -121,7 +121,7 @@
             Logger.Debug("Part: Get CurrentSituation");
             currentSituation = CurrentFightState(p);
             Logger.Debug("Part: GetOppositeCard");
-            Handcard hc = GetOppositeCard(p, currentSituation);
+            Handcard hc = null;//GetOppositeCard(p, currentSituation);
 
             if (hc == null)
             {
@@ -189,7 +189,7 @@
                         return hc;
                 }
             }
-            catch (Exception){ }
+            catch (Exception) { }
 
             switch (currentSituation)
             {
@@ -202,7 +202,7 @@
                 case FightState.DKT:
                 case FightState.DLPT:
                 case FightState.DRPT:
-                {
+                    {
                         BoardObj defender = GetBestDefender(p);
 
                         if (defender == null)
@@ -221,8 +221,8 @@
                             else
                                 return spell.hc;
                         }
-                }
-                break; 
+                    }
+                    break;
             }
             return null;
         }
@@ -311,7 +311,7 @@
             //    fightState = EnemyIsOnOurSideDecision(p);
             //}
 
-            
+
             int dangerOrAttackLine = GetDangerOrBestAttackingLine(p);
 
 
@@ -338,7 +338,7 @@
                     }
                 }
                 catch (Exception) { }
-                
+
                 if (StartLoadedDeploy)
                     fightState = DefenseDecision(p);
             }
@@ -373,12 +373,12 @@
         private static int GetDangerOrBestAttackingLine(Playfield p) // Good chance for an attack?
         {
             #region TowerAnalyses
-            int oPtHpL1 = p.ownPrincessTower1.HP; 
-            int oPtHpL2 = p.ownPrincessTower2.HP; 
-            int oKtHp = p.ownKingsTower.HP; 
+            int oPtHpL1 = p.ownPrincessTower1.HP;
+            int oPtHpL2 = p.ownPrincessTower2.HP;
+            int oKtHp = p.ownKingsTower.HP;
 
-            int ePtHpL1 = p.enemyPrincessTower1.HP; 
-            int ePtHpL2 = p.enemyPrincessTower2.HP; 
+            int ePtHpL1 = p.enemyPrincessTower1.HP;
+            int ePtHpL2 = p.enemyPrincessTower2.HP;
             int eKtHp = p.enemyKingsTower.HP;
             #endregion
 
@@ -423,21 +423,21 @@
             int enemyLine = p.enemyKingsTower.Line;
 
             // TODO: Also use attack
-            if(enemyLine == 0)
+            if (enemyLine == 0)
             {
                 if (p.enemyPrincessTower1.HP + (-1 * compHpL1) < p.enemyPrincessTower2.HP + (-1 * compHpL2))
                     enemyLine = 1;
                 else
                     enemyLine = 2;
             }
-            else if(enemyLine == 1)
+            else if (enemyLine == 1)
             {
                 if (p.enemyKingsTower.HP + (-1 * compHpL1) < p.enemyPrincessTower2.HP + (-1 * compHpL2))
                     enemyLine = 1;
                 else
                     enemyLine = 2;
             }
-            else if(enemyLine == 2)
+            else if (enemyLine == 2)
             {
                 if (p.enemyKingsTower.HP + (-1 * compHpL2) < p.enemyPrincessTower1.HP + (-1 * compHpL1))
                     enemyLine = 2;
@@ -474,13 +474,13 @@
             BoardObj enemyTower = p.enemyTowers.Where(n => n.Line == enemyLine).FirstOrDefault();
             BoardObj ownTower = p.ownTowers.Where(n => n.Line == ownLine).FirstOrDefault();
 
-            if(enemyTower != null && ownTower != null)
+            if (enemyTower != null && ownTower != null)
             {
                 int towerHpDiff = ownTower.HP - enemyTower.HP;
 
                 int val;
 
-                if(ownLine == 1)
+                if (ownLine == 1)
                     val = towerHpDiff + compHpL1 + compAtkL1;
                 else
                     val = towerHpDiff + compHpL2 + compAtkL2;
@@ -488,7 +488,7 @@
 
                 if (val > 0 && (ownHealthSumL1 > 300 || ownHealthSumL2 > 300))
                     return enemyLine;
-                else if(enemyHealthSumL1 > 300 || enemyHealthSumL2 > 300)
+                else if (enemyHealthSumL1 > 300 || enemyHealthSumL2 > 300)
                     return -ownLine;
             }
 
@@ -731,14 +731,7 @@
             //}
             //#endregion
 
-
-
-
-
-
             return 0;
-
-
 
             #region just as comments (.attacker is not implemented atm)
             // Check if building attacks Tower (.attacker is not implemented atm)
@@ -767,7 +760,7 @@
                         {
                             if (p.BattleTime.TotalSeconds < 20)
                                 return false;
-                            else if (p.enemyPrincessTower1.HP < 300)
+                            else if (p.enemyPrincessTower1.HP < 300 && p.enemyPrincessTower1.HP > 0)
                                 return false;
                             break;
                         }
@@ -775,7 +768,7 @@
                         {
                             if (p.BattleTime.TotalSeconds < 20)
                                 return false;
-                            else if (p.enemyPrincessTower2.HP < 300)
+                            else if (p.enemyPrincessTower2.HP < 300 && p.enemyPrincessTower2.HP > 0)
                                 return false;
                             break;
                         }
@@ -783,7 +776,7 @@
                         {
                             if (p.BattleTime.TotalSeconds < 30)
                                 return false;
-                            else if (p.enemyKingsTower.HP < 300)
+                            else if (p.enemyKingsTower.HP < 300 && p.enemyKingsTower.HP > 0)
                                 return false;
                             break;
                         }
@@ -795,7 +788,7 @@
                     return false;
                 if (p.ownKingsTower.HP < 1000)
                     return false;
-                if (p.ownKingsTower.attacked)
+                if (IsAnEnemyObjectInArea(p, p.ownKingsTower.Position, 4000, boardObjType.MOB))
                     return false;
             }
 
@@ -863,7 +856,7 @@
         private static FightState EnemyIsOnOurSideDecision(Playfield p)
         {
             Logger.Debug("Enemy is on our Side!!");
-            if (p.ownTowers.Count > 2) // Question: If in ownTowers the KT is not included change to > 1
+            if (p.ownTowers.Count > 2)
             {
                 BoardObj obj = GetNearestEnemy(p);
 
@@ -997,7 +990,7 @@
 
         private static Handcard AttackKingTowerWithSpell(Playfield p)
         {
-            IEnumerable<Handcard> spells = p.ownHandCards.Where(n => n.card.type == boardObjType.AOE || n.card.type == boardObjType.PROJECTILE);
+            IEnumerable<Handcard> spells = GetOwnHandCards(p, boardObjType.AOE, SpecificCardType.SpellsDamaging);
 
             if (spells != null)
                 return spells.FirstOrDefault();
@@ -1015,7 +1008,7 @@
             if (damagingSpell != null)
                 return damagingSpell;
 
-            Handcard aoeCard = AOEDecision(p, out choosedPosition ,currentSituation);
+            Handcard aoeCard = AOEDecision(p, out choosedPosition, currentSituation);
             if (aoeCard != null)
                 return aoeCard;
 
@@ -1054,8 +1047,8 @@
             if (rangerCard != null && rangerCard.manacost <= p.ownMana)
                 return rangerCard;
 
-            var damageDealerCard = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsDamageDealer).FirstOrDefault();    
-            if(damageDealerCard != null && damageDealerCard.manacost <= p.ownMana)
+            var damageDealerCard = GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsDamageDealer).FirstOrDefault();
+            if (damageDealerCard != null && damageDealerCard.manacost <= p.ownMana)
                 return damageDealerCard;
 
             Logger.Debug("Wait - No card selected...");
@@ -1129,13 +1122,14 @@
         }
 
 
+        // TODO: Check this out
         public static Handcard DamagingSpellDecision(Playfield p, out VectorAI choosedPosition)
         {
             choosedPosition = null;
 
-            IEnumerable<Handcard> damagingSpells = GetOwnHandCards(p, boardObjType.AOE, SpecificCardType.SpellsDamaging);
-            
-            if(damagingSpells.FirstOrDefault() == null)
+            IEnumerable<Handcard> damagingSpells = GetOwnHandCards(p, boardObjType.PROJECTILE, SpecificCardType.SpellsDamaging);
+
+            if (damagingSpells.FirstOrDefault() == null)
                 return null;
 
             Logger.Debug("Damaging-Spell: tower damage first card = " + damagingSpells.FirstOrDefault().card?.towerDamage);
@@ -1147,17 +1141,17 @@
                 IEnumerable<Handcard> ds5 = damagingSpells.Where(n => (n.card.towerDamage >= p.enemyKingsTower.HP));
 
 
-                if (ds3.FirstOrDefault() != null)
+                if (ds3.FirstOrDefault() != null && p.enemyPrincessTower1.HP > 0)
                 {
-                    Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds3.FirstOrDefault().card.towerDamage, 
+                    Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds3.FirstOrDefault().card.towerDamage,
                         p.enemyPrincessTower1.HP);
                     choosedPosition = p.enemyPrincessTower1.Position;
                     return ds3.FirstOrDefault();
                 }
 
-                if (ds4.FirstOrDefault() != null)
+                if (ds4.FirstOrDefault() != null && p.enemyPrincessTower2.HP > 0)
                 {
-                    Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds4.FirstOrDefault().card.towerDamage, 
+                    Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds4.FirstOrDefault().card.towerDamage,
                         p.enemyPrincessTower2.HP);
                     choosedPosition = p.enemyPrincessTower2.Position;
                     return ds4.FirstOrDefault();
@@ -1165,7 +1159,7 @@
 
                 if (ds5.FirstOrDefault() != null)
                 {
-                    Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds5.FirstOrDefault().card.towerDamage, 
+                    Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds5.FirstOrDefault().card.towerDamage,
                         p.enemyKingsTower.HP);
                     choosedPosition = p.enemyKingsTower.Position;
                     return ds5.FirstOrDefault();
@@ -1175,8 +1169,10 @@
             IOrderedEnumerable<Handcard> radiusOrderedDS = damagingSpells.OrderBy(n => n.card.DamageRadius);
 
             group Group = p.getGroup(false, 200, boPriority.byTotalNumber, radiusOrderedDS.LastOrDefault().card.DamageRadius);
-            int hpSum = (Group.lowHPboHP + Group.avgHPboHP + Group.hiHPboHP);
-            IEnumerable<Handcard> ds1 = damagingSpells.Where(n => n.card.DamageRadius > 3 && n.card.Atk * 5 <= hpSum);
+            int grpCount = Group.lowHPbo.Count() + Group.avgHPbo.Count() + Group.hiHPbo.Count();
+            int hpSum = Group.lowHPboHP + Group.hiHPboHP + Group.avgHPboHP;
+
+            IEnumerable<Handcard> ds1 = damagingSpells.Where(n => n.card.DamageRadius > 3 && grpCount > 4);
 
             if (ds1.FirstOrDefault() != null)
             {
@@ -1185,7 +1181,7 @@
                 return ds1.FirstOrDefault();
             }
 
-            IEnumerable<Handcard> ds2 = damagingSpells.Where(n => n.card.DamageRadius <= 3 && n.card.Atk * 4 <= hpSum);
+            IEnumerable<Handcard> ds2 = damagingSpells.Where(n => n.card.DamageRadius <= 3 && grpCount > 1 && hpSum >= n.card.Atk * 2);
 
             if (ds2.FirstOrDefault() != null)
             {
@@ -1196,7 +1192,7 @@
 
             return null;
 
-            
+
         }
 
         public static bool DeployBuildingDecision(Playfield p, out VectorAI choosedPosition)
@@ -1252,7 +1248,7 @@
                 case FightState.UAKT:
                     if (aoeAir != null)
                     {
-                        choosedPosition = objAir.Line == 1 ? p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine1) 
+                        choosedPosition = objAir.Line == 1 ? p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine1)
                             : p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine2);
                         return aoeAir;
 
@@ -1285,9 +1281,9 @@
                                                     n.Position.Y >= position.Y - areaSize && n.Position.Y <= position.Y + areaSize;
 
 
-            if(type == boardObjType.MOB)
+            if (type == boardObjType.MOB)
                 return p.enemyMinions.Where(whereClause).Count() > 0;
-            else if(type == boardObjType.BUILDING)
+            else if (type == boardObjType.BUILDING)
                 return p.enemyBuildings.Where(whereClause).Count() > 0;
             else if (type == boardObjType.AOE)
                 return p.enemyAreaEffects.Where(whereClause).Count() > 0;
@@ -1400,7 +1396,7 @@
                     }
                 }
                 catch (Exception) { }
-            
+
                 if (hc.card.Transport == transportType.AIR)
                 {
                     // TODO: Analyse which is the most dangerous line
@@ -1481,21 +1477,27 @@
             }
 
             if (p.enemyPrincessTower1.HP == 0)
-                return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
+                return ALPT(p);
 
             if (p.enemyPrincessTower2.HP == 0)
-                return p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
+                return ARPT(p);
 
-            if (p.enemyPrincessTowers.Count == 0)
-                return p.enemyKingsTower?.Position;
+            VectorAI position = p.enemyKingsTower?.Position;
 
-            return p.enemyKingsTower?.Position;
+            if (SupportDeployment(p, 1))
+                position = p.getDeployPosition(position, deployDirectionRelative.Down, 500);
+
+            return position;
         }
         private static VectorAI ALPT(Playfield p)
         {
             Logger.Debug("ALPT");
 
             VectorAI lPT = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
+
+            if (SupportDeployment(p, 1))
+                lPT = p.getDeployPosition(lPT, deployDirectionRelative.Down, 500);
+
             return lPT;
         }
         private static VectorAI ARPT(Playfield p)
@@ -1503,6 +1505,10 @@
             Logger.Debug("ARPT");
 
             VectorAI rPT = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
+
+            if (SupportDeployment(p, 2))
+                rPT = p.getDeployPosition(rPT, deployDirectionRelative.Down, 500);
+
             return rPT;
         }
         #endregion
@@ -1517,8 +1523,9 @@
             {
                 if (p.enemyKingsTower?.HP < Settings.KingTowerSpellDamagingHealth || (p.enemyMinions.Count + p.enemyBuildings.Count) < 1)
                     return p.enemyKingsTower?.Position;
-            } catch(Exception)
-            
+            }
+            catch (Exception)
+
             {
                 int count;
                 BoardObj enemy = EnemyCharacterWithTheMostEnemiesAround(p, out count, transportType.NONE);
@@ -1534,7 +1541,8 @@
 
                             return enemy.Position;
                         }
-                    } catch(Exception)
+                    }
+                    catch (Exception)
 
                     {
                         //enemy.Position.AddYInDirection(p, 3000); // Position Correction
@@ -1584,7 +1592,7 @@
                     //position.AddYInDirection(p);
                     return p.getDeployPosition(position, deployDirectionRelative.Down, 2000);
                 }
-                
+
             }
             else if (hc.card.type == boardObjType.BUILDING)
                 return GetPositionOfTheBestBuildingDeploy(p);
@@ -1651,7 +1659,8 @@
                                                     && n.Position.X < item.Position.X + boarderX &&
                                                     n.Position.Y > item.Position.Y - boarderY &&
                                                     n.Position.Y < item.Position.Y + boarderY && n.Transport == tP);
-                }else
+                }
+                else
                 {
                     enemiesAroundTemp = enemies.Where(n => n.Position.X > item.Position.X - boarderX
                                 && n.Position.X < item.Position.X + boarderX &&
@@ -1680,12 +1689,54 @@
             else
                 return orderedChar.LastOrDefault();
         }
+
+        private static bool SupportDeployment(Playfield p, int line)
+        {
+            // If own characters already attacking and you are deploying as support
+            // The chars should be deployed behind the own chars
+            IEnumerable<BoardObj> attackingChars = p.ownMinions.Where(n => n.Line == line && IsObjectAtOtherSide(p, n));
+
+            // Maybe check also which card type: Tank deployed in front, Ranger behinde ...
+
+            if (attackingChars.Count() > 0)
+                return true;
+            else
+                return false;
+        }
+
+        private static bool IsObjectAtOtherSide(Playfield p, BoardObj bo)
+        {
+            if (p.home && bo.own || !p.home && !bo.own)
+            {
+                if (bo.Position.Y >= MiddleLineY(p))
+                    return true;
+                else
+                    return false;
+            }
+            else
+            {
+                if (bo.Position.Y <= MiddleLineY(p))
+                    return true;
+                else
+                    return false;
+            }
+        }
+
+        public static int MiddleLineY(Playfield p)
+        {
+            return (p.ownKingsTower.Position.Y +
+                    p.enemyKingsTower.Position.Y) / 2;
+
+        }
         #endregion
 
         #region Classification
         private static IEnumerable<Handcard> GetOwnHandCards(Playfield p, boardObjType cardType, SpecificCardType sCardType)
         {
             IEnumerable<Handcard> cardsOfType = p.ownHandCards.Where(n => n.card.type == cardType);
+
+            if (cardsOfType.FirstOrDefault() == null)
+                return cardsOfType;
 
             switch (sCardType)
             {
@@ -1694,7 +1745,7 @@
 
                 // Mobs
                 case SpecificCardType.MobsTank:
-                        try { return cardsOfType.Where(n => n.card.MaxHP >= Settings.MinHealthAsTank); } catch (Exception) { }
+                    try { return cardsOfType.Where(n => n.card.MaxHP >= Settings.MinHealthAsTank); } catch (Exception) { }
                     break;
                 case SpecificCardType.MobsDamageDealer:
                     return cardsOfType.Where(n => (n.card.Atk * n.card.SummonNumber) > 100);
