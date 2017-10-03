@@ -59,13 +59,12 @@
             PlayfieldAnalyse.AnalyseLines(p);
             currentSituation = GetCurrentFightState(p);
             Logger.Debug("Part: GetOppositeCard");
-            Handcard hc = null;//GetOppositeCard(p, currentSituation);
+            Handcard hc = CardChoosing.GetOppositeCard(p, currentSituation);
 
             if (hc == null)
             {
                 Logger.Debug("Part: SpellApolloWay");
-                VectorAI choosedPosition;
-                Handcard hcApollo = SpellMagic(p, currentSituation, out choosedPosition);
+                Handcard hcApollo = SpellMagic(p, currentSituation, out  VectorAI choosedPosition);
 
                 if (hcApollo != null)
                 {

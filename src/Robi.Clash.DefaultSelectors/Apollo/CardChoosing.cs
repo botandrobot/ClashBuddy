@@ -12,12 +12,12 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         private static readonly ILogger Logger = LogProvider.CreateLogger<CardChoosing>();
 
         #region Which Card Old
-        private static IOrderedEnumerable<Handcard> cycleCard(Playfield p)
+        private static IOrderedEnumerable<Handcard> CycleCard(Playfield p)
         {
             return p.ownHandCards.Where(s => s != null && s.manacost <= 3 && s.card.type == boardObjType.MOB).OrderBy(s => s.manacost);
         }
 
-        private static IOrderedEnumerable<Handcard> powerCard(Playfield p)
+        private static IOrderedEnumerable<Handcard> PowerCard(Playfield p)
         {
             return p.ownHandCards.Where(s => s != null && s.manacost > 3 && s.card.type == boardObjType.MOB).OrderBy(s => s.manacost);
         }
@@ -242,11 +242,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         private static Handcard AOEDecision(Playfield p, out VectorAI choosedPosition, FightState currentSituation)
         {
-            int biggestEnemieGroupCount;
             choosedPosition = null;
             Handcard aoeGround = null, aoeAir = null;
 
-            BoardObj objGround = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out biggestEnemieGroupCount, transportType.GROUND);
+            BoardObj objGround = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out int biggestEnemieGroupCount, transportType.GROUND);
             if (biggestEnemieGroupCount > 3)
                 aoeGround = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEGround).FirstOrDefault();
 
@@ -312,7 +311,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         }
         #endregion
 
-        private static Handcard GetOppositeCard(Playfield p, FightState currentSituation)
+        public static Handcard GetOppositeCard(Playfield p, FightState currentSituation)
         {
             try
             {

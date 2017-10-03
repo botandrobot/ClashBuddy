@@ -212,31 +212,28 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         public static int DangerOrBestAttackingLine(Playfield p) // Good chance for an attack?
         {
             float hpBorder = p.ownKingsTower.Atk * 3;
-
+            Line[] lines = PlayfieldAnalyse.lines;
             // comparison
-            int compHpL1 = PlayfieldAnalyse.lines[0].OwnMinionHP - PlayfieldAnalyse.lines[0].EnemyMinionHP;
-            int compHpL2 = PlayfieldAnalyse.lines[1].OwnMinionHP - PlayfieldAnalyse.lines[1].EnemyMinionHP;
-            int compAtkL1 = PlayfieldAnalyse.lines[0].OwnMinionAtk - PlayfieldAnalyse.lines[0].EnemyMinionAtk;
-            int compAtkL2 = PlayfieldAnalyse.lines[1].OwnMinionAtk - PlayfieldAnalyse.lines[1].EnemyMinionAtk;
 
-            if (compHpL1 == 0 && compHpL2 == 0)
+
+            if (lines[0].ComparisionHP == 0 && lines[1].ComparisionHP == 0)
                 return 0;
 
 
-            if (compHpL1 < compHpL2)
+            if (lines[0].ComparisionHP < lines[1].ComparisionHP)
             {
-                if (compHpL1 < -hpBorder)
+                if (lines[0].ComparisionHP < -hpBorder)
                     return -1;
 
-                if (compHpL2 > hpBorder)
+                if (lines[1].ComparisionHP > hpBorder)
                     return 2;
             }
             else
             {
-                if (compHpL1 > hpBorder)
+                if (lines[0].ComparisionHP > hpBorder)
                     return 1;
 
-                if (compHpL2 < hpBorder)
+                if (lines[1].ComparisionHP < hpBorder)
                     return -2;
             }
 
@@ -279,8 +276,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         public static BoardObj GetBestDefender(Playfield p)
         {
             // TODO: Find better condition
-            int count = 0;
-            BoardObj enemy = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out count, transportType.NONE);
+            BoardObj enemy = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out int count, transportType.NONE);
 
             if (enemy == null)
                 return p.ownKingsTower;

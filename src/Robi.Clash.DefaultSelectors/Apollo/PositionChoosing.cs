@@ -95,7 +95,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     {
 
                         // TODO: Analyse which is the most dangerous line
-                        if (Helper.GetNearestEnemy(p)?.Line == 2)
+                        if (PlayfieldAnalyse.lines[1].ComparisionHP < PlayfieldAnalyse.lines[0].ComparisionHP)
                         {
                             Logger.Debug("KT RightUp");
                             VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirectionRelative.RightUp, 100);
@@ -114,14 +114,14 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 if (hc.card.Transport == transportType.AIR)
                 {
                     // TODO: Analyse which is the most dangerous line
-                    if (Helper.GetNearestEnemy(p)?.Line == 2)
+                    if (PlayfieldAnalyse.lines[1].ComparisionHP < PlayfieldAnalyse.lines[0].ComparisionHP)
                         return p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine2);
                     else
                         return p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine1);
                 }
                 else
                 {
-                    if (Helper.GetNearestEnemy(p)?.Line == 2)
+                    if (PlayfieldAnalyse.lines[1].ComparisionHP < PlayfieldAnalyse.lines[0].ComparisionHP)
                     {
                         Logger.Debug("BehindKT: Line2");
                         VectorAI position = p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine2);
@@ -239,10 +239,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return p.enemyKingsTower?.Position;
             }
             catch (Exception)
-
             {
-                int count;
-                BoardObj enemy = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out count, transportType.NONE);
+                BoardObj enemy = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out int count, transportType.NONE);
 
                 if (enemy != null && enemy.Position != null)
                 {

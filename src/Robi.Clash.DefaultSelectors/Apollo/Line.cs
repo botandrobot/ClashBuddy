@@ -8,6 +8,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         private Level danger;
         public Level Danger { get => danger; set => danger = value; }
 
+        private Level chance;
+        public Level  Chance{ get => chance; set => chance = value; }
+
         private int enemyMinionHP; 
         public int EnemyMinionHP { get => enemyMinionHP; set => enemyMinionHP = value; }
 
@@ -29,8 +32,17 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         private Level ownPtHp;
         public Level OwnPtHp { get => ownPtHp; set => ownPtHp = value; }
 
+        private int ownPtMaxHp;
+        public int OwnPtMaxHp { get => ownPtMaxHp; set => ownPtMaxHp = value; }
+
         private Level enemyPtHp;
         public Level EnemyPtHp { get => enemyPtHp; set => enemyPtHp = value; }
+
+        private int comparisionHP;
+        public int ComparisionHP { get => comparisionHP; set => comparisionHP = value; }
+
+        private int comparisionAtk;
+        public int ComparisionAtk { get => comparisionAtk; set => comparisionAtk = value; }
 
     }
 }
