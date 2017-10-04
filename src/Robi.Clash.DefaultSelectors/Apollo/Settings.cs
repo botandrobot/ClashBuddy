@@ -4,21 +4,23 @@ using System.Text;
 
 namespace Robi.Clash.DefaultSelectors.Apollo
 {
-    static class Settings
+    static class Setting
     {
-        public static Player.FightStyle FightStyle { get; set; }
+        public static FightStyle FightStyle { get; set; }
 
         public static int KingTowerSpellDamagingHealth { get; set; }
 
         public static int SpellCorrectionConditionCharCount { get; set; }
-
-        public static int SpellDeployConditionCharCount { get; set; }
 
         public static int ManaTillFirstAttack { get; set; }
 
         public static int ManaTillDeploy { get; set; }
 
         public static int MinHealthAsTank { get; set; }
+
+        public static Level DangerSensitivity { get; set; }
+
+        public static Level ChanceSensitivity { get; set; }
 
         //[SettingsGroup(" Deployment Faktor")]
         //[FloatRangeSettings(100, 0, 10000)]

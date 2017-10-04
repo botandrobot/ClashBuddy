@@ -255,27 +255,27 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             switch (currentSituation)
             {
-                case FightState.DLPT:
-                case FightState.UALPT:
+                case FightState.DPTL1:
+                case FightState.UAPTL1:
                     choosedPosition = p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine1);
                     if (aoeAir != null)
                         return aoeAir;
 
                     return aoeGround;
-                case FightState.ALPT:
+                case FightState.APTL1:
                     choosedPosition = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
                     if (aoeAir != null)
                         return aoeAir;
 
                     return aoeGround;
-                case FightState.DRPT:
-                case FightState.UARPT:
+                case FightState.DPTL2:
+                case FightState.UAPTL2:
                     choosedPosition = p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine2);
                     if (aoeAir != null)
                         return aoeAir;
 
                     return aoeGround;
-                case FightState.ARPT:
+                case FightState.APTL2:
                     choosedPosition = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
                     if (aoeAir != null)
                         return aoeAir;
@@ -313,9 +313,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         public static Handcard GetOppositeCard(Playfield p, FightState currentSituation)
         {
+            // Debugging: try - catch is just for debugging
             try
             {
-                if (p.enemyKingsTower.HP < Apollo.Settings.KingTowerSpellDamagingHealth)
+                if (p.enemyKingsTower.HP < Apollo.Setting.KingTowerSpellDamagingHealth)
                 {
                     Handcard hc = AttackKingTowerWithSpell(p);
 
@@ -328,14 +329,14 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             switch (currentSituation)
             {
                 case FightState.UAKT:
-                case FightState.UALPT:
-                case FightState.UARPT:
+                case FightState.UAPTL1:
+                case FightState.UAPTL2:
                 case FightState.AKT:
-                case FightState.ALPT:
-                case FightState.ARPT:
+                case FightState.APTL1:
+                case FightState.APTL2:
                 case FightState.DKT:
-                case FightState.DLPT:
-                case FightState.DRPT:
+                case FightState.DPTL1:
+                case FightState.DPTL2:
                     {
                         BoardObj defender = Decision.GetBestDefender(p);
 

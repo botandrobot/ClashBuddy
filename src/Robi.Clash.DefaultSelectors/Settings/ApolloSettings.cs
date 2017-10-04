@@ -16,10 +16,22 @@ namespace Robi.Clash.DefaultSelectors.Settings
         }
 
         [Category("Default")]
-        [DefaultValue(Player.FightStyle.Balanced)]
+        [DefaultValue(Apollo.FightStyle.Balanced)]
         [DisplayName("Fight Style")]
         [Description("Choose Apollos fight style. Smart balanced, concentrated on the Defense or as an angry rusher?")]
-        public Player.FightStyle FightStyle { get; set; }
+        public Apollo.FightStyle FightStyle { get; set; }
+
+        [Category("Default")]
+        [DefaultValue(Apollo.Level.MEDIUM)]
+        [DisplayName("Danger Sensitivity")]
+        [Description("Sensitivity of danger analysis?")]
+        public Apollo.Level DangerSensitivity { get; set; }
+
+        [Category("Default")]
+        [DefaultValue(Apollo.Level.MEDIUM)]
+        [DisplayName("Chance Sensitivity")]
+        [Description("Sensitivity of chance analysis?")]
+        public Apollo.Level ChanceSensitivity { get; set; }
 
         [Category("Default")]
         [DisplayName("Enemys KingTower spell damaging mode")]
@@ -35,18 +47,11 @@ namespace Robi.Clash.DefaultSelectors.Settings
         [DefaultValue(2)]
         public int SpellCorrectionConditionCharCount { get; set; }
 
-        [Category("Default")]
-        [DisplayName("Spell deployment decision (minimum anzahl Characters)")]
-        [Description("How many enemy characters should be at least in the area for an deploy")]
-        [Range(0, 50)]
-        [DefaultValue(5)]
-        public int SpellDeployConditionCharCount { get; set; }
-
         [Category("Game Start")]
         [DisplayName("Mana-Load")]
         [Description("How much Mana till first attack")]
         [Range(0, 10)]
-        [DefaultValue(9)]
+        [DefaultValue(10)]
         public int ManaTillFirstAttack { get; set; }
 
         [Category("Attack")]

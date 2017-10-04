@@ -22,17 +22,17 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     //    break;
                     //case FightState.DKT:
                     //    break;
-                    case FightState.ALPT:
+                    case FightState.APTL1:
                         {
-                            if (p.BattleTime.TotalSeconds < 20)
+                            if (p.BattleTime.TotalSeconds < 10)
                                 return false;
                             else if (p.enemyPrincessTower1.HP < 300 && p.enemyPrincessTower1.HP > 0)
                                 return false;
                             break;
                         }
-                    case FightState.ARPT:
+                    case FightState.APTL2:
                         {
-                            if (p.BattleTime.TotalSeconds < 20)
+                            if (p.BattleTime.TotalSeconds < 10)
                                 return false;
                             else if (p.enemyPrincessTower2.HP < 300 && p.enemyPrincessTower2.HP > 0)
                                 return false;
@@ -40,7 +40,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                         }
                     case FightState.AKT:
                         {
-                            if (p.BattleTime.TotalSeconds < 30)
+                            if (p.BattleTime.TotalSeconds < 10)
                                 return false;
                             else if (p.enemyKingsTower.HP < 300 && p.enemyKingsTower.HP > 0)
                                 return false;
@@ -50,91 +50,31 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             }
             else
             {
-                if (p.BattleTime.TotalSeconds < 20)
+                if (p.BattleTime.TotalSeconds < 15)
                     return false;
-                if (p.ownKingsTower.HP < 1000)
+                if (p.ownKingsTower.HP < 500)
                     return false;
                 if (Helper.IsAnEnemyObjectInArea(p, p.ownKingsTower.Position, 4000, boardObjType.MOB))
-                    return false;
+                    return false; // ToDo: Find better condition, if the handcard can´t attack the minions, we should wait
             }
 
             return true;
         }
+
         public static FightState DefenseDecision(Playfield p)
         {
+            // There a no dangerous or own important minions on the playfield
+            // This is why we are deciding independent of the minions on the field
+
             if (p.ownTowers.Count < 3)
                 return FightState.DKT;
 
             BoardObj princessTower = p.enemyPrincessTowers.OrderBy(n => n.HP).FirstOrDefault(); // Because they are going to attack this tower
 
             if (princessTower.Line == 2)
-                return FightState.DRPT;
+                return FightState.DPTL2;
             else
-                return FightState.DLPT;
-        }
-
-        public static FightState EnemyHasCharsOnTheFieldDecision(Playfield p)
-        {
-            if (p.ownTowers.Count > 2)
-            {
-                //BoardObj obj = GetNearestEnemy(p);
-
-                // ToDo: Get most dangeroust group
-                group mostDangeroustGroup = p.getGroup(false, 200, boPriority.byTotalBuildingsDPS, 3000);
-
-                if (mostDangeroustGroup == null)
-                {
-                    Logger.Debug("mostDangeroustGroup = null");
-                    return FightState.DKT;
-                }
-                int line = mostDangeroustGroup.Position.X > 8700 ? 2 : 1;
-                Logger.Debug("mostDangeroustGroup.Position.X = {0} ; line = {1}", mostDangeroustGroup?.Position?.X, line);
-
-
-                if (line == 2)
-                    return FightState.DRPT;
-                else
-                    return FightState.DLPT;
-            }
-            else
-            {
-                return FightState.DKT;
-            }
-        }
-
-        public static FightState DangerousSituationDecision(Playfield p, int line)
-        {
-            if (p.ownTowers.Count > 2)
-            {
-                if (line == 2)
-                    return FightState.UARPT;
-                else if (line == 1)
-                    return FightState.UALPT;
-                else
-                    return FightState.UAKT;
-            }
-            else
-            {
-                return FightState.UAKT;
-            }
-        }
-
-        public static FightState EnemyIsOnOurSideDecision(Playfield p)
-        {
-            Logger.Debug("Enemy is on our Side!!");
-            if (p.ownTowers.Count > 2)
-            {
-                BoardObj obj = Helper.GetNearestEnemy(p);
-
-                if (obj != null && obj.Line == 2)
-                    return FightState.UARPT;
-                else
-                    return FightState.UALPT;
-            }
-            else
-            {
-                return FightState.UAKT;
-            }
+                return FightState.DPTL1;
         }
 
         public static FightState AttackDecision(Playfield p)
@@ -146,9 +86,26 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             BoardObj princessTower = p.enemyPrincessTowers.OrderBy(n => n.HP).FirstOrDefault();
 
             if (princessTower.Line == 2)
-                return FightState.ARPT;
+                return FightState.APTL2;
             else
-                return FightState.ALPT;
+                return FightState.APTL1;
+        }
+
+        public static FightState DangerousSituationDecision(Playfield p, int line)
+        {
+            if (p.ownTowers.Count > 2)
+            {
+                if (line == 2)
+                    return FightState.UAPTL2;
+                else if (line == 1)
+                    return FightState.UAPTL1;
+                else
+                    return FightState.UAKT;
+            }
+            else
+            {
+                return FightState.UAKT;
+            }
         }
 
         public static FightState GoodAttackChanceDecision(Playfield p, int line)
@@ -157,18 +114,19 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 return FightState.AKT;
 
             if (line == 2)
-                return FightState.ARPT;
+                return FightState.APTL2;
             else
-                return FightState.ALPT;
+                return FightState.APTL1;
         }
 
         public static FightState GameBeginningDecision(Playfield p, bool gameBeginning)
         {
             bool StartFirstAttack = true;
 
+            // Debugging: try - catch is just for debugging
             try
             {
-                StartFirstAttack = (p.ownMana < Settings.ManaTillFirstAttack);
+                StartFirstAttack = (p.ownMana < Setting.ManaTillFirstAttack);
             }
             catch (Exception e)
             {
@@ -189,9 +147,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 BoardObj obj = Helper.GetNearestEnemy(p);
 
                 if (obj.Line == 2)
-                    return FightState.DRPT;
+                    return FightState.DPTL2;
                 else
-                    return FightState.DLPT;
+                    return FightState.DPTL1;
             }
         }
 
@@ -289,5 +247,53 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 return p.ownKingsTower;
 
         }
+
+        #region Not used in balanced FightMode
+        public static FightState EnemyHasCharsOnTheFieldDecision(Playfield p)
+        {
+            if (p.ownTowers.Count > 2)
+            {
+                //BoardObj obj = GetNearestEnemy(p);
+
+                // ToDo: Get most dangeroust group
+                group mostDangeroustGroup = p.getGroup(false, 200, boPriority.byTotalBuildingsDPS, 3000);
+
+                if (mostDangeroustGroup == null)
+                {
+                    Logger.Debug("mostDangeroustGroup = null");
+                    return FightState.DKT;
+                }
+                int line = mostDangeroustGroup.Position.X > 8700 ? 2 : 1;
+                Logger.Debug("mostDangeroustGroup.Position.X = {0} ; line = {1}", mostDangeroustGroup?.Position?.X, line);
+
+
+                if (line == 2)
+                    return FightState.DPTL2;
+                else
+                    return FightState.DPTL1;
+            }
+            else
+            {
+                return FightState.DKT;
+            }
+        }
+        public static FightState EnemyIsOnOurSideDecision(Playfield p)
+        {
+            Logger.Debug("Enemy is on our Side!!");
+            if (p.ownTowers.Count > 2)
+            {
+                BoardObj obj = Helper.GetNearestEnemy(p);
+
+                if (obj != null && obj.Line == 2)
+                    return FightState.UAPTL2;
+                else
+                    return FightState.UAPTL1;
+            }
+            else
+            {
+                return FightState.UAKT;
+            }
+        }
+        #endregion
     }
 }

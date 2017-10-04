@@ -233,7 +233,7 @@ namespace Robi.Clash.DefaultSelectors.Logic
             Logger.Debug("enemyWhithTheMostEnemiesAround-Count: {count} enemy-Name {name}", count
                          , enemy.LogicGameObjectData.Name.Value);
                          */
-            if (count > GameHandling.Settings.SpellDeployConditionCharCount)
+            if (count > 4)
                 return true;
 
             return false;

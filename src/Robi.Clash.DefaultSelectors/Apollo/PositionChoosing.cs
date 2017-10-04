@@ -30,29 +30,29 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 case FightState.UAKT:
                     choosedPosition = UAKT(p, hc);
                     break;
-                case FightState.UALPT:
-                    choosedPosition = UALPT(p, hc);
+                case FightState.UAPTL1:
+                    choosedPosition = UAPTL1(p, hc);
                     break;
-                case FightState.UARPT:
-                    choosedPosition = UARPT(p, hc);
+                case FightState.UAPTL2:
+                    choosedPosition = UAPTL2(p, hc);
                     break;
                 case FightState.AKT:
                     choosedPosition = AKT(p);
                     break;
-                case FightState.ALPT:
-                    choosedPosition = ALPT(p);
+                case FightState.APTL1:
+                    choosedPosition = APTL1(p);
                     break;
-                case FightState.ARPT:
-                    choosedPosition = ARPT(p);
+                case FightState.APTL2:
+                    choosedPosition = APTL2(p);
                     break;
                 case FightState.DKT:
                     choosedPosition = DKT(p, hc);
                     break;
-                case FightState.DLPT:
-                    choosedPosition = DLPT(p, hc);
+                case FightState.DPTL1:
+                    choosedPosition = DPTL1(p, hc);
                     break;
-                case FightState.DRPT:
-                    choosedPosition = DRPT(p, hc);
+                case FightState.DPTL2:
+                    choosedPosition = DPTL2(p, hc);
                     break;
                 default:
                     //Logger.Debug("GameState unknown");
@@ -74,13 +74,13 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             return DKT(p, hc);
         }
 
-        private static VectorAI UALPT(Playfield p, Handcard hc)
+        private static VectorAI UAPTL1(Playfield p, Handcard hc)
         {
-            return DLPT(p, hc);
+            return DPTL1(p, hc);
         }
-        private static VectorAI UARPT(Playfield p, Handcard hc)
+        private static VectorAI UAPTL2(Playfield p, Handcard hc)
         {
-            return DRPT(p, hc);
+            return DPTL2(p, hc);
         }
         #endregion
 
@@ -89,9 +89,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         {
             if (hc.card.type == boardObjType.MOB)
             {
+                // Debugging: try - catch is just for debugging
                 try
                 {
-                    if (hc.card.MaxHP >= Settings.MinHealthAsTank)
+                    if (hc.card.MaxHP >= Setting.MinHealthAsTank)
                     {
 
                         // TODO: Analyse which is the most dangerous line
@@ -153,7 +154,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             }
 
         }
-        private static VectorAI DLPT(Playfield p, Handcard hc)
+        private static VectorAI DPTL1(Playfield p, Handcard hc)
         {
             BoardObj lPT = p.ownPrincessTower1;
 
@@ -164,7 +165,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             VectorAI correctedPosition = PrincessTowerCharacterDeploymentCorrection(lPTP, p, hc);
             return correctedPosition;
         }
-        private static VectorAI DRPT(Playfield p, Handcard hc)
+        private static VectorAI DPTL2(Playfield p, Handcard hc)
         {
             BoardObj rPT = p.ownPrincessTower2;
 
@@ -185,16 +186,16 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if (p.enemyPrincessTowers.Count == 2)
             {
                 if (p.enemyPrincessTower1.HP < p.enemyPrincessTower2.HP)
-                    return ALPT(p);
+                    return APTL1(p);
                 else
-                    return ARPT(p);
+                    return APTL2(p);
             }
 
             if (p.enemyPrincessTower1.HP == 0)
-                return ALPT(p);
+                return APTL1(p);
 
             if (p.enemyPrincessTower2.HP == 0)
-                return ARPT(p);
+                return APTL2(p);
 
             VectorAI position = p.enemyKingsTower?.Position;
 
@@ -203,7 +204,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             return position;
         }
-        private static VectorAI ALPT(Playfield p)
+        private static VectorAI APTL1(Playfield p)
         {
             Logger.Debug("ALPT");
 
@@ -214,7 +215,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             return lPT;
         }
-        private static VectorAI ARPT(Playfield p)
+        private static VectorAI APTL2(Playfield p)
         {
             Logger.Debug("ARPT");
 
@@ -233,9 +234,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             // Prio2: Every damaging spell if there is a big group of enemies
             Logger.Debug("GetPositionOfTheBestDamaingSpellDeploy");
 
+            // Debugging: try - catch is just for debugging
             try
             {
-                if (p.enemyKingsTower?.HP < Settings.KingTowerSpellDamagingHealth || (p.enemyMinions.Count + p.enemyBuildings.Count) < 1)
+                if (p.enemyKingsTower?.HP < Setting.KingTowerSpellDamagingHealth || (p.enemyMinions.Count + p.enemyBuildings.Count) < 1)
                     return p.enemyKingsTower?.Position;
             }
             catch (Exception)
@@ -244,18 +246,31 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
                 if (enemy != null && enemy.Position != null)
                 {
+                    // Debugging: try - catch is just for debugging
                     try
                     {
-                        if (Helper.HowManyNFCharactersAroundCharacter(p, enemy) >= Settings.SpellCorrectionConditionCharCount)
+                        // ToDo: Use a mix of the HP and count of the Enemy Units
+                        // How fast are the enemy units, needed for a better correction
+                        if (Helper.HowManyNFCharactersAroundCharacter(p, enemy) >= Setting.SpellCorrectionConditionCharCount)
                         {
-                            Logger.Debug("enemy.Name = {Name}", enemy.Name);
-                            if (enemy.Position != null) Logger.Debug("enemy.Position = {position}", enemy.Position);
-
-                            return enemy.Position;
+                            Logger.Debug("With correction; enemy.Name = {Name}", enemy.Name);
+                            if (enemy.Position != null)
+                            {
+                                Logger.Debug("enemy.Position = {position}", enemy.Position);
+                                return p.getDeployPosition(enemy.Position, deployDirectionRelative.Down, 500);
+                            }
+                        }
+                        else
+                        {
+                            Logger.Debug("No correction; enemy.Name = {Name}", enemy.Name);
+                            if (enemy.Position != null)
+                            {
+                                Logger.Debug("enemy.Position = {position}", enemy.Position);
+                                return enemy.Position;
+                            }
                         }
                     }
                     catch (Exception)
-
                     {
                         //enemy.Position.AddYInDirection(p, 3000); // Position Correction
                         VectorAI result = p.getDeployPosition(enemy.Position, deployDirectionRelative.Down, 500);
@@ -290,18 +305,18 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             //Logger.Debug("PT Characer Position Correction: Name und Typ {0} " + cardToDeploy.Name, (cardToDeploy as CardCharacter).Type);
             if (hc.card.type == boardObjType.MOB)
             {
+                // Debugging: try - catch is just for debugging
                 try
                 {
-                    if (hc.card.MaxHP >= Settings.MinHealthAsTank)
+                    if (hc.card.MaxHP >= Setting.MinHealthAsTank)
                     {
                         //position.SubtractYInDirection(p);
                         return p.getDeployPosition(position, deployDirectionRelative.Up, 100);
                     }
+                    else return p.getDeployPosition(position, deployDirectionRelative.Down, 2000);
                 }
                 catch (Exception) { }
-
                 {
-                    //position.AddYInDirection(p);
                     return p.getDeployPosition(position, deployDirectionRelative.Down, 2000);
                 }
 

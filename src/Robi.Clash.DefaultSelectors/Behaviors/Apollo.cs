@@ -1,8 +1,6 @@
 ﻿namespace Robi.Clash.DefaultSelectors.Behaviors
 {
-    using Robi.Clash.Engine.NativeObjects.Logic.GameObjects;
     using Common;
-    using Engine.NativeObjects.Native;
     using Robi.Clash.DefaultSelectors.Apollo;
     using Robi.Engine.Settings;
     using Serilog;
@@ -10,8 +8,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Linq.Expressions;
-    using Robi.Clash.Engine;
     using System.Reflection;
 
     public class Apollo : BehaviorBase
@@ -130,14 +126,14 @@
             switch (currentSituation)
             {
                 case FightState.UAKT:
-                case FightState.UALPT:
-                case FightState.UARPT:
+                case FightState.UAPTL1:
+                case FightState.UAPTL2:
                 case FightState.DKT:
-                case FightState.DLPT:
-                case FightState.DRPT:
+                case FightState.DPTL1:
+                case FightState.DPTL2:
                 case FightState.AKT:
-                case FightState.ALPT:
-                case FightState.ARPT:
+                case FightState.APTL1:
+                case FightState.APTL2:
                     return CardChoosing.All(p, currentSituation, out choosedPosition);
                 case FightState.START:
                     return null;
@@ -150,9 +146,10 @@
 
         public static FightState GetCurrentFightState(Playfield p)
         {
+            // Debugging: try - catch is just for debugging
             try
             {
-                switch ((FightStyle)Settings.FightStyle)
+                switch (Setting.FightStyle)
                 {
                     case FightStyle.Defensive:
                         return GetCurrentFightStateDefensive(p);
@@ -173,7 +170,6 @@
 
         private static FightState GetCurrentFightStateBalanced(Playfield p)
         {
-
             FightState fightState = FightState.WAIT;
 
             if (GameBeginning)
@@ -182,15 +178,7 @@
                 return Decision.GameBeginningDecision(p, GameBeginning);
             }
 
-            //if (!p.noEnemiesOnMySide())
-            //{
-            //    StartLoadedDeploy = false;
-            //    fightState = EnemyIsOnOurSideDecision(p);
-            //}
-
-
             int dangerOrAttackLine = Decision.DangerOrBestAttackingLine(p);
-
 
             if (dangerOrAttackLine < 0)
             {
@@ -206,9 +194,10 @@
             }
             else
             {
+                // Debugging: try - catch is just for debugging
                 try
                 {
-                    if (p.ownMana >= Settings.ManaTillDeploy)
+                    if (p.ownMana >= Setting.ManaTillDeploy)
                     {
                         StartLoadedDeploy = true;
                         fightState = Decision.DefenseDecision(p);
@@ -247,13 +236,14 @@
 
         private static void FillSettings()
         {
-            Apollo.Settings.FightStyle = Settings.FightStyle; 
-            Apollo.Settings.KingTowerSpellDamagingHealth = Settings.KingTowerSpellDamagingHealth;
-            Apollo.Settings.ManaTillDeploy = Settings.ManaTillDeploy;
-            Apollo.Settings.ManaTillFirstAttack = Settings.ManaTillFirstAttack;
-            Apollo.Settings.MinHealthAsTank = Settings.MinHealthAsTank;
-            Apollo.Settings.SpellCorrectionConditionCharCount = Settings.SpellCorrectionConditionCharCount;
-            Apollo.Settings.SpellDeployConditionCharCount = Settings.SpellDeployConditionCharCount;
+            Setting.FightStyle = Settings.FightStyle; 
+            Setting.KingTowerSpellDamagingHealth = Settings.KingTowerSpellDamagingHealth;
+            Setting.ManaTillDeploy = Settings.ManaTillDeploy;
+            Setting.ManaTillFirstAttack = Settings.ManaTillFirstAttack;
+            Setting.MinHealthAsTank = Settings.MinHealthAsTank;
+            Setting.SpellCorrectionConditionCharCount = Settings.SpellCorrectionConditionCharCount;
+            Setting.DangerSensitivity = Settings.DangerSensitivity;
+            Setting.ChanceSensitivity = Settings.ChanceSensitivity;
         }
 
         public override float GetPlayfieldValue(Playfield p)

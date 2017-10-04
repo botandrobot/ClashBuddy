@@ -7,6 +7,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 {
     class PlayfieldAnalyse
     {
+        // ToDo: Use ATK per second
+        // ToDo: Involve KT in analyses
+
         public static Line[] lines;
 
         public static void AnalyseLines(Playfield p)
@@ -23,6 +26,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         private static void Tower(Playfield p)
         {
+            // TODO: Level must be fixed, is everytime 0
             lines[0].OwnPtMaxHp = (int)Helper.LevelMultiplicator(p.ownPrincessTower1.MaxHP, p.ownPrincessTower1.level);
             lines[1].OwnPtMaxHp = (int)Helper.LevelMultiplicator(p.ownPrincessTower2.MaxHP, p.ownPrincessTower2.level);
             #region TowerAnalyses
@@ -31,7 +35,6 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             double ePtHpL1 = Helper.Quotient(p.enemyPrincessTower1.HP, lines[0].OwnPtMaxHp) * 100;
             double ePtHpL2 = Helper.Quotient(p.enemyPrincessTower2.HP, lines[1].OwnPtMaxHp) * 100;
 
-            // TODO: Level must be fixed, is everytime 0
             if (oPtHpL1 == 0) lines[0].OwnPtHp = Apollo.Level.ZERO;
             else if (oPtHpL1 <= 30) lines[0].OwnPtHp = Apollo.Level.LOW;
             else if (oPtHpL1 <= 70) lines[0].OwnPtHp = Apollo.Level.MEDIUM;
@@ -91,17 +94,18 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         private static Level GetDangerLevel(int line)
         {
             int dangerLevel = 0;
+            int sensitivity = (int)Setting.DangerSensitivity;
             int comparisionHP = lines[line].ComparisionHP;
             int comparisionAtk = lines[line].ComparisionAtk;
 
             #region Minion HP
             if (comparisionHP != 0)
             {
-                if (comparisionHP < -(lines[0].OwnPtMaxHp / 5))
+                if (comparisionHP < -(lines[0].OwnPtMaxHp / (5 * sensitivity)))
                     dangerLevel += 3;
-                else if (comparisionHP < -(lines[0].OwnPtMaxHp / 10))
+                else if (comparisionHP < -(lines[0].OwnPtMaxHp / (10 * sensitivity)))
                     dangerLevel += 2;
-                else if (comparisionHP < -(lines[0].OwnPtMaxHp / 15))
+                else if (comparisionHP < -(lines[0].OwnPtMaxHp / (15 * sensitivity)))
                     dangerLevel += 1;
             }
             #endregion
@@ -109,11 +113,11 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             #region Minion Atk
             if (comparisionAtk != 0)
             {
-                if (comparisionAtk < -(lines[0].OwnPtMaxHp / 15))
+                if (comparisionAtk < -(lines[0].OwnPtMaxHp / (15 * sensitivity)))
                     dangerLevel += 3;
-                else if (comparisionAtk < -(lines[0].OwnPtMaxHp / 20))
+                else if (comparisionAtk < -(lines[0].OwnPtMaxHp / (20 * sensitivity)))
                     dangerLevel += 2;
-                else if (comparisionAtk < -(lines[0].OwnPtMaxHp / 25))
+                else if (comparisionAtk < -(lines[0].OwnPtMaxHp / (25 * sensitivity)))
                     dangerLevel += 1;
             }
             #endregion
@@ -135,23 +139,25 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             }
             #endregion
 
+            // Maybe round up
             return (Level)(dangerLevel / 3);
         }
 
         private static Level GetChanceLevel(int line)
         {
             int chanceLevel = 0;
+            int sensitivity = (int)Setting.ChanceSensitivity;
             int comparisionHP = lines[line].ComparisionHP;
             int comparisionAtk = lines[line].ComparisionAtk;
 
             #region Minion HP
             if (comparisionHP != 0)
             {
-                if (comparisionHP > (lines[0].OwnPtMaxHp / 5))
+                if (comparisionHP > (lines[0].OwnPtMaxHp / (5 * sensitivity)))
                     chanceLevel += 3;
-                else if (comparisionHP > (lines[0].OwnPtMaxHp / 10))
+                else if (comparisionHP > (lines[0].OwnPtMaxHp / (10 * sensitivity)))
                     chanceLevel += 2;
-                else if (comparisionHP > (lines[0].OwnPtMaxHp / 15))
+                else if (comparisionHP > (lines[0].OwnPtMaxHp / (15 * sensitivity)))
                     chanceLevel += 1;
 
             }
@@ -160,11 +166,11 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             #region Minion Atk
             if (comparisionAtk != 0)
             {
-                if (comparisionAtk > (lines[0].OwnPtMaxHp / 15))
+                if (comparisionAtk > (lines[0].OwnPtMaxHp / (15 * sensitivity)))
                     chanceLevel += 3;
-                else if (comparisionAtk > (lines[0].OwnPtMaxHp / 20))
+                else if (comparisionAtk > (lines[0].OwnPtMaxHp / (20 * sensitivity)))
                     chanceLevel += 2;
-                else if (comparisionAtk > (lines[0].OwnPtMaxHp / 25))
+                else if (comparisionAtk > (lines[0].OwnPtMaxHp / (25 * sensitivity)))
                     chanceLevel += 1;
 
 
