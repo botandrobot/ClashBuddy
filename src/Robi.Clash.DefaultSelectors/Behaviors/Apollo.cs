@@ -42,7 +42,6 @@
 
         private static bool StartLoadedDeploy = false;
         private static FightState currentSituation;
-        private static Line[] Lines = new Line[2];
 
         public override Cast GetBestCast(Playfield p)
         {
@@ -51,10 +50,8 @@
             Logger.Debug("Home = {Home}", p.home);
 
             #region Apollo Magic
-            Logger.Debug("Part: Get CurrentSituation");
             PlayfieldAnalyse.AnalyseLines(p);
             currentSituation = GetCurrentFightState(p);
-            Logger.Debug("Part: GetOppositeCard");
             Handcard hc = CardChoosing.GetOppositeCard(p, currentSituation);
 
             if (hc == null)
@@ -116,7 +113,6 @@
             int i2 = p.ownPrincessTower1.HP;
             int i3 = p.ownPrincessTower2.HP;
 
-            int abc = 10;
             Logger.Debug("test");
         }
 
@@ -161,7 +157,7 @@
                         return FightState.DKT;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return GetCurrentFightStateBalanced(p);
             }
@@ -175,7 +171,7 @@
             if (GameBeginning)
             {
                 StartLoadedDeploy = false;
-                return Decision.GameBeginningDecision(p, GameBeginning);
+                return Decision.GameBeginningDecision(p, out GameBeginning);
             }
 
             int dangerOrAttackLine = Decision.DangerOrBestAttackingLine(p);
@@ -216,7 +212,7 @@
         private static FightState GetCurrentFightStateDefensive(Playfield p)
         {
             if (GameBeginning)
-                return Decision.GameBeginningDecision(p, GameBeginning);
+                return Decision.GameBeginningDecision(p, out GameBeginning);
 
             if (!p.noEnemiesOnMySide())
                 return Decision.EnemyIsOnOurSideDecision(p);

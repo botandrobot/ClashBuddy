@@ -119,20 +119,17 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 return FightState.APTL1;
         }
 
-        public static FightState GameBeginningDecision(Playfield p, bool gameBeginning)
+        public static FightState GameBeginningDecision(Playfield p, out bool gameBeginning)
         {
             bool StartFirstAttack = true;
+            gameBeginning = true;
 
             // Debugging: try - catch is just for debugging
             try
             {
                 StartFirstAttack = (p.ownMana < Setting.ManaTillFirstAttack);
             }
-            catch (Exception e)
-            {
-
-            }
-
+            catch (Exception) { }
 
             if (StartFirstAttack)
             {
@@ -169,31 +166,49 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         public static int DangerOrBestAttackingLine(Playfield p) // Good chance for an attack?
         {
-            float hpBorder = p.ownKingsTower.Atk * 3;
             Line[] lines = PlayfieldAnalyse.lines;
             // comparison
-
+            // ToDo: Use line danger and chance analyses
 
             if (lines[0].ComparisionHP == 0 && lines[1].ComparisionHP == 0)
                 return 0;
 
 
-            if (lines[0].ComparisionHP < lines[1].ComparisionHP)
+            if (lines[0].Danger > lines[0].Chance)
             {
-                if (lines[0].ComparisionHP < -hpBorder)
-                    return -1;
-
-                if (lines[1].ComparisionHP > hpBorder)
-                    return 2;
+                if(lines[1].Danger > lines[1].Chance)
+                {
+                    if (lines[0].Danger > lines[1].Danger)
+                        return -1;
+                    else
+                        return -2;
+                }
+                else
+                {
+                    if (lines[0].Danger > lines[1].Chance)
+                        return -1;
+                    else
+                        return 2;
+                }
             }
             else
             {
-                if (lines[0].ComparisionHP > hpBorder)
-                    return 1;
-
-                if (lines[1].ComparisionHP < hpBorder)
-                    return -2;
+                if (lines[1].Danger > lines[1].Chance)
+                {
+                    if (lines[0].Chance > lines[1].Danger)
+                        return 1;
+                    else
+                        return -2;
+                }
+                else
+                {
+                    if (lines[0].Chance > lines[1].Chance)
+                        return 1;
+                    else
+                        return 2;
+                }
             }
+
 
 
 
