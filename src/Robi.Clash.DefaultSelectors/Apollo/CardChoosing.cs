@@ -67,7 +67,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 choosedPosition = null;
             }
 
-            if ((int)currentSituation < 3 || (int)currentSituation > 5) // Just not at Under Attack
+            if ((int)currentSituation < 3 || (int)currentSituation > 6) // Just not at Under Attack
             {
                 var tank = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsTank).OrderBy(n => n.card.MaxHP);
                 if (tank.LastOrDefault() != null && tank.LastOrDefault().manacost <= p.ownMana)
@@ -82,8 +82,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if (damageDealerCard != null && damageDealerCard.manacost <= p.ownMana)
                 return damageDealerCard;
 
-            if((int)currentSituation >= 3 && (int)currentSituation <= 5)
+            if((int)currentSituation >= 3 && (int)currentSituation <= 6)
                 return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsUnderAttack).FirstOrDefault();
+
+            // ToDo: Decision for building attacker
 
             Logger.Debug("Wait - No card selected...");
             return null;
@@ -282,7 +284,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
                     return aoeGround;
                 case FightState.DKT:
-                case FightState.UAKT:
+                case FightState.UAKTL1:
+                case FightState.UAKTL2:
                     if (aoeAir != null)
                     {
                         choosedPosition = objAir.Line == 1 ? p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine1)
@@ -328,7 +331,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             switch (currentSituation)
             {
-                case FightState.UAKT:
+                case FightState.UAKTL1:
+                case FightState.UAKTL2:
                 case FightState.UAPTL1:
                 case FightState.UAPTL2:
                 case FightState.AKT:

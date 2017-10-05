@@ -27,8 +27,11 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             // ToDo: Handle Defense Gamestates
             switch (gameState)
             {
-                case FightState.UAKT:
-                    choosedPosition = UAKT(p, hc);
+                case FightState.UAKTL1:
+                    choosedPosition = UAKT(p, hc, 1);
+                    break;
+                case FightState.UAKTL2:
+                    choosedPosition = UAKT(p, hc, 2);
                     break;
                 case FightState.UAPTL1:
                     choosedPosition = UAPTL1(p, hc);
@@ -46,7 +49,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     choosedPosition = APTL2(p);
                     break;
                 case FightState.DKT:
-                    choosedPosition = DKT(p, hc);
+                    choosedPosition = DKT(p, hc,0);
                     break;
                 case FightState.DPTL1:
                     choosedPosition = DPTL1(p, hc);
@@ -69,9 +72,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         }
 
         #region UnderAttack
-        private static VectorAI UAKT(Playfield p, Handcard hc)
+        private static VectorAI UAKT(Playfield p, Handcard hc, int line)
         {
-            return DKT(p, hc);
+            return DKT(p, hc, line);
         }
 
         private static VectorAI UAPTL1(Playfield p, Handcard hc)
@@ -85,8 +88,17 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         #endregion
 
         #region Defense
-        private static VectorAI DKT(Playfield p, Handcard hc)
+        private static VectorAI DKT(Playfield p, Handcard hc, int line)
         {
+            // ToDo: Improve
+            if(line == 0)
+            {
+                if (p.enemyPrincessTower1.HP < p.enemyPrincessTower2.HP)
+                    line = 1;
+                else
+                    line = 2;
+            }
+
             if (hc.card.type == boardObjType.MOB)
             {
                 // Debugging: try - catch is just for debugging
@@ -96,7 +108,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     {
 
                         // TODO: Analyse which is the most dangerous line
-                        if (PlayfieldAnalyse.lines[1].ComparisionHP < PlayfieldAnalyse.lines[0].ComparisionHP)
+                        if (line == 2)
                         {
                             Logger.Debug("KT RightUp");
                             VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirectionRelative.RightUp, 100);
@@ -115,14 +127,14 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 if (hc.card.Transport == transportType.AIR)
                 {
                     // TODO: Analyse which is the most dangerous line
-                    if (PlayfieldAnalyse.lines[1].ComparisionHP < PlayfieldAnalyse.lines[0].ComparisionHP)
+                    if (line == 2)
                         return p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine2);
                     else
                         return p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine1);
                 }
                 else
                 {
-                    if (PlayfieldAnalyse.lines[1].ComparisionHP < PlayfieldAnalyse.lines[0].ComparisionHP)
+                    if (line == 2)
                     {
                         Logger.Debug("BehindKT: Line2");
                         VectorAI position = p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine2);
@@ -159,7 +171,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             BoardObj lPT = p.ownPrincessTower1;
 
             if (lPT == null || lPT.Position == null)
-                return DKT(p, hc);
+                return DKT(p, hc,1);
 
             VectorAI lPTP = lPT.Position;
             VectorAI correctedPosition = PrincessTowerCharacterDeploymentCorrection(lPTP, p, hc);
@@ -170,7 +182,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             BoardObj rPT = p.ownPrincessTower2;
 
             if (rPT == null && rPT.Position == null)
-                return DKT(p, hc);
+                return DKT(p, hc,2);
 
             VectorAI rPTP = rPT.Position;
             VectorAI correctedPosition = PrincessTowerCharacterDeploymentCorrection(rPTP, p, hc);

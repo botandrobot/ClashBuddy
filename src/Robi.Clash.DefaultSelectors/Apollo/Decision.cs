@@ -97,14 +97,15 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             {
                 if (line == 2)
                     return FightState.UAPTL2;
-                else if (line == 1)
+                else 
                     return FightState.UAPTL1;
-                else
-                    return FightState.UAKT;
             }
             else
             {
-                return FightState.UAKT;
+                if (line == 2)
+                    return FightState.UAKTL2;
+                else
+                    return FightState.UAKTL1;
             }
         }
 
@@ -310,7 +311,12 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             }
             else
             {
-                return FightState.UAKT;
+                BoardObj obj = Helper.GetNearestEnemy(p);
+
+                if (obj != null && obj.Line == 2)
+                    return FightState.UAKTL2;
+                else
+                    return FightState.UAKTL1;
             }
         }
         #endregion

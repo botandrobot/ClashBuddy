@@ -121,7 +121,8 @@
             choosedPosition = null;
             switch (currentSituation)
             {
-                case FightState.UAKT:
+                case FightState.UAKTL1:
+                case FightState.UAKTL2:
                 case FightState.UAPTL1:
                 case FightState.UAPTL2:
                 case FightState.DKT:
