@@ -3,6 +3,10 @@ namespace Robi.Clash.DefaultSelectors.Tests
     using Behaviors;
     using Xunit;
 
+    using System.Reflection;
+    using System;
+    using System.Text;
+
     public class TestHarness
     {
         [Fact]

@@ -382,7 +382,22 @@ namespace Robi.Clash.DefaultSelectors
             });
 
             //dartgoblin
-            //electrowizard
+            OppositeDB.Add(CardDB.cardName.electrowizard, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.fireball, 100 },
+                { CardDB.cardName.lightning, 100 },
+                { CardDB.cardName.skeletonarmy, 100 },
+                { CardDB.cardName.icegolem, 100 },
+                { CardDB.cardName.minionhorde, 90 },
+                { CardDB.cardName.barbarian, 90 },
+                { CardDB.cardName.angrybarbarian, 90 },
+                { CardDB.cardName.guards, 80 },
+                { CardDB.cardName.knight, 80 },
+                { CardDB.cardName.minipekka, 80 },
+                { CardDB.cardName.valkyrie, 80 },
+                { CardDB.cardName.lumberjack, 80 },
+                { CardDB.cardName.goblingang, 50 },
+                { CardDB.cardName.princess, 50 }
+            });
             //elitebarbarians
             //executioner
             //firespirits
@@ -453,7 +468,22 @@ namespace Robi.Clash.DefaultSelectors
 
             //icegolem
             //icespirit
-            //icewizard
+            OppositeDB.Add(CardDB.cardName.icewizard, new Dictionary<CardDB.cardName, int>(){
+                { CardDB.cardName.lightning, 100 },
+                { CardDB.cardName.fireball, 100 },
+                { CardDB.cardName.babydragon, 100 },
+                { CardDB.cardName.barbarian, 100 },
+                { CardDB.cardName.musketeer, 100 },
+                { CardDB.cardName.minipekka, 95 },
+                { CardDB.cardName.knight, 90 },
+                { CardDB.cardName.guards, 90 },
+                { CardDB.cardName.wizard, 85 },
+                { CardDB.cardName.goblin, 85 },
+                { CardDB.cardName.goblingang, 85 },
+                { CardDB.cardName.minionhorde, 85 },
+                { CardDB.cardName.bombtower, 85 },
+                { CardDB.cardName.princess, 80 }
+            });
             //infernodragon
             //knight
 
