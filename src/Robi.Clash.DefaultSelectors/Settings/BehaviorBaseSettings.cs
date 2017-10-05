@@ -13,14 +13,10 @@
 
         public string DatabaseFullpath => System.IO.Path.GetFullPath(DatabaseFolder);
 
-        [DisplayName("Database Folder")]
-        [Description("The folder containing the Nano Databases.")]
-        [DefaultValue("Nano")]
-        public string DatabaseFolder { get; set; }
-
-        [DisplayName("Logfile Name")]
-        [Description("File name for the logfile, might be removed in the future.")]
-        [DefaultValue("nano.log")]
-        public string LogFileName { get; set; }
+        [DisplayName("Routine version")]
+        [Description("Routine version.")]
+        [DefaultValue("0.8.0")]
+        public string DatabaseFolder { get; }
+        
     }
 }
