@@ -74,6 +74,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return tank.LastOrDefault();
             }
 
+            // ToDo: Decision for building attacker
+            if ((int)currentSituation > 6 && (int)currentSituation < 10)
+                return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsBuildingAttacker).FirstOrDefault();
+
             var rangerCard = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsRanger).FirstOrDefault();
             if (rangerCard != null && rangerCard.manacost <= p.ownMana)
                 return rangerCard;
@@ -84,10 +88,6 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             if((int)currentSituation >= 3 && (int)currentSituation <= 6)
                 return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsUnderAttack).FirstOrDefault();
-
-            // ToDo: Decision for building attacker
-            if ((int)currentSituation > 6 && (int)currentSituation < 10)
-                return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsBuildingAttacker).FirstOrDefault();
 
             Logger.Debug("Wait - No card selected...");
             return null;
