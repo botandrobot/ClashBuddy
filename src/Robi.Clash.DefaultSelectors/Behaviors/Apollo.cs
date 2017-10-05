@@ -52,7 +52,7 @@
             #region Apollo Magic
             PlayfieldAnalyse.AnalyseLines(p);
             currentSituation = GetCurrentFightState(p);
-            Handcard hc = null; //CardChoosing.GetOppositeCard(p, currentSituation);
+            Handcard hc = CardChoosing.GetOppositeCard(p, currentSituation);
 
             if (hc == null)
             {

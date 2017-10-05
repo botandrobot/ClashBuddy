@@ -76,7 +76,11 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             // ToDo: Decision for building attacker
             if ((int)currentSituation > 6 && (int)currentSituation < 10)
-                return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsBuildingAttacker).FirstOrDefault();
+            {
+                var buildingAtkCard = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsBuildingAttacker).FirstOrDefault();
+                if (buildingAtkCard != null && buildingAtkCard.manacost <= p.ownMana)
+                    return buildingAtkCard;
+            }
 
             var rangerCard = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsRanger).FirstOrDefault();
             if (rangerCard != null && rangerCard.manacost <= p.ownMana)
