@@ -23,7 +23,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             Tower(p);
             Minions(p);
             Comparision();
-            Level();
+            Level(p);
         }
 
         private static void Tower(Playfield p)
@@ -89,54 +89,25 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             lines[1].ComparisionAtk = lines[1].OwnMinionAtk - lines[1].EnemyMinionAtk;
         }
 
-        private static void Level()
+        private static void Level(Playfield p)
         {
-            lines[0].Danger = GetDangerLevel(0);
-            lines[1].Danger = GetDangerLevel(1);
+            lines[0].Danger = GetDangerLevel(p,0);
+            lines[1].Danger = GetDangerLevel(p,1);
 
             lines[0].Chance = GetChanceLevel(0);
             lines[1].Chance = GetChanceLevel(1);
         }
 
-        private static Level GetDangerLevel(int line)
+        private static Level GetDangerLevel(Playfield p, int line)
         {
-            int dangerLevel = 0, dangerLvlHP = 0, dangerLvlAtk = 0, dangerLvlTower = 0;
+            int dangerLevel, dangerLvlHP, dangerLvlAtk, dangerLvlBuilding, dangerLvlTower = 0;
             int sensitivity = (int)Setting.DangerSensitivity;
             sensitivity = 2; // Remove: Just for debugging
-            int enemyMinionHP = lines[line].EnemyMinionHP;
-            int enemyMinionAtk = lines[line].EnemyMinionAtk;
 
-            #region Minion HP
-            if (enemyMinionHP != 0)
-            {
-                if (enemyMinionHP > (lines[line].OwnPtMaxHp / (2 * sensitivity)))
-                    dangerLvlHP += 3;
-                else if (enemyMinionHP > (lines[line].OwnPtMaxHp / (3 * sensitivity)))
-                    dangerLvlHP += 2;
-                else if (enemyMinionHP > (lines[line].OwnPtMaxHp / (4 * sensitivity)))
-                    dangerLvlHP += 1;
+            dangerLvlHP = GetDangerLvLMinionHP(line, sensitivity);
+            dangerLvlAtk = GetDangerLvLMinionAtk(line, sensitivity);
+            dangerLvlBuilding = GetDangerLvlBuilding(p, line);
 
-                // ToDo: Use this, but Atk is zero at the moment
-                //if (enemyMinionHP < -(lines[line].OwnPtAtk * sensitivity * 2))
-                //    dangerLvlHP += 3;
-                //else if (enemyMinionHP < -(lines[line].OwnPtAtk * sensitivity * 1.5))
-                //    dangerLvlHP += 2;
-                //else if (enemyMinionHP < -(lines[line].OwnPtAtk * sensitivity))
-                //    dangerLvlHP += 1;
-            }
-            #endregion
-
-            #region Minion Atk
-            if (enemyMinionAtk != 0)
-            {
-                if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (5 * sensitivity)))
-                    dangerLvlAtk += 3;
-                else if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (10 * sensitivity)))
-                    dangerLvlAtk += 2;
-                else if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (15 * sensitivity)))
-                    dangerLvlAtk += 1;
-            }
-            #endregion
 
             #region PrincessTower HP
             //switch (lines[line].OwnPtHp)
@@ -159,11 +130,82 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             Logger.Debug("Atk       :" + dangerLvlAtk);
             Logger.Debug("HP        :" + dangerLvlHP);
             Logger.Debug("Tower-HP  :" + dangerLvlTower);
+            Logger.Debug("Building  :" + dangerLvlBuilding);
             Logger.Debug("Danger-Analyses-End");
 
-            dangerLevel = dangerLvlAtk + dangerLvlHP + dangerLvlTower;
+            dangerLevel = dangerLvlAtk + dangerLvlHP + dangerLvlTower + dangerLvlBuilding;
             // Maybe round up
-            return (Level)(dangerLevel / 2);
+            if (dangerLvlBuilding == 0)
+                return (Level)(dangerLevel / 2);
+            else if (dangerLvlHP > 0)
+                return (Level)(dangerLevel / 3);
+            else
+                return (Level)(dangerLvlBuilding);
+
+        }
+
+        private static int GetDangerLvLMinionHP(int line, int sensitivity)
+        {
+            int enemyMinionHP = lines[line].EnemyMinionHP;
+
+            if (enemyMinionHP != 0)
+            {
+                if (enemyMinionHP > (lines[line].OwnPtMaxHp / (2 * sensitivity)))
+                    return 3;
+                else if (enemyMinionHP > (lines[line].OwnPtMaxHp / (3 * sensitivity)))
+                    return 2;
+                else if (enemyMinionHP > (lines[line].OwnPtMaxHp / (4 * sensitivity)))
+                    return 1;
+
+                // ToDo: Use this, but Atk is zero at the moment
+                //if (enemyMinionHP < -(lines[line].OwnPtAtk * sensitivity * 2))
+                //    dangerLvlHP += 3;
+                //else if (enemyMinionHP < -(lines[line].OwnPtAtk * sensitivity * 1.5))
+                //    dangerLvlHP += 2;
+                //else if (enemyMinionHP < -(lines[line].OwnPtAtk * sensitivity))
+                //    dangerLvlHP += 1;
+            }
+
+            return 0;
+        }
+
+        private static int GetDangerLvLMinionAtk(int line, int sensitivity)
+        {
+            int enemyMinionAtk = lines[line].EnemyMinionAtk;
+
+            if (enemyMinionAtk != 0)
+            {
+                if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (5 * sensitivity)))
+                    return 3;
+                else if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (10 * sensitivity)))
+                    return 2;
+                else if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (15 * sensitivity)))
+                    return 1;
+            }
+
+            return 0;
+        }
+
+        private static int GetDangerLvlBuilding(Playfield p, int line)
+        {
+            List<BoardObj> enemyBuildings = p.enemyBuildings;
+
+            if (enemyBuildings?.Count() > 0)
+            {
+                BoardObj bKT = enemyBuildings.Where(n => n.Line == line && n.IsPositionInArea(p, p.ownKingsTower.Position)).FirstOrDefault();
+
+                BoardObj bPT;
+
+                if (line == 1)
+                    bPT = enemyBuildings.Where(n => n.IsPositionInArea(p, p.ownPrincessTower1.Position)).FirstOrDefault();
+                else
+                    bPT = enemyBuildings.Where(n => n.IsPositionInArea(p, p.ownPrincessTower2.Position)).FirstOrDefault();
+
+                if (bKT != null || bPT != null)
+                    return 3;
+            }
+
+            return 0;
         }
 
         private static Level GetChanceLevel(int line)

@@ -220,6 +220,11 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         {
             Logger.Debug("ALPT");
 
+            VectorAI behindTank = Helper.DeployBehindTank(p, 1);
+
+            if (behindTank != null)
+                return behindTank;
+
             VectorAI lPT = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
 
             if (Decision.SupportDeployment(p, 1))
@@ -230,6 +235,11 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         private static VectorAI APTL2(Playfield p)
         {
             Logger.Debug("ARPT");
+
+            VectorAI behindTank = Helper.DeployBehindTank(p, 2);
+
+            if (behindTank != null)
+                return behindTank;
 
             VectorAI rPT = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
 
@@ -340,5 +350,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             return position;
         }
+
+
     }
 }

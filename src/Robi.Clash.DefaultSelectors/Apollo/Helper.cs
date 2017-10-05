@@ -145,5 +145,16 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             return a / b;
         }
+
+        public static VectorAI DeployBehindTank(Playfield p, int line)
+        {
+            IEnumerable<BoardObj> tankChar = p.ownMinions.Where(n => n.Line == line && n.card.MaxHP >= Setting.MinHealthAsTank);
+
+            if (tankChar.FirstOrDefault() != null)
+                return p.getDeployPosition(tankChar.FirstOrDefault(), deployDirectionRelative.Down);
+            else
+                return null;
+
+        }
     }
 }

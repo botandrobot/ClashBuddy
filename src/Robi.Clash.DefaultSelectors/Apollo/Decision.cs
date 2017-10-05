@@ -165,6 +165,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 return false;
         }
 
+
         public static int DangerOrBestAttackingLine(Playfield p) // Good chance for an attack?
         {
             Line[] lines = PlayfieldAnalyse.lines;
@@ -216,32 +217,6 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                         return 2;
                 }
             }
-
-
-
-
-            #region check if buildings can attack own towers
-            List<BoardObj> enemyBuildings = p.enemyBuildings;
-
-            if (enemyBuildings?.Count() > 0)
-            {
-                BoardObj bKT = enemyBuildings.Where(n => n.IsPositionInArea(p, p.ownKingsTower.Position)).FirstOrDefault();
-                BoardObj bPT1 = enemyBuildings.Where(n => n.IsPositionInArea(p, p.ownPrincessTower1.Position)).FirstOrDefault();
-                BoardObj bPT2 = enemyBuildings.Where(n => n.IsPositionInArea(p, p.ownPrincessTower2.Position)).FirstOrDefault();
-
-                if (bKT != null)
-                    return 3;
-
-                if (bPT1 != null)
-                    return 1;
-
-                if (bPT2 != null)
-                    return 2;
-            }
-            #endregion
-
-
-            return 0;
 
             #region just as comments (.attacker is not implemented atm)
             // Check if building attacks Tower (.attacker is not implemented atm)

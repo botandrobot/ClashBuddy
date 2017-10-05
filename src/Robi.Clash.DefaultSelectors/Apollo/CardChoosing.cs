@@ -82,6 +82,15 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return buildingAtkCard;
             }
 
+            if((int)currentSituation < 3)
+            {
+                var highestHP = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.All)
+                    .Where(n => n.manacost - p.ownMana <= 0)
+                    .OrderBy(n => n.card.MaxHP).LastOrDefault();
+
+                return highestHP;
+            }
+
             var rangerCard = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsRanger).FirstOrDefault();
             if (rangerCard != null && rangerCard.manacost <= p.ownMana)
                 return rangerCard;
