@@ -86,6 +86,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsUnderAttack).FirstOrDefault();
 
             // ToDo: Decision for building attacker
+            if ((int)currentSituation > 6 && (int)currentSituation < 10)
+                return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsBuildingAttacker).FirstOrDefault();
 
             Logger.Debug("Wait - No card selected...");
             return null;
