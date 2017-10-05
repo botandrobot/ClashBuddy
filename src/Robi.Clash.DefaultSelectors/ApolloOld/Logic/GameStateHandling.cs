@@ -71,7 +71,7 @@ namespace Robi.Clash.DefaultSelectors.Logic
             {
                 SetAttackMode();
 
-                switch (GameHandling.Settings.FightStyle)
+                switch ((Player.FightStyle)GameHandling.Settings.FightStyle)
                 {
                     case FightStyle.Defensive:
                         return GetCurrentFightStateDefensive();

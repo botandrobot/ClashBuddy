@@ -9,7 +9,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 {
     class PlayfieldAnalyse
     {
-        // ToDo: Use ATK per second
+        // ToDo: Use ATK per second btw: Whats with tower damage?
         // ToDo: Involve KT in analyses
         public static readonly ILogger Logger = LogProvider.CreateLogger<Decision>();
         public static Line[] lines;
@@ -82,11 +82,11 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         private static void Comparision()
         {
-            int compHpL1 = lines[0].OwnMinionHP - lines[0].EnemyMinionHP;
-            int compAtkL1 = lines[0].OwnMinionAtk - lines[0].EnemyMinionAtk;
+            lines[0].ComparisionHP = lines[0].OwnMinionHP - lines[0].EnemyMinionHP;
+            lines[0].ComparisionAtk = lines[0].OwnMinionAtk - lines[0].EnemyMinionAtk;
 
-            int compHpL2 = lines[1].OwnMinionHP - lines[1].EnemyMinionHP;
-            int compAtkL2 = lines[1].OwnMinionAtk - lines[1].EnemyMinionAtk;
+            lines[1].ComparisionHP = lines[1].OwnMinionHP - lines[1].EnemyMinionHP;
+            lines[1].ComparisionAtk = lines[1].OwnMinionAtk - lines[1].EnemyMinionAtk;
         }
 
         private static void Level()
@@ -102,96 +102,99 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         {
             int dangerLevel = 0, dangerLvlHP = 0, dangerLvlAtk = 0, dangerLvlTower = 0;
             int sensitivity = (int)Setting.DangerSensitivity;
-            int comparisionHP = lines[line].ComparisionHP;
-            int comparisionAtk = lines[line].ComparisionAtk;
+            sensitivity = 2; // Remove: Just for debugging
+            int enemyMinionHP = lines[line].EnemyMinionHP;
+            int enemyMinionAtk = lines[line].EnemyMinionAtk;
 
             #region Minion HP
-            if (comparisionHP != 0)
+            if (enemyMinionHP != 0)
             {
-                //if (comparisionHP < -(lines[line].OwnPtMaxHp / (5 * sensitivity)))
-                //    dangerLevel += 3;
-                //else if (comparisionHP < -(lines[line].OwnPtMaxHp / (10 * sensitivity)))
-                //    dangerLevel += 2;
-                //else if (comparisionHP < -(lines[line].OwnPtMaxHp / (15 * sensitivity)))
-                //    dangerLevel += 1;
-
-                if (comparisionHP < -(lines[line].OwnPtAtk * sensitivity * 2))
+                if (enemyMinionHP > (lines[line].OwnPtMaxHp / (2 * sensitivity)))
                     dangerLvlHP += 3;
-                else if (comparisionHP < -(lines[line].OwnPtAtk * sensitivity * 1.5))
+                else if (enemyMinionHP > (lines[line].OwnPtMaxHp / (3 * sensitivity)))
                     dangerLvlHP += 2;
-                else if (comparisionHP < -(lines[line].OwnPtAtk * sensitivity))
+                else if (enemyMinionHP > (lines[line].OwnPtMaxHp / (4 * sensitivity)))
                     dangerLvlHP += 1;
+
+                // ToDo: Use this, but Atk is zero at the moment
+                //if (enemyMinionHP < -(lines[line].OwnPtAtk * sensitivity * 2))
+                //    dangerLvlHP += 3;
+                //else if (enemyMinionHP < -(lines[line].OwnPtAtk * sensitivity * 1.5))
+                //    dangerLvlHP += 2;
+                //else if (enemyMinionHP < -(lines[line].OwnPtAtk * sensitivity))
+                //    dangerLvlHP += 1;
             }
             #endregion
 
             #region Minion Atk
-            if (comparisionAtk != 0)
+            if (enemyMinionAtk != 0)
             {
-                if (comparisionAtk < -(lines[line].OwnPtMaxHp / (5 * sensitivity)))
+                if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (5 * sensitivity)))
                     dangerLvlAtk += 3;
-                else if (comparisionAtk < -(lines[line].OwnPtMaxHp / (10 * sensitivity)))
+                else if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (10 * sensitivity)))
                     dangerLvlAtk += 2;
-                else if (comparisionAtk < -(lines[line].OwnPtMaxHp / (15 * sensitivity)))
+                else if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (15 * sensitivity)))
                     dangerLvlAtk += 1;
             }
             #endregion
 
             #region PrincessTower HP
-            switch (lines[line].OwnPtHp)
-            {
-                case Apollo.Level.LOW:
-                    dangerLvlTower += 1;
-                    break;
-                case Apollo.Level.MEDIUM:
-                    dangerLvlTower += 2;
-                    break;
-                case Apollo.Level.HIGH:
-                    dangerLvlTower += 3;
-                    break;
-                default:
-                    break;
-            }
+            //switch (lines[line].OwnPtHp)
+            //{
+            //    case Apollo.Level.LOW:
+            //        dangerLvlTower += 1;
+            //        break;
+            //    case Apollo.Level.MEDIUM:
+            //        dangerLvlTower += 2;
+            //        break;
+            //    case Apollo.Level.HIGH:
+            //        dangerLvlTower += 3;
+            //        break;
+            //    default:
+            //        break;
+            //}
             #endregion
 
             Logger.Debug("Danger-Analyses-Level");
-            Logger.Debug("Atk       : " + dangerLvlAtk);
+            Logger.Debug("Atk       :" + dangerLvlAtk);
             Logger.Debug("HP        :" + dangerLvlHP);
             Logger.Debug("Tower-HP  :" + dangerLvlTower);
             Logger.Debug("Danger-Analyses-End");
 
             dangerLevel = dangerLvlAtk + dangerLvlHP + dangerLvlTower;
             // Maybe round up
-            return (Level)(dangerLevel / 3);
+            return (Level)(dangerLevel / 2);
         }
 
         private static Level GetChanceLevel(int line)
         {
             int chanceLevel = 0, chanceLvlHP = 0, chanceLvlAtk = 0, chanceLvlTower = 0;
             int sensitivity = (int)Setting.ChanceSensitivity;
-            int comparisionHP = lines[line].ComparisionHP;
-            int comparisionAtk = lines[line].ComparisionAtk;
+            sensitivity = 2; // Remove: Just for debugging
+            int ownMinionHP = lines[line].OwnMinionHP;
+            int ownMinionAtk = lines[line].OwnMinionAtk;
 
             #region Minion HP
-            if (comparisionHP != 0)
+            if (ownMinionHP != 0)
             {
-                if (comparisionHP > (lines[line].OwnPtMaxHp / (5 * sensitivity)))
+                if (ownMinionHP > (lines[line].OwnPtMaxHp / (2 * sensitivity)))
                     chanceLvlHP += 3;
-                else if (comparisionHP > (lines[line].OwnPtMaxHp / (10 * sensitivity)))
+                else if (ownMinionHP > (lines[line].OwnPtMaxHp / (3 * sensitivity)))
                     chanceLvlHP += 2;
-                else if (comparisionHP > (lines[line].OwnPtMaxHp / (15 * sensitivity)))
+                else if (ownMinionHP > (lines[line].OwnPtMaxHp / (4 * sensitivity)))
                     chanceLvlHP += 1;
 
             }
             #endregion
 
             #region Minion Atk
-            if (comparisionAtk != 0)
+            if (ownMinionAtk != 0)
             {
-                if (comparisionAtk > (lines[line].OwnPtMaxHp / (15 * sensitivity)))
+                if (ownMinionAtk > (lines[line].OwnPtMaxHp / (5 * sensitivity)))
                     chanceLvlAtk += 3;
-                else if (comparisionAtk > (lines[line].OwnPtMaxHp / (20 * sensitivity)))
+                else if (ownMinionAtk > (lines[line].OwnPtMaxHp / (10 * sensitivity)))
                     chanceLvlAtk += 2;
-                else if (comparisionAtk > (lines[line].OwnPtMaxHp / (25 * sensitivity)))
+                else if (ownMinionAtk > (lines[line].OwnPtMaxHp / (15 * sensitivity)))
                     chanceLvlAtk += 1;
 
 
@@ -199,31 +202,31 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             #endregion
 
             #region PrincessTower HP
-            switch (lines[line].EnemyPtHp)
-            {
-                case Apollo.Level.LOW:
-                    chanceLvlTower += 1;
-                    break;
-                case Apollo.Level.MEDIUM:
-                    chanceLvlTower += 2;
-                    break;
-                case Apollo.Level.HIGH:
-                    chanceLvlTower += 3;
-                    break;
-                default:
-                    break;
-            }
+            //switch (lines[line].EnemyPtHp)
+            //{
+            //    case Apollo.Level.LOW:
+            //        chanceLvlTower += 1;
+            //        break;
+            //    case Apollo.Level.MEDIUM:
+            //        chanceLvlTower += 2;
+            //        break;
+            //    case Apollo.Level.HIGH:
+            //        chanceLvlTower += 3;
+            //        break;
+            //    default:
+            //        break;
+            //}
             #endregion
 
             Logger.Debug("Chance-Analyses-Level");
-            Logger.Debug("Atk       : " + chanceLvlAtk);
+            Logger.Debug("Atk       :" + chanceLvlAtk);
             Logger.Debug("HP        :" + chanceLvlHP);
             Logger.Debug("Tower-HP  :" + chanceLvlTower);
             Logger.Debug("Chance-Analyses-End");
 
             chanceLevel = chanceLvlAtk + chanceLvlHP + chanceLvlTower;
 
-            return (Level)(chanceLevel / 3);
+            return (Level)(chanceLevel / 2);
         }
 
     }

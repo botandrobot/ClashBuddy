@@ -25,7 +25,7 @@ namespace Robi.Clash.DefaultSelectors.Tests
             CardDB.Initialize();
             BoardTester bt = new BoardTester();
             Apollo behave = new Apollo();
-
+            Apollo.FillSettings();
             Cast bc = behave.GetBestCast(bt.btPlayfield);
             bt.btPlayfield.print();
 

@@ -52,7 +52,7 @@
             #region Apollo Magic
             PlayfieldAnalyse.AnalyseLines(p);
             currentSituation = GetCurrentFightState(p);
-            Handcard hc = CardChoosing.GetOppositeCard(p, currentSituation);
+            Handcard hc = null; //CardChoosing.GetOppositeCard(p, currentSituation);
 
             if (hc == null)
             {
@@ -230,16 +230,30 @@
                 return Decision.AttackDecision(p);
         }
 
-        private static void FillSettings()
+        public static void FillSettings()
         {
-            Setting.FightStyle = Settings.FightStyle; 
-            Setting.KingTowerSpellDamagingHealth = Settings.KingTowerSpellDamagingHealth;
-            Setting.ManaTillDeploy = Settings.ManaTillDeploy;
-            Setting.ManaTillFirstAttack = Settings.ManaTillFirstAttack;
-            Setting.MinHealthAsTank = Settings.MinHealthAsTank;
-            Setting.SpellCorrectionConditionCharCount = Settings.SpellCorrectionConditionCharCount;
-            Setting.DangerSensitivity = Settings.DangerSensitivity;
-            Setting.ChanceSensitivity = Settings.ChanceSensitivity;
+            try
+            {
+                Setting.FightStyle = Settings.FightStyle;
+                Setting.KingTowerSpellDamagingHealth = Settings.KingTowerSpellDamagingHealth;
+                Setting.ManaTillDeploy = Settings.ManaTillDeploy;
+                Setting.ManaTillFirstAttack = Settings.ManaTillFirstAttack;
+                Setting.MinHealthAsTank = Settings.MinHealthAsTank;
+                Setting.SpellCorrectionConditionCharCount = Settings.SpellCorrectionConditionCharCount;
+                Setting.DangerSensitivity = Settings.DangerSensitivity;
+                Setting.ChanceSensitivity = Settings.ChanceSensitivity;
+            }
+            catch(Exception)
+            {
+                Setting.FightStyle = FightStyle.Balanced;
+                Setting.KingTowerSpellDamagingHealth = 400;
+                Setting.ManaTillDeploy = 10;
+                Setting.ManaTillFirstAttack = 10;
+                Setting.MinHealthAsTank = 1200;
+                Setting.SpellCorrectionConditionCharCount = 5;
+                Setting.DangerSensitivity = Level.MEDIUM;
+                Setting.ChanceSensitivity = Level.MEDIUM;
+            }
         }
 
         public override float GetPlayfieldValue(Playfield p)

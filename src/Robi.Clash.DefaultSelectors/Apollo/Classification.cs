@@ -34,7 +34,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return cardsOfType.Where(n => n.card.TargetType == targetType.BUILDINGS);
 
                 case SpecificCardType.MobsRanger:
-                    return cardsOfType.Where(n => n.card.MaxRange >= 3);
+                    return cardsOfType.Where(n => n.card.MaxRange > 4500);
                 case SpecificCardType.MobsAOEGround:
                     return cardsOfType.Where(n => n.card.aoeGround);
                 case SpecificCardType.MobsAOEAll:

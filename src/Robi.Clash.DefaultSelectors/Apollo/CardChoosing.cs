@@ -37,6 +37,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         {
             // TODO: Use more current situation
             Logger.Debug("Path: Spell - All");
+            Logger.Debug("FightState: " + currentSituation);
 
             Handcard damagingSpell = DamagingSpellDecision(p, out choosedPosition);
             if (damagingSpell != null)
@@ -72,10 +73,6 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 if (tank.LastOrDefault() != null && tank.LastOrDefault().manacost <= p.ownMana)
                     return tank.LastOrDefault();
             }
-            else
-            {
-                Handcard hc = p.ownHandCards.Where(n => n.manacost - p.ownMana <= 0).OrderBy(n => n.manacost).FirstOrDefault();
-            }
 
             var rangerCard = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsRanger).FirstOrDefault();
             if (rangerCard != null && rangerCard.manacost <= p.ownMana)
@@ -84,6 +81,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             var damageDealerCard = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsDamageDealer).FirstOrDefault();
             if (damageDealerCard != null && damageDealerCard.manacost <= p.ownMana)
                 return damageDealerCard;
+
+            if((int)currentSituation >= 3 && (int)currentSituation <= 5)
+                return p.ownHandCards.Where(n => n.manacost - p.ownMana <= 0).OrderBy(n => n.manacost).FirstOrDefault();
 
             Logger.Debug("Wait - No card selected...");
             return null;
@@ -251,7 +251,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             BoardObj objAir = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out biggestEnemieGroupCount, transportType.AIR);
             if (biggestEnemieGroupCount > 3)
-                aoeAir = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEGround).FirstOrDefault();
+                aoeAir = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEAll).FirstOrDefault();
 
             switch (currentSituation)
             {

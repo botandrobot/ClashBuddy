@@ -167,25 +167,29 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         public static int DangerOrBestAttackingLine(Playfield p) // Good chance for an attack?
         {
             Line[] lines = PlayfieldAnalyse.lines;
+            int lvlBorder = 1;
             // comparison
             // ToDo: Use line danger and chance analyses
 
-            if (lines[0].ComparisionHP == 0 && lines[1].ComparisionHP == 0)
+            //if (lines[0].ComparisionHP == 0 && lines[1].ComparisionHP == 0)
+            //    return 0;
+
+            if ((int)lines[0].Danger <= lvlBorder && (int)lines[1].Danger <= lvlBorder && (int)lines[0].Chance == lvlBorder && (int)lines[1].Chance <= lvlBorder)
                 return 0;
 
 
-            if (lines[0].Danger > lines[0].Chance)
+            if (lines[0].Danger >= lines[0].Chance)
             {
-                if(lines[1].Danger > lines[1].Chance)
+                if(lines[1].Danger >= lines[1].Chance)
                 {
-                    if (lines[0].Danger > lines[1].Danger)
+                    if (lines[0].Danger >= lines[1].Danger)
                         return -1;
                     else
                         return -2;
                 }
                 else
                 {
-                    if (lines[0].Danger > lines[1].Chance)
+                    if (lines[0].Danger >= lines[1].Chance)
                         return -1;
                     else
                         return 2;
@@ -193,7 +197,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             }
             else
             {
-                if (lines[1].Danger > lines[1].Chance)
+                if (lines[1].Danger >= lines[1].Chance)
                 {
                     if (lines[0].Chance > lines[1].Danger)
                         return 1;
