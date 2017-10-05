@@ -83,7 +83,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 return damageDealerCard;
 
             if((int)currentSituation >= 3 && (int)currentSituation <= 5)
-                return p.ownHandCards.Where(n => n.manacost - p.ownMana <= 0).OrderBy(n => n.manacost).FirstOrDefault();
+                return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsUnderAttack).FirstOrDefault();
 
             Logger.Debug("Wait - No card selected...");
             return null;

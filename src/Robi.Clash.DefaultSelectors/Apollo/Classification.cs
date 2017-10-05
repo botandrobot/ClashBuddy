@@ -41,6 +41,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return cardsOfType.Where(n => n.card.aoeAir);
                 case SpecificCardType.MobsFlyingAttack:
                     return cardsOfType.Where(n => n.card.TargetType == targetType.ALL);
+                case SpecificCardType.MobsUnderAttack:
+                    return cardsOfType.Where(n => n.card.TargetType != targetType.BUILDINGS && n.card.MaxHP < Setting.MinHealthAsTank);
 
                 // Buildings
                 case SpecificCardType.BuildingsDefense:
