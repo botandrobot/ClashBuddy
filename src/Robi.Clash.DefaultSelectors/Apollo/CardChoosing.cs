@@ -43,7 +43,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if (damagingSpell != null)
                 return damagingSpell;
 
-            Handcard aoeCard = AOEDecision(p, out choosedPosition, currentSituation);
+            Handcard aoeCard = AOEDecision(p);
             if (aoeCard != null)
                 return aoeCard;
 
@@ -57,7 +57,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             if ((int)currentSituation < 3) // Just for Defense
             {
-                if (DeployBuildingDecision(p, out choosedPosition))
+                if (DeployBuildingDecision(p))
                 {
                     // ToDo: Take right building and set right Building-Type
                     var buildingCard = p.ownHandCards.Where(n => n.card.type == boardObjType.BUILDING).FirstOrDefault();
@@ -250,16 +250,15 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         }
 
-        public static bool DeployBuildingDecision(Playfield p, out VectorAI choosedPosition)
+        public static bool DeployBuildingDecision(Playfield p)
         {
-            choosedPosition = p.getDeployPosition(p.ownKingsTower, deployDirectionRelative.Up, 4000);
+            VectorAI choosedPosition = p.getDeployPosition(p.ownKingsTower, deployDirectionRelative.Up, 4000);
             return Helper.IsAnEnemyObjectInArea(p, choosedPosition, 3000, boardObjType.MOB);
         }
 
 
-        private static Handcard AOEDecision(Playfield p, out VectorAI choosedPosition, FightState currentSituation)
+        private static Handcard AOEDecision(Playfield p)
         {
-            choosedPosition = null;
             Handcard aoeGround = null, aoeAir = null;
 
             BoardObj objGround = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out int biggestEnemieGroupCount, transportType.GROUND);
@@ -270,62 +269,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if (biggestEnemieGroupCount > 3)
                 aoeAir = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEAll).FirstOrDefault();
 
-            switch (currentSituation)
-            {
-                case FightState.DPTL1:
-                case FightState.UAPTL1:
-                    choosedPosition = p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine1);
-                    if (aoeAir != null)
-                        return aoeAir;
+            if (aoeAir != null)
+                return aoeAir;
 
-                    return aoeGround;
-                case FightState.APTL1:
-                    choosedPosition = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
-                    if (aoeAir != null)
-                        return aoeAir;
-
-                    return aoeGround;
-                case FightState.DPTL2:
-                case FightState.UAPTL2:
-                    choosedPosition = p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine2);
-                    if (aoeAir != null)
-                        return aoeAir;
-
-                    return aoeGround;
-                case FightState.APTL2:
-                    choosedPosition = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
-                    if (aoeAir != null)
-                        return aoeAir;
-
-                    return aoeGround;
-                case FightState.DKT:
-                case FightState.UAKTL1:
-                case FightState.UAKTL2:
-                    if (aoeAir != null)
-                    {
-                        choosedPosition = objAir.Line == 1 ? p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine1)
-                            : p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine2);
-                        return aoeAir;
-
-                    }
-
-                    if (aoeGround != null)
-                    {
-                        choosedPosition = objGround.Line == 1 ? p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine1)
-                            : p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine2);
-                    }
-                    return aoeGround;
-                case FightState.AKT:
-                    choosedPosition = p.enemyKingsTower.Line == 3 ? p.enemyKingsTower.Position
-                        : p.enemyKingsTower.Line == 1 ? p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1)
-                        : p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
-
-                    if (aoeAir != null)
-                        return aoeAir;
-
-                    return aoeGround;
-            }
-            return null;
+            return aoeGround;
         }
         #endregion
 
