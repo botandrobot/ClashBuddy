@@ -28,6 +28,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                                 return false;
                             else if (p.enemyPrincessTower1.HP < 300 && p.enemyPrincessTower1.HP > 0)
                                 return false;
+                            else if (PlayfieldAnalyse.lines[0].Chance == Level.HIGH)
+                                return false;
                             break;
                         }
                     case FightState.APTL2:
@@ -36,6 +38,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                                 return false;
                             else if (p.enemyPrincessTower2.HP < 300 && p.enemyPrincessTower2.HP > 0)
                                 return false;
+                            else if (PlayfieldAnalyse.lines[1].Chance == Level.HIGH)
+                                return false;
                             break;
                         }
                     case FightState.AKT:
@@ -43,6 +47,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                             if (p.BattleTime.TotalSeconds < 10)
                                 return false;
                             else if (p.enemyKingsTower.HP < 300 && p.enemyKingsTower.HP > 0)
+                                return false;
+                            else if (PlayfieldAnalyse.lines[0].Chance == Level.HIGH || PlayfieldAnalyse.lines[1].Chance == Level.HIGH)
                                 return false;
                             break;
                         }
@@ -56,6 +62,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return false;
                 if (Helper.IsAnEnemyObjectInArea(p, p.ownKingsTower.Position, 4000, boardObjType.MOB))
                     return false; // ToDo: Find better condition, if the handcard can´t attack the minions, we should wait
+                if (PlayfieldAnalyse.lines[0].Danger > Level.LOW || PlayfieldAnalyse.lines[1].Danger > Level.LOW) // ToDo: Maybe check just the line
+                    return false;
             }
 
             return true;
