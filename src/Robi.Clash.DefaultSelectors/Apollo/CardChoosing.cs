@@ -64,7 +64,6 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     if (buildingCard != null)
                         return new Handcard(buildingCard.name, buildingCard.lvl);
                 }
-                choosedPosition = null;
             }
 
             if ((int)currentSituation < 3 || (int)currentSituation > 6) // Just not at Under Attack

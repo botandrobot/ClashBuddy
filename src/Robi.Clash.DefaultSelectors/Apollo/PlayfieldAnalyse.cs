@@ -68,10 +68,20 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             IEnumerable<BoardObj> ownMinionsL1 = p.ownMinions.Where(n => n.Line == 1);
             IEnumerable<BoardObj> ownMinionsL2 = p.ownMinions.Where(n => n.Line == 2);
 
-            lines[0].OwnMinionHP = ownMinionsL1.Sum(n => n.HP);
+            int ownSideL1HP = ownMinionsL1.Where(n => Helper.IsObjectAtOwnSide(p, n)).Sum(n => n.HP);
+            int enemySideL1HP = ownMinionsL1.Where(n => !Helper.IsObjectAtOwnSide(p, n)).Sum(n => n.HP);
+
+            int ownSideL2HP = ownMinionsL2.Where(n => Helper.IsObjectAtOwnSide(p, n)).Sum(n => n.HP);
+            int enemySideL2HP = ownMinionsL2.Where(n => !Helper.IsObjectAtOwnSide(p, n)).Sum(n => n.HP);
+
+
+            lines[0].OwnMinionHP = ownSideL1HP + enemySideL1HP;
             lines[0].OwnMinionAtk = ownMinionsL1.Sum(n => n.Atk);
-            lines[1].OwnMinionHP = ownMinionsL2.Sum(n => n.HP);
+            lines[1].OwnMinionHP = ownSideL2HP + enemySideL2HP;
             lines[1].OwnMinionAtk = ownMinionsL2.Sum(n => n.Atk);
+
+            lines[0].OwnMobSide = ownSideL1HP > enemySideL1HP;
+            lines[1].OwnMobSide = ownSideL2HP > enemySideL2HP;
             #endregion
 
             lines[0].OwnMinionCount = ownMinionsL1.Count();

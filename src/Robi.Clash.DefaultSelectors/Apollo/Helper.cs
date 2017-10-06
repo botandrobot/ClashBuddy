@@ -110,6 +110,24 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             }
         }
 
+        public static bool IsObjectAtOwnSide(Playfield p, BoardObj bo)
+        {
+            if (p.home)
+            {
+                if (bo.Position.Y >= MiddleLineY(p))
+                    return true;
+                else
+                    return false;
+            }
+            else
+            {
+                if (bo.Position.Y <= MiddleLineY(p))
+                    return true;
+                else
+                    return false;
+            }
+        }
+
         public static int MiddleLineY(Playfield p)
         {
             return (p.ownKingsTower.Position.Y +
@@ -148,12 +166,33 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         public static VectorAI DeployBehindTank(Playfield p, int line)
         {
-            IEnumerable<BoardObj> tankChar = p.ownMinions.Where(n => n.Line == line && n.card.MaxHP >= Setting.MinHealthAsTank);
+            IEnumerable<BoardObj> tankChar = p.ownMinions.Where(n => n.Line == line && n.HP >= Setting.MinHealthAsTank).OrderBy(n => n.HP);
 
             if (tankChar.FirstOrDefault() != null)
                 return p.getDeployPosition(tankChar.FirstOrDefault(), deployDirectionRelative.Down);
             else
                 return null;
+
+        }
+
+        public static VectorAI DeployTankInFront(Playfield p, int line)
+        {
+            IEnumerable<BoardObj> ownChar = p.ownMinions.Where(n => n.Line == line && n.MaxHP < Setting.MinHealthAsTank).OrderBy(n => n.Position.Y);
+
+            if (p.home)
+            {
+                if (ownChar.LastOrDefault() != null)
+                    return p.getDeployPosition(ownChar.FirstOrDefault(), deployDirectionRelative.Up);
+                else
+                    return null;
+            }
+            else
+            {
+                if (ownChar.FirstOrDefault() != null)
+                    return p.getDeployPosition(ownChar.FirstOrDefault(), deployDirectionRelative.Up);
+                else
+                    return null;
+            }
 
         }
     }

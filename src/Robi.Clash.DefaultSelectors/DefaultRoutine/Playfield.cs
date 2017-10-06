@@ -678,8 +678,8 @@ namespace Robi.Clash.DefaultSelectors
             switch (absoluteDirection)
             {
                 case deployDirectionAbsolute.behindKingsTowerCenter: return home ? new VectorAI(9500, 900) : new VectorAI(9500, 30900); //TODO: test !home
-                case deployDirectionAbsolute.behindKingsTowerLine1: return home ? new VectorAI(8300, 1000) : new VectorAI(8700, 30950);
-                case deployDirectionAbsolute.behindKingsTowerLine2: return home ? new VectorAI(10400, 1100) : new VectorAI(10300, 31000);
+                case deployDirectionAbsolute.behindKingsTowerLine1: return home ? new VectorAI(7500, 1000) : new VectorAI(7300, 30950);
+                case deployDirectionAbsolute.behindKingsTowerLine2: return home ? new VectorAI(11200, 1100) : new VectorAI(11100, 31000);
                 case deployDirectionAbsolute.cornerLine1: return home ? new VectorAI(800, 2200) : new VectorAI(500, 30000);
                 case deployDirectionAbsolute.cornerLine2: return home ? new VectorAI(17000, 2500) : new VectorAI(17500, 30100);
                 case deployDirectionAbsolute.bridgeLine1: return home ? new VectorAI(3500, 14900) : new VectorAI(3500, 17200);

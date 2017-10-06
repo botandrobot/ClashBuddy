@@ -11,6 +11,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         private Level chance;
         public Level  Chance{ get => chance; set => chance = value; }
 
+        private bool ownMobSide;
+        public bool OwnMobSide { get => ownMobSide; set => ownMobSide = value; }
+
         private int enemyMinionHP; 
         public int EnemyMinionHP { get => enemyMinionHP; set => enemyMinionHP = value; }
 

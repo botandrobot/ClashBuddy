@@ -151,11 +151,16 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             }
         }
 
-        public static bool SupportDeployment(Playfield p, int line)
+        public static bool SupportDeployment(Playfield p, int line, bool ownSide)
         {
             // If own characters already attacking and you are deploying as support
             // The chars should be deployed behind the own chars
-            IEnumerable<BoardObj> attackingChars = p.ownMinions.Where(n => n.Line == line && Helper.IsObjectAtOtherSide(p, n));
+            IEnumerable<BoardObj> attackingChars;
+
+            if (ownSide)
+                attackingChars = p.ownMinions.Where(n => n.Line == line && Helper.IsObjectAtOwnSide(p, n));
+            else
+                attackingChars = p.ownMinions.Where(n => n.Line == line && Helper.IsObjectAtOtherSide(p, n));
 
             // Maybe check also which card type: Tank deployed in front, Ranger behinde ...
 
