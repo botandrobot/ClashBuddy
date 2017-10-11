@@ -88,7 +88,14 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         public static FightState AttackDecision(Playfield p)
         {
             if (p.enemyTowers.Count < 3)
+            {
+                if (p.enemyPrincessTower1.HP > 0 && p.enemyPrincessTower1.HP < p.enemyKingsTower.HP / 2)
+                    return FightState.APTL1;
+                else if (p.enemyPrincessTower2.HP > 0 && p.enemyPrincessTower2.HP < p.enemyKingsTower.HP / 2)
+                    return FightState.APTL2;
+
                 return FightState.AKT;
+            }
 
 
             BoardObj princessTower = p.enemyPrincessTowers.OrderBy(n => n.HP).FirstOrDefault();
@@ -120,7 +127,15 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         public static FightState GoodAttackChanceDecision(Playfield p, int line)
         {
             if (p.enemyTowers.Count < 3)
+            {
+                if (p.enemyPrincessTower1.HP > 0 && p.enemyPrincessTower1.HP < p.enemyKingsTower.HP / 2)
+                    return FightState.APTL1;
+
+                if (p.enemyPrincessTower2.HP > 0 && p.enemyPrincessTower2.HP < p.enemyKingsTower.HP / 2)
+                    return FightState.APTL1;
+
                 return FightState.AKT;
+            }
 
             if (line == 2)
                 return FightState.APTL2;
