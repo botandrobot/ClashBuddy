@@ -114,14 +114,14 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         {
             if (p.home)
             {
-                if (bo.Position.Y >= MiddleLineY(p))
+                if (bo.Position.Y <= MiddleLineY(p))
                     return true;
                 else
                     return false;
             }
             else
             {
-                if (bo.Position.Y <= MiddleLineY(p))
+                if (bo.Position.Y >= MiddleLineY(p))
                     return true;
                 else
                     return false;
