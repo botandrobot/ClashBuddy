@@ -55,15 +55,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return atkFlying;
             }
 
-            if ((int)currentSituation < 3) // Just for Defense
+            if (DeployBuildingDecision(p, out Handcard buildingCard, currentSituation))
             {
-                if (DeployBuildingDecision(p))
-                {
-                    // ToDo: Take right building and set right Building-Type
-                    var buildingCard = p.ownHandCards.Where(n => n.card.type == boardObjType.BUILDING).FirstOrDefault();
-                    if (buildingCard != null)
-                        return new Handcard(buildingCard.name, buildingCard.lvl);
-                }
+                if (buildingCard != null)
+                    return new Handcard(buildingCard.name, buildingCard.lvl);
             }
 
             // ToDo: Don´t play a tank, if theres already one on this side
@@ -249,10 +244,36 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             return null;
         }
 
-        public static bool DeployBuildingDecision(Playfield p)
+        public static bool DeployBuildingDecision(Playfield p, out Handcard buildingCard, FightState currentSituation)
         {
-            VectorAI choosedPosition = p.getDeployPosition(p.ownKingsTower, deployDirectionRelative.Up, 4000);
-            return Helper.IsAnEnemyObjectInArea(p, choosedPosition, 3000, boardObjType.MOB);
+            buildingCard = null;
+            bool condition = false;
+
+            Handcard hcMana = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsMana).FirstOrDefault();
+            Handcard hcDefense = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsDefense).FirstOrDefault();
+            Handcard hcAttack = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsAttack).FirstOrDefault();
+            Handcard hcSpawning = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsSpawning).FirstOrDefault();
+
+
+            // Just for Defense
+            if ((int)currentSituation >= 3)
+            {
+                if (hcMana != null)
+                    condition = true;
+
+
+                if (hcSpawning != null)
+                    condition = true;
+
+                if (hcDefense != null)
+                    condition = true;
+            }
+
+            // ToDo: Attack condition
+
+            // ToDo: Underattack condition
+
+            return condition;
         }
 
 
