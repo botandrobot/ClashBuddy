@@ -149,7 +149,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 //{
                 //    case BuildingType.BuildingDefense:
                 //    case BuildingType.BuildingSpawning:
-                return GetPositionOfTheBestBuildingDeploy(p, hc);
+                return GetPositionOfTheBestBuildingDeploy(p, hc, FightState.DKT);
                 //}
             }
             else if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
@@ -178,7 +178,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 //{
                 //    case BuildingType.BuildingDefense:
                 //    case BuildingType.BuildingSpawning:
-                return GetPositionOfTheBestBuildingDeploy(p, hc);
+                return GetPositionOfTheBestBuildingDeploy(p, hc, FightState.DPTL1);
                 //}
             }
             else if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
@@ -203,7 +203,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 //{
                 //    case BuildingType.BuildingDefense:
                 //    case BuildingType.BuildingSpawning:
-                return GetPositionOfTheBestBuildingDeploy(p, hc);
+                return GetPositionOfTheBestBuildingDeploy(p, hc, FightState.DPTL2);
                 //}
             }
             else if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
@@ -372,12 +372,31 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             return new VectorAI(0, 0);
         }
 
-        public static VectorAI GetPositionOfTheBestBuildingDeploy(Playfield p, Handcard hc)
+        public static VectorAI GetPositionOfTheBestBuildingDeploy(Playfield p, Handcard hc, FightState currentSituation)
         {
             // ToDo: Find the best position
             VectorAI betweenBridges = p.getDeployPosition(deployDirectionAbsolute.betweenBridges);
-            VectorAI result = p.getDeployPosition(betweenBridges, deployDirectionRelative.Down, 4000);
-            return result;
+
+            switch (currentSituation)
+            {
+                case FightState.UAPTL1:
+                case FightState.DPTL1:
+                    return p.getDeployPosition(p.ownPrincessTower1.Position, deployDirectionRelative.RightDown);
+                case FightState.UAPTL2:
+                case FightState.DPTL2:
+                    return p.getDeployPosition(p.ownPrincessTower2.Position, deployDirectionRelative.LeftDown);
+                case FightState.UAKTL1:
+                case FightState.UAKTL2:
+                    return p.getDeployPosition(p.ownKingsTower.Position, deployDirectionRelative.Down);
+                case FightState.APTL1:
+                    return p.getDeployPosition(betweenBridges, deployDirectionRelative.Left, 1000);
+                case FightState.APTL2:
+                    return p.getDeployPosition(betweenBridges, deployDirectionRelative.Right, 1000);
+                case FightState.AKT:
+                    return p.getDeployPosition(p.enemyKingsTower, deployDirectionRelative.Down, 500);
+            }
+
+            return p.getDeployPosition(betweenBridges, deployDirectionRelative.Down, 4000);
         }
 
         private static VectorAI PrincessTowerCharacterDeploymentCorrection(VectorAI position, Playfield p, Handcard hc)
@@ -396,8 +415,6 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 else
                     return p.getDeployPosition(position, deployDirectionRelative.Down, 2000);
             }
-            else if (hc.card.type == boardObjType.BUILDING)
-                return GetPositionOfTheBestBuildingDeploy(p);
             else
                 Logger.Debug("Tower Correction: No Correction!!!");
 
