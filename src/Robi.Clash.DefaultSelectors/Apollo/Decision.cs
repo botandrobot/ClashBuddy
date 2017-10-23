@@ -148,12 +148,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             bool StartFirstAttack = true;
             gameBeginning = true;
 
-            // Debugging: try - catch is just for debugging
-            try
-            {
-                StartFirstAttack = (p.ownMana < Setting.ManaTillFirstAttack);
-            }
-            catch (Exception) { }
+            StartFirstAttack = (p.ownMana < Setting.ManaTillFirstAttack);
 
             if (StartFirstAttack)
             {

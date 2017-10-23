@@ -101,28 +101,23 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             if (hc.card.type == boardObjType.MOB)
             {
-                // Debugging: try - catch is just for debugging
-                try
+                if (hc.card.MaxHP >= Setting.MinHealthAsTank)
                 {
-                    if (hc.card.MaxHP >= Setting.MinHealthAsTank)
-                    {
 
-                        // TODO: Analyse which is the most dangerous line
-                        if (line == 2)
-                        {
-                            Logger.Debug("KT RightUp");
-                            VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirectionRelative.RightUp, 100);
-                            return v;
-                        }
-                        else
-                        {
-                            Logger.Debug("KT LeftUp");
-                            VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirectionRelative.LeftUp, 100);
-                            return v;
-                        }
+                    // TODO: Analyse which is the most dangerous line
+                    if (line == 2)
+                    {
+                        Logger.Debug("KT RightUp");
+                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirectionRelative.RightUp, 100);
+                        return v;
+                    }
+                    else
+                    {
+                        Logger.Debug("KT LeftUp");
+                        VectorAI v = p.getDeployPosition(p.ownKingsTower.Position, deployDirectionRelative.LeftUp, 100);
+                        return v;
                     }
                 }
-                catch (Exception) { }
 
                 if (hc.card.Transport == transportType.AIR)
                 {
@@ -300,56 +295,50 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             // Prio2: Every damaging spell if there is a big group of enemies
             Logger.Debug("GetPositionOfTheBestDamaingSpellDeploy");
 
-            // Debugging: try - catch is just for debugging
-            try
-            {
-                if (p.enemyKingsTower?.HP < Setting.KingTowerSpellDamagingHealth || (p.enemyMinions.Count + p.enemyBuildings.Count) < 1)
-                    return p.enemyKingsTower?.Position;
-            }
-            catch (Exception)
-            {
-                BoardObj enemy = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out int count, transportType.NONE);
+            if (p.enemyKingsTower?.HP < Setting.KingTowerSpellDamagingHealth || (p.enemyMinions.Count + p.enemyBuildings.Count) < 1)
+                return p.enemyKingsTower?.Position;
 
-                if (enemy != null && enemy.Position != null)
+            BoardObj enemy = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out int count, transportType.NONE);
+
+            if (enemy != null && enemy.Position != null)
+            {
+                // Debugging: try - catch is just for debugging
+                try
                 {
-                    // Debugging: try - catch is just for debugging
-                    try
+                    // ToDo: Use a mix of the HP and count of the Enemy Units
+                    // How fast are the enemy units, needed for a better correction
+                    if (Helper.HowManyNFCharactersAroundCharacter(p, enemy) >= Setting.SpellCorrectionConditionCharCount)
                     {
-                        // ToDo: Use a mix of the HP and count of the Enemy Units
-                        // How fast are the enemy units, needed for a better correction
-                        if (Helper.HowManyNFCharactersAroundCharacter(p, enemy) >= Setting.SpellCorrectionConditionCharCount)
+                        Logger.Debug("With correction; enemy.Name = {Name}", enemy.Name);
+                        if (enemy.Position != null)
                         {
-                            Logger.Debug("With correction; enemy.Name = {Name}", enemy.Name);
-                            if (enemy.Position != null)
-                            {
-                                Logger.Debug("enemy.Position = {position}", enemy.Position);
-                                return p.getDeployPosition(enemy.Position, deployDirectionRelative.Down, 500);
-                            }
-                        }
-                        else
-                        {
-                            Logger.Debug("No correction; enemy.Name = {Name}", enemy.Name);
-                            if (enemy.Position != null)
-                            {
-                                Logger.Debug("enemy.Position = {position}", enemy.Position);
-                                return enemy.Position;
-                            }
+                            Logger.Debug("enemy.Position = {position}", enemy.Position);
+                            return p.getDeployPosition(enemy.Position, deployDirectionRelative.Down, 500);
                         }
                     }
-                    catch (Exception)
+                    else
                     {
-                        //enemy.Position.AddYInDirection(p, 3000); // Position Correction
-                        VectorAI result = p.getDeployPosition(enemy.Position, deployDirectionRelative.Down, 500);
-
-                        Logger.Debug("enemy.Name = {Name}", enemy.Name);
-                        if (enemy.Position != null) Logger.Debug("enemy.Position = {position}", enemy.Position);
-                        Logger.Debug("result = {position}", result);
-
-                        return result;
+                        Logger.Debug("No correction; enemy.Name = {Name}", enemy.Name);
+                        if (enemy.Position != null)
+                        {
+                            Logger.Debug("enemy.Position = {position}", enemy.Position);
+                            return enemy.Position;
+                        }
                     }
                 }
-                Logger.Debug("enemy = null?{enemy} ; enemy.position = null?{position}", enemy == null, enemy.Position == null);
+                catch (Exception)
+                {
+                    //enemy.Position.AddYInDirection(p, 3000); // Position Correction
+                    VectorAI result = p.getDeployPosition(enemy.Position, deployDirectionRelative.Down, 500);
+
+                    Logger.Debug("enemy.Name = {Name}", enemy.Name);
+                    if (enemy.Position != null) Logger.Debug("enemy.Position = {position}", enemy.Position);
+                    Logger.Debug("result = {position}", result);
+
+                    return result;
+                }
             }
+            Logger.Debug("enemy = null?{enemy} ; enemy.position = null?{position}", enemy == null, enemy.Position == null);
 
             Logger.Debug("Error: 0/0");
             return new VectorAI(0, 0);
@@ -371,21 +360,13 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             //Logger.Debug("PT Characer Position Correction: Name und Typ {0} " + cardToDeploy.Name, (cardToDeploy as CardCharacter).Type);
             if (hc.card.type == boardObjType.MOB)
             {
-                // Debugging: try - catch is just for debugging
-                try
+                if (hc.card.MaxHP >= Setting.MinHealthAsTank)
                 {
-                    if (hc.card.MaxHP >= Setting.MinHealthAsTank)
-                    {
-                        //position.SubtractYInDirection(p);
-                        return p.getDeployPosition(position, deployDirectionRelative.Up, 100);
-                    }
-                    else return p.getDeployPosition(position, deployDirectionRelative.Down, 2000);
+                    //position.SubtractYInDirection(p);
+                    return p.getDeployPosition(position, deployDirectionRelative.Up, 100);
                 }
-                catch (Exception) { }
-                {
+                else
                     return p.getDeployPosition(position, deployDirectionRelative.Down, 2000);
-                }
-
             }
             else if (hc.card.type == boardObjType.BUILDING)
                 return GetPositionOfTheBestBuildingDeploy(p);

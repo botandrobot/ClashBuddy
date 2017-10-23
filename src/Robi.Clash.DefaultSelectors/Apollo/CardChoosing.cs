@@ -66,6 +66,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 }
             }
 
+            // ToDo: Don´t play a tank, if theres already one on this side
             if ((int)currentSituation < 3 || (int)currentSituation > 6) // Just not at Under Attack
             {
                 var tank = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsTank).OrderBy(n => n.card.MaxHP);
@@ -277,18 +278,13 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         public static Handcard GetOppositeCard(Playfield p, FightState currentSituation)
         {
-            // Debugging: try - catch is just for debugging
-            try
+            if (p.enemyKingsTower.HP < Apollo.Setting.KingTowerSpellDamagingHealth)
             {
-                if (p.enemyKingsTower.HP < Apollo.Setting.KingTowerSpellDamagingHealth)
-                {
-                    Handcard hc = AttackKingTowerWithSpell(p);
+                Handcard hc = AttackKingTowerWithSpell(p);
 
-                    if (hc != null)
-                        return hc;
-                }
+                if (hc != null)
+                    return hc;
             }
-            catch (Exception) { }
 
             switch (currentSituation)
             {

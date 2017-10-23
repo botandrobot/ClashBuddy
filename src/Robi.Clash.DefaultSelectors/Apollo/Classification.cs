@@ -25,9 +25,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
                 // Mobs
                 case SpecificCardType.MobsTank:
-                    // Debugging: try - catch is just for debugging
-                    try { return cardsOfType.Where(n => n.card.MaxHP >= Setting.MinHealthAsTank); }
-                    catch (Exception) { return cardsOfType.Where(n => n.card.MaxHP >= 1200); } 
+                    return cardsOfType.Where(n => n.card.MaxHP >= Setting.MinHealthAsTank);
                 case SpecificCardType.MobsDamageDealer:
                     return cardsOfType.Where(n => (n.card.Atk * n.card.SummonNumber) > 100);
                 case SpecificCardType.MobsBuildingAttacker:
