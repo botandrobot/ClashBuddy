@@ -58,6 +58,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return cardsOfType.Where(n => n.card.DamageRadius > 0);
                 case SpecificCardType.SpellsNonDamaging:
                     return cardsOfType.Where(n => n.card.DamageRadius == 0);
+                case SpecificCardType.SpellsTroopSpawning:
+                    return cardsOfType.Where(n => n.card.SpawnNumber > 0); // TODO: Check
+                case SpecificCardType.SpellsBuffs:
+                    return cardsOfType.Where(n => n.card.affectType == affectType.ONLY_OWN); // TODO: Check
 
             }
 

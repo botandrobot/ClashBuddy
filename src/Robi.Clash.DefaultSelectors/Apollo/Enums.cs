@@ -74,7 +74,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         // Spells
         SpellsDamaging,
-        SpellsNonDamaging
+        SpellsNonDamaging,
+        SpellsTroopSpawning,
+        SpellsBuffs
     };
 
     public enum Level
