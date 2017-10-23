@@ -149,7 +149,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 //{
                 //    case BuildingType.BuildingDefense:
                 //    case BuildingType.BuildingSpawning:
-                return GetPositionOfTheBestBuildingDeploy(p);
+                return GetPositionOfTheBestBuildingDeploy(p, hc);
                 //}
             }
             else if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
@@ -168,9 +168,23 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if (lPT == null || lPT.Position == null)
                 return DKT(p, hc,1);
 
-            VectorAI lPTP = lPT.Position;
-            VectorAI correctedPosition = PrincessTowerCharacterDeploymentCorrection(lPTP, p, hc);
-            return correctedPosition;
+            if (hc.card.type == boardObjType.MOB)
+            {
+                return PrincessTowerCharacterDeploymentCorrection(lPT.Position, p, hc);
+            }
+            else if (hc.card.type == boardObjType.BUILDING)
+            {
+                //switch ((cardToDeploy as CardBuilding).Type)
+                //{
+                //    case BuildingType.BuildingDefense:
+                //    case BuildingType.BuildingSpawning:
+                return GetPositionOfTheBestBuildingDeploy(p, hc);
+                //}
+            }
+            else if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
+                return GetPositionOfTheBestDamagingSpellDeploy(p);
+
+            return lPT.Position;
         }
         private static VectorAI DPTL2(Playfield p, Handcard hc)
         {
@@ -179,9 +193,23 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if (rPT == null && rPT.Position == null)
                 return DKT(p, hc,2);
 
-            VectorAI rPTP = rPT.Position;
-            VectorAI correctedPosition = PrincessTowerCharacterDeploymentCorrection(rPTP, p, hc);
-            return correctedPosition;
+            if (hc.card.type == boardObjType.MOB)
+            {
+                return PrincessTowerCharacterDeploymentCorrection(rPT.Position, p, hc);
+            }
+            else if (hc.card.type == boardObjType.BUILDING)
+            {
+                //switch ((cardToDeploy as CardBuilding).Type)
+                //{
+                //    case BuildingType.BuildingDefense:
+                //    case BuildingType.BuildingSpawning:
+                return GetPositionOfTheBestBuildingDeploy(p, hc);
+                //}
+            }
+            else if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
+                return GetPositionOfTheBestDamagingSpellDeploy(p);
+
+            return rPT.Position;
         }
         #endregion
 
@@ -344,7 +372,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             return new VectorAI(0, 0);
         }
 
-        public static VectorAI GetPositionOfTheBestBuildingDeploy(Playfield p)
+        public static VectorAI GetPositionOfTheBestBuildingDeploy(Playfield p, Handcard hc)
         {
             // ToDo: Find the best position
             VectorAI betweenBridges = p.getDeployPosition(deployDirectionAbsolute.betweenBridges);
