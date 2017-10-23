@@ -162,6 +162,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         //}
 
 
+        // ToDo: Create a Building concept
+
         private static Handcard Building(Playfield p)
         {
             Logger.Debug("Path: Spell - Building");
@@ -179,19 +181,25 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             choosedPosition = null;
 
             IEnumerable<Handcard> damagingSpells = Classification.GetOwnHandCards(p, boardObjType.PROJECTILE, SpecificCardType.SpellsDamaging);
-
             if (damagingSpells.FirstOrDefault() == null)
                 return null;
 
-            Logger.Debug("Damaging-Spell: tower damage first card = " + damagingSpells.FirstOrDefault().card?.towerDamage);
+
+            #region Tower
+            IEnumerable<Handcard> ds5 = damagingSpells.Where(n => (n.card.towerDamage >= p.enemyKingsTower.HP));
+            if (ds5.FirstOrDefault() != null)
+            {
+                Logger.Debug("towerDamage: {td} ; kt.hp: {kthp}", ds5.FirstOrDefault().card.towerDamage,
+                    p.enemyKingsTower.HP);
+                choosedPosition = p.enemyKingsTower.Position;
+                return ds5.FirstOrDefault();
+            }
 
             if (p.suddenDeath)
             {
                 IEnumerable<Handcard> ds3 = damagingSpells.Where(n => (n.card.towerDamage >= p.enemyPrincessTower1.HP));
                 IEnumerable<Handcard> ds4 = damagingSpells.Where(n => (n.card.towerDamage >= p.enemyPrincessTower2.HP));
-                IEnumerable<Handcard> ds5 = damagingSpells.Where(n => (n.card.towerDamage >= p.enemyKingsTower.HP));
-
-
+               
                 if (ds3.FirstOrDefault() != null && p.enemyPrincessTower1.HP > 0)
                 {
                     Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds3.FirstOrDefault().card.towerDamage,
@@ -207,15 +215,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     choosedPosition = p.enemyPrincessTower2.Position;
                     return ds4.FirstOrDefault();
                 }
-
-                if (ds5.FirstOrDefault() != null)
-                {
-                    Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds5.FirstOrDefault().card.towerDamage,
-                        p.enemyKingsTower.HP);
-                    choosedPosition = p.enemyKingsTower.Position;
-                    return ds5.FirstOrDefault();
-                }
             }
+            #endregion
 
             IOrderedEnumerable<Handcard> radiusOrderedDS = damagingSpells.OrderBy(n => n.card.DamageRadius);
 
@@ -246,8 +247,6 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             }
 
             return null;
-
-
         }
 
         public static bool DeployBuildingDecision(Playfield p)
