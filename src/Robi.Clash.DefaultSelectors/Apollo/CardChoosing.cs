@@ -331,33 +331,37 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             return null;
         }
 
+
         public static Handcard GetMobInPeace(Playfield p, FightState currentSituation)
         {
             if(PlayfieldAnalyse.lines[0].Danger <= Level.LOW || PlayfieldAnalyse.lines[1].Danger <= Level.LOW)
             {
+                IEnumerable<BoardObj> tanks = p.ownMinions.Where(n => Classification.IsMobsTankCurrentHP(n))
+                                                            .OrderBy(n => n.HP);
                 switch (currentSituation)
                 {
                     case FightState.DPTL1:
                     case FightState.APTL1:
-                        return p.getPatnerForMobInPeace
-                            (
-                                p.ownMinions.Where(n => Classification.IsMobsTankCurrentHP(n) && n.Line == 1)
-                                .OrderBy(n => n.HP).FirstOrDefault()
-                            );
+                        BoardObj tankL1 = tanks.Where(n => n.Line == 1).OrderBy(n => n.HP).FirstOrDefault();
+
+                        if (tankL1 != null)
+                            return p.getPatnerForMobInPeace(tankL1);
+                        else
+                            return p.getPatnerForMobInPeace(p.ownMinions.Where(n => n.Line == 1).OrderBy(n => n.Atk).FirstOrDefault());
                     case FightState.DPTL2:
                     case FightState.APTL2:
-                        return p.getPatnerForMobInPeace
-                            (
-                                p.ownMinions.Where(n => Classification.IsMobsTankCurrentHP(n) && n.Line == 2)
-                                .OrderBy(n => n.HP).FirstOrDefault()
-                            );
+                        BoardObj tankL2 = tanks.Where(n => n.Line == 2).OrderBy(n => n.HP).FirstOrDefault();
+
+                        if (tankL2 != null)
+                            return p.getPatnerForMobInPeace(tankL2);
+                        else
+                            return p.getPatnerForMobInPeace(p.ownMinions.Where(n => n.Line == 2).OrderBy(n => n.Atk).FirstOrDefault());
                     case FightState.DKT:
                     case FightState.AKT:
-                        return p.getPatnerForMobInPeace
-                            (
-                                p.ownMinions.Where(n => Classification.IsMobsTankCurrentHP(n))
-                                .OrderBy(n => n.HP).FirstOrDefault()
-                            );
+                        if (tanks.FirstOrDefault() != null)
+                            return p.getPatnerForMobInPeace(tanks.FirstOrDefault());
+                        else
+                            return p.getPatnerForMobInPeace(p.ownMinions.OrderBy(n => n.Atk).FirstOrDefault());
                 }
             }
             return null;
