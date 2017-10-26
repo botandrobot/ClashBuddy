@@ -11,17 +11,6 @@ namespace Robi.Clash.DefaultSelectors.Apollo
     {
         private static readonly ILogger Logger = LogProvider.CreateLogger<CardChoosing>();
 
-        #region Which Card Old
-        private static IOrderedEnumerable<Handcard> CycleCard(Playfield p)
-        {
-            return p.ownHandCards.Where(s => s != null && s.manacost <= 3 && s.card.type == boardObjType.MOB).OrderBy(s => s.manacost);
-        }
-
-        private static IOrderedEnumerable<Handcard> PowerCard(Playfield p)
-        {
-            return p.ownHandCards.Where(s => s != null && s.manacost > 3 && s.card.type == boardObjType.MOB).OrderBy(s => s.manacost);
-        }
-
         private static Handcard AttackKingTowerWithSpell(Playfield p)
         {
             IEnumerable<Handcard> spells = Classification.GetOwnHandCards(p, boardObjType.AOE, SpecificCardType.SpellsDamaging);
@@ -95,7 +84,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 return damageDealerCard;
 
             if((int)currentSituation >= 3 && (int)currentSituation <= 6)
-                return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsUnderAttack).FirstOrDefault();
+                return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsNoTank).FirstOrDefault();
 
             Logger.Debug("Wait - No card selected...");
             return null;
@@ -294,7 +283,6 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             return aoeGround;
         }
-        #endregion
 
         public static Handcard GetOppositeCard(Playfield p, FightState currentSituation)
         {
@@ -339,6 +327,38 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                         }
                     }
                     break;
+            }
+            return null;
+        }
+
+        public static Handcard GetMobInPeace(Playfield p, FightState currentSituation)
+        {
+            if(PlayfieldAnalyse.lines[0].Danger <= Level.LOW || PlayfieldAnalyse.lines[1].Danger <= Level.LOW)
+            {
+                switch (currentSituation)
+                {
+                    case FightState.DPTL1:
+                    case FightState.APTL1:
+                        return p.getPatnerForMobInPeace
+                            (
+                                p.ownMinions.Where(n => Classification.IsMobsTankCurrentHP(n) && n.Line == 1)
+                                .OrderBy(n => n.HP).FirstOrDefault()
+                            );
+                    case FightState.DPTL2:
+                    case FightState.APTL2:
+                        return p.getPatnerForMobInPeace
+                            (
+                                p.ownMinions.Where(n => Classification.IsMobsTankCurrentHP(n) && n.Line == 2)
+                                .OrderBy(n => n.HP).FirstOrDefault()
+                            );
+                    case FightState.DKT:
+                    case FightState.AKT:
+                        return p.getPatnerForMobInPeace
+                            (
+                                p.ownMinions.Where(n => Classification.IsMobsTankCurrentHP(n))
+                                .OrderBy(n => n.HP).FirstOrDefault()
+                            );
+                }
             }
             return null;
         }

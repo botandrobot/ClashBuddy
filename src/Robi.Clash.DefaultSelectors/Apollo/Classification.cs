@@ -38,8 +38,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return cardsOfType.Where(n => IsMobsAOEAll(n));
                 case SpecificCardType.MobsFlyingAttack:
                     return cardsOfType.Where(n => IsMobsFlyingAttack(n));
-                case SpecificCardType.MobsUnderAttack:
-                    return cardsOfType.Where(n => IsMobsUnderAttack(n));
+                case SpecificCardType.MobsNoTank:
+                    return cardsOfType.Where(n => IsMobsNoTank(n));
 
                 // Buildings
                 case SpecificCardType.BuildingsDefense:
@@ -83,7 +83,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     if (IsMobsFlyingAttack(hc))         return SpecificCardType.MobsFlyingAttack;
                     if (IsMobsRanger(hc))               return SpecificCardType.MobsRanger;
                     if (IsMobsTank(hc))                 return SpecificCardType.MobsTank;
-                    if (IsMobsUnderAttack(hc))          return SpecificCardType.MobsUnderAttack;
+                    if (IsMobsNoTank(hc))               return SpecificCardType.MobsNoTank;
                     return SpecificCardType.All;
                 case boardObjType.AOE:
                 case boardObjType.PROJECTILE:
@@ -99,25 +99,29 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         // Conditions
         // Spells
-        private static Func<Handcard, bool> IsSpellBuff = (Handcard hc) => (hc.card.affectType == affectType.ONLY_OWN); 
-        private static Func<Handcard, bool> IsSpellsTroopSpawning = (Handcard hc) => (hc.card.SpawnNumber > 0);
-        private static Func<Handcard, bool> IsSpellsNonDamaging = (Handcard hc) => (hc.card.DamageRadius == 0);
-        private static Func<Handcard, bool> IsSpellsDamaging = (Handcard hc) => (hc.card.DamageRadius > 0);
+        public static Func<Handcard, bool> IsSpellBuff = (Handcard hc) => (hc.card.affectType == affectType.ONLY_OWN); 
+        public static Func<Handcard, bool> IsSpellsTroopSpawning = (Handcard hc) => (hc.card.SpawnNumber > 0);
+        public static Func<Handcard, bool> IsSpellsNonDamaging = (Handcard hc) => (hc.card.DamageRadius == 0);
+        public static Func<Handcard, bool> IsSpellsDamaging = (Handcard hc) => (hc.card.DamageRadius > 0);
 
         //Buildings
-        private static Func<Handcard, bool> IsBuildingsDefense = (Handcard hc) => (hc.card.Atk > 0);
-        private static Func<Handcard, bool> IsBuildingsAttack = (Handcard hc) => (hc.card.Atk > 0);
-        private static Func<Handcard, bool> IsBuildingsSpawning = (Handcard hc) => (hc.card.SpawnNumber > 0);
-        private static Func<Handcard, bool> IsBuildingsMana = (Handcard hc) => (false); // ToDo: Implement mana production
+        public static Func<Handcard, bool> IsBuildingsDefense = (Handcard hc) => (hc.card.Atk > 0);
+        public static Func<Handcard, bool> IsBuildingsAttack = (Handcard hc) => (hc.card.Atk > 0);
+        public static Func<Handcard, bool> IsBuildingsSpawning = (Handcard hc) => (hc.card.SpawnNumber > 0);
+        public static Func<Handcard, bool> IsBuildingsMana = (Handcard hc) => (false); // ToDo: Implement mana production
 
         // Mobs
-        private static Func<Handcard, bool> IsMobsUnderAttack = (Handcard hc) => (hc.card.TargetType != targetType.BUILDINGS && hc.card.MaxHP < Setting.MinHealthAsTank);
-        private static Func<Handcard, bool> IsMobsFlyingAttack = (Handcard hc) => (hc.card.TargetType == targetType.ALL);
-        private static Func<Handcard, bool> IsMobsAOEAll = (Handcard hc) => (hc.card.aoeAir);
-        private static Func<Handcard, bool> IsMobsAOEGround = (Handcard hc) => (hc.card.aoeGround);
-        private static Func<Handcard, bool> IsMobsRanger = (Handcard hc) => (hc.card.MaxRange > 4500);
-        private static Func<Handcard, bool> IsMobsBuildingAttacker = (Handcard hc) => (hc.card.TargetType == targetType.BUILDINGS);
-        private static Func<Handcard, bool> IsMobsDamageDealer = (Handcard hc) => ((hc.card.Atk * hc.card.SummonNumber) > 100);
-        private static Func<Handcard, bool> IsMobsTank = (Handcard hc) => (hc.card.MaxHP >= Setting.MinHealthAsTank);
+        public static Func<Handcard, bool> IsMobsNoTank = (Handcard hc) => (hc.card.TargetType != targetType.BUILDINGS && hc.card.MaxHP < Setting.MinHealthAsTank);
+        public static Func<Handcard, bool> IsMobsFlyingAttack = (Handcard hc) => (hc.card.TargetType == targetType.ALL);
+        public static Func<Handcard, bool> IsMobsAOEAll = (Handcard hc) => (hc.card.aoeAir);
+        public static Func<Handcard, bool> IsMobsAOEGround = (Handcard hc) => (hc.card.aoeGround);
+        public static Func<Handcard, bool> IsMobsRanger = (Handcard hc) => (hc.card.MaxRange > 4500);
+        public static Func<Handcard, bool> IsMobsBuildingAttacker = (Handcard hc) => (hc.card.TargetType == targetType.BUILDINGS);
+        public static Func<Handcard, bool> IsMobsDamageDealer = (Handcard hc) => ((hc.card.Atk * hc.card.SummonNumber) > 100);
+        public static Func<Handcard, bool> IsMobsTank = (Handcard hc) => (hc.card.MaxHP >= Setting.MinHealthAsTank);
+        public static Func<BoardObj, bool> IsMobsTankCurrentHP = (BoardObj bo) => (bo.HP >= Setting.MinHealthAsTank);
+        
+        public static Func<Handcard, bool> IsCycleCard = (Handcard hc) => (hc.manacost <= 2);
+        public static Func<Handcard, bool> IsPowerCard = (Handcard hc) => (hc.manacost >= 5);
     }
 }

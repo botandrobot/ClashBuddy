@@ -53,6 +53,11 @@
             PlayfieldAnalyse.AnalyseLines(p);
             currentSituation = GetCurrentFightState(p);
             Handcard hc = CardChoosing.GetOppositeCard(p, currentSituation);
+            
+            if(hc == null)
+            {
+                hc = CardChoosing.GetMobInPeace(p, currentSituation);
+            }
 
             if (hc == null)
             {
