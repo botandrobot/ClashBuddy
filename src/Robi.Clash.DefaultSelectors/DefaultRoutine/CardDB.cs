@@ -807,10 +807,10 @@ namespace Robi.Clash.DefaultSelectors
             sb.Append("Radius:").Append(spell.Radius).Append(" ");
             sb.Append("Pushback:").Append(spell.Pushback).Append(" ");
             sb.Append("StatsUnderInfo:").Append(spell.StatsUnderInfo).Append(" ");
-            sb.Append("Field80:").Append(spell.Field80).Append(" ");
+            sb.Append("SummonRadius:").Append(spell.SummonRadius).Append(" ");
             sb.Append("Field84:").Append(spell.Field84).Append(" ");
             sb.Append("Field88:").Append(spell.Field88).Append(" ");
-            sb.Append("Field50:").Append(spell.Field50).Append(" ");
+            sb.Append("Field8C:").Append(spell.Field8C).Append(" ");
 
             try
             {
