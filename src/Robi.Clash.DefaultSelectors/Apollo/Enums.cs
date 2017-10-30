@@ -64,7 +64,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         MobsAOEGround,
         MobsAOEAll,
         MobsFlyingAttack,
-        MobsUnderAttack,
+        MobsNoTank,
 
         // Buildings
         BuildingsDefense,
