@@ -91,32 +91,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             else
                 return orderedChar.LastOrDefault();
         }
-
-        public static bool IsObjectAtOtherSide(Playfield p, BoardObj bo)
-        {
-            if (p.home && bo.own || !p.home && !bo.own)
-            {
-                if (bo.Position.Y >= MiddleLineY(p))
-                    return true;
-                else
-                    return false;
-            }
-            else
-            {
-                if (bo.Position.Y <= MiddleLineY(p))
-                    return true;
-                else
-                    return false;
-            }
-        }
-
-        public static int MiddleLineY(Playfield p)
-        {
-            return (p.ownKingsTower.Position.Y +
-                    p.enemyKingsTower.Position.Y) / 2;
-
-        }
-
+        
         public static bool IsAnEnemyObjectInArea(Playfield p, VectorAI position, int areaSize, boardObjType type)
         {
             Func<BoardObj, bool> whereClause = n => n.Position.X >= position.X - areaSize && n.Position.X <= position.X + areaSize &&
@@ -148,12 +123,33 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         public static VectorAI DeployBehindTank(Playfield p, int line)
         {
-            IEnumerable<BoardObj> tankChar = p.ownMinions.Where(n => n.Line == line && n.card.MaxHP >= Setting.MinHealthAsTank);
+            IEnumerable<BoardObj> tankChar = p.ownMinions.Where(n => n.Line == line && n.HP >= Setting.MinHealthAsTank).OrderBy(n => n.HP);
 
             if (tankChar.FirstOrDefault() != null)
                 return p.getDeployPosition(tankChar.FirstOrDefault(), deployDirectionRelative.Down);
             else
                 return null;
+
+        }
+
+        public static VectorAI DeployTankInFront(Playfield p, int line)
+        {
+            IEnumerable<BoardObj> ownChar = p.ownMinions.Where(n => n.Line == line && n.MaxHP < Setting.MinHealthAsTank).OrderBy(n => n.Position.Y);
+
+            if (p.home)
+            {
+                if (ownChar.LastOrDefault() != null)
+                    return p.getDeployPosition(ownChar.FirstOrDefault(), deployDirectionRelative.Up);
+                else
+                    return null;
+            }
+            else
+            {
+                if (ownChar.FirstOrDefault() != null)
+                    return p.getDeployPosition(ownChar.FirstOrDefault(), deployDirectionRelative.Up);
+                else
+                    return null;
+            }
 
         }
     }

@@ -58,6 +58,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         // Mobs
         MobsTank,
+        MobsNoTank,
         MobsDamageDealer,
         MobsBuildingAttacker,
         MobsRanger,
@@ -74,7 +75,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         // Spells
         SpellsDamaging,
-        SpellsNonDamaging
+        SpellsNonDamaging,
+        SpellsTroopSpawning,
+        SpellsBuffs
     };
 
     public enum Level

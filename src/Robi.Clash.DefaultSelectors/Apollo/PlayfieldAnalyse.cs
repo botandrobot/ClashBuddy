@@ -68,10 +68,20 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             IEnumerable<BoardObj> ownMinionsL1 = p.ownMinions.Where(n => n.Line == 1);
             IEnumerable<BoardObj> ownMinionsL2 = p.ownMinions.Where(n => n.Line == 2);
 
-            lines[0].OwnMinionHP = ownMinionsL1.Sum(n => n.HP);
+            int ownSideL1HP = ownMinionsL1.Where(n => n.onMySide(p.home)).Sum(n => n.HP);
+            int enemySideL1HP = ownMinionsL1.Where(n => !n.onMySide(p.home)).Sum(n => n.HP);
+
+            int ownSideL2HP = ownMinionsL2.Where(n => n.onMySide(p.home)).Sum(n => n.HP);
+            int enemySideL2HP = ownMinionsL2.Where(n => !n.onMySide(p.home)).Sum(n => n.HP);
+
+
+            lines[0].OwnMinionHP = ownSideL1HP + enemySideL1HP;
             lines[0].OwnMinionAtk = ownMinionsL1.Sum(n => n.Atk);
-            lines[1].OwnMinionHP = ownMinionsL2.Sum(n => n.HP);
+            lines[1].OwnMinionHP = ownSideL2HP + enemySideL2HP;
             lines[1].OwnMinionAtk = ownMinionsL2.Sum(n => n.Atk);
+
+            lines[0].OwnMobSide = ownSideL1HP > enemySideL1HP;
+            lines[1].OwnMobSide = ownSideL2HP > enemySideL2HP;
             #endregion
 
             lines[0].OwnMinionCount = ownMinionsL1.Count();
@@ -101,8 +111,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         private static Level GetDangerLevel(Playfield p, int line)
         {
             int dangerLevel, dangerLvlHP, dangerLvlAtk, dangerLvlBuilding, dangerLvlTower = 0;
-            int sensitivity = (int)Setting.DangerSensitivity;
-            sensitivity = 2; // Remove: Just for debugging
+            float sensitivity = (int)Setting.DangerSensitivity;
+
+            if (sensitivity == 0)
+                sensitivity = 0.5f;
 
             dangerLvlHP = GetDangerLvLMinionHP(line, sensitivity);
             dangerLvlAtk = GetDangerLvLMinionAtk(line, sensitivity);
@@ -144,7 +156,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         }
 
-        private static int GetDangerLvLMinionHP(int line, int sensitivity)
+        private static int GetDangerLvLMinionHP(int line, float sensitivity)
         {
             int enemyMinionHP = lines[line].EnemyMinionHP;
 
@@ -169,7 +181,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             return 0;
         }
 
-        private static int GetDangerLvLMinionAtk(int line, int sensitivity)
+        private static int GetDangerLvLMinionAtk(int line, float sensitivity)
         {
             int enemyMinionAtk = lines[line].EnemyMinionAtk;
 
@@ -211,8 +223,11 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         private static Level GetChanceLevel(int line)
         {
             int chanceLevel = 0, chanceLvlHP = 0, chanceLvlAtk = 0, chanceLvlTower = 0;
-            int sensitivity = (int)Setting.ChanceSensitivity;
-            sensitivity = 2; // Remove: Just for debugging
+            float sensitivity = (int)Setting.ChanceSensitivity;
+
+            if (sensitivity == 0)
+                sensitivity = 0.5f;
+
             int ownMinionHP = lines[line].OwnMinionHP;
             int ownMinionAtk = lines[line].OwnMinionAtk;
 

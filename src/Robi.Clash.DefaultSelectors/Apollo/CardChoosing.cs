@@ -11,17 +11,6 @@ namespace Robi.Clash.DefaultSelectors.Apollo
     {
         private static readonly ILogger Logger = LogProvider.CreateLogger<CardChoosing>();
 
-        #region Which Card Old
-        private static IOrderedEnumerable<Handcard> CycleCard(Playfield p)
-        {
-            return p.ownHandCards.Where(s => s != null && s.manacost <= 3 && s.card.type == boardObjType.MOB).OrderBy(s => s.manacost);
-        }
-
-        private static IOrderedEnumerable<Handcard> PowerCard(Playfield p)
-        {
-            return p.ownHandCards.Where(s => s != null && s.manacost > 3 && s.card.type == boardObjType.MOB).OrderBy(s => s.manacost);
-        }
-
         private static Handcard AttackKingTowerWithSpell(Playfield p)
         {
             IEnumerable<Handcard> spells = Classification.GetOwnHandCards(p, boardObjType.AOE, SpecificCardType.SpellsDamaging);
@@ -43,7 +32,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if (damagingSpell != null)
                 return damagingSpell;
 
-            Handcard aoeCard = AOEDecision(p, out choosedPosition, currentSituation);
+            Handcard aoeCard = AOEDecision(p);
             if (aoeCard != null)
                 return aoeCard;
 
@@ -55,18 +44,13 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return atkFlying;
             }
 
-            if ((int)currentSituation < 3) // Just for Defense
+            if (DeployBuildingDecision(p, out Handcard buildingCard, currentSituation))
             {
-                if (DeployBuildingDecision(p, out choosedPosition))
-                {
-                    // ToDo: Take right building and set right Building-Type
-                    var buildingCard = p.ownHandCards.Where(n => n.card.type == boardObjType.BUILDING).FirstOrDefault();
-                    if (buildingCard != null)
-                        return new Handcard(buildingCard.name, buildingCard.lvl);
-                }
-                choosedPosition = null;
+                if (buildingCard != null)
+                    return new Handcard(buildingCard.name, buildingCard.lvl);
             }
 
+            // ToDo: Don´t play a tank, if theres already one on this side
             if ((int)currentSituation < 3 || (int)currentSituation > 6) // Just not at Under Attack
             {
                 var tank = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsTank).OrderBy(n => n.card.MaxHP);
@@ -100,7 +84,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 return damageDealerCard;
 
             if((int)currentSituation >= 3 && (int)currentSituation <= 6)
-                return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsUnderAttack).FirstOrDefault();
+                return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsNoTank).FirstOrDefault();
 
             Logger.Debug("Wait - No card selected...");
             return null;
@@ -162,6 +146,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         //}
 
 
+        // ToDo: Create a Building concept
+
         private static Handcard Building(Playfield p)
         {
             Logger.Debug("Path: Spell - Building");
@@ -179,19 +165,25 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             choosedPosition = null;
 
             IEnumerable<Handcard> damagingSpells = Classification.GetOwnHandCards(p, boardObjType.PROJECTILE, SpecificCardType.SpellsDamaging);
-
             if (damagingSpells.FirstOrDefault() == null)
                 return null;
 
-            Logger.Debug("Damaging-Spell: tower damage first card = " + damagingSpells.FirstOrDefault().card?.towerDamage);
+
+            #region Tower
+            IEnumerable<Handcard> ds5 = damagingSpells.Where(n => (n.card.towerDamage >= p.enemyKingsTower.HP));
+            if (ds5.FirstOrDefault() != null)
+            {
+                Logger.Debug("towerDamage: {td} ; kt.hp: {kthp}", ds5.FirstOrDefault().card.towerDamage,
+                    p.enemyKingsTower.HP);
+                choosedPosition = p.enemyKingsTower.Position;
+                return ds5.FirstOrDefault();
+            }
 
             if (p.suddenDeath)
             {
                 IEnumerable<Handcard> ds3 = damagingSpells.Where(n => (n.card.towerDamage >= p.enemyPrincessTower1.HP));
                 IEnumerable<Handcard> ds4 = damagingSpells.Where(n => (n.card.towerDamage >= p.enemyPrincessTower2.HP));
-                IEnumerable<Handcard> ds5 = damagingSpells.Where(n => (n.card.towerDamage >= p.enemyKingsTower.HP));
-
-
+               
                 if (ds3.FirstOrDefault() != null && p.enemyPrincessTower1.HP > 0)
                 {
                     Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds3.FirstOrDefault().card.towerDamage,
@@ -207,15 +199,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     choosedPosition = p.enemyPrincessTower2.Position;
                     return ds4.FirstOrDefault();
                 }
-
-                if (ds5.FirstOrDefault() != null)
-                {
-                    Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds5.FirstOrDefault().card.towerDamage,
-                        p.enemyKingsTower.HP);
-                    choosedPosition = p.enemyKingsTower.Position;
-                    return ds5.FirstOrDefault();
-                }
             }
+            #endregion
 
             IOrderedEnumerable<Handcard> radiusOrderedDS = damagingSpells.OrderBy(n => n.card.DamageRadius);
 
@@ -246,20 +231,43 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             }
 
             return null;
-
-
         }
 
-        public static bool DeployBuildingDecision(Playfield p, out VectorAI choosedPosition)
+        public static bool DeployBuildingDecision(Playfield p, out Handcard buildingCard, FightState currentSituation)
         {
-            choosedPosition = p.getDeployPosition(p.ownKingsTower, deployDirectionRelative.Up, 4000);
-            return Helper.IsAnEnemyObjectInArea(p, choosedPosition, 3000, boardObjType.MOB);
+            buildingCard = null;
+            bool condition = false;
+
+            Handcard hcMana = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsMana).FirstOrDefault();
+            Handcard hcDefense = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsDefense).FirstOrDefault();
+            Handcard hcAttack = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsAttack).FirstOrDefault();
+            Handcard hcSpawning = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsSpawning).FirstOrDefault();
+
+
+            // Just for Defense
+            if ((int)currentSituation >= 3)
+            {
+                if (hcMana != null)
+                    condition = true;
+
+
+                if (hcSpawning != null)
+                    condition = true;
+
+                if (hcDefense != null)
+                    condition = true;
+            }
+
+            // ToDo: Attack condition
+
+            // ToDo: Underattack condition
+
+            return condition;
         }
 
 
-        private static Handcard AOEDecision(Playfield p, out VectorAI choosedPosition, FightState currentSituation)
+        private static Handcard AOEDecision(Playfield p)
         {
-            choosedPosition = null;
             Handcard aoeGround = null, aoeAir = null;
 
             BoardObj objGround = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out int biggestEnemieGroupCount, transportType.GROUND);
@@ -270,79 +278,21 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if (biggestEnemieGroupCount > 3)
                 aoeAir = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEAll).FirstOrDefault();
 
-            switch (currentSituation)
-            {
-                case FightState.DPTL1:
-                case FightState.UAPTL1:
-                    choosedPosition = p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine1);
-                    if (aoeAir != null)
-                        return aoeAir;
+            if (aoeAir != null)
+                return aoeAir;
 
-                    return aoeGround;
-                case FightState.APTL1:
-                    choosedPosition = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
-                    if (aoeAir != null)
-                        return aoeAir;
-
-                    return aoeGround;
-                case FightState.DPTL2:
-                case FightState.UAPTL2:
-                    choosedPosition = p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine2);
-                    if (aoeAir != null)
-                        return aoeAir;
-
-                    return aoeGround;
-                case FightState.APTL2:
-                    choosedPosition = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
-                    if (aoeAir != null)
-                        return aoeAir;
-
-                    return aoeGround;
-                case FightState.DKT:
-                case FightState.UAKTL1:
-                case FightState.UAKTL2:
-                    if (aoeAir != null)
-                    {
-                        choosedPosition = objAir.Line == 1 ? p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine1)
-                            : p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine2);
-                        return aoeAir;
-
-                    }
-
-                    if (aoeGround != null)
-                    {
-                        choosedPosition = objGround.Line == 1 ? p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine1)
-                            : p.getDeployPosition(deployDirectionAbsolute.behindKingsTowerLine2);
-                    }
-                    return aoeGround;
-                case FightState.AKT:
-                    choosedPosition = p.enemyKingsTower.Line == 3 ? p.enemyKingsTower.Position
-                        : p.enemyKingsTower.Line == 1 ? p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1)
-                        : p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
-
-                    if (aoeAir != null)
-                        return aoeAir;
-
-                    return aoeGround;
-            }
-            return null;
+            return aoeGround;
         }
-        #endregion
 
         public static Handcard GetOppositeCard(Playfield p, FightState currentSituation)
         {
-            // Debugging: try - catch is just for debugging
-            try
+            if (p.enemyKingsTower.HP < Apollo.Setting.KingTowerSpellDamagingHealth)
             {
-                if (p.enemyKingsTower.HP < Apollo.Setting.KingTowerSpellDamagingHealth)
-                {
-                    Handcard hc = AttackKingTowerWithSpell(p);
+                Handcard hc = AttackKingTowerWithSpell(p);
 
-                    if (hc != null)
-                        return hc;
-                }
+                if (hc != null)
+                    return hc;
             }
-            catch (Exception) { }
 
             switch (currentSituation)
             {
@@ -377,6 +327,42 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                         }
                     }
                     break;
+            }
+            return null;
+        }
+
+
+        public static Handcard GetMobInPeace(Playfield p, FightState currentSituation)
+        {
+            if(PlayfieldAnalyse.lines[0].Danger <= Level.LOW || PlayfieldAnalyse.lines[1].Danger <= Level.LOW)
+            {
+                IEnumerable<BoardObj> tanks = p.ownMinions.Where(n => Classification.IsMobsTankCurrentHP(n))
+                                                            .OrderBy(n => n.HP);
+                switch (currentSituation)
+                {
+                    case FightState.DPTL1:
+                    case FightState.APTL1:
+                        BoardObj tankL1 = tanks.Where(n => n.Line == 1).OrderBy(n => n.HP).FirstOrDefault();
+
+                        if (tankL1 != null)
+                            return p.getPatnerForMobInPeace(tankL1);
+                        else
+                            return p.getPatnerForMobInPeace(p.ownMinions.Where(n => n.Line == 1).OrderBy(n => n.Atk).FirstOrDefault());
+                    case FightState.DPTL2:
+                    case FightState.APTL2:
+                        BoardObj tankL2 = tanks.Where(n => n.Line == 2).OrderBy(n => n.HP).FirstOrDefault();
+
+                        if (tankL2 != null)
+                            return p.getPatnerForMobInPeace(tankL2);
+                        else
+                            return p.getPatnerForMobInPeace(p.ownMinions.Where(n => n.Line == 2).OrderBy(n => n.Atk).FirstOrDefault());
+                    case FightState.DKT:
+                    case FightState.AKT:
+                        if (tanks.FirstOrDefault() != null)
+                            return p.getPatnerForMobInPeace(tanks.FirstOrDefault());
+                        else
+                            return p.getPatnerForMobInPeace(p.ownMinions.OrderBy(n => n.Atk).FirstOrDefault());
+                }
             }
             return null;
         }

@@ -28,8 +28,13 @@ namespace Robi.Clash.DefaultSelectors
         private List<Playfield> battleLogs = new List<Playfield>();
         private List<Handcard> prevHandCards = new List<Handcard>();
         private int statNumSuccessfulEntrances = 0;
-        private TimeSpan statPrevBattleTime;
-        private TimeSpan statCurrentBattleTime;
+        private TimeSpan statTimeOutsideRoutine;
+        private TimeSpan statSumTimeOutsideRoutine;
+        private TimeSpan statTimeInitPlayfield;
+        private TimeSpan statSumTimeInitPlayfield;
+        private TimeSpan statTimeInsideBehavior;
+        private TimeSpan statSumTimeInsideBehavior;
+        DateTime statTimerRoutine;
         private Dictionary<int, double> lvlToCoef = new Dictionary<int, double>() { { 1, 1 }, { 2, 1.1 }, { 3, 1.21 }, { 4, 1.33 }, { 5, 1.46 }, { 6, 1.6 }, { 7, 1.76 }, { 8, 1.93 }, { 9, 2.12 }, { 10, 2.33 }, { 11, 2.56 }, };
 
         private static BehaviorBaseSettings Settings { get; } = new BehaviorBaseSettings();
@@ -54,7 +59,14 @@ namespace Robi.Clash.DefaultSelectors
             GameBeginning = true;
             battleLogs.Clear();
             prevHandCards.Clear();
+
             statNumSuccessfulEntrances = 0;
+            statTimeOutsideRoutine = TimeSpan.Zero;
+            statTimeInitPlayfield = TimeSpan.Zero;
+            statSumTimeOutsideRoutine = TimeSpan.Zero;
+            statSumTimeInitPlayfield = TimeSpan.Zero;
+            statSumTimeInsideBehavior = TimeSpan.Zero;
+            statTimerRoutine = DateTime.Now;
         }
 
         public override void BattleEnd()
@@ -89,7 +101,9 @@ namespace Robi.Clash.DefaultSelectors
                                 battleres = "Draw";
                                 break;
                             default:
-                                throw new ArgumentOutOfRangeException();
+                                battleres = "ArgumentOutOfRangeException()";
+                                //throw new ArgumentOutOfRangeException();
+                                break;
                         }
                     }
                 }
@@ -111,6 +125,7 @@ namespace Robi.Clash.DefaultSelectors
         {
             SettingsManager.RegisterSettings("Base Behavior", Settings);
             CardDB.Initialize();
+            AIDebugCommand.Register();
         }
 
         public override void Deinitialize()
@@ -120,6 +135,9 @@ namespace Robi.Clash.DefaultSelectors
 
         public sealed override CastRequest GetNextCast()
         {
+            if (statNumSuccessfulEntrances > 0) statTimeOutsideRoutine = DateTime.Now - statTimerRoutine;
+            statTimerRoutine = DateTime.Now;
+
             List<BoardObj> ownMinions = new List<BoardObj>();
             List<BoardObj> enemyMinions = new List<BoardObj>();
 
@@ -139,6 +157,9 @@ namespace Robi.Clash.DefaultSelectors
             List<Handcard> ownHandCards = new List<Handcard>();
             Handcard prevHandCard = new Handcard();
 
+            Logger.Debug("#####Stats##### Inint BO {0}", (statTimerRoutine - DateTime.Now).TotalSeconds);
+
+
             var battle = ClashEngine.Instance.Battle;
             if (battle == null || !battle.IsValid) return null;
             var om = ClashEngine.Instance.ObjectManager;
@@ -148,7 +169,8 @@ namespace Robi.Clash.DefaultSelectors
             var spells = ClashEngine.Instance.AvailableSpells;
             if (spells == null) return null;
 
-            StringBuilder sb = new StringBuilder();
+
+            Logger.Debug("#####Stats##### Inint BO+engine {0}", (statTimerRoutine - DateTime.Now).TotalSeconds);
 
             using (new PerformanceTimer("GetNextCast entrance"))
             {
@@ -186,18 +208,18 @@ namespace Robi.Clash.DefaultSelectors
                         }
                     }
                 }
-                /*
-                var projs = om.OfType<Clash.Engine.NativeObjects.Logic.GameObjects.Projectile>();
-                foreach (var proj in projs)
-                {
-                    if (proj != null && proj.IsValid)
-                    {
-                        //TODO: get static data for all objects
-                        //Here we get dynamic data only
 
-                        CardDB.Instance.collectNewCards(proj);
-                    }
-                }*/
+                //var projs = om.OfType<Clash.Engine.NativeObjects.Logic.GameObjects.Projectile>();
+                //foreach (var proj in projs)
+                //{
+                //    if (proj != null && proj.IsValid)
+                //    {
+                //        //TODO: get static data for all objects
+                //        //Here we get dynamic data only
+
+                //        CardDB.Instance.collectNewCards(proj);
+                //    }
+                //}
 
                 var aoes = om.OfType<Clash.Engine.NativeObjects.Logic.GameObjects.AreaEffectObject>();
                 foreach (var aoe in aoes)
@@ -231,8 +253,12 @@ namespace Robi.Clash.DefaultSelectors
                     if (data != null && data.IsValid)
                     {
                         BoardObj bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(data.Name.Value.ToString(), "2"));
-                        //if (bo.card.needUpdate) CardDB.Instance.cardsAdjustment(@char);
+                        bo.ownerIndex = (int)@char.OwnerIndex;
+                        bool own = bo.ownerIndex == lp.OwnerIndex ? true : false; //TODO: replace it on Friendly (for 2x2 mode)
+                        bo.own = own;
+
                         if (bo.card.name == CardDB.cardName.unknown) CardDB.Instance.collectNewCards(@char);
+                        else if (bo.ownerIndex == lp.OwnerIndex && bo.card.needUpdate) CardDB.Instance.cardsAdjustment(@char);
                         bo.GId = @char.GlobalId;
                         bo.Position = new VectorAI(@char.StartPosition);
                         bo.Line = bo.Position.X > 8700 ? 2 : 1;
@@ -244,9 +270,6 @@ namespace Robi.Clash.DefaultSelectors
                         bo.Shield = @char.HealthComponent.CurrentShieldHealth;
                         bo.LifeTime = @char.HealthComponent.LifeTime - @char.HealthComponent.RemainingTime; //TODO: - find real value for battle stage
 
-                        bo.ownerIndex = (int)@char.OwnerIndex;
-                        bool own = bo.ownerIndex == lp.OwnerIndex ? true : false; //TODO: replace it on Friendly (for 2x2 mode)
-                        bo.own = own;
 
                         int tower = 0;
                         switch (bo.Name)
@@ -307,13 +330,12 @@ namespace Robi.Clash.DefaultSelectors
             }
 
             Playfield p;
-            this.statCurrentBattleTime = ClashEngine.Instance.Battle.BattleTime;
-            if (statNumSuccessfulEntrances == 0) this.statPrevBattleTime = this.statCurrentBattleTime;
-            this.statNumSuccessfulEntrances++;
+
+            Logger.Debug("#####Stats##### before Initialize playfield {0}", (statTimerRoutine - DateTime.Now).TotalSeconds);
 
             using (new PerformanceTimer("Initialize playfield."))
             {
-                Logger.Debug("################################Routine v.0.8.0 Behavior:{Name:l} v.{Version:l} ne:{ne} DET:{deltaEntranceTime} aDET:{averagedet}", Name, Version, statNumSuccessfulEntrances, statCurrentBattleTime - statPrevBattleTime, statCurrentBattleTime / (statNumSuccessfulEntrances > 1 ? statNumSuccessfulEntrances - 1 : 1));
+                Logger.Debug("################################Routine v.0.8.2 Behavior:{Name:l} v.{Version:l}", Name, Version);
                 p = new Playfield
                 {
                     BattleTime = ClashEngine.Instance.Battle.BattleTime,
@@ -350,25 +372,46 @@ namespace Robi.Clash.DefaultSelectors
                 p.print();
                 battleLogs.Add(p);
             }
-            this.statPrevBattleTime = this.statCurrentBattleTime;
 
-            DateTime startCalc = DateTime.Now;
+            Logger.Debug("#####Stats##### after Initialize playfield {0}", (statTimerRoutine - DateTime.Now).TotalSeconds);
+            statTimeInitPlayfield = DateTime.Now - statTimerRoutine;
+            statTimerRoutine = DateTime.Now;
 
             Cast bc;
             using (new PerformanceTimer("GetBestCast"))
             {
+                //DateTime statBehaviorCalcStart = DateTime.Now;
                 bc = this.GetBestCast(p);
 
                 CastRequest retval = null;
                 if (bc != null && bc.Position != null)
                 {
-                    Logger.Debug("Cast {bc}", bc.ToString());
+                    Logger.Debug("CastRequest {bc:l}", bc.ToString());
                     retval = new CastRequest(bc.SpellName, bc.Position.ToVector2());
                 }
                 else Logger.Debug("Waiting for cast, maybe next tick...");
+                statTimeInsideBehavior = DateTime.Now - statTimerRoutine;
 
-                Logger.Debug("#####Calc duration: {0}", DateTime.Now - startCalc);
+                //stat info
+
+
+                statSumTimeOutsideRoutine += statTimeOutsideRoutine;
+                statSumTimeInitPlayfield += statTimeInitPlayfield;
+                statSumTimeInsideBehavior += statTimeInsideBehavior;
+                statNumSuccessfulEntrances++;
+                int objsCount = ownAreaEffects.Count + enemyAreaEffects.Count + ownMinions.Count + enemyMinions.Count + ownBuildings.Count + enemyBuildings.Count; //without HandCards
+
+
+                Logger.Debug("#####Stats### ne:{NumberEntrances} Behavior(CT/aCT/tpo):{BehaviorCalcTime}/{averageBCT}/{timePer1Object} Playfield(CT/aCT/tpo):{PlayfieldCreationTime}/{averagePCT}/{timePer1Object} outsideRoutine(ToR/aToR/tpo):{timeOutsideRoutine}/{averageToR}/{timePer1Object}",
+                    statNumSuccessfulEntrances, statTimeInsideBehavior.TotalSeconds, (statSumTimeInsideBehavior / statNumSuccessfulEntrances).TotalSeconds, (statTimeInsideBehavior / objsCount).TotalSeconds,
+                     statTimeInitPlayfield.TotalSeconds, (statSumTimeInitPlayfield / statNumSuccessfulEntrances).TotalSeconds, (statTimeInitPlayfield / objsCount).TotalSeconds,
+                     statTimeOutsideRoutine.TotalSeconds, (statSumTimeOutsideRoutine / (statNumSuccessfulEntrances > 1 ? statNumSuccessfulEntrances - 1 : 1)).TotalSeconds, (statTimeOutsideRoutine / objsCount).TotalSeconds);
+
+
                 Logger.Debug("");
+
+                statTimerRoutine = DateTime.Now;
+
                 return retval;
             }
         }

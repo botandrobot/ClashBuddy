@@ -53,6 +53,11 @@
             PlayfieldAnalyse.AnalyseLines(p);
             currentSituation = GetCurrentFightState(p);
             Handcard hc = CardChoosing.GetOppositeCard(p, currentSituation);
+            
+            if(hc == null)
+            {
+                hc = CardChoosing.GetMobInPeace(p, currentSituation);
+            }
 
             if (hc == null)
             {
@@ -143,26 +148,17 @@
 
         public static FightState GetCurrentFightState(Playfield p)
         {
-            // Debugging: try - catch is just for debugging
-            try
+            switch (Setting.FightStyle)
             {
-                switch (Setting.FightStyle)
-                {
-                    case FightStyle.Defensive:
-                        return GetCurrentFightStateDefensive(p);
-                    case FightStyle.Balanced:
-                        return GetCurrentFightStateBalanced(p);
-                    case FightStyle.Rusher:
-                        return GetCurrentFightStateRusher(p);
-                    default:
-                        return FightState.DKT;
-                }
+                case FightStyle.Defensive:
+                    return GetCurrentFightStateDefensive(p);
+                case FightStyle.Balanced:
+                    return GetCurrentFightStateBalanced(p);
+                case FightStyle.Rusher:
+                    return GetCurrentFightStateRusher(p);
+                default:
+                    return FightState.DKT;
             }
-            catch (Exception)
-            {
-                return GetCurrentFightStateBalanced(p);
-            }
-
         }
 
         private static FightState GetCurrentFightStateBalanced(Playfield p)
@@ -191,16 +187,11 @@
             }
             else
             {
-                // Debugging: try - catch is just for debugging
-                try
+                if (p.ownMana >= Setting.ManaTillDeploy)
                 {
-                    if (p.ownMana >= Setting.ManaTillDeploy)
-                    {
-                        StartLoadedDeploy = true;
-                        fightState = Decision.DefenseDecision(p);
-                    }
+                    StartLoadedDeploy = true;
+                    fightState = Decision.DefenseDecision(p);
                 }
-                catch (Exception) { StartLoadedDeploy = true; }
 
                 if (StartLoadedDeploy)
                     fightState = Decision.DefenseDecision(p);
@@ -233,8 +224,7 @@
 
         public static void FillSettings()
         {
-            try
-            {
+            #if TEST
                 Setting.FightStyle = Settings.FightStyle;
                 Setting.KingTowerSpellDamagingHealth = Settings.KingTowerSpellDamagingHealth;
                 Setting.ManaTillDeploy = Settings.ManaTillDeploy;
@@ -243,9 +233,7 @@
                 Setting.SpellCorrectionConditionCharCount = Settings.SpellCorrectionConditionCharCount;
                 Setting.DangerSensitivity = Settings.DangerSensitivity;
                 Setting.ChanceSensitivity = Settings.ChanceSensitivity;
-            }
-            catch(Exception)
-            {
+            #else
                 Setting.FightStyle = FightStyle.Balanced;
                 Setting.KingTowerSpellDamagingHealth = 400;
                 Setting.ManaTillDeploy = 10;
@@ -254,7 +242,7 @@
                 Setting.SpellCorrectionConditionCharCount = 5;
                 Setting.DangerSensitivity = Level.MEDIUM;
                 Setting.ChanceSensitivity = Level.MEDIUM;
-            }
+            #endif
         }
 
         public override float GetPlayfieldValue(Playfield p)

@@ -28,6 +28,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                                 return false;
                             else if (p.enemyPrincessTower1.HP < 300 && p.enemyPrincessTower1.HP > 0)
                                 return false;
+                            else if (PlayfieldAnalyse.lines[0].Chance == Level.HIGH)
+                                return false;
                             break;
                         }
                     case FightState.APTL2:
@@ -36,6 +38,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                                 return false;
                             else if (p.enemyPrincessTower2.HP < 300 && p.enemyPrincessTower2.HP > 0)
                                 return false;
+                            else if (PlayfieldAnalyse.lines[1].Chance == Level.HIGH)
+                                return false;
                             break;
                         }
                     case FightState.AKT:
@@ -43,6 +47,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                             if (p.BattleTime.TotalSeconds < 10)
                                 return false;
                             else if (p.enemyKingsTower.HP < 300 && p.enemyKingsTower.HP > 0)
+                                return false;
+                            else if (PlayfieldAnalyse.lines[0].Chance == Level.HIGH || PlayfieldAnalyse.lines[1].Chance == Level.HIGH)
                                 return false;
                             break;
                         }
@@ -56,6 +62,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return false;
                 if (Helper.IsAnEnemyObjectInArea(p, p.ownKingsTower.Position, 4000, boardObjType.MOB))
                     return false; // ToDo: Find better condition, if the handcard can´t attack the minions, we should wait
+                if (PlayfieldAnalyse.lines[0].Danger > Level.LOW || PlayfieldAnalyse.lines[1].Danger > Level.LOW) // ToDo: Maybe check just the line
+                    return false;
             }
 
             return true;
@@ -80,7 +88,14 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         public static FightState AttackDecision(Playfield p)
         {
             if (p.enemyTowers.Count < 3)
+            {
+                if (p.enemyPrincessTower1.HP > 0 && p.enemyPrincessTower1.HP < p.enemyKingsTower.HP / 2)
+                    return FightState.APTL1;
+                else if (p.enemyPrincessTower2.HP > 0 && p.enemyPrincessTower2.HP < p.enemyKingsTower.HP / 2)
+                    return FightState.APTL2;
+
                 return FightState.AKT;
+            }
 
 
             BoardObj princessTower = p.enemyPrincessTowers.OrderBy(n => n.HP).FirstOrDefault();
@@ -112,7 +127,15 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         public static FightState GoodAttackChanceDecision(Playfield p, int line)
         {
             if (p.enemyTowers.Count < 3)
+            {
+                if (p.enemyPrincessTower1.HP > 0 && p.enemyPrincessTower1.HP < p.enemyKingsTower.HP / 2)
+                    return FightState.APTL1;
+
+                if (p.enemyPrincessTower2.HP > 0 && p.enemyPrincessTower2.HP < p.enemyKingsTower.HP / 2)
+                    return FightState.APTL1;
+
                 return FightState.AKT;
+            }
 
             if (line == 2)
                 return FightState.APTL2;
@@ -125,12 +148,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             bool StartFirstAttack = true;
             gameBeginning = true;
 
-            // Debugging: try - catch is just for debugging
-            try
-            {
-                StartFirstAttack = (p.ownMana < Setting.ManaTillFirstAttack);
-            }
-            catch (Exception) { }
+            StartFirstAttack = (p.ownMana < Setting.ManaTillFirstAttack);
 
             if (StartFirstAttack)
             {
@@ -151,11 +169,16 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             }
         }
 
-        public static bool SupportDeployment(Playfield p, int line)
+        public static bool SupportDeployment(Playfield p, int line, bool ownSide)
         {
             // If own characters already attacking and you are deploying as support
             // The chars should be deployed behind the own chars
-            IEnumerable<BoardObj> attackingChars = p.ownMinions.Where(n => n.Line == line && Helper.IsObjectAtOtherSide(p, n));
+            IEnumerable<BoardObj> attackingChars;
+
+            if (ownSide)
+                attackingChars = p.ownMinions.Where(n => n.Line == line && n.onMySide(p.home));
+            else
+                attackingChars = p.ownMinions.Where(n => n.Line == line && !n.onMySide(p.home));
 
             // Maybe check also which card type: Tank deployed in front, Ranger behinde ...
 

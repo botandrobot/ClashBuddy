@@ -25,28 +25,33 @@ namespace Robi.Clash.DefaultSelectors
     {
         private static readonly ILogger Logger = LogProvider.CreateLogger<CardDB>();
 
-        public enum cardtrigers
+        public enum cardParamInt
         {
-            newtriger,
-            getBattlecryEffect,
-            onAHeroGotHealedTrigger,
-            onAMinionGotHealedTrigger,
-            onAuraEnds,
-            onAuraStarts,
-            onCardIsGoingToBePlayed,
-            onCardPlay,
-            onCardWasPlayed,
-            onDeathrattle,
-            onEnrageStart,
-            onEnrageStop,
-            onMinionDiedTrigger,
-            onMinionGotDmgTrigger,
-            onMinionIsSummoned,
-            onMinionWasSummoned,
-            onSecretPlay,
-            onTurnEndsTrigger,
-            onTurnStartTrigger,
-            triggerInspire
+            cost,
+            DeployTime,
+            DeployDelay,
+            MaxHP,
+            Atk,
+            Shield,
+            SpawnDamage,
+            Speed,
+            HitSpeed,
+            MinRange,
+            MaxRange,
+            SightRange,
+            SightClip,
+            MultipleTargets,
+            MultipleProjectiles,
+            Level,
+            DamageRadius,
+            CollisionRadius,
+            towerDamage,
+            LifeTime,
+            SummonNumber,
+            SpawnNumber,
+            SpawnPause,
+            SpawnInterval,
+            SpawnCharacterLevel
         }
 
         public enum cardName //-replace " ", ".", lower case
@@ -276,8 +281,6 @@ namespace Robi.Clash.DefaultSelectors
 
             //Internal use
             public bool needUpdate = true;
-            public int numDuplicates = 0;
-            public int numDifferences = 0;
 
 
 
@@ -327,11 +330,46 @@ namespace Robi.Clash.DefaultSelectors
                 this.SpawnCharacter = c.SpawnCharacter;
                 this.SpawnCharacterLevel = c.SpawnCharacterLevel;
             }
+
+
+            public int getParamByNameInt(cardParamInt param)
+            {
+                switch (param)
+                {
+                    case cardParamInt.cost: return this.cost;
+                    case cardParamInt.DeployTime: return this.DeployTime;
+                    case cardParamInt.DeployDelay: return this.DeployDelay;
+                    case cardParamInt.MaxHP: return this.MaxHP;
+                    case cardParamInt.Atk: return this.Atk;
+                    case cardParamInt.Shield: return this.Shield;
+                    case cardParamInt.SpawnDamage: return this.SpawnDamage;
+                    case cardParamInt.Speed: return this.Speed;
+                    case cardParamInt.HitSpeed: return this.HitSpeed;
+                    case cardParamInt.MinRange: return this.MinRange;
+                    case cardParamInt.MaxRange: return this.MaxRange;
+                    case cardParamInt.SightRange: return this.SightRange;
+                    case cardParamInt.SightClip: return this.SightClip;
+                    case cardParamInt.MultipleTargets: return this.MultipleTargets;
+                    case cardParamInt.MultipleProjectiles: return this.MultipleProjectiles;
+                    case cardParamInt.Level: return this.Level;
+                    case cardParamInt.DamageRadius: return this.DamageRadius;
+                    case cardParamInt.CollisionRadius: return this.CollisionRadius;
+                    case cardParamInt.towerDamage: return this.towerDamage;
+                    case cardParamInt.LifeTime: return this.LifeTime;
+                    case cardParamInt.SummonNumber: return this.SummonNumber;
+                    case cardParamInt.SpawnNumber: return this.SpawnNumber;
+                    case cardParamInt.SpawnPause: return this.SpawnPause;
+                    case cardParamInt.SpawnInterval: return this.SpawnInterval;
+                    case cardParamInt.SpawnCharacterLevel: return this.SpawnCharacterLevel;
+                    default: return int.MinValue;
+                }
+            }
         }
 
         Dictionary<int, Card> forTestBase = new Dictionary<int, Card>();
         Dictionary<cardName, Card> cardNameToCardList = new Dictionary<cardName, Card>();
         Dictionary<cardName, List<Card>> cardsAdjustmentDB = new Dictionary<cardName, List<Card>>();
+        Dictionary<cardParamInt, Dictionary<int, int>> cardsAdjustmentContainerInt = new Dictionary<cardParamInt, Dictionary<int, int>>();
         int updCardsMeasure = 20;
         List<string> allCardIDS = new List<string>();
         public Card unknownCard = new Card();
@@ -358,6 +396,7 @@ namespace Robi.Clash.DefaultSelectors
             cardNameToCardList.Clear();
             cardsAdjustmentDB.Clear();
             initBasicDBfromString();
+            initCardsAdjustmentContainerInt();
 
             foreach (var pair in cardNameToCardList) cardsAdjustmentDB.Add(pair.Key, new List<Card>() { pair.Value });
             Logger.Debug("CardList count: {0}", cardNameToCardList.Count);
@@ -665,7 +704,6 @@ namespace Robi.Clash.DefaultSelectors
                 LogProjectileRolling 11100
                 AxeManProjectile 6000 axeman 4500*/
 
-                string tmp = "";
                 switch (c.stringName)
                 {
                     case "DartBarrellProjectile": if (cardNameToCardList.ContainsKey(cardName.dartbarrell)) { cardNameToCardList[cardName.dartbarrell].Atk = c.Atk; cardNameToCardList[cardName.dartbarrell].DamageRadius = c.DamageRadius; cardNameToCardList[cardName.dartbarrell].aoeGround = c.aoeGround; cardNameToCardList[cardName.dartbarrell].aoeAir = c.aoeAir; } break;
@@ -846,6 +884,43 @@ namespace Robi.Clash.DefaultSelectors
             }
         }
 
+        private void initCardsAdjustmentContainerInt(bool onlyClear = false)
+        {
+            if (!onlyClear || cardsAdjustmentContainerInt.Count == 0)
+            {
+                cardsAdjustmentContainerInt = new Dictionary<cardParamInt, Dictionary<int, int>> {
+                    {cardParamInt.cost, new Dictionary<int, int>()},
+                    {cardParamInt.DeployTime, new Dictionary<int, int>()},
+                    {cardParamInt.DeployDelay, new Dictionary<int, int>()},
+                    {cardParamInt.MaxHP, new Dictionary<int, int>()},
+                    {cardParamInt.Atk, new Dictionary<int, int>()},
+                    {cardParamInt.Shield, new Dictionary<int, int>()},
+                    {cardParamInt.SpawnDamage, new Dictionary<int, int>()},
+                    {cardParamInt.Speed, new Dictionary<int, int>()},
+                    {cardParamInt.HitSpeed, new Dictionary<int, int>()},
+                    {cardParamInt.MinRange, new Dictionary<int, int>()},
+                    {cardParamInt.MaxRange, new Dictionary<int, int>()},
+                    {cardParamInt.SightRange, new Dictionary<int, int>()},
+                    {cardParamInt.SightClip, new Dictionary<int, int>()},
+                    {cardParamInt.MultipleTargets, new Dictionary<int, int>()},
+                    {cardParamInt.MultipleProjectiles, new Dictionary<int, int>()},
+                    {cardParamInt.Level, new Dictionary<int, int>()},
+                    {cardParamInt.DamageRadius, new Dictionary<int, int>()},
+                    {cardParamInt.CollisionRadius, new Dictionary<int, int>()},
+                    {cardParamInt.LifeTime, new Dictionary<int, int>()},
+                    {cardParamInt.SummonNumber, new Dictionary<int, int>()},
+                    {cardParamInt.SpawnNumber, new Dictionary<int, int>()},
+                    {cardParamInt.SpawnPause, new Dictionary<int, int>()},
+                    {cardParamInt.SpawnInterval, new Dictionary<int, int>()},
+                    {cardParamInt.SpawnCharacterLevel, new Dictionary<int, int>()}
+                };
+            }
+            else
+            {
+                foreach (var pair in cardsAdjustmentContainerInt) pair.Value.Clear();
+            }
+        }
+
         public boardObjType boardObjTypeStringToEnum(string s)
         {
             boardObjType retval;
@@ -907,7 +982,7 @@ namespace Robi.Clash.DefaultSelectors
                     Logger.Debug("Add {0} {1}", c.name, list.Count);
                     if (list.Count >= updCardsMeasure)
                     {
-                        updateCardData(list);
+                        //updateCardData(list);
                     }
                 }
             }
@@ -927,18 +1002,18 @@ namespace Robi.Clash.DefaultSelectors
                 List<Card> list = cardsAdjustmentDB[cName];
                 if (list[0].needUpdate)
                 {
-                    Card c = collectNewCards(@char, true);
+                    Card c = collectNewCards(@char, false);
                     list.Add(c);
                     Logger.Debug("Add {0} {1}", c.name, list.Count);
                     if (list.Count >= updCardsMeasure)
                     {
-                        updateCardData(list);
+                        updateCardData(list, "char");
                     }
                 }
             }
         }
 
-        private void updateCardData(List<Card> list)
+        private void updateCardData(List<Card> list, string sender)
         {
             if (list == null) return;
             int count = list.Count;
@@ -947,41 +1022,81 @@ namespace Robi.Clash.DefaultSelectors
             Card baseCard = list[0];
             baseCard.needUpdate = false;
             Logger.Debug("Total after {0} {1} {2}", list.Count, baseCard.name, cardNameToCardList[baseCard.name].needUpdate);
-            /*
-            Card c;
-            Dictionary<string, int> moda = new Dictionary<string, int>();
-            for (int i = 0; i < count; i++)
-            {
-                c.DeployTime
-                c.DeployDelay
-                c.MaxHP
-                c.Atk
-                c.Shield
-                SpawnDamage
-                c.Speed
-                c.HitSpeed
-                c.MinRange
-                c.MaxRange
-                c.SightRange
-                c.SightClip
-                c.MultipleTargets
-                c.MultipleProjectiles
-                c.Rarity
-                c.Level
-                c.DamageRadius
-                c.aoeGround
-                c.aoeAir
-                c.CollisionRadius
-                c.LifeTime
-                c.SummonNumber
-                c.SpawnNumber
-                c.SpawnPause
-                c.SpawnInterval
-                SpawnCharacter
-                c.SpawnCharacterLevel
 
-                if ()
-            }*/
+            initCardsAdjustmentContainerInt(true);
+            Card c;
+            for (int i = 1; i < count; i++)
+            {
+                c = list[i];
+                switch (sender)
+                {
+                    case "char":
+                        updCardsAdjustmentContainerInt(cardParamInt.MaxHP, c.MaxHP);
+                        updCardsAdjustmentContainerInt(cardParamInt.Shield, c.Shield);
+                        updCardsAdjustmentContainerInt(cardParamInt.Speed, c.Speed);
+                        updCardsAdjustmentContainerInt(cardParamInt.Level, c.Level);
+                        updCardsAdjustmentContainerInt(cardParamInt.DamageRadius, c.DamageRadius);
+                        continue;
+                    default:
+                        Logger.Debug("[AI] Wrong updateCardData sender: {0}", sender);
+                        continue;
+                }
+
+                /*
+                updCardsAdjustmentContainerInt("cost", c.cost);
+                updCardsAdjustmentContainerInt("DeployTime", c.DeployTime);
+                updCardsAdjustmentContainerInt("DeployDelay", c.DeployDelay);
+                updCardsAdjustmentContainerInt("Atk", c.Atk);
+                updCardsAdjustmentContainerInt("SpawnDamage", c.SpawnDamage);
+                updCardsAdjustmentContainerInt("HitSpeed", c.HitSpeed);
+                updCardsAdjustmentContainerInt("MinRange", c.MinRange);
+                updCardsAdjustmentContainerInt("MaxRange", c.MaxRange);
+                updCardsAdjustmentContainerInt("SightRange", c.SightRange);
+                updCardsAdjustmentContainerInt("SightClip", c.SightClip);
+                updCardsAdjustmentContainerInt("MultipleTargets", c.MultipleTargets);
+                updCardsAdjustmentContainerInt("MultipleProjectiles", c.MultipleProjectiles);
+                updCardsAdjustmentContainerInt("CollisionRadius", c.CollisionRadius);
+                updCardsAdjustmentContainerInt("LifeTime", c.LifeTime);
+                updCardsAdjustmentContainerInt("SummonNumber", c.SummonNumber);
+                updCardsAdjustmentContainerInt("SpawnNumber", c.SpawnNumber);
+                updCardsAdjustmentContainerInt("SpawnPause", c.SpawnPause);
+                updCardsAdjustmentContainerInt("SpawnInterval", c.SpawnInterval);
+                updCardsAdjustmentContainerInt("SpawnCharacterLevel", c.SpawnCharacterLevel);
+                */
+
+            }
+
+            foreach (var pair in cardsAdjustmentContainerInt)
+            {
+                int baseVal = baseCard.getParamByNameInt(pair.Key);
+                int moda = int.MinValue;
+                int maxNum = 0;
+                foreach (var vals in pair.Value)
+                {
+                    if (vals.Value > maxNum)
+                    {
+                        if (baseVal > 0)
+                        {
+                            if (vals.Key < baseVal / 2 || vals.Key > baseVal * 5) continue;
+                        }
+                        else if (vals.Key > 1000000 || vals.Key < 0) continue;
+
+                        maxNum = vals.Value;
+                        moda = vals.Key;
+                    }
+                }
+                Logger.Debug("adj: {0} moda:{1} : {2} Old val:{3}", pair.Key, moda, maxNum, baseVal);
+                if (moda != int.MinValue)
+                {
+                    Logger.Debug("adj:!!!!!! moda:{0}", moda);
+                }
+            }
+        }
+
+        private void updCardsAdjustmentContainerInt(cardParamInt param, int val)
+        {
+            if (cardsAdjustmentContainerInt[param].ContainsKey(val)) cardsAdjustmentContainerInt[param][val]++;
+            else cardsAdjustmentContainerInt[param].Add(val, 1);
         }
 
         public Card collectNewCards(Robi.Clash.Engine.NativeObjects.LogicData.Spell spell, bool needLog = true)
