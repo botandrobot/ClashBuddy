@@ -122,7 +122,7 @@ namespace Robi.Clash.DefaultSelectors
             return bestCard;
         }
 
-        public opposite getOppositeToAll(Playfield p, BoardObj defender, bool canWait = true)
+        public opposite getOppositeToAll(Playfield p, BoardObj defender, int canWaitMissingMana = 3)
         {
             opposite bestOpposite = null;
             List<attackDef> attackersList = defender.getPossibleAttackers(p);
@@ -158,7 +158,7 @@ namespace Robi.Clash.DefaultSelectors
                         foreach (Handcard hc in p.ownHandCards)
                         {
                             dName = hc.card.name;
-                            if ((canWait || hc.manacost <= p.ownMana) && aopp.ContainsKey(dName))
+                            if (canWaitMissingMana >= hc.manacost - p.ownMana && aopp.ContainsKey(dName))
                             {
                                 hc.missingMana = hc.manacost - p.ownMana;
                                 if (!allOpposite.ContainsKey(dName)) allOpposite.Add(dName, new opposite(dName, aopp[dName], hc, ad.attacker));
@@ -176,7 +176,7 @@ namespace Robi.Clash.DefaultSelectors
                     {
                         foreach (Handcard hc in p.ownHandCards)
                         {
-                            if (canWait || hc.manacost <= p.ownMana)
+                            if (canWaitMissingMana >= hc.manacost - p.ownMana)
                             {
                                 if (hc.card.TargetType == targetType.ALL)
                                 {
@@ -205,7 +205,7 @@ namespace Robi.Clash.DefaultSelectors
                         {
                             foreach (Handcard hc in p.ownHandCards)
                             {
-                                if (canWait || hc.manacost <= p.ownMana)
+                                if (canWaitMissingMana >= hc.manacost - p.ownMana)
                                 {
                                     if (ad.attacker.card.DamageRadius > 1000 && hc.card.MaxHP > ad.attacker.Atk)
                                     {
@@ -226,7 +226,7 @@ namespace Robi.Clash.DefaultSelectors
                         {
                             foreach (Handcard hc in p.ownHandCards)
                             {
-                                if (canWait || hc.manacost <= p.ownMana)
+                                if (canWaitMissingMana >= hc.manacost - p.ownMana)
                                 {
                                     if (hc.card.Atk > ad.attacker.HP * 5 || hc.card.SpawnNumber > 3)
                                     {
@@ -240,7 +240,7 @@ namespace Robi.Clash.DefaultSelectors
                         {
                             foreach (Handcard hc in p.ownHandCards)
                             {
-                                if (canWait || hc.manacost <= p.ownMana)
+                                if (canWaitMissingMana >= hc.manacost - p.ownMana)
                                 {
                                     if (hc.card.Transport == transportType.AIR)
                                     {
@@ -252,7 +252,7 @@ namespace Robi.Clash.DefaultSelectors
                             {
                                 foreach (Handcard hc in p.ownHandCards)
                                 {
-                                    if (canWait || hc.manacost <= p.ownMana)
+                                    if (canWaitMissingMana >= hc.manacost - p.ownMana)
                                     {
                                         if (ad.attacker.card.DamageRadius > 1000)
                                         {

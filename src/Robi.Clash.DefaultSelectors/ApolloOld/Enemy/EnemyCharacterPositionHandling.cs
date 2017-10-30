@@ -21,9 +21,9 @@ namespace Robi.Clash.DefaultSelectors.Enemy
             return Vector2f.Zero;
         }
 
-        public static Vector2 EnemyLeftPrincessTower { get; set; }
+        public static Vector2f EnemyLeftPrincessTower { get; set; }
 
-        public static Vector2 EnemyRightPrincessTower { get; set; }
+        public static Vector2f EnemyRightPrincessTower { get; set; }
 
     }
 }

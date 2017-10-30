@@ -819,6 +819,8 @@ namespace Robi.Clash.DefaultSelectors
 
         public Handcard getPatnerForMobInPeace(BoardObj bo)
         {
+            if (bo == null) return null;
+
             Handcard retval = null;
             List<Handcard> air = new List<Handcard>();
             List<Handcard> troops = new List<Handcard>();

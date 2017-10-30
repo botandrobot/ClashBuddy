@@ -26,7 +26,7 @@ namespace Robi.Clash.DefaultSelectors.Tests
         [Fact]
         public void ApolloTest()
         {
-            CardDB.Initialize();
+           CardDB.Initialize();
             BoardTester bt = new BoardTester();
             Apollo behave = new Apollo();
             Apollo.FillSettings();

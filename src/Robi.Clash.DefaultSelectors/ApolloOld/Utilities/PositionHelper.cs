@@ -17,7 +17,7 @@ namespace Robi.Clash.DefaultSelectors.Utilities
 
         public static Vector2f AddYInDirection(Vector2f position, Position fieldPosition, int y = 1000)
         {
-            Vector2f moveVector = new Vector2(0, y);
+            Vector2f moveVector = new Vector2f(0, y);
             Logger.Debug("PlayerPosition: {0}", fieldPosition);
 
                     if (fieldPosition == Position.Down)
@@ -28,7 +28,7 @@ namespace Robi.Clash.DefaultSelectors.Utilities
 
         public static Vector2f SubtractYInDirection(Vector2f position, Position fieldPosition, int y = 1000)
         {
-            Vector2f moveVector = new Vector2(0, y);
+            Vector2f moveVector = new Vector2f(0, y);
             Logger.Debug("PlayerPosition: {0}", fieldPosition);
 
                     if (fieldPosition == Position.Down)

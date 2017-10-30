@@ -98,4 +98,9 @@ namespace Robi.Clash.DefaultSelectors
                 this.Y -= y;
         }
     }
+
+    public class VectorConverter : System.ComponentModel.TypeConverter
+    {
+
+    }
 }
