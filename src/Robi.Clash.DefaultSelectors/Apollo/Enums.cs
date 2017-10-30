@@ -58,6 +58,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         // Mobs
         MobsTank,
+        MobsNoTank,
         MobsDamageDealer,
         MobsBuildingAttacker,
         MobsRanger,

@@ -176,9 +176,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             IEnumerable<BoardObj> attackingChars;
 
             if (ownSide)
-                attackingChars = p.ownMinions.Where(n => n.Line == line && Helper.IsObjectAtOwnSide(p, n));
+                attackingChars = p.ownMinions.Where(n => n.Line == line && n.onMySide(p.home));
             else
-                attackingChars = p.ownMinions.Where(n => n.Line == line && Helper.IsObjectAtOtherSide(p, n));
+                attackingChars = p.ownMinions.Where(n => n.Line == line && !n.onMySide(p.home));
 
             // Maybe check also which card type: Tank deployed in front, Ranger behinde ...
 

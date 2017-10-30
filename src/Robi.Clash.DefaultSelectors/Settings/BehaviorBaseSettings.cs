@@ -15,8 +15,8 @@
 
         [DisplayName("Routine version")]
         [Description("Routine version.")]
-        [DefaultValue("0.8.0")]
+        [DefaultValue("0.8.2")]
         public string DatabaseFolder { get; }
-        
+
     }
 }

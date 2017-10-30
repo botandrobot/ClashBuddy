@@ -235,6 +235,81 @@
             return attackersList;
         }
 
+        public bool onMySide(bool home) //Return True if troops/buildings on My side of the board
+        {
+            if (home)
+            {
+                if (this.Position.Y < 16000) return true;
+                else return false;
+            }
+            else
+            {
+                if (this.Position.Y > 16000) return true;
+                else return false;
+            }
+        }
+
+        public bool onItsOwnSide(bool home) //Return True if troops/buildings on its own side of the board
+        {
+            if (home)
+            {
+                if (this.Position.Y < 16000) return own ? true : false;
+                else return own ? false : true;
+            }
+            else
+            {
+                if (this.Position.Y > 16000) return own ? true : false;
+                else return own ? false : true;
+            }
+        }
+
+        public bool onDeployedSide(Playfield p) //Return True if we can deploy own troops/buildings on this part of the board
+        {
+            if (p.home)
+            {
+                if (this.Position.Y < 16000)
+                {
+                    if (this.own) return true;
+                    switch (this.Line)
+                    {
+                        case 1: return p.ownPrincessTower1.HP > 0 ? false : true;
+                        case 2: return p.ownPrincessTower2.HP > 0 ? false : true;
+                    }
+                }
+                else
+                {
+                    if (!this.own) return true;
+                    switch (this.Line)
+                    {
+                        case 1: return p.enemyPrincessTower1.HP > 0 ? false : true;
+                        case 2: return p.enemyPrincessTower2.HP > 0 ? false : true;
+                    }
+                }
+            }
+            else
+            {
+                if (this.Position.Y > 16000)
+                {
+                    if (this.own) return true;
+                    switch (this.Line)
+                    {
+                        case 1: return p.ownPrincessTower1.HP > 0 ? false : true;
+                        case 2: return p.ownPrincessTower2.HP > 0 ? false : true;
+                    }
+                }
+                else
+                {
+                    if (!this.own) return true;
+                    switch (this.Line)
+                    {
+                        case 1: return p.enemyPrincessTower1.HP > 0 ? false : true;
+                        case 2: return p.enemyPrincessTower2.HP > 0 ? false : true;
+                    }
+                }
+            }
+            return false;
+        }
+
 
         /*
         public void objectDied(Playfield p)

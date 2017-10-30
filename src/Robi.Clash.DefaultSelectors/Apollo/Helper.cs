@@ -91,50 +91,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             else
                 return orderedChar.LastOrDefault();
         }
-
-        public static bool IsObjectAtOtherSide(Playfield p, BoardObj bo)
-        {
-            if (p.home && bo.own || !p.home && !bo.own)
-            {
-                if (bo.Position.Y >= MiddleLineY(p))
-                    return true;
-                else
-                    return false;
-            }
-            else
-            {
-                if (bo.Position.Y <= MiddleLineY(p))
-                    return true;
-                else
-                    return false;
-            }
-        }
-
-        public static bool IsObjectAtOwnSide(Playfield p, BoardObj bo)
-        {
-            if (p.home)
-            {
-                if (bo.Position.Y <= MiddleLineY(p))
-                    return true;
-                else
-                    return false;
-            }
-            else
-            {
-                if (bo.Position.Y >= MiddleLineY(p))
-                    return true;
-                else
-                    return false;
-            }
-        }
-
-        public static int MiddleLineY(Playfield p)
-        {
-            return (p.ownKingsTower.Position.Y +
-                    p.enemyKingsTower.Position.Y) / 2;
-
-        }
-
+        
         public static bool IsAnEnemyObjectInArea(Playfield p, VectorAI position, int areaSize, boardObjType type)
         {
             Func<BoardObj, bool> whereClause = n => n.Position.X >= position.X - areaSize && n.Position.X <= position.X + areaSize &&

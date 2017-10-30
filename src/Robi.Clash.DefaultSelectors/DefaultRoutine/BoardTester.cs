@@ -94,6 +94,7 @@ namespace Robi.Clash.DefaultSelectors
                             if (bo.own) p.ownBuildings.Add(bo);
                             else p.enemyBuildings.Add(bo);
                         }
+                        else bo.Tower = tower;
                         continue;
                     case "MOB":
                         bo = getBOfromHeader(tmp, p.ownerIndex); //predefined data
