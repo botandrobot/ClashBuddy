@@ -16,7 +16,7 @@ namespace Robi.Clash.DefaultSelectors.Settings
         }
 
         [Category("Default")]
-        [DefaultValue(Player.FightStyle.Balanced)]
+        [DefaultValue((int)Player.FightStyle.Balanced)]
         [DisplayName("Fight Style")]
         [Description("Choose Apollos fight style. Smart balanced, concentrated on the Defense or as an angry rusher?")]
         public Player.FightStyle FightStyle { get; set; }
