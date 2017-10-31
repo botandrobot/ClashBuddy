@@ -1104,7 +1104,7 @@ namespace Robi.Clash.DefaultSelectors
             //try to fill missing data
             var SummonCharacter = spell.SummonCharacter;
             var Projectile = spell.Projectile;
-            var AreaEffect = spell.AreaEffect;
+            var AreaEffect = spell.AreaEffectObject;
 
             Card c = new Card();
             c.stringName = spell.Name.Value;
