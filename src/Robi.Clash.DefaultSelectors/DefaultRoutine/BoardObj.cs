@@ -9,7 +9,6 @@
         public transportType Transport = transportType.NONE; //-Mob (Air, Ground)
         public targetType TargetType = targetType.NONE; //-AttacksAir, TargetOnlyBuildings
         public affectType affectOn = affectType.NONE;
-        //-        public bool isHero = false; решить вопрос с башнями - сюда или в бордТип
         public VectorAI Position;
         public bool own = true;
         public int ownerIndex = -1;
@@ -109,11 +108,6 @@
             this.type = c.type;
             this.Transport = c.Transport;
             this.affectOn = c.affectType;
-            //this.Position = c.Position;
-            //this.own = c.own;
-            //this.pID = c.pID; //-????????
-            //this.Line = c.Line;
-            //this.GId = c.GId;
             this.cost = c.cost;
             this.DeployTime = c.DeployTime;
             this.DamageRadius = c.DamageRadius;
@@ -128,17 +122,11 @@
             this.SightRange = c.SightRange;
             this.TargetType = c.TargetType;
             this.MaxTargets = c.MultipleTargets;
-            //this.attacking = c.attacking;
-            //this.attacked = c.attacked;
             this.LifeTime = c.LifeTime;
             this.SpawnNumber = c.SpawnNumber;
             this.SpawnInterval = c.SpawnInterval;
             this.SpawnTime = c.SpawnPause;
             this.SpawnCharacterLevel = c.SpawnCharacterLevel;
-            //this.frozen = c.frozen;
-            //this.startFrozen = c.startFrozen;
-            //this.attacker = c.attacker;
-            //this.target = c.target;
             this.DeathEffect = c.DeathEffect;
             //this.Tower = c.Tower;
         }
@@ -245,6 +233,81 @@
                 attackersList.Sort((a, b) => a.time.CompareTo(b.time));
             }
             return attackersList;
+        }
+
+        public bool onMySide(bool home) //Return True if troops/buildings on My side of the board
+        {
+            if (home)
+            {
+                if (this.Position.Y < 16000) return true;
+                else return false;
+            }
+            else
+            {
+                if (this.Position.Y > 16000) return true;
+                else return false;
+            }
+        }
+
+        public bool onItsOwnSide(bool home) //Return True if troops/buildings on its own side of the board
+        {
+            if (home)
+            {
+                if (this.Position.Y < 16000) return own ? true : false;
+                else return own ? false : true;
+            }
+            else
+            {
+                if (this.Position.Y > 16000) return own ? true : false;
+                else return own ? false : true;
+            }
+        }
+
+        public bool onDeployedSide(Playfield p) //Return True if we can deploy own troops/buildings on this part of the board
+        {
+            if (p.home)
+            {
+                if (this.Position.Y < 16000)
+                {
+                    if (this.own) return true;
+                    switch (this.Line)
+                    {
+                        case 1: return p.ownPrincessTower1.HP > 0 ? false : true;
+                        case 2: return p.ownPrincessTower2.HP > 0 ? false : true;
+                    }
+                }
+                else
+                {
+                    if (!this.own) return true;
+                    switch (this.Line)
+                    {
+                        case 1: return p.enemyPrincessTower1.HP > 0 ? false : true;
+                        case 2: return p.enemyPrincessTower2.HP > 0 ? false : true;
+                    }
+                }
+            }
+            else
+            {
+                if (this.Position.Y > 16000)
+                {
+                    if (this.own) return true;
+                    switch (this.Line)
+                    {
+                        case 1: return p.ownPrincessTower1.HP > 0 ? false : true;
+                        case 2: return p.ownPrincessTower2.HP > 0 ? false : true;
+                    }
+                }
+                else
+                {
+                    if (!this.own) return true;
+                    switch (this.Line)
+                    {
+                        case 1: return p.enemyPrincessTower1.HP > 0 ? false : true;
+                        case 2: return p.enemyPrincessTower2.HP > 0 ? false : true;
+                    }
+                }
+            }
+            return false;
         }
 
 

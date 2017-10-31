@@ -325,6 +325,7 @@ namespace Robi.Clash.DefaultSelectors
 
         public List<Handcard> ownHandCards = new List<Handcard>();
         public Handcard nextCard = new Handcard();
+        public Handcard prevCard = new Handcard();
         public List<CardDB.cardName> ownDeck = new List<CardDB.cardName>();
         public List<CardDB.cardName> enemyDeck = new List<CardDB.cardName>();
 
@@ -400,13 +401,14 @@ namespace Robi.Clash.DefaultSelectors
             }
         }
 
-        private void copyCards(List<Handcard> source, Handcard nxtCard)
+        private void copyCards(List<Handcard> source, Handcard nxtCard, Handcard prvCard)
         {
             foreach (Handcard hc in source)
             {
                 this.ownHandCards.Add(new Handcard(hc));
             }
             this.nextCard = new Handcard(nxtCard);
+            this.prevCard = new Handcard(prvCard);
         }
 
         public Playfield()
@@ -452,7 +454,7 @@ namespace Robi.Clash.DefaultSelectors
                     break;
             }
             ownKingsTower.Line = kingsLine;
-            
+
             i = 0;
             kingsLine = 0;
             enemyTowers.Add(enemyKingsTower);
@@ -492,7 +494,7 @@ namespace Robi.Clash.DefaultSelectors
             this.ownMana = p.ownMana;
             this.enemyMana = p.enemyMana;
 
-            copyCards(p.ownHandCards, p.nextCard);
+            copyCards(p.ownHandCards, p.nextCard, p.prevCard);
 
             copyBoardObj(p.ownMinions, this.ownMinions);
             copyBoardObj(p.enemyMinions, this.enemyMinions);
@@ -676,8 +678,8 @@ namespace Robi.Clash.DefaultSelectors
             switch (absoluteDirection)
             {
                 case deployDirectionAbsolute.behindKingsTowerCenter: return home ? new VectorAI(9500, 900) : new VectorAI(9500, 30900); //TODO: test !home
-                case deployDirectionAbsolute.behindKingsTowerLine1: return home ? new VectorAI(8300, 1000) : new VectorAI(8700, 30950);
-                case deployDirectionAbsolute.behindKingsTowerLine2: return home ? new VectorAI(10400, 1100) : new VectorAI(10300, 31000);
+                case deployDirectionAbsolute.behindKingsTowerLine1: return home ? new VectorAI(7500, 1000) : new VectorAI(7300, 30950);
+                case deployDirectionAbsolute.behindKingsTowerLine2: return home ? new VectorAI(11200, 1100) : new VectorAI(11100, 31000);
                 case deployDirectionAbsolute.cornerLine1: return home ? new VectorAI(800, 2200) : new VectorAI(500, 30000);
                 case deployDirectionAbsolute.cornerLine2: return home ? new VectorAI(17000, 2500) : new VectorAI(17500, 30100);
                 case deployDirectionAbsolute.bridgeLine1: return home ? new VectorAI(3500, 14900) : new VectorAI(3500, 17200);
@@ -817,6 +819,8 @@ namespace Robi.Clash.DefaultSelectors
 
         public Handcard getPatnerForMobInPeace(BoardObj bo)
         {
+            if (bo == null) return null;
+
             Handcard retval = null;
             List<Handcard> air = new List<Handcard>();
             List<Handcard> troops = new List<Handcard>();
@@ -991,7 +995,6 @@ namespace Robi.Clash.DefaultSelectors
         /*
 		public int getNextEntity()
 		{
-			//i dont trust return this.nextEntity++; !!!
 			int retval = this.nextEntity;
 			this.nextEntity++;
 			return retval;
@@ -1000,8 +1003,8 @@ namespace Robi.Clash.DefaultSelectors
 
         public void guessObjDamage() //TODO
         {
-            //или как то по другому когда один наносит урон другому - типа кто сильнее
-            //здесь мы быренько предугадуем дамаг по башне и/или миниону
+            //или как то по другому когда один наносит урон другому - выяснить кто сильнее
+            //здесь мы быстро предугадуем дамаг по башне и/или миниону
         }
 
         //TODO allCharsInAreaGetDamage
@@ -1014,12 +1017,12 @@ namespace Robi.Clash.DefaultSelectors
 
         private void LogHandCard(Handcard hc)
         {
-            Logger.Debug("Hand {position} {name} {lvl} {manacost}", hc.position, hc.card.name, hc.lvl, hc.manacost);
+            Logger.Debug("Hand {position} {name} {lvl} {manacost}{mirror:l}", hc.position, hc.card.name, hc.lvl, hc.manacost, (hc.mirror ? " mirror" : ""));
         }
 
         public void print()
         {
-            Logger.Debug("Data bt:{BattleTime} owner:{ownerIndex} mana:{ownMana} nxtc:{name:l}:{lvl}", BattleTime, ownerIndex, ownMana, nextCard.name, nextCard.lvl);
+            Logger.Debug("Data bt:{BattleTime:l} owner:{ownerIndex} mana:{ownMana} nxtc:{nname:l}:{lvl} prvc:{pname:l}:{lvl}", BattleTime.ToString(@"hh\:mm\:ss\.fff"), ownerIndex, ownMana, nextCard.name, nextCard.lvl, prevCard.name, prevCard.lvl);
 
             //help.logg("ownCards");
             foreach (Handcard hc in ownHandCards) LogHandCard(hc);

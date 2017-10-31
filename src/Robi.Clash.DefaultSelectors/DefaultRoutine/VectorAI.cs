@@ -83,8 +83,6 @@ namespace Robi.Clash.DefaultSelectors
         public void AddYInDirection(Playfield p, int y = 1000)
         {
             VectorAI moveVector = new VectorAI(0, y);
-            //Logger.Debug("PlayerPosition: {0}", fieldPosition);
-
             if (p.home)
                 this.Y -= (y * 4);
             else
@@ -94,12 +92,15 @@ namespace Robi.Clash.DefaultSelectors
         public void SubtractYInDirection(Playfield p, int y = 1000)
         {
             VectorAI moveVector = new VectorAI(0, y);
-            //Logger.Debug("PlayerPosition: {0}", fieldPosition);
-
             if (p.home)
                 this.Y += (y * 4);
             else
                 this.Y -= y;
         }
+    }
+
+    public class VectorConverter : System.ComponentModel.TypeConverter
+    {
+
     }
 }

@@ -94,6 +94,7 @@ namespace Robi.Clash.DefaultSelectors
                             if (bo.own) p.ownBuildings.Add(bo);
                             else p.enemyBuildings.Add(bo);
                         }
+                        else bo.Tower = tower;
                         continue;
                     case "MOB":
                         bo = getBOfromHeader(tmp, p.ownerIndex); //predefined data
@@ -146,6 +147,9 @@ namespace Robi.Clash.DefaultSelectors
                     case "nxtc":
                         p.nextCard = new Handcard(tmp[1], Convert.ToInt32(tmp[2]));
                         continue;
+                    case "prvc":
+                        p.prevCard = new Handcard(tmp[1], Convert.ToInt32(tmp[2]));
+                        continue;
                 }
             }
         }
@@ -155,12 +159,13 @@ namespace Robi.Clash.DefaultSelectors
             Handcard hc = new Handcard(line[2], Convert.ToInt32(line[3]));
             hc.position = Convert.ToInt32(line[1]);
             hc.manacost = Convert.ToInt32(line[4]);
+            if (line.Length > 5) hc.mirror = (line[5] == "mirror");
             return hc;
         }
 
         private BoardObj getBOfromHeader(string[] line, int ownerIndex)
         {
-            BoardObj bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(line[2]));
+            BoardObj bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(line[2], "3"));
             bo.ownerIndex = Convert.ToInt32(line[1]);
             bo.own = bo.ownerIndex == ownerIndex ? true : false;
             bo.GId = Convert.ToUInt32(line[3]);
