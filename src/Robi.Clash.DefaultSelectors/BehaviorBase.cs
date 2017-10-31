@@ -135,6 +135,7 @@ namespace Robi.Clash.DefaultSelectors
 
         public sealed override CastRequest GetNextCast()
         {
+            Logger.Debug("");
             if (statNumSuccessfulEntrances > 0) statTimeOutsideRoutine = DateTime.Now - statTimerRoutine;
             statTimerRoutine = DateTime.Now;
 
@@ -394,22 +395,19 @@ namespace Robi.Clash.DefaultSelectors
 
                 //stat info
 
-
                 statSumTimeOutsideRoutine += statTimeOutsideRoutine;
                 statSumTimeInitPlayfield += statTimeInitPlayfield;
                 statSumTimeInsideBehavior += statTimeInsideBehavior;
                 statNumSuccessfulEntrances++;
                 int objsCount = ownAreaEffects.Count + enemyAreaEffects.Count + ownMinions.Count + enemyMinions.Count + ownBuildings.Count + enemyBuildings.Count; //without HandCards
+                if (objsCount == 0) objsCount = 2;
 
-
+                Logger.Debug("Hint: ne:NumberEntrances  CT:CalculationTime  aCT:AverageCalculationTimePer1Game  tpo:TimePer1Object  ToR:TimeOutsideRoutine");
                 Logger.Debug("#####Stats### ne:{NumberEntrances} Behavior(CT/aCT/tpo):{BehaviorCalcTime}/{averageBCT}/{timePer1Object} Playfield(CT/aCT/tpo):{PlayfieldCreationTime}/{averagePCT}/{timePer1Object} outsideRoutine(ToR/aToR/tpo):{timeOutsideRoutine}/{averageToR}/{timePer1Object}",
                     statNumSuccessfulEntrances, statTimeInsideBehavior.TotalSeconds, (statSumTimeInsideBehavior / statNumSuccessfulEntrances).TotalSeconds, (statTimeInsideBehavior / objsCount).TotalSeconds,
                      statTimeInitPlayfield.TotalSeconds, (statSumTimeInitPlayfield / statNumSuccessfulEntrances).TotalSeconds, (statTimeInitPlayfield / objsCount).TotalSeconds,
                      statTimeOutsideRoutine.TotalSeconds, (statSumTimeOutsideRoutine / (statNumSuccessfulEntrances > 1 ? statNumSuccessfulEntrances - 1 : 1)).TotalSeconds, (statTimeOutsideRoutine / objsCount).TotalSeconds);
-
-
-                Logger.Debug("");
-
+                
                 statTimerRoutine = DateTime.Now;
 
                 return retval;
