@@ -37,7 +37,7 @@ namespace Robi.Clash.DefaultSelectors
         DateTime statTimerRoutine;
         private Dictionary<int, double> lvlToCoef = new Dictionary<int, double>() { { 1, 1 }, { 2, 1.1 }, { 3, 1.21 }, { 4, 1.33 }, { 5, 1.46 }, { 6, 1.6 }, { 7, 1.76 }, { 8, 1.93 }, { 9, 2.12 }, { 10, 2.33 }, { 11, 2.56 }, };
 
-        private static BehaviorBaseSettings Settings { get; } = new BehaviorBaseSettings();
+        //private static BehaviorBaseSettings Settings { get; } = new BehaviorBaseSettings();
         public static bool GameBeginning = false;
 
         private ILogEventSink _battleLogger;
@@ -123,14 +123,14 @@ namespace Robi.Clash.DefaultSelectors
 
         public override void Initialize()
         {
-            SettingsManager.RegisterSettings("Base Behavior", Settings);
+            //SettingsManager.RegisterSettings("Base Behavior", Settings);
             CardDB.Initialize();
             AIDebugCommand.Register();
         }
 
         public override void Deinitialize()
         {
-            SettingsManager.UnregisterSettings("Base Behavior");
+            //SettingsManager.UnregisterSettings("Base Behavior");
         }
 
         public sealed override CastRequest GetNextCast()
