@@ -3,7 +3,7 @@ using Serilog;
 
 namespace Robi.Clash.DefaultSelectors
 {
-
+#if DEBUG
     class AIDebugCommand : Robi.Engine.FrontendCommands.RootCommand
     {
         public static void Register()
@@ -31,5 +31,5 @@ namespace Robi.Clash.DefaultSelectors
             Logger.Error("======================== AI LOG MARK ========================");
         }
     }
-
+#endif
 }

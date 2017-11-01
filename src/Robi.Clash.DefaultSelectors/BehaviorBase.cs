@@ -125,7 +125,9 @@ namespace Robi.Clash.DefaultSelectors
         {
             //SettingsManager.RegisterSettings("Base Behavior", Settings);
             CardDB.Initialize();
+#if DEBUG
             AIDebugCommand.Register();
+#endif
         }
 
         public override void Deinitialize()
