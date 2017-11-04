@@ -1270,16 +1270,28 @@ namespace Robi.Clash.DefaultSelectors
         public Card collectNewCards(Robi.Clash.Engine.NativeObjects.Logic.GameObjects.Character @char, bool needLog = true)
         {
             //try to fill missing data
+            if (@char == null || !@char.IsValid) return null;
+
             var LogicDataCharacter = @char.LogicGameObjectData;
             if (!LogicDataCharacter.IsValid) return null;
 
-            Card c = new Card();
-            c.stringName = LogicDataCharacter.Name.Value;
-            c.name = cardNamestringToEnum(c.stringName, "4");
+            var name = LogicDataCharacter.Name;
+            if ((MemPtr) name == MemPtr.Zero) return null;
 
-            c.type = boardObjType.MOB; //TODO: divide with Buildings (is not enough data)
-            c.Transport = LogicDataCharacter.FlyingHeight > 0 ? transportType.AIR : transportType.GROUND;
-            c.TargetType = targetType.NONE;
+            var cardName = name.Value;
+
+            if (string.IsNullOrWhiteSpace(cardName)) return null;
+
+            var c = new Card
+            {
+                stringName = cardName,
+                name = cardNamestringToEnum(cardName, "4"),
+                type = boardObjType.MOB,
+                Transport = LogicDataCharacter.FlyingHeight > 0 ? transportType.AIR : transportType.GROUND,
+                TargetType = targetType.NONE
+            };
+
+            //TODO: divide with Buildings (is not enough data)
             if (LogicDataCharacter.TargetOnlyBuildings > 0) c.TargetType = targetType.BUILDINGS;
             else if (LogicDataCharacter.AttacksAir > 0) c.TargetType = targetType.ALL;
             else if (LogicDataCharacter.AttacksGround > 0) c.TargetType = targetType.GROUND;
