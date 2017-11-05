@@ -14,7 +14,7 @@ Once your device is ready you have multiple options to install the target game. 
 
 ## Bot Setup
 
-Go to the [Bot and Robot Shop](https://botandrobot.shop/) and download the latest version of the bot. It will come in a zip file. To use the bot extract the files to a folder for example ```C:\BOTS\ClashBuddy```. Inside this folder you will find a Buddy.Launcher executeable. This is the main assembly of the bot. Start the launcher and you will see a console window open.
+Go to the [Bot and Robot Shop](https://botandrobot.shop/) and download the latest version of the bot. It will come in a zip file. To use the bot extract the files to a folder for example ```C:\BOTS\ClashBuddy```. Inside this folder you will find a ClashBuddy executeable. This is the main assembly of the bot. Start the launcher and you will see a console window open.
 
 ![alt text][launcher]
 
@@ -32,19 +32,19 @@ When only one device is connected this step is skipped and the bot will connect 
 
 ![alt text][ready]
 
-Before starting the Bot you need to setup an action selector. This handles what action to cast where. You can find the action selector selection in the settings area.
+When you hit play right away, Apollo will be setup with it's default settings and the bot will start its work. You can customize the Action Selector and even create your own. Action Selectors define the behavior of the bot. You can find the action selector selection in the settings area.
 
 ![alt text][action-selector]
 
-During the tutorial use the Sequence Action selector up to the point where you enter your new name. From then it depends on your deck. What action selecor you want to use. The Early Cycle Selector is working okisch for a deck similar to this.
+Apollo is the out of the box default action selector. It currently will play at around 1800 Trophies. With a deck like:
 
-* Knight
-* Archer
-* Bomber
+* P.E.K.K.A
+* Freeze
+* Wizard
 * Baby Dragon
-* Mini P.E.K.K.A
 * Giant
 * Musketeer
+* Witch
 * Skeleton Army
 
 Here you find some info on [Trouble Shooting](./trouble-shooting.md).
