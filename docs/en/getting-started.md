@@ -14,7 +14,7 @@ Once your device is ready you have multiple options to install the target game. 
 
 ## Bot Setup
 
-Go to the [Bot and Robot Shop](https://botandrobot.shop/) and download the latest version of the bot. It will come in a zip file. To use the bot extract the files to a folder for example ```C:\BOTS\ClashBuddy```. Inside this folder you will find a ClashBuddy executeable. This is the main assembly of the bot. Start the launcher and you will see a console window open.
+Go to the [Bot and Robot Shop](https://botandrobot.shop/) and download the latest version of the bot. It will come in a zip file. To use the bot extract the files to a folder for example ```C:\BOTS\ClashBuddy```. Inside this folder you will find ClashBuddy.exe file. This is the main assembly of the bot. Start the executable and you will see a console window open.
 
 ![alt text][launcher]
 
