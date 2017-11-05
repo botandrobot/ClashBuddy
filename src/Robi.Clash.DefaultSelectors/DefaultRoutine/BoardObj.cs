@@ -239,13 +239,11 @@
         {
             if (home)
             {
-                if (this.Position.Y < 16000) return true;
-                else return false;
+                return this.Position.Y < 16000;
             }
             else
             {
-                if (this.Position.Y > 16000) return true;
-                else return false;
+                return this.Position.Y > 16000;
             }
         }
 
@@ -254,12 +252,12 @@
             if (home)
             {
                 if (this.Position.Y < 16000) return own ? true : false;
-                else return own ? false : true;
+                else return !own;
             }
             else
             {
                 if (this.Position.Y > 16000) return own ? true : false;
-                else return own ? false : true;
+                else return !own;
             }
         }
 
@@ -272,8 +270,8 @@
                     if (this.own) return true;
                     switch (this.Line)
                     {
-                        case 1: return p.ownPrincessTower1.HP > 0 ? false : true;
-                        case 2: return p.ownPrincessTower2.HP > 0 ? false : true;
+                        case 1: return p.ownPrincessTower1.HP <= 0;
+                        case 2: return p.ownPrincessTower2.HP <= 0;
                     }
                 }
                 else
@@ -281,8 +279,8 @@
                     if (!this.own) return true;
                     switch (this.Line)
                     {
-                        case 1: return p.enemyPrincessTower1.HP > 0 ? false : true;
-                        case 2: return p.enemyPrincessTower2.HP > 0 ? false : true;
+                        case 1: return p.enemyPrincessTower1.HP <= 0;
+                        case 2: return p.enemyPrincessTower2.HP <= 0;
                     }
                 }
             }
@@ -293,8 +291,8 @@
                     if (this.own) return true;
                     switch (this.Line)
                     {
-                        case 1: return p.ownPrincessTower1.HP > 0 ? false : true;
-                        case 2: return p.ownPrincessTower2.HP > 0 ? false : true;
+                        case 1: return p.ownPrincessTower1.HP <= 0;
+                        case 2: return p.ownPrincessTower2.HP <= 0;
                     }
                 }
                 else
@@ -302,8 +300,8 @@
                     if (!this.own) return true;
                     switch (this.Line)
                     {
-                        case 1: return p.enemyPrincessTower1.HP > 0 ? false : true;
-                        case 2: return p.enemyPrincessTower2.HP > 0 ? false : true;
+                        case 1: return p.enemyPrincessTower1.HP <= 0;
+                        case 2: return p.enemyPrincessTower2.HP <= 0;
                     }
                 }
             }

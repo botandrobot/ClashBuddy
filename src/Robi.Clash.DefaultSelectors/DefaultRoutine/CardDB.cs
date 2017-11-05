@@ -367,8 +367,8 @@ namespace Robi.Clash.DefaultSelectors
         }
 
         Dictionary<int, Card> forTestBase = new Dictionary<int, Card>();
-        Dictionary<cardName, Card> cardNameToCardList = new Dictionary<cardName, Card>();
-        Dictionary<cardName, List<Card>> cardsAdjustmentDB = new Dictionary<cardName, List<Card>>();
+        readonly Dictionary<cardName, Card> cardNameToCardList = new Dictionary<cardName, Card>();
+        readonly Dictionary<cardName, List<Card>> cardsAdjustmentDB = new Dictionary<cardName, List<Card>>();
         Dictionary<cardParamInt, Dictionary<int, int>> cardsAdjustmentContainerInt = new Dictionary<cardParamInt, Dictionary<int, int>>();
         int updCardsMeasure = 20;
         List<string> allCardIDS = new List<string>();
@@ -404,30 +404,22 @@ namespace Robi.Clash.DefaultSelectors
 
         public affectType stringToAffectType(string s)
         {
-            affectType type;
-            if (Enum.TryParse<affectType>(s, false, out type)) return type;
-            else return affectType.NONE;
+            return Enum.TryParse<affectType>(s, false, out var type) ? type : affectType.NONE;
         }
 
         public targetType stringToTargetType(string s)
         {
-            targetType type;
-            if (Enum.TryParse<targetType>(s, false, out type)) return type;
-            else return targetType.NONE;
+            return Enum.TryParse<targetType>(s, false, out var type) ? type : targetType.NONE;
         }
 
         public transportType stringToTransportType(string s)
         {
-            transportType type;
-            if (Enum.TryParse<transportType>(s, false, out type)) return type;
-            else return transportType.NONE;
+            return Enum.TryParse<transportType>(s, false, out var type) ? type : transportType.NONE;
         }
 
         public boardObjType stringToBoardObjType(string s)
         {
-            boardObjType type;
-            if (Enum.TryParse<boardObjType>(s, false, out type)) return type;
-            else return boardObjType.NONE;
+            return Enum.TryParse<boardObjType>(s, false, out var type) ? type : boardObjType.NONE;
         }
 
         public void uploadCardInfo()
@@ -503,11 +495,13 @@ namespace Robi.Clash.DefaultSelectors
             Card c = new Card();
             foreach (var e in Robi.Clash.Engine.Csv.CsvLogic.Characters.Entries)
             {
-                c = new Card();
-                c.stringName = e.Name;
-                c.name = cardNamestringToEnum(c.stringName, "7");
-                c.type = boardObjType.MOB;
-                c.Transport = e.FlyingHeight > 0 ? transportType.AIR : transportType.GROUND;
+                c = new Card
+                {
+                    stringName = e.Name,
+                    name = cardNamestringToEnum(e.Name, "7"),
+                    type = boardObjType.MOB,
+                    Transport = e.FlyingHeight > 0 ? transportType.AIR : transportType.GROUND
+                };
 
                 if (e.TargetOnlyBuildings != null && (bool)e.TargetOnlyBuildings) c.TargetType = targetType.BUILDINGS;
                 else if (e.AttacksAir != null && (bool)e.AttacksAir) c.TargetType = targetType.ALL;
@@ -556,11 +550,13 @@ namespace Robi.Clash.DefaultSelectors
 
             foreach (var e in Robi.Clash.Engine.Csv.CsvLogic.Buildings.Entries)
             {
-                c = new Card();
-                c.stringName = e.Name;
-                c.name = cardNamestringToEnum(c.stringName, "8");
-                c.type = boardObjType.BUILDING;
-                c.Transport = e.FlyingHeight > 0 ? transportType.AIR : transportType.GROUND;
+                c = new Card
+                {
+                    stringName = e.Name,
+                    name = cardNamestringToEnum(e.Name, "8"),
+                    type = boardObjType.BUILDING,
+                    Transport = e.FlyingHeight > 0 ? transportType.AIR : transportType.GROUND
+                };
 
                 if (e.TargetOnlyBuildings != null && (bool)e.TargetOnlyBuildings) c.TargetType = targetType.BUILDINGS;
                 else if (e.AttacksAir != null && (bool)e.AttacksAir) c.TargetType = targetType.ALL;
@@ -601,10 +597,12 @@ namespace Robi.Clash.DefaultSelectors
 
             foreach (var e in Robi.Clash.Engine.Csv.CsvLogic.AreaEffectObjects.Entries)
             {
-                c = new Card();
-                c.stringName = e.Name;
-                c.name = cardNamestringToEnum(c.stringName, "9");
-                c.type = boardObjType.AOE;
+                c = new Card
+                {
+                    stringName = e.Name,
+                    name = cardNamestringToEnum(e.Name, "9"),
+                    type = boardObjType.AOE
+                };
                 if (e.IgnoreBuildings != null) c.TargetType = (bool)e.IgnoreBuildings ? targetType.IGNOREBUILDINGS : targetType.ALL;
 
                 if (e.OnlyEnemies != null)
@@ -663,8 +661,7 @@ namespace Robi.Clash.DefaultSelectors
 
             foreach (var e in Robi.Clash.Engine.Csv.CsvLogic.Projectiles.Entries)
             {
-                c = new Card();
-                c.stringName = e.Name;
+                c = new Card { stringName = e.Name };
                 switch (c.stringName)
                 {
                     case "FireballSpell": c.stringName = "Fireball"; break;
@@ -834,8 +831,7 @@ namespace Robi.Clash.DefaultSelectors
             foreach (string ct in cardsTxt)
             {
                 string[] paramsTxt = ct.Split(' ');
-                Card c = new Card();
-                c.name = cardNamestringToEnum(paramsTxt[0], "18");
+                Card c = new Card { name = cardNamestringToEnum(paramsTxt[0], "18") };
                 int count = paramsTxt.Length;
                 for (int i = 1; i < count; i++)
                 {
@@ -923,8 +919,7 @@ namespace Robi.Clash.DefaultSelectors
 
         public boardObjType boardObjTypeStringToEnum(string s)
         {
-            boardObjType retval;
-            if (Enum.TryParse<boardObjType>(s, false, out retval)) return retval;
+            if (Enum.TryParse<boardObjType>(s, false, out var retval)) return retval;
             else
             {
                 Logger.Debug("!!!NEW boardObjType: {s}", s);
@@ -934,8 +929,7 @@ namespace Robi.Clash.DefaultSelectors
 
         public transportType transportTypeStringToEnum(string s)
         {
-            transportType retval;
-            if (Enum.TryParse<transportType>(s, false, out retval)) return retval;
+            if (Enum.TryParse<transportType>(s, false, out var retval)) return retval;
             else
             {
                 Logger.Debug("!!!NEW transportType: {s}", s);
@@ -945,8 +939,7 @@ namespace Robi.Clash.DefaultSelectors
 
         public targetType targetTypeStringToEnum(string s)
         {
-            targetType retval;
-            if (Enum.TryParse<targetType>(s, false, out retval)) return retval;
+            if (Enum.TryParse<targetType>(s, false, out var retval)) return retval;
             else
             {
                 Logger.Debug("!!!NEW targetType: {s}", s);
@@ -956,8 +949,7 @@ namespace Robi.Clash.DefaultSelectors
 
         public affectType affectTypeStringToEnum(string s)
         {
-            affectType retval;
-            if (Enum.TryParse<affectType>(s, false, out retval)) return retval;
+            if (Enum.TryParse<affectType>(s, false, out var retval)) return retval;
             else
             {
                 Logger.Debug("!!!NEW affectType: {s}", s);
@@ -972,19 +964,17 @@ namespace Robi.Clash.DefaultSelectors
             cardName cName = cardNamestringToEnum(spell.Name.Value, "19");
             if (cName == cardName.unknown) return;
 
-            if (cardsAdjustmentDB.ContainsKey(cName))
+            if (!cardsAdjustmentDB.ContainsKey(cName)) return;
+
+            List<Card> list = cardsAdjustmentDB[cName];
+            if (!list[0].needUpdate) return;
+
+            Card c = collectNewCards(spell, false);
+            list.Add(c);
+            Logger.Debug("Add {0} {1}", c.name, list.Count);
+            if (list.Count >= updCardsMeasure)
             {
-                List<Card> list = cardsAdjustmentDB[cName];
-                if (list[0].needUpdate)
-                {
-                    Card c = collectNewCards(spell, false);
-                    list.Add(c);
-                    Logger.Debug("Add {0} {1}", c.name, list.Count);
-                    if (list.Count >= updCardsMeasure)
-                    {
-                        //updateCardData(list);
-                    }
-                }
+                //updateCardData(list);
             }
         }
 
@@ -1276,7 +1266,7 @@ namespace Robi.Clash.DefaultSelectors
             if (!LogicDataCharacter.IsValid) return null;
 
             var name = LogicDataCharacter.Name;
-            if ((MemPtr) name == MemPtr.Zero) return null;
+            if ((MemPtr)name == MemPtr.Zero) return null;
 
             var cardName = name.Value;
 
@@ -1379,8 +1369,7 @@ namespace Robi.Clash.DefaultSelectors
 
             if (LogicDataAOE.OnlyEnemies > 0)
             {
-                if (LogicDataAOE.OnlyOwnTroops > 0) c.affectType = affectType.ALL;
-                else c.affectType = affectType.ONLY_ENEMIES;
+                c.affectType = LogicDataAOE.OnlyOwnTroops > 0 ? affectType.ALL : affectType.ONLY_ENEMIES;
             }
             else if (LogicDataAOE.OnlyOwnTroops > 0) c.affectType = affectType.ONLY_OWN;
 

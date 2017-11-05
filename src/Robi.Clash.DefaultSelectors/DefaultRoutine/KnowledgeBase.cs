@@ -37,20 +37,17 @@ namespace Robi.Clash.DefaultSelectors
                 foreach (Handcard hc in p.ownHandCards)
                 {
                     name = hc.card.name;
-                    if (canWait || hc.manacost <= p.ownMana)
+                    if (!canWait && hc.manacost > p.ownMana) continue;
+                    if (!tmp.ContainsKey(name)) continue;
+
+                    if (tmp[name] > bestCardVal)
                     {
-                        if (tmp.ContainsKey(name))
-                        {
-                            if (tmp[name] > bestCardVal)
-                            {
-                                bestCardVal = tmp[name];
-                                bestCard = hc;
-                                bestCard.val = bestCardVal;
-                                bestCard.missingMana = hc.manacost - p.ownMana;
-                            }
-                            if (bestCardVal == 100) break;
-                        }
+                        bestCardVal = tmp[name];
+                        bestCard = hc;
+                        bestCard.val = bestCardVal;
+                        bestCard.missingMana = hc.manacost - p.ownMana;
                     }
+                    if (bestCardVal == 100) break;
                 }
             }
             return bestCard;
@@ -60,12 +57,11 @@ namespace Robi.Clash.DefaultSelectors
         {
             Handcard bestCard = null;
             int bestVal = int.MinValue;
-            int tmpVal;
             foreach (Handcard hc in p.ownHandCards)
             {
                 if (canWait || hc.manacost <= p.ownMana)
                 {
-                    tmpVal = 0;
+                    var tmpVal = 0;
                     int numAirTransport = Group.lowHPboAirTransport + Group.avgHPboAirTransport + Group.hiHPboAirTransport;
                     int groupSize = Group.lowHPbo.Count + Group.avgHPbo.Count + Group.hiHPbo.Count;
                     if (hc.card.aoeAir) tmpVal += 3;
@@ -126,7 +122,7 @@ namespace Robi.Clash.DefaultSelectors
         {
             opposite bestOpposite = null;
             List<attackDef> attackersList = defender.getPossibleAttackers(p);
-            if (attackersList.Count < 1) return bestOpposite;
+            if (attackersList.Count < 1) return null;
 
             List<attackDef> defendersList;
             CardDB.cardName aName;

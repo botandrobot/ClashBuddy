@@ -13,12 +13,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         private static Handcard AttackKingTowerWithSpell(Playfield p)
         {
-            IEnumerable<Handcard> spells = Classification.GetOwnHandCards(p, boardObjType.AOE, SpecificCardType.SpellsDamaging);
+            var spells = Classification.GetOwnHandCards(p, boardObjType.AOE, SpecificCardType.SpellsDamaging);
 
-            if (spells != null)
-                return spells.FirstOrDefault();
-
-            return null;
+            return spells?.FirstOrDefault();
         }
 
 
@@ -36,7 +33,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if (aoeCard != null)
                 return aoeCard;
 
-            if (p.enemyMinions.Where(n => n.Transport == transportType.AIR).Count() > 0)
+            if (p.enemyMinions.Any(n => n.Transport == transportType.AIR))
             {
                 Logger.Debug("AttackFlying Needed");
                 Handcard atkFlying = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsFlyingAttack).FirstOrDefault();
@@ -54,8 +51,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if ((int)currentSituation < 3 || (int)currentSituation > 6) // Just not at Under Attack
             {
                 var tank = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsTank).OrderBy(n => n.card.MaxHP);
-                if (tank.LastOrDefault() != null && tank.LastOrDefault().manacost <= p.ownMana)
-                    return tank.LastOrDefault();
+                var lt = tank.LastOrDefault();
+                if (lt != null && lt.manacost <= p.ownMana)
+                    return lt;
             }
 
             // ToDo: Decision for building attacker
@@ -151,7 +149,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         private static Handcard Building(Playfield p)
         {
             Logger.Debug("Path: Spell - Building");
-            var buildingCard = p.ownHandCards.Where(n => n.card.type == boardObjType.BUILDING).FirstOrDefault();
+            var buildingCard = p.ownHandCards.FirstOrDefault(n => n.card.type == boardObjType.BUILDING);
             if (buildingCard != null)
                 return new Handcard(buildingCard.name, buildingCard.lvl);
 
@@ -164,99 +162,97 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         {
             choosedPosition = null;
 
-            IEnumerable<Handcard> damagingSpells = Classification.GetOwnHandCards(p, boardObjType.PROJECTILE, SpecificCardType.SpellsDamaging);
-            if (damagingSpells.FirstOrDefault() == null)
+            var damagingSpellsSource =
+                Classification.GetOwnHandCards(p, boardObjType.PROJECTILE, SpecificCardType.SpellsDamaging);
+            var damagingSpells = damagingSpellsSource as Handcard[] ?? damagingSpellsSource.ToArray();
+            var fds = damagingSpells.FirstOrDefault();
+            if (fds == null)
                 return null;
 
 
             #region Tower
-            IEnumerable<Handcard> ds5 = damagingSpells.Where(n => (n.card.towerDamage >= p.enemyKingsTower.HP));
-            if (ds5.FirstOrDefault() != null)
+            var ds5 = damagingSpells.FirstOrDefault(n => (n.card.towerDamage >= p.enemyKingsTower.HP));
+            if (ds5 != null)
             {
-                Logger.Debug("towerDamage: {td} ; kt.hp: {kthp}", ds5.FirstOrDefault().card.towerDamage,
+                Logger.Debug("towerDamage: {td} ; kt.hp: {kthp}", ds5.card.towerDamage,
                     p.enemyKingsTower.HP);
                 choosedPosition = p.enemyKingsTower.Position;
-                return ds5.FirstOrDefault();
+                return ds5;
             }
 
             if (p.suddenDeath)
             {
-                IEnumerable<Handcard> ds3 = damagingSpells.Where(n => (n.card.towerDamage >= p.enemyPrincessTower1.HP));
-                IEnumerable<Handcard> ds4 = damagingSpells.Where(n => (n.card.towerDamage >= p.enemyPrincessTower2.HP));
+                var ds3 = damagingSpells.FirstOrDefault(n => (n.card.towerDamage >= p.enemyPrincessTower1.HP));
+                var ds4 = damagingSpells.FirstOrDefault(n => (n.card.towerDamage >= p.enemyPrincessTower2.HP));
                
-                if (ds3.FirstOrDefault() != null && p.enemyPrincessTower1.HP > 0)
+                if (ds3 != null && p.enemyPrincessTower1.HP > 0)
                 {
-                    Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds3.FirstOrDefault().card.towerDamage,
+                    Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds3.card.towerDamage,
                         p.enemyPrincessTower1.HP);
                     choosedPosition = p.enemyPrincessTower1.Position;
-                    return ds3.FirstOrDefault();
+                    return ds3;
                 }
 
-                if (ds4.FirstOrDefault() != null && p.enemyPrincessTower2.HP > 0)
+                if (ds4 != null && p.enemyPrincessTower2.HP > 0)
                 {
-                    Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds4.FirstOrDefault().card.towerDamage,
+                    Logger.Debug("towerDamage: {td} ; pt1.hp: {pt1hp}", ds4.card.towerDamage,
                         p.enemyPrincessTower2.HP);
                     choosedPosition = p.enemyPrincessTower2.Position;
-                    return ds4.FirstOrDefault();
+                    return ds4;
                 }
             }
             #endregion
 
-            IOrderedEnumerable<Handcard> radiusOrderedDS = damagingSpells.OrderBy(n => n.card.DamageRadius);
+            var radiusOrderedDS = damagingSpells.OrderBy(n => n.card.DamageRadius).LastOrDefault();
 
-            group Group = p.getGroup(false, 200, boPriority.byTotalNumber, radiusOrderedDS.LastOrDefault().card.DamageRadius);
+            if (radiusOrderedDS == null) return null;
+            
+            var Group = p.getGroup(false, 200, boPriority.byTotalNumber, radiusOrderedDS.card.DamageRadius);
 
             if (Group == null)
                 return null;
 
-            int grpCount = Group.lowHPbo.Count() + Group.avgHPbo.Count() + Group.hiHPbo.Count();
-            int hpSum = Group.lowHPboHP + Group.hiHPboHP + Group.avgHPboHP;
+            var grpCount = Group.lowHPbo.Count() + Group.avgHPbo.Count() + Group.hiHPbo.Count();
+            var hpSum = Group.lowHPboHP + Group.hiHPboHP + Group.avgHPboHP;
 
-            IEnumerable<Handcard> ds1 = damagingSpells.Where(n => n.card.DamageRadius > 3 && grpCount > 4);
+            var ds1 = damagingSpells.FirstOrDefault(n => n.card.DamageRadius > 3 && grpCount > 4);
 
-            if (ds1.FirstOrDefault() != null)
+            if (ds1 != null)
             {
                 Logger.Debug("Damaging-Spell-Decision: HP-Sum of group = " + hpSum);
                 choosedPosition = p.getDeployPosition(Group.Position, deployDirectionRelative.Down, 1000);
-                return ds1.FirstOrDefault();
+                return ds1;
             }
 
-            IEnumerable<Handcard> ds2 = damagingSpells.Where(n => n.card.DamageRadius <= 3 && grpCount > 1 && hpSum >= n.card.Atk * 2);
+            var ds2 = damagingSpells.FirstOrDefault(n => n.card.DamageRadius <= 3 && grpCount > 1 && hpSum >= n.card.Atk * 2);
 
-            if (ds2.FirstOrDefault() != null)
+            if (ds2 != null)
             {
                 Logger.Debug("Damaging-Spell-Decision: HP-Sum of group = " + hpSum);
                 choosedPosition = p.getDeployPosition(Group.Position, deployDirectionRelative.Down, 1000);
-                return ds2.FirstOrDefault();
+                return ds2;
             }
-
+            
             return null;
         }
 
         public static bool DeployBuildingDecision(Playfield p, out Handcard buildingCard, FightState currentSituation)
         {
             buildingCard = null;
-            bool condition = false;
+            var condition = false;
 
-            Handcard hcMana = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsMana).FirstOrDefault();
-            Handcard hcDefense = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsDefense).FirstOrDefault();
-            Handcard hcAttack = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsAttack).FirstOrDefault();
-            Handcard hcSpawning = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsSpawning).FirstOrDefault();
+            var hcMana = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsMana).FirstOrDefault();
+            var hcDefense = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsDefense).FirstOrDefault();
+            var hcAttack = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsAttack).FirstOrDefault();
+            var hcSpawning = Classification.GetOwnHandCards(p, boardObjType.BUILDING, SpecificCardType.BuildingsSpawning).FirstOrDefault();
 
 
             // Just for Defense
-            if ((int)currentSituation >= 3)
-            {
-                if (hcMana != null)
-                    condition = true;
+            if ((int) currentSituation < 3) return false;
 
-
-                if (hcSpawning != null)
-                    condition = true;
-
-                if (hcDefense != null)
-                    condition = true;
-            }
+            if (hcMana != null) condition = true;
+            if (hcSpawning != null) condition = true;
+            if (hcDefense != null) condition = true;
 
             // ToDo: Attack condition
 
@@ -270,18 +266,15 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         {
             Handcard aoeGround = null, aoeAir = null;
 
-            BoardObj objGround = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out int biggestEnemieGroupCount, transportType.GROUND);
+            var objGround = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out int biggestEnemieGroupCount, transportType.GROUND);
             if (biggestEnemieGroupCount > 3)
                 aoeGround = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEGround).FirstOrDefault();
 
-            BoardObj objAir = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out biggestEnemieGroupCount, transportType.AIR);
+            var objAir = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out biggestEnemieGroupCount, transportType.AIR);
             if (biggestEnemieGroupCount > 3)
                 aoeAir = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEAll).FirstOrDefault();
 
-            if (aoeAir != null)
-                return aoeAir;
-
-            return aoeGround;
+            return aoeAir ?? aoeGround;
         }
 
         public static Handcard GetOppositeCard(Playfield p, FightState currentSituation)
@@ -327,6 +320,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                         }
                     }
                     break;
+                case FightState.START:
+                case FightState.WAIT:
+                default:
+                    break;
             }
             return null;
         }
@@ -336,8 +333,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         {
             if(PlayfieldAnalyse.lines[0].Danger <= Level.LOW || PlayfieldAnalyse.lines[1].Danger <= Level.LOW)
             {
-                IEnumerable<BoardObj> tanks = p.ownMinions.Where(n => Classification.IsMobsTankCurrentHP(n))
-                                                            .OrderBy(n => n.HP);
+                var tanks = p.ownMinions.Where(n => Classification.IsMobsTankCurrentHP(n))
+                                                            .OrderBy(n => n.HP).ToArray();
                 switch (currentSituation)
                 {
                     case FightState.DPTL1:
@@ -362,6 +359,14 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                             return p.getPatnerForMobInPeace(tanks.FirstOrDefault());
                         else
                             return p.getPatnerForMobInPeace(p.ownMinions.OrderBy(n => n.Atk).FirstOrDefault());
+                    case FightState.UAPTL1:
+                    case FightState.UAPTL2:
+                    case FightState.UAKTL1:
+                    case FightState.UAKTL2:
+                    case FightState.START:
+                    case FightState.WAIT:
+                    default:
+                        break;
                 }
             }
             return null;

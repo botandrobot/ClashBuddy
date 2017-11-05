@@ -12,7 +12,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         public static VectorAI GetNextSpellPosition(FightState gameState, Handcard hc, Playfield p)
         {
-            if (hc == null || hc.card == null)
+            if (hc?.card == null)
                 return null;
 
             VectorAI choosedPosition = null;
@@ -62,9 +62,6 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     break;
             }
 
-            if (choosedPosition == null)
-                return null;
-
             //Logger.Debug("GameState: {GameState}", gameState.ToString());
             //Logger.Debug("nextPosition: " + nextPosition);
 
@@ -93,10 +90,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             // ToDo: Improve
             if(line == 0)
             {
-                if (p.enemyPrincessTower1.HP < p.enemyPrincessTower2.HP)
-                    line = 1;
-                else
-                    line = 2;
+                line = p.enemyPrincessTower1.HP < p.enemyPrincessTower2.HP ? 1 : 2;
             }
 
             if (hc.card.type == boardObjType.MOB)
@@ -122,10 +116,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 if (hc.card.Transport == transportType.AIR)
                 {
                     // TODO: Analyse which is the most dangerous line
-                    if (line == 2)
-                        return p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine2);
-                    else
-                        return p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine1);
+                    return p.getDeployPosition(line == 2 ? deployDirectionAbsolute.ownPrincessTowerLine2 : deployDirectionAbsolute.ownPrincessTowerLine1);
                 }
                 else
                 {
@@ -165,24 +156,24 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         {
             BoardObj lPT = p.ownPrincessTower1;
 
-            if (lPT == null || lPT.Position == null)
+            if (lPT?.Position == null)
                 return DKT(p, hc,1);
 
-            if (hc.card.type == boardObjType.MOB)
+            switch (hc.card.type)
             {
-                return PrincessTowerCharacterDeploymentCorrection(lPT.Position, p, hc);
+                case boardObjType.MOB:
+                    return PrincessTowerCharacterDeploymentCorrection(lPT.Position, p, hc);
+                case boardObjType.BUILDING:
+                    //switch ((cardToDeploy as CardBuilding).Type)
+                    //{
+                    //    case BuildingType.BuildingDefense:
+                    //    case BuildingType.BuildingSpawning:
+                    return GetPositionOfTheBestBuildingDeploy(p, hc, FightState.DPTL1);
+                    //}
+                case boardObjType.AOE:
+                case boardObjType.PROJECTILE:
+                    return GetPositionOfTheBestDamagingSpellDeploy(p);
             }
-            else if (hc.card.type == boardObjType.BUILDING)
-            {
-                //switch ((cardToDeploy as CardBuilding).Type)
-                //{
-                //    case BuildingType.BuildingDefense:
-                //    case BuildingType.BuildingSpawning:
-                return GetPositionOfTheBestBuildingDeploy(p, hc, FightState.DPTL1);
-                //}
-            }
-            else if (hc.card.type == boardObjType.AOE || hc.card.type == boardObjType.PROJECTILE)
-                return GetPositionOfTheBestDamagingSpellDeploy(p);
 
             return lPT.Position;
         }
@@ -328,7 +319,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             BoardObj enemy = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out int count, transportType.NONE);
 
-            if (enemy != null && enemy.Position != null)
+            if (enemy?.Position != null)
             {
                 // Debugging: try - catch is just for debugging
                 try
@@ -401,19 +392,15 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         private static VectorAI PrincessTowerCharacterDeploymentCorrection(VectorAI position, Playfield p, Handcard hc)
         {
-            if (hc == null || hc.card == null || position == null)
+            if (hc?.card == null || position == null)
                 return null;
 
             //Logger.Debug("PT Characer Position Correction: Name und Typ {0} " + cardToDeploy.Name, (cardToDeploy as CardCharacter).Type);
             if (hc.card.type == boardObjType.MOB)
             {
-                if (hc.card.MaxHP >= Setting.MinHealthAsTank)
-                {
-                    //position.SubtractYInDirection(p);
-                    return p.getDeployPosition(position, deployDirectionRelative.Up, 100);
-                }
-                else
-                    return p.getDeployPosition(position, deployDirectionRelative.Down, 2000);
+                return hc.card.MaxHP >= Setting.MinHealthAsTank ? 
+                                        p.getDeployPosition(position, deployDirectionRelative.Up, 100) : 
+                                        p.getDeployPosition(position, deployDirectionRelative.Down, 2000);
             }
             else
                 Logger.Debug("Tower Correction: No Correction!!!");
