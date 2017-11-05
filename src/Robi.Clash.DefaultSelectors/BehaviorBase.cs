@@ -36,7 +36,7 @@ namespace Robi.Clash.DefaultSelectors
         private TimeSpan statTimeInsideBehavior;
         private TimeSpan statSumTimeInsideBehavior;
         DateTime statTimerRoutine;
-        private Dictionary<int, double> lvlToCoef = new Dictionary<int, double>() { { 1, 1 }, { 2, 1.1 }, { 3, 1.21 }, { 4, 1.33 }, { 5, 1.46 }, { 6, 1.6 }, { 7, 1.76 }, { 8, 1.93 }, { 9, 2.12 }, { 10, 2.33 }, { 11, 2.56 }, };
+        private readonly Dictionary<int, double> lvlToCoef = new Dictionary<int, double>() { { 1, 1 }, { 2, 1.1 }, { 3, 1.21 }, { 4, 1.33 }, { 5, 1.46 }, { 6, 1.6 }, { 7, 1.76 }, { 8, 1.93 }, { 9, 2.12 }, { 10, 2.33 }, { 11, 2.56 }, };
 
         //private static BehaviorBaseSettings Settings { get; } = new BehaviorBaseSettings();
         public static bool GameBeginning = false;
@@ -347,8 +347,8 @@ namespace Robi.Clash.DefaultSelectors
                 Logger.Debug("################################Routine v.0.8.2 Behavior:{Name:l} v.{Version:l}", Name, Version);
                 p = new Playfield
                 {
-                    BattleTime = ClashEngine.Instance.Battle.BattleTime,
-                    suddenDeath = ClashEngine.Instance.Battle.BattleTime.TotalSeconds > 180,
+                    BattleTime = battle.BattleTime,
+                    suddenDeath = battle.BattleTime.TotalSeconds > 180,
                     ownerIndex = (int)lp.OwnerIndex,
                     ownMana = (int)lp.Mana,
                     ownHandCards = ownHandCards,

@@ -20,8 +20,7 @@ namespace Robi.Clash.DefaultSelectors.Player
         {
             get
             {
-                return ClashEngine.Instance.Battle.SummonerTowers.Where(n =>
-                                            n.OwnerIndex == StaticValues.Player.OwnerIndex).FirstOrDefault();
+                return ClashEngine.Instance.Battle.SummonerTowers.FirstOrDefault(n => n.OwnerIndex == StaticValues.Player.OwnerIndex);
             }
         }
 
@@ -54,7 +53,7 @@ namespace Robi.Clash.DefaultSelectors.Player
                     leftPrincessTower = firstPrincessTower;
 
                 // If the position is not equals, it means the LeftPrincessTower is already destroyed
-                if (!firstPrincessTower.StartPosition.Equals(leftPrincessTower.StartPosition))
+                if (firstPrincessTower != null && !firstPrincessTower.StartPosition.Equals(leftPrincessTower.StartPosition))
                     return null;
 
                 return firstPrincessTower;
@@ -72,7 +71,7 @@ namespace Robi.Clash.DefaultSelectors.Player
                     rightPrincessTower = lastPrincessTower;
 
                 // If the position is not equals, it means the LeftPrincessTower is already destroyed
-                if (!lastPrincessTower.StartPosition.Equals(rightPrincessTower.StartPosition))
+                if (lastPrincessTower != null && !lastPrincessTower.StartPosition.Equals(rightPrincessTower.StartPosition))
                     return null;
 
                 return lastPrincessTower;
@@ -84,14 +83,13 @@ namespace Robi.Clash.DefaultSelectors.Player
             int boarderX = 1000;
             int boarderY = 1000;
             IEnumerable<Character> playerCharacter = PlayerCharacterHandling.Troop;
-            IEnumerable<Character> characterAround;
 
-            characterAround = playerCharacter.Where(n => n.StartPosition.X > @char.StartPosition.X - boarderX
-                                            && n.StartPosition.X < @char.StartPosition.X + boarderX &&
-                                            n.StartPosition.Y > @char.StartPosition.Y - boarderY &&
-                                            n.StartPosition.Y < @char.StartPosition.Y + boarderY);
+            var characterAround = playerCharacter.Count(n => n.StartPosition.X > @char.StartPosition.X - boarderX
+                                                                     && n.StartPosition.X < @char.StartPosition.X + boarderX &&
+                                                                     n.StartPosition.Y > @char.StartPosition.Y - boarderY &&
+                                                                     n.StartPosition.Y < @char.StartPosition.Y + boarderY);
 
-            return characterAround.Count();
+            return characterAround;
         }
 
         public static IEnumerable<Character> Troop
