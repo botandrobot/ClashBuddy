@@ -4,19 +4,19 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
 
-    internal class BehaviorBaseSettings : JsonSettings
-    {
-        internal BehaviorBaseSettings() : base(SettingsPath, "Settings", "BehaviorBaseSettings.json")
-        {
+    //internal class BehaviorBaseSettings : JsonSettings
+    //{
+    //    internal BehaviorBaseSettings() : base(SettingsPath, "Settings", "BehaviorBaseSettings.json")
+    //    {
 
-        }
+    //    }
 
-        public string DatabaseFullpath => System.IO.Path.GetFullPath(DatabaseFolder);
+    //    public string DatabaseFullpath => System.IO.Path.GetFullPath(DatabaseFolder);
 
-        [DisplayName("Routine version")]
-        [Description("Routine version.")]
-        [DefaultValue("0.8.2")]
-        public string DatabaseFolder { get; }
+    //    [DisplayName("Routine version")]
+    //    [Description("Routine version.")]
+    //    [DefaultValue("0.8.2")]
+    //    public string DatabaseFolder { get; }
 
-    }
+    //}
 }

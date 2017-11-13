@@ -18,15 +18,16 @@ namespace Robi.Clash.DefaultSelectors.Utilities
         {
             var om = ClashEngine.Instance.ObjectManager;
             var chars = om.OfType<Character>();
-            var princessTower = chars.Where(n => n.LogicGameObjectData.Name.Value == "PrincessTower" &&
-                                            n.OwnerIndex == ownerIndex).OrderBy(n => n.OwnerIndex).OrderBy(n => n.StartPosition.X);
+            var princessTower = chars.Where(n => n.LogicGameObjectData.Name.Value == "PrincessTower"
+                                              && n.OwnerIndex == ownerIndex)
+                                     .OrderBy(n => n.OwnerIndex)
+                                     .ThenBy(n => n.StartPosition.X);
             return princessTower;
         }
 
         public static Character KingTowerOfOwner(uint ownerIndex)
         {
-            return ClashEngine.Instance.Battle.SummonerTowers.Where(n =>
-                                        n.OwnerIndex == ownerIndex).FirstOrDefault();
+            return ClashEngine.Instance.Battle.SummonerTowers.FirstOrDefault(n => n.OwnerIndex == ownerIndex);
         }
 
         /*

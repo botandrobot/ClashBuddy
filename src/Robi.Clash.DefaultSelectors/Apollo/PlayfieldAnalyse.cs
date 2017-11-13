@@ -57,16 +57,16 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         private static void Minions(Playfield p)
         {
             #region minion sums (atk and health; Line 1 and 2)
-            IEnumerable<BoardObj> enemyMinionsL1 = p.enemyMinions.Where(n => n.Line == 1);
-            IEnumerable<BoardObj> enemyMinionsL2 = p.enemyMinions.Where(n => n.Line == 2);
+            var enemyMinionsL1 = p.enemyMinions.Where(n => n.Line == 1).ToArray();
+            var enemyMinionsL2 = p.enemyMinions.Where(n => n.Line == 2).ToArray();
 
             lines[0].EnemyMinionAtk = enemyMinionsL1.Sum(n => n.Atk);
             lines[0].EnemyMinionHP = enemyMinionsL1.Sum(n => n.HP);
             lines[1].EnemyMinionAtk = enemyMinionsL2.Sum(n => n.Atk);
             lines[1].EnemyMinionHP = enemyMinionsL2.Sum(n => n.HP);
 
-            IEnumerable<BoardObj> ownMinionsL1 = p.ownMinions.Where(n => n.Line == 1);
-            IEnumerable<BoardObj> ownMinionsL2 = p.ownMinions.Where(n => n.Line == 2);
+            IEnumerable<BoardObj> ownMinionsL1 = p.ownMinions.Where(n => n.Line == 1).ToArray();
+            IEnumerable<BoardObj> ownMinionsL2 = p.ownMinions.Where(n => n.Line == 2).ToArray();
 
             int ownSideL1HP = ownMinionsL1.Where(n => n.onMySide(p.home)).Sum(n => n.HP);
             int enemySideL1HP = ownMinionsL1.Where(n => !n.onMySide(p.home)).Sum(n => n.HP);
@@ -204,14 +204,14 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             if (enemyBuildings?.Count() > 0)
             {
-                BoardObj bKT = enemyBuildings.Where(n => n.Line == line && n.IsPositionInArea(p, p.ownKingsTower.Position)).FirstOrDefault();
+                BoardObj bKT = enemyBuildings.FirstOrDefault(n => n.Line == line && n.IsPositionInArea(p, p.ownKingsTower.Position));
 
                 BoardObj bPT;
 
                 if (line == 1)
-                    bPT = enemyBuildings.Where(n => n.IsPositionInArea(p, p.ownPrincessTower1.Position)).FirstOrDefault();
+                    bPT = enemyBuildings.FirstOrDefault(n => n.IsPositionInArea(p, p.ownPrincessTower1.Position));
                 else
-                    bPT = enemyBuildings.Where(n => n.IsPositionInArea(p, p.ownPrincessTower2.Position)).FirstOrDefault();
+                    bPT = enemyBuildings.FirstOrDefault(n => n.IsPositionInArea(p, p.ownPrincessTower2.Position));
 
                 if (bKT != null || bPT != null)
                     return 3;

@@ -12,17 +12,12 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             int boarderX = 1000;
             int boarderY = 1000;
             IEnumerable<BoardObj> playerCharacter = p.ownMinions;
-            IEnumerable<BoardObj> characterAround;
 
-            characterAround = playerCharacter.Where(n => n.Position.X > obj.Position.X - boarderX
-                                            && n.Position.X < obj.Position.X + boarderX &&
-                                            n.Position.Y > obj.Position.Y - boarderY &&
-                                            n.Position.Y < obj.Position.Y + boarderY);
-
-            if (characterAround == null)
-                return null;
-
-            return characterAround.Count();
+            var characterAround = playerCharacter.Count(n => n.Position.X > obj.Position.X - boarderX
+                                                                     && n.Position.X < obj.Position.X + boarderX &&
+                                                                     n.Position.Y > obj.Position.Y - boarderY &&
+                                                                     n.Position.Y < obj.Position.Y + boarderY);
+            return characterAround;
         }
 
         // NF = not flying
@@ -31,17 +26,13 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             int boarderX = 1000;
             int boarderY = 1000;
             IEnumerable<BoardObj> playerCharacter = p.ownMinions;
-            IEnumerable<BoardObj> characterAround;
 
-            characterAround = playerCharacter.Where(n => n.Position.X > obj.Position.X - boarderX
-                                            && n.Position.X < obj.Position.X + boarderX &&
-                                            n.Position.Y > obj.Position.Y - boarderY &&
-                                            n.Position.Y < obj.Position.Y + boarderY && n.card.Transport == transportType.GROUND);
-
-            if (characterAround == null)
-                return null;
-
-            return characterAround.Count();
+            var characterAround = playerCharacter.Count(n => n.Position.X > obj.Position.X - boarderX
+                                                                     && n.Position.X < obj.Position.X + boarderX &&
+                                                                     n.Position.Y > obj.Position.Y - boarderY &&
+                                                                     n.Position.Y < obj.Position.Y + boarderY && n.card.Transport == transportType.GROUND);
+            
+            return characterAround;
         }
 
         public static BoardObj EnemyCharacterWithTheMostEnemiesAround(Playfield p, out int count, transportType tP)
@@ -49,32 +40,31 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             int boarderX = 1000;
             int boarderY = 1000;
             IEnumerable<BoardObj> enemies = p.enemyMinions;
-            IEnumerable<BoardObj> enemiesAroundTemp;
             BoardObj enemy = null;
             count = 0;
 
             foreach (var item in enemies)
             {
+                BoardObj[] enemiesAroundTemp;
                 if (tP != transportType.NONE)
                 {
                     enemiesAroundTemp = enemies.Where(n => n.Position.X > item.Position.X - boarderX
                                                     && n.Position.X < item.Position.X + boarderX &&
                                                     n.Position.Y > item.Position.Y - boarderY &&
-                                                    n.Position.Y < item.Position.Y + boarderY && n.Transport == tP);
+                                                    n.Position.Y < item.Position.Y + boarderY && n.Transport == tP).ToArray();
                 }
                 else
                 {
                     enemiesAroundTemp = enemies.Where(n => n.Position.X > item.Position.X - boarderX
                                 && n.Position.X < item.Position.X + boarderX &&
                                 n.Position.Y > item.Position.Y - boarderY &&
-                                n.Position.Y < item.Position.Y + boarderY);
+                                n.Position.Y < item.Position.Y + boarderY).ToArray();
                 }
 
-                if (enemiesAroundTemp?.Count() > count)
-                {
-                    count = enemiesAroundTemp.Count();
-                    enemy = item;
-                }
+                if (!(enemiesAroundTemp?.Count() > count)) continue;
+
+                count = enemiesAroundTemp.Count();
+                enemy = item;
             }
 
             return enemy;
@@ -86,24 +76,20 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             var orderedChar = nearestChar.OrderBy(n => n.Position.Y);
 
-            if (p.home)
-                return orderedChar.FirstOrDefault();
-            else
-                return orderedChar.LastOrDefault();
+            return p.home ? orderedChar.FirstOrDefault() : orderedChar.LastOrDefault();
         }
         
         public static bool IsAnEnemyObjectInArea(Playfield p, VectorAI position, int areaSize, boardObjType type)
         {
-            Func<BoardObj, bool> whereClause = n => n.Position.X >= position.X - areaSize && n.Position.X <= position.X + areaSize &&
-                                                    n.Position.Y >= position.Y - areaSize && n.Position.Y <= position.Y + areaSize;
+            bool WhereClause(BoardObj n) => n.Position.X >= position.X - areaSize && n.Position.X <= position.X + areaSize && n.Position.Y >= position.Y - areaSize && n.Position.Y <= position.Y + areaSize;
 
 
             if (type == boardObjType.MOB)
-                return p.enemyMinions.Where(whereClause).Count() > 0;
+                return p.enemyMinions.Where(WhereClause).Any();
             else if (type == boardObjType.BUILDING)
-                return p.enemyBuildings.Where(whereClause).Count() > 0;
+                return p.enemyBuildings.Where(WhereClause).Any();
             else if (type == boardObjType.AOE)
-                return p.enemyAreaEffects.Where(whereClause).Count() > 0;
+                return p.enemyAreaEffects.Where(WhereClause).Any();
 
             return false;
         }
@@ -123,32 +109,24 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         public static VectorAI DeployBehindTank(Playfield p, int line)
         {
-            IEnumerable<BoardObj> tankChar = p.ownMinions.Where(n => n.Line == line && n.HP >= Setting.MinHealthAsTank).OrderBy(n => n.HP);
+            var tankChar = p.ownMinions.Where(n => n.Line == line && n.HP >= Setting.MinHealthAsTank).OrderBy(n => n.HP).FirstOrDefault();
 
-            if (tankChar.FirstOrDefault() != null)
-                return p.getDeployPosition(tankChar.FirstOrDefault(), deployDirectionRelative.Down);
-            else
-                return null;
-
+            return tankChar != null ? p.getDeployPosition(tankChar, deployDirectionRelative.Down) : null;
         }
 
         public static VectorAI DeployTankInFront(Playfield p, int line)
         {
-            IEnumerable<BoardObj> ownChar = p.ownMinions.Where(n => n.Line == line && n.MaxHP < Setting.MinHealthAsTank).OrderBy(n => n.Position.Y);
+            var ownChar = p.ownMinions.Where(n => n.Line == line && n.MaxHP < Setting.MinHealthAsTank).OrderBy(n => n.Position.Y).ToArray();
+            var lc = ownChar.LastOrDefault();
+            var fc = ownChar.FirstOrDefault();
 
             if (p.home)
             {
-                if (ownChar.LastOrDefault() != null)
-                    return p.getDeployPosition(ownChar.FirstOrDefault(), deployDirectionRelative.Up);
-                else
-                    return null;
+                return lc != null ? p.getDeployPosition(lc, deployDirectionRelative.Up) : null;
             }
             else
             {
-                if (ownChar.FirstOrDefault() != null)
-                    return p.getDeployPosition(ownChar.FirstOrDefault(), deployDirectionRelative.Up);
-                else
-                    return null;
+                return fc != null ? p.getDeployPosition(fc, deployDirectionRelative.Up) : null;
             }
 
         }

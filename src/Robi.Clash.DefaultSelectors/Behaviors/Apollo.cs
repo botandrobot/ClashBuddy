@@ -52,12 +52,7 @@
             #region Apollo Magic
             PlayfieldAnalyse.AnalyseLines(p);
             currentSituation = GetCurrentFightState(p);
-            Handcard hc = CardChoosing.GetOppositeCard(p, currentSituation);
-            
-            if(hc == null)
-            {
-                hc = CardChoosing.GetMobInPeace(p, currentSituation);
-            }
+            Handcard hc = CardChoosing.GetOppositeCard(p, currentSituation) ?? CardChoosing.GetMobInPeace(p, currentSituation);
 
             if (hc == null)
             {
@@ -82,8 +77,7 @@
             bc = new Cast(hc.name, nextPosition, hc);
             #endregion
 
-            if (bc != null) Logger.Debug("BestCast:" + bc.SpellName + " " + bc.Position.ToString());
-            else Logger.Debug("BestCast: null");
+            Logger.Debug("BestCast:" + bc.SpellName + " " + bc.Position.ToString());
 
             return bc;
         }
@@ -106,8 +100,11 @@
             IEnumerable<Handcard> damagingSpells = Classification.GetOwnHandCards(p, boardObjType.AOE, SpecificCardType.SpellsDamaging);
             if (damagingSpells != null)
             {
-                IOrderedEnumerable<Handcard> radiusOrderedDS = damagingSpells.OrderBy(n => n.card.DamageRadius);
-                group Group = p.getGroup(false, 200, boPriority.byTotalNumber, radiusOrderedDS.FirstOrDefault().card.DamageRadius);
+                var radiusOrderedDS = damagingSpells.OrderBy(n => n.card.DamageRadius).FirstOrDefault();
+                if (radiusOrderedDS != null)
+                {
+                    @group Group = p.getGroup(false, 200, boPriority.byTotalNumber, radiusOrderedDS.card.DamageRadius);
+                }
             }
 
             Logger.Debug("Name: " + p.ownKingsTower.Name);
@@ -216,10 +213,7 @@
 
         private static FightState GetCurrentFightStateRusher(Playfield p)
         {
-            if (!p.noEnemiesOnMySide())
-                return Decision.EnemyIsOnOurSideDecision(p);
-            else
-                return Decision.AttackDecision(p);
+            return !p.noEnemiesOnMySide() ? Decision.EnemyIsOnOurSideDecision(p) : Decision.AttackDecision(p);
         }
 
         public static void FillSettings()
@@ -248,13 +242,13 @@
         public override float GetPlayfieldValue(Playfield p)
         {
             if (p.value >= -2000000) return p.value;
-            int retval = 0;
+            const int retval = 0;
             return retval;
         }
 
         public override int GetBoValue(BoardObj bo, Playfield p)
         {
-            int retval = 5;
+            const int retval = 5;
             return retval;
         }
 
