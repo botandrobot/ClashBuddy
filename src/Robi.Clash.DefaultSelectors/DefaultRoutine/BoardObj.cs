@@ -237,16 +237,8 @@
 
         public bool onMySide(bool home) //Return True if troops/buildings on My side of the board
         {
-            if (home)
-            {
-                if (this.Position.Y < 16000) return true;
-                else return false;
-            }
-            else
-            {
-                if (this.Position.Y > 16000) return true;
-                else return false;
-            }
+            if (home) return this.Position.Y < 16000;
+            else return this.Position.Y > 16000;
         }
 
         public bool onItsOwnSide(bool home) //Return True if troops/buildings on its own side of the board
@@ -254,12 +246,12 @@
             if (home)
             {
                 if (this.Position.Y < 16000) return own ? true : false;
-                else return own ? false : true;
+                else return !own;
             }
             else
             {
                 if (this.Position.Y > 16000) return own ? true : false;
-                else return own ? false : true;
+                else return !own;
             }
         }
 
@@ -272,8 +264,8 @@
                     if (this.own) return true;
                     switch (this.Line)
                     {
-                        case 1: return p.ownPrincessTower1.HP > 0 ? false : true;
-                        case 2: return p.ownPrincessTower2.HP > 0 ? false : true;
+                        case 1: return p.ownPrincessTower1.HP <= 0;
+                        case 2: return p.ownPrincessTower2.HP <= 0;
                     }
                 }
                 else
@@ -281,8 +273,8 @@
                     if (!this.own) return true;
                     switch (this.Line)
                     {
-                        case 1: return p.enemyPrincessTower1.HP > 0 ? false : true;
-                        case 2: return p.enemyPrincessTower2.HP > 0 ? false : true;
+                        case 1: return p.enemyPrincessTower1.HP <= 0;
+                        case 2: return p.enemyPrincessTower2.HP <= 0;
                     }
                 }
             }
@@ -293,8 +285,8 @@
                     if (this.own) return true;
                     switch (this.Line)
                     {
-                        case 1: return p.ownPrincessTower1.HP > 0 ? false : true;
-                        case 2: return p.ownPrincessTower2.HP > 0 ? false : true;
+                        case 1: return p.ownPrincessTower1.HP <= 0;
+                        case 2: return p.ownPrincessTower2.HP <= 0;
                     }
                 }
                 else
@@ -302,8 +294,8 @@
                     if (!this.own) return true;
                     switch (this.Line)
                     {
-                        case 1: return p.enemyPrincessTower1.HP > 0 ? false : true;
-                        case 2: return p.enemyPrincessTower2.HP > 0 ? false : true;
+                        case 1: return p.enemyPrincessTower1.HP <= 0;
+                        case 2: return p.enemyPrincessTower2.HP <= 0;
                     }
                 }
             }

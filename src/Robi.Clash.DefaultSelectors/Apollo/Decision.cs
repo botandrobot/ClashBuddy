@@ -11,7 +11,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
     {
         public static readonly ILogger Logger = LogProvider.CreateLogger<Decision>();
 
-        public static bool CanWaitDecision(Playfield p, FightState currentSituation)
+        public static int CanWaitDecision(Playfield p, FightState currentSituation)
         {
             if (p.noEnemiesOnMySide())
             {
@@ -25,31 +25,31 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     case FightState.APTL1:
                         {
                             if (p.BattleTime.TotalSeconds < 10)
-                                return false;
+                                return 0;
                             else if (p.enemyPrincessTower1.HP < 300 && p.enemyPrincessTower1.HP > 0)
-                                return false;
+                                return 2;
                             else if (PlayfieldAnalyse.lines[0].Chance == Level.HIGH)
-                                return false;
+                                return 2;
                             break;
                         }
                     case FightState.APTL2:
                         {
                             if (p.BattleTime.TotalSeconds < 10)
-                                return false;
+                                return 0;
                             else if (p.enemyPrincessTower2.HP < 300 && p.enemyPrincessTower2.HP > 0)
-                                return false;
+                                return 2;
                             else if (PlayfieldAnalyse.lines[1].Chance == Level.HIGH)
-                                return false;
+                                return 2;
                             break;
                         }
                     case FightState.AKT:
                         {
                             if (p.BattleTime.TotalSeconds < 10)
-                                return false;
+                                return 0;
                             else if (p.enemyKingsTower.HP < 300 && p.enemyKingsTower.HP > 0)
-                                return false;
+                                return 2;
                             else if (PlayfieldAnalyse.lines[0].Chance == Level.HIGH || PlayfieldAnalyse.lines[1].Chance == Level.HIGH)
-                                return false;
+                                return 2;
                             break;
                         }
                 }
@@ -57,16 +57,16 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             else
             {
                 if (p.BattleTime.TotalSeconds < 15)
-                    return false;
+                    return 2;
                 if (p.ownKingsTower.HP < 500)
-                    return false;
+                    return 1;
                 if (Helper.IsAnEnemyObjectInArea(p, p.ownKingsTower.Position, 4000, boardObjType.MOB))
-                    return false; // ToDo: Find better condition, if the handcard can´t attack the minions, we should wait
-                if (PlayfieldAnalyse.lines[0].Danger > Level.LOW || PlayfieldAnalyse.lines[1].Danger > Level.LOW) // ToDo: Maybe check just the line
-                    return false;
+                    return 2; // ToDo: Find better condition, if the handcard can´t attack the minions, we should wait
+                if (PlayfieldAnalyse.lines[0].Danger == Level.HIGH || PlayfieldAnalyse.lines[1].Danger == Level.HIGH) // ToDo: Maybe check just the line
+                    return 1;
             }
 
-            return true;
+            return 10;
         }
 
         public static FightState DefenseDecision(Playfield p)
@@ -210,7 +210,15 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             {
                 if(lines[1].Danger >= lines[1].Chance)
                 {
-                    if (lines[0].Danger >= lines[1].Danger)
+                    if (lines[0].Danger == lines[1].Danger)
+                    {
+                        if (lines[0].ComparisionHP < lines[1].ComparisionHP)
+                            return -1;
+                        else
+                            return -2;
+                    }
+
+                        if (lines[0].Danger >= lines[1].Danger)
                         return -1;
                     else
                         return -2;

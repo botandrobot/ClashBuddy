@@ -1,6 +1,7 @@
 ﻿
 
 using System.IO;
+using Microsoft.AspNetCore.Mvc.Internal;
 using Serilog.Core;
 using Serilog.Events;
 
@@ -25,7 +26,7 @@ namespace Robi.Clash.DefaultSelectors
         public abstract float GetPlayfieldValue(Playfield p);
         public abstract int GetBoValue(BoardObj bo, Playfield p);
         public abstract int GetPlayCardPenalty(CardDB.Card card, Playfield p);
-        private List<Playfield> battleLogs = new List<Playfield>();
+        private readonly List<Playfield> battleLogs = new List<Playfield>();
         private List<Handcard> prevHandCards = new List<Handcard>();
         private int statNumSuccessfulEntrances = 0;
         private TimeSpan statTimeOutsideRoutine;
@@ -35,10 +36,12 @@ namespace Robi.Clash.DefaultSelectors
         private TimeSpan statTimeInsideBehavior;
         private TimeSpan statSumTimeInsideBehavior;
         DateTime statTimerRoutine;
-        private Dictionary<int, double> lvlToCoef = new Dictionary<int, double>() { { 1, 1 }, { 2, 1.1 }, { 3, 1.21 }, { 4, 1.33 }, { 5, 1.46 }, { 6, 1.6 }, { 7, 1.76 }, { 8, 1.93 }, { 9, 2.12 }, { 10, 2.33 }, { 11, 2.56 }, };
+        private readonly Dictionary<int, double> lvlToCoef = new Dictionary<int, double>() { { 1, 1 }, { 2, 1.1 }, { 3, 1.21 }, { 4, 1.33 }, { 5, 1.46 }, { 6, 1.6 }, { 7, 1.76 }, { 8, 1.93 }, { 9, 2.12 }, { 10, 2.33 }, { 11, 2.56 }, };
 
         private static BehaviorBaseSettings Settings { get; } = new BehaviorBaseSettings();
         public static bool GameBeginning = false;
+        private VectorAI ownKingsTowerPos = new VectorAI(-1, -1);
+        private int friendlyOwnerIndex = -1;
 
         private ILogEventSink _battleLogger;
         public override void BattleStart()
@@ -57,6 +60,9 @@ namespace Robi.Clash.DefaultSelectors
             LogProvider.AttachSink(_battleLogger);
 
             GameBeginning = true;
+            ownKingsTowerPos.X = -1;
+            ownKingsTowerPos.Y = -1;
+            friendlyOwnerIndex = -1;
             battleLogs.Clear();
             prevHandCards.Clear();
 
@@ -135,6 +141,7 @@ namespace Robi.Clash.DefaultSelectors
 
         public sealed override CastRequest GetNextCast()
         {
+            Logger.Debug("");
             if (statNumSuccessfulEntrances > 0) statTimeOutsideRoutine = DateTime.Now - statTimerRoutine;
             statTimerRoutine = DateTime.Now;
 
@@ -158,8 +165,7 @@ namespace Robi.Clash.DefaultSelectors
             Handcard prevHandCard = new Handcard();
 
             Logger.Debug("#####Stats##### Inint BO {0}", (statTimerRoutine - DateTime.Now).TotalSeconds);
-
-
+            
             var battle = ClashEngine.Instance.Battle;
             if (battle == null || !battle.IsValid) return null;
             var om = ClashEngine.Instance.ObjectManager;
@@ -169,6 +175,42 @@ namespace Robi.Clash.DefaultSelectors
             var spells = ClashEngine.Instance.AvailableSpells;
             if (spells == null) return null;
 
+            if (ownKingsTowerPos.Y == -1)
+            {
+                List<Tuple<int, int>> towersIndY = new List<Tuple<int, int>>();
+                bool needFriendlyIndex = false;
+                var chars = om.OfType<Clash.Engine.NativeObjects.Logic.GameObjects.Character>();
+                foreach (var @char in chars)
+                {
+                    if (!@char.IsValid) continue;
+                    var data = @char.LogicGameObjectData;
+                    if (data == null || !data.IsValid) continue;
+                    var name = data.Name;
+                    if ((MemPtr)name == MemPtr.Zero) continue;
+
+                    switch (CardDB.Instance.cardNamestringToEnum(name.Value.ToString(), "0"))
+                    {
+                        case CardDB.cardName.kingtower:
+                            int OwnerIndex = (int)@char.OwnerIndex;
+                            int charY = @char.StartPosition.Y;
+                            towersIndY.Add(new Tuple<int, int>(OwnerIndex, charY));
+                            if (OwnerIndex == lp.OwnerIndex) ownKingsTowerPos.Y = charY;
+                            break;
+                        case CardDB.cardName.kingtowermiddle:
+                            ownKingsTowerPos.X = @char.StartPosition.X;
+                            needFriendlyIndex = true;
+                            break;
+                    }
+                }
+
+                if (needFriendlyIndex)
+                {
+                    foreach (var t in towersIndY)
+                    {
+                        if (ownKingsTowerPos.Y == t.Item2 && lp.OwnerIndex != t.Item1) friendlyOwnerIndex = t.Item1;
+                    }
+                }
+            }
 
             Logger.Debug("#####Stats##### Inint BO+engine {0}", (statTimerRoutine - DateTime.Now).TotalSeconds);
 
@@ -177,17 +219,18 @@ namespace Robi.Clash.DefaultSelectors
                 Handcard Mirror = null;
                 foreach (var spell in spells)
                 {
-                    if (spell != null && spell.IsValid)
-                    {
-                        int lvl = 1; //TODO: wrong data in spell.SummonCharacterLevelIndex
-                        Handcard hc = new Handcard(spell.Name.Value.ToString(), lvl); //hc.lvl = ??? TODO
-                        if (hc.card.name == CardDB.cardName.unknown) CardDB.Instance.collectNewCards(spell);
-                        hc.manacost = spell.ManaCost;
-                        if (hc.card.name == CardDB.cardName.mirror) Mirror = hc;
-                        //if (hc.card.needUpdate) CardDB.Instance.cardsAdjustment(spell);
-                        //hc.position = ??? TODO
-                        ownHandCards.Add(hc);
-                    }
+                    if (spell == null || !spell.IsValid) continue;
+                    var name = spell.Name;
+                    if((MemPtr)name == MemPtr.Zero) continue;
+                    
+                    int lvl = 1; //TODO: wrong data in spell.SummonCharacterLevelIndex
+                    Handcard hc = new Handcard(name.Value.ToString(), lvl); //hc.lvl = ??? TODO
+                    if (hc.card.name == CardDB.cardName.unknown) CardDB.Instance.collectNewCards(spell);
+                    hc.manacost = spell.ManaCost;
+                    if (hc.card.name == CardDB.cardName.mirror) Mirror = hc;
+                    //if (hc.card.needUpdate) CardDB.Instance.cardsAdjustment(spell);
+                    //hc.position = ??? TODO
+                    ownHandCards.Add(hc);
                 }
                 if (ownHandCards.Count == 4)
                 {
@@ -224,107 +267,117 @@ namespace Robi.Clash.DefaultSelectors
                 var aoes = om.OfType<Clash.Engine.NativeObjects.Logic.GameObjects.AreaEffectObject>();
                 foreach (var aoe in aoes)
                 {
-                    if (aoe != null && aoe.IsValid)
-                    {
-                        BoardObj bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(aoe.LogicGameObjectData.Name.Value.ToString(), "1"));
-                        //if (bo.card.needUpdate) CardDB.Instance.cardsAdjustment(aoe);
-                        if (bo.card.name == CardDB.cardName.unknown) CardDB.Instance.collectNewCards(aoe);
-                        bo.GId = aoe.GlobalId;
-                        bo.Position = new VectorAI(aoe.StartPosition);
-                        bo.Line = bo.Position.X > 8700 ? 2 : 1;
-                        //bo.level = TODO real value
-                        //bo.Atk = TODO real value
-                        bo.LifeTime = aoe.HealthComponent.RemainingTime;
+                    if (!aoe.IsValid) continue;
+                    var data = aoe.LogicGameObjectData;
+                    if(data == null || !data.IsValid) continue;
+                    var name = data.Name;
+                    if((MemPtr)name == MemPtr.Zero) continue;
 
-                        bo.ownerIndex = (int)aoe.OwnerIndex;
-                        bool own = bo.ownerIndex == lp.OwnerIndex ? true : false; //TODO: replace it on Friendly (for 2x2 mode)
-                        bo.own = own;
+                    BoardObj bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(name.Value.ToString(), "1"));
+                    //if (bo.card.needUpdate) CardDB.Instance.cardsAdjustment(aoe);
+                    if (bo.card.name == CardDB.cardName.unknown) CardDB.Instance.collectNewCards(aoe);
+                    bo.GId = aoe.GlobalId;
+                    bo.Position = new VectorAI(aoe.StartPosition);
+                    bo.Line = bo.Position.X > 8700 ? 2 : 1;
+                    //bo.level = TODO real value
+                    //bo.Atk = TODO real value
+                    bo.LifeTime = aoe.HealthComponent.RemainingTime;
 
-                        if (own) ownAreaEffects.Add(bo);
-                        else enemyAreaEffects.Add(bo);
-                    }
+                    bo.ownerIndex = (int)aoe.OwnerIndex;
+                    bool own = bo.ownerIndex == lp.OwnerIndex ? true : (bo.ownerIndex == friendlyOwnerIndex ? true : false);
+                    bo.own = own;
 
+                    if (own) ownAreaEffects.Add(bo);
+                    else enemyAreaEffects.Add(bo);
                 }
-
+                
                 var chars = om.OfType<Clash.Engine.NativeObjects.Logic.GameObjects.Character>();
                 foreach (var @char in chars)
                 {
+                    if (!@char.IsValid) continue;
                     var data = @char.LogicGameObjectData;
-                    if (data != null && data.IsValid)
+                    if (data == null || !data.IsValid) continue;
+                    var name = data.Name;
+                    if ((MemPtr) name == MemPtr.Zero) continue; 
+
+                    BoardObj bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(name.Value.ToString(), "2"));
+                    bo.ownerIndex = (int)@char.OwnerIndex;
+                    bool own = bo.ownerIndex == lp.OwnerIndex ? true : (bo.ownerIndex == friendlyOwnerIndex ? true : false);
+                    bo.own = own;
+
+                    if (bo.card.name == CardDB.cardName.unknown) CardDB.Instance.collectNewCards(@char);
+                    else if (bo.ownerIndex == lp.OwnerIndex && bo.card.needUpdate) CardDB.Instance.cardsAdjustment(@char);
+                    bo.GId = @char.GlobalId;
+                    bo.Position = new VectorAI(@char.StartPosition);
+                    bo.Line = bo.Position.X > 8700 ? 2 : 1;
+                    bo.level = 1 + (int)@char.TowerLevel;
+                    bo.Atk = (int)(bo.card.Atk * lvlToCoef[bo.level]); //TODO: need real value
+                    //this.frozen = TODO
+                    //this.startFrozen = TODO
+                    bo.HP = @char.HealthComponent.CurrentHealth;
+                    bo.Shield = @char.HealthComponent.CurrentShieldHealth;
+                    bo.LifeTime = @char.HealthComponent.LifeTime - @char.HealthComponent.RemainingTime; //TODO: - find real value for battle stage
+                    
+                    int tower = 0;
+                    switch (bo.Name)
                     {
-                        BoardObj bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(data.Name.Value.ToString(), "2"));
-                        bo.ownerIndex = (int)@char.OwnerIndex;
-                        bool own = bo.ownerIndex == lp.OwnerIndex ? true : false; //TODO: replace it on Friendly (for 2x2 mode)
-                        bo.own = own;
-
-                        if (bo.card.name == CardDB.cardName.unknown) CardDB.Instance.collectNewCards(@char);
-                        else if (bo.ownerIndex == lp.OwnerIndex && bo.card.needUpdate) CardDB.Instance.cardsAdjustment(@char);
-                        bo.GId = @char.GlobalId;
-                        bo.Position = new VectorAI(@char.StartPosition);
-                        bo.Line = bo.Position.X > 8700 ? 2 : 1;
-                        bo.level = 1 + (int)@char.TowerLevel;
-                        bo.Atk = (int)(bo.card.Atk * lvlToCoef[bo.level]); //TODO: need real value
-                        //this.frozen = TODO
-                        //this.startFrozen = TODO
-                        bo.HP = @char.HealthComponent.CurrentHealth;
-                        bo.Shield = @char.HealthComponent.CurrentShieldHealth;
-                        bo.LifeTime = @char.HealthComponent.LifeTime - @char.HealthComponent.RemainingTime; //TODO: - find real value for battle stage
-
-
-                        int tower = 0;
-                        switch (bo.Name)
-                        {
-                            case CardDB.cardName.princesstower:
-                                tower = bo.Line;
-                                if (bo.own)
+                        case CardDB.cardName.princesstower:
+                            tower = bo.Line;
+                            if (bo.own)
+                            {
+                                if (tower == 1) ownPrincessTower1 = bo;
+                                else ownPrincessTower2 = bo;
+                            }
+                            else
+                            {
+                                if (tower == 1) enemyPrincessTower1 = bo;
+                                else enemyPrincessTower2 = bo;
+                            }
+                            break;
+                        case CardDB.cardName.kingtower:
+                            tower = 10 + bo.Line;
+                            if (bo.own)
+                            {
+                                if (ownKingsTower.HP == 0) ownKingsTower = bo;
+                                else if (bo.HP < ownKingsTower.HP) ownKingsTower = bo;
+                                if (ownKingsTowerPos.X != -1) ownKingsTower.Position.X = ownKingsTowerPos.X;
+                            }
+                            else
+                            {
+                                if (enemyKingsTower.HP == 0) enemyKingsTower = bo;
+                                else if (bo.HP < enemyKingsTower.HP) enemyKingsTower = bo;
+                                if (ownKingsTowerPos.X != -1) enemyKingsTower.Position.X = ownKingsTowerPos.X;
+                            }
+                            break;
+                        case CardDB.cardName.kingtowermiddle:
+                            tower = 100;
+                            break;
+                        default:
+                            if (own)
+                            {
+                                switch (bo.type)
                                 {
-                                    if (tower == 1) ownPrincessTower1 = bo;
-                                    else ownPrincessTower2 = bo;
+                                    case boardObjType.MOB:
+                                        ownMinions.Add(bo);
+                                        break;
+                                    case boardObjType.BUILDING:
+                                        ownBuildings.Add(bo);
+                                        break;
                                 }
-                                else
+                            }
+                            else
+                            {
+                                switch (bo.type)
                                 {
-                                    if (tower == 1) enemyPrincessTower1 = bo;
-                                    else enemyPrincessTower2 = bo;
+                                    case boardObjType.MOB:
+                                        enemyMinions.Add(bo);
+                                        break;
+                                    case boardObjType.BUILDING:
+                                        enemyBuildings.Add(bo);
+                                        break;
                                 }
-                                break;
-                            case CardDB.cardName.kingtower:
-                                tower = 10 + bo.Line;
-                                if (bo.own)
-                                {
-                                    if (lp.OwnerIndex == bo.ownerIndex) ownKingsTower = bo;
-                                }
-                                else enemyKingsTower = bo;
-                                break;
-                            case CardDB.cardName.kingtowermiddle:
-                                tower = 100;
-                                break;
-                            default:
-                                if (own)
-                                {
-                                    switch (bo.type)
-                                    {
-                                        case boardObjType.MOB:
-                                            ownMinions.Add(bo);
-                                            break;
-                                        case boardObjType.BUILDING:
-                                            ownBuildings.Add(bo);
-                                            break;
-                                    }
-                                }
-                                else
-                                {
-                                    switch (bo.type)
-                                    {
-                                        case boardObjType.MOB:
-                                            enemyMinions.Add(bo);
-                                            break;
-                                        case boardObjType.BUILDING:
-                                            enemyBuildings.Add(bo);
-                                            break;
-                                    }
-                                }
-                                break;
-                        }
+                            }
+                            break;
                     }
                 }
             }
@@ -335,11 +388,11 @@ namespace Robi.Clash.DefaultSelectors
 
             using (new PerformanceTimer("Initialize playfield."))
             {
-                Logger.Debug("################################Routine v.0.8.2 Behavior:{Name:l} v.{Version:l}", Name, Version);
+                Logger.Debug("################################Routine v.0.8.3 Behavior:{Name:l} v.{Version:l}", Name, Version);
                 p = new Playfield
                 {
-                    BattleTime = ClashEngine.Instance.Battle.BattleTime,
-                    suddenDeath = ClashEngine.Instance.Battle.BattleTime.TotalSeconds > 180,
+                    BattleTime = battle.BattleTime,
+                    suddenDeath = battle.BattleTime.TotalSeconds > 180,
                     ownerIndex = (int)lp.OwnerIndex,
                     ownMana = (int)lp.Mana,
                     ownHandCards = ownHandCards,
@@ -394,22 +447,19 @@ namespace Robi.Clash.DefaultSelectors
 
                 //stat info
 
-
                 statSumTimeOutsideRoutine += statTimeOutsideRoutine;
                 statSumTimeInitPlayfield += statTimeInitPlayfield;
                 statSumTimeInsideBehavior += statTimeInsideBehavior;
                 statNumSuccessfulEntrances++;
                 int objsCount = ownAreaEffects.Count + enemyAreaEffects.Count + ownMinions.Count + enemyMinions.Count + ownBuildings.Count + enemyBuildings.Count; //without HandCards
+                if (objsCount == 0) objsCount = 2;
 
-
+                Logger.Debug("Hint: ne:NumberEntrances  CT:CalculationTime  aCT:AverageCalculationTimePer1Game  tpo:TimePer1Object  ToR:TimeOutsideRoutine");
                 Logger.Debug("#####Stats### ne:{NumberEntrances} Behavior(CT/aCT/tpo):{BehaviorCalcTime}/{averageBCT}/{timePer1Object} Playfield(CT/aCT/tpo):{PlayfieldCreationTime}/{averagePCT}/{timePer1Object} outsideRoutine(ToR/aToR/tpo):{timeOutsideRoutine}/{averageToR}/{timePer1Object}",
                     statNumSuccessfulEntrances, statTimeInsideBehavior.TotalSeconds, (statSumTimeInsideBehavior / statNumSuccessfulEntrances).TotalSeconds, (statTimeInsideBehavior / objsCount).TotalSeconds,
                      statTimeInitPlayfield.TotalSeconds, (statSumTimeInitPlayfield / statNumSuccessfulEntrances).TotalSeconds, (statTimeInitPlayfield / objsCount).TotalSeconds,
                      statTimeOutsideRoutine.TotalSeconds, (statSumTimeOutsideRoutine / (statNumSuccessfulEntrances > 1 ? statNumSuccessfulEntrances - 1 : 1)).TotalSeconds, (statTimeOutsideRoutine / objsCount).TotalSeconds);
-
-
-                Logger.Debug("");
-
+                
                 statTimerRoutine = DateTime.Now;
 
                 return retval;

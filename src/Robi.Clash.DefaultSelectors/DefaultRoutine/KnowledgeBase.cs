@@ -26,7 +26,7 @@ namespace Robi.Clash.DefaultSelectors
             setupOppositeDB();
         }
 
-        public Handcard getOppositeCard(Playfield p, BoardObj attacker, bool canWait = true)
+        public Handcard getOppositeCard(Playfield p, BoardObj attacker, int canWaitMissingMana = 3)
         {
             Handcard bestCard = null;
             if (OppositeDB.ContainsKey(attacker.Name))
@@ -37,7 +37,7 @@ namespace Robi.Clash.DefaultSelectors
                 foreach (Handcard hc in p.ownHandCards)
                 {
                     name = hc.card.name;
-                    if (canWait || hc.manacost <= p.ownMana)
+                    if (canWaitMissingMana >= hc.manacost - p.ownMana)
                     {
                         if (tmp.ContainsKey(name))
                         {
@@ -56,14 +56,14 @@ namespace Robi.Clash.DefaultSelectors
             return bestCard;
         }
 
-        public Handcard getOppositeCard(Playfield p, group Group, bool canWait = true, int gangSize = 5)
+        public Handcard getOppositeCard(Playfield p, group Group, int canWaitMissingMana = 3, int gangSize = 5)
         {
             Handcard bestCard = null;
             int bestVal = int.MinValue;
             int tmpVal;
             foreach (Handcard hc in p.ownHandCards)
             {
-                if (canWait || hc.manacost <= p.ownMana)
+                if (canWaitMissingMana >= hc.manacost - p.ownMana)
                 {
                     tmpVal = 0;
                     int numAirTransport = Group.lowHPboAirTransport + Group.avgHPboAirTransport + Group.hiHPboAirTransport;
