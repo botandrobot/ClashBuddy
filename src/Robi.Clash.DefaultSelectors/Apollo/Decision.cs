@@ -79,7 +79,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             BoardObj princessTower = p.enemyPrincessTowers.OrderBy(n => n.HP).FirstOrDefault(); // Because they are going to attack this tower
 
-            if (princessTower.Line == 2)
+            if (princessTower != null && princessTower.Line == 2)
                 return FightState.DPTL2;
             else
                 return FightState.DPTL1;
@@ -100,7 +100,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             BoardObj princessTower = p.enemyPrincessTowers.OrderBy(n => n.HP).FirstOrDefault();
 
-            if (princessTower.Line == 2)
+            if (princessTower != null && princessTower.Line == 2)
                 return FightState.APTL2;
             else
                 return FightState.APTL1;
@@ -110,17 +110,11 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         {
             if (p.ownTowers.Count > 2)
             {
-                if (line == 2)
-                    return FightState.UAPTL2;
-                else 
-                    return FightState.UAPTL1;
+                return line == 2 ? FightState.UAPTL2 : FightState.UAPTL1;
             }
             else
             {
-                if (line == 2)
-                    return FightState.UAKTL2;
-                else
-                    return FightState.UAKTL1;
+                return line == 2 ? FightState.UAKTL2 : FightState.UAKTL1;
             }
         }
 
@@ -173,19 +167,14 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         {
             // If own characters already attacking and you are deploying as support
             // The chars should be deployed behind the own chars
-            IEnumerable<BoardObj> attackingChars;
 
-            if (ownSide)
-                attackingChars = p.ownMinions.Where(n => n.Line == line && n.onMySide(p.home));
-            else
-                attackingChars = p.ownMinions.Where(n => n.Line == line && !n.onMySide(p.home));
+            var attackingChars = ownSide ? 
+                p.ownMinions.Where(n => n.Line == line && n.onMySide(p.home)) : 
+                p.ownMinions.Where(n => n.Line == line && !n.onMySide(p.home));
 
             // Maybe check also which card type: Tank deployed in front, Ranger behinde ...
 
-            if (attackingChars.Count() > 0)
-                return true;
-            else
-                return false;
+            return attackingChars.Any();
         }
 
 
@@ -212,40 +201,25 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 {
                     if (lines[0].Danger == lines[1].Danger)
                     {
-                        if (lines[0].ComparisionHP < lines[1].ComparisionHP)
-                            return -1;
-                        else
-                            return -2;
+                        return lines[0].ComparisionHP < lines[1].ComparisionHP ? -1 : -2;
                     }
 
-                        if (lines[0].Danger >= lines[1].Danger)
-                        return -1;
-                    else
-                        return -2;
+                    return lines[0].Danger >= lines[1].Danger ? -1 : -2;
                 }
                 else
                 {
-                    if (lines[0].Danger >= lines[1].Chance)
-                        return -1;
-                    else
-                        return 2;
+                    return lines[0].Danger >= lines[1].Chance ? -1 : 2;
                 }
             }
             else
             {
                 if (lines[1].Danger >= lines[1].Chance)
                 {
-                    if (lines[0].Chance > lines[1].Danger)
-                        return 1;
-                    else
-                        return -2;
+                    return lines[0].Chance > lines[1].Danger ? 1 : -2;
                 }
                 else
                 {
-                    if (lines[0].Chance > lines[1].Chance)
-                        return 1;
-                    else
-                        return 2;
+                    return lines[0].Chance > lines[1].Chance ? 1 : 2;
                 }
             }
 
@@ -268,12 +242,15 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if (enemy == null)
                 return p.ownKingsTower;
 
-            if (enemy.Line == 2)
-                return p.ownPrincessTower2;
-            else if (enemy.Line == 1)
-                return p.ownPrincessTower1;
-            else
-                return p.ownKingsTower;
+            switch (enemy.Line)
+            {
+                case 2:
+                    return p.ownPrincessTower2;
+                case 1:
+                    return p.ownPrincessTower1;
+                default:
+                    return p.ownKingsTower;
+            }
 
         }
 
@@ -296,10 +273,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 Logger.Debug("mostDangeroustGroup.Position.X = {0} ; line = {1}", mostDangeroustGroup?.Position?.X, line);
 
 
-                if (line == 2)
-                    return FightState.DPTL2;
-                else
-                    return FightState.DPTL1;
+                return line == 2 ? FightState.DPTL2 : FightState.DPTL1;
             }
             else
             {

@@ -3,7 +3,6 @@ using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Robi.Clash.DefaultSelectors.Apollo
 {
@@ -13,56 +12,77 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         public static IEnumerable<Handcard> GetOwnHandCards(Playfield p, boardObjType cardType, SpecificCardType sCardType)
         {
-            IEnumerable<Handcard> cardsOfType = p.ownHandCards.Where(n => n.card.type == cardType);
+            var cardsOfType = p.ownHandCards.Where(n => n.card.type == cardType).ToArray();
 
-            if (cardsOfType.FirstOrDefault() == null)
+            if (cardsOfType.Length == 0)
                 return cardsOfType;
 
+            Func<Handcard, bool> @delegate = (n) => true;
+            
             switch (sCardType)
             {
                 case SpecificCardType.All:
-                    return cardsOfType;
+                    break;
 
                 // Mobs
                 case SpecificCardType.MobsTank:
-                    return cardsOfType.Where(n => IsMobsTank(n));
+                    @delegate = IsMobsTank;
+                    break;
                 case SpecificCardType.MobsDamageDealer:
-                    return cardsOfType.Where(n => IsMobsDamageDealer(n));
+                    @delegate = IsMobsDamageDealer;
+                    break;
                 case SpecificCardType.MobsBuildingAttacker:
-                    return cardsOfType.Where(n => IsMobsBuildingAttacker(n));
+                    @delegate = IsMobsBuildingAttacker;
+                    break;
                 case SpecificCardType.MobsRanger:
-                    return cardsOfType.Where(n => IsMobsRanger(n));
+                    @delegate = IsMobsRanger;
+                    break;
                 case SpecificCardType.MobsAOEGround:
-                    return cardsOfType.Where(n => IsMobsAOEGround(n));
+                    @delegate = IsMobsAOEGround;
+                    break;
                 case SpecificCardType.MobsAOEAll:
-                    return cardsOfType.Where(n => IsMobsAOEAll(n));
+                    @delegate = IsMobsAOEAll;
+                    break;
                 case SpecificCardType.MobsFlyingAttack:
-                    return cardsOfType.Where(n => IsMobsFlyingAttack(n));
+                    @delegate = IsMobsFlyingAttack;
+                    break;
                 case SpecificCardType.MobsNoTank:
-                    return cardsOfType.Where(n => IsMobsNoTank(n));
+                    @delegate = IsMobsNoTank;
+                    break;
 
                 // Buildings
                 case SpecificCardType.BuildingsDefense:
-                    return cardsOfType.Where(n => IsBuildingsDefense(n)); // TODO: Define
+                    @delegate = IsBuildingsDefense; // TODO: Define
+                    break;
                 case SpecificCardType.BuildingsAttack:
-                    return cardsOfType.Where(n => IsBuildingsAttack(n)); // TODO: Define
+                    @delegate = IsBuildingsAttack; // TODO: Define
+                    break;
                 case SpecificCardType.BuildingsSpawning:
-                    return cardsOfType.Where(n => IsBuildingsSpawning(n));
+                    @delegate = IsBuildingsSpawning;
+                    break;
                 case SpecificCardType.BuildingsMana:
+                    @delegate = (n) => false;
                     break; // TODO: ManaProduction
 
                 // Spells
                 case SpecificCardType.SpellsDamaging:
-                    return cardsOfType.Where(n => IsSpellsDamaging(n));
+                    @delegate = IsSpellsDamaging;
+                    break;
                 case SpecificCardType.SpellsNonDamaging:
-                    return cardsOfType.Where(n => IsSpellsNonDamaging(n));
+                    @delegate = IsSpellsNonDamaging;
+                    break;
                 case SpecificCardType.SpellsTroopSpawning:
-                    return cardsOfType.Where(n => IsSpellsTroopSpawning(n)); // TODO: Check
+                    @delegate = IsSpellsTroopSpawning; // TODO: Check
+                    break;
                 case SpecificCardType.SpellsBuffs:
-                    return cardsOfType.Where(n => IsSpellBuff(n)); // TODO: Check
+                    @delegate = IsSpellBuff; // TODO: Check
+                    break;
+                default:
+                    @delegate = (n) => false;
+                    break;
             }
 
-            return null;
+            return cardsOfType.Where(@delegate).ToArray();
         }
 
         public static SpecificCardType GetSpecificCardType(Handcard hc)

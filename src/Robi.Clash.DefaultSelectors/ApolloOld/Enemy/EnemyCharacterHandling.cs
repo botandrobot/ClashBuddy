@@ -28,8 +28,7 @@ namespace Robi.Clash.DefaultSelectors.Enemy
         {
             get
             {
-                IEnumerable<Character> enemiesOnOurSide = Enemies.Where(
-                                                            n => PlaygroundPositionHandling.IsPositionOnPlayerSide(n.StartPosition));
+                var enemiesOnOurSide = Enemies.Where(n => PlaygroundPositionHandling.IsPositionOnPlayerSide(n.StartPosition));
 
                 return enemiesOnOurSide;
             }
@@ -41,10 +40,9 @@ namespace Robi.Clash.DefaultSelectors.Enemy
             {
                 var om = ClashEngine.Instance.ObjectManager;
                 var chars = om.OfType<Character>();
-                uint ownerIndex = StaticValues.Player.OwnerIndex;
+                var ownerIndex = StaticValues.Player.OwnerIndex;
 
-                IEnumerable<Character> enemies = chars.Where(
-                                                            n => n.OwnerIndex != ownerIndex);
+                var enemies = chars.Where(n => n.OwnerIndex != ownerIndex);
 
                 return enemies;
             }
@@ -56,12 +54,11 @@ namespace Robi.Clash.DefaultSelectors.Enemy
             {
                 var om = ClashEngine.Instance.ObjectManager;
                 var chars = om.OfType<Character>();
-                uint ownerIndex = StaticValues.Player.OwnerIndex;
+                var ownerIndex = StaticValues.Player.OwnerIndex;
 
-                IEnumerable<Character> enemies = chars.Where(
-                                                            n => n.OwnerIndex != ownerIndex
-                                                            && n.LogicGameObjectData.Name.Value != "PrincessTower"
-                                                            && n.LogicGameObjectData.Name.Value != "KingTower");
+                var enemies = chars.Where(n => n.OwnerIndex != ownerIndex
+                                            && n.LogicGameObjectData.Name.Value != "PrincessTower"
+                                            && n.LogicGameObjectData.Name.Value != "KingTower");
 
                 return enemies;
             }
@@ -74,7 +71,7 @@ namespace Robi.Clash.DefaultSelectors.Enemy
         {
             get
             {
-                uint ownerIndex = StaticValues.Player.OwnerIndex;
+                var ownerIndex = StaticValues.Player.OwnerIndex;
                 var om = ClashEngine.Instance.ObjectManager;
                 var chars = om.OfType<Character>();
                 var nearestChar = chars.Where(n => n.LogicGameObjectData.Name.Value != "PrincessTower" &&
@@ -97,25 +94,22 @@ namespace Robi.Clash.DefaultSelectors.Enemy
 
         public static Character EnemyCharacterWithTheMostEnemiesAround(out int count)
         {
-            int boarderX = 1000;
-            int boarderY = 1000;
-            IEnumerable<Character> enemies = Enemies;
-            IEnumerable<Character> enemiesAroundTemp;
+            const int boarderX = 1000;
+            const int boarderY = 1000;
+            var enemies = Enemies as Character[] ?? Enemies.ToArray();
             Character enemy = null;
             count = 0;
 
             foreach (var item in enemies)
             {
-                enemiesAroundTemp = enemies.Where(n => n.StartPosition.X > item.StartPosition.X - boarderX
-                                                && n.StartPosition.X < item.StartPosition.X + boarderX &&
-                                                n.StartPosition.Y > item.StartPosition.Y - boarderY &&
-                                                n.StartPosition.Y < item.StartPosition.Y + boarderY);
+                var enemiesAroundTemp = enemies.Where(n => n.StartPosition.X > item.StartPosition.X - boarderX
+                                                                              && n.StartPosition.X < item.StartPosition.X + boarderX &&
+                                                                              n.StartPosition.Y > item.StartPosition.Y - boarderY &&
+                                                                              n.StartPosition.Y < item.StartPosition.Y + boarderY).ToArray();
+                if (enemiesAroundTemp.Length <= count) continue;
 
-                if (enemiesAroundTemp.Count() > count)
-                {
-                    count = enemiesAroundTemp.Count();
-                    enemy = item;
-                }
+                count = enemiesAroundTemp.Length;
+                enemy = item;
             }
 
             return enemy;
@@ -123,25 +117,23 @@ namespace Robi.Clash.DefaultSelectors.Enemy
 
         public static Character EnemyCharacterWithTheMostGroundEnemiesAround(out int count)
         {
-            int boarderX = 1000;
-            int boarderY = 1000;
-            IEnumerable<Character> enemies = Enemies;
-            IEnumerable<Character> enemiesAroundTemp;
+            const int boarderX = 1000;
+            const int boarderY = 1000;
+            var enemies = Enemies as Character[] ?? Enemies.ToArray();
             Character enemy = null;
             count = 0;
 
             foreach (var item in enemies)
             {
-                enemiesAroundTemp = enemies.Where(n => n.StartPosition.X > item.StartPosition.X - boarderX
-                                                && n.StartPosition.X < item.StartPosition.X + boarderX &&
-                                                n.StartPosition.Y > item.StartPosition.Y - boarderY &&
-                                                n.StartPosition.Y < item.StartPosition.Y + boarderY).Where(n => n.LogicGameObjectData.FlyingHeight == 0);
+                var enemiesAroundTemp = enemies.Where(n => n.StartPosition.X > item.StartPosition.X - boarderX
+                                                                              && n.StartPosition.X < item.StartPosition.X + boarderX &&
+                                                                              n.StartPosition.Y > item.StartPosition.Y - boarderY &&
+                                                                              n.StartPosition.Y < item.StartPosition.Y + boarderY).Where(n => n.LogicGameObjectData.FlyingHeight == 0).ToArray();
 
-                if (enemiesAroundTemp.Count() > count)
-                {
-                    count = enemiesAroundTemp.Count();
-                    enemy = item;
-                }
+                if (enemiesAroundTemp.Length <= count) continue;
+
+                count = enemiesAroundTemp.Length;
+                enemy = item;
             }
 
             return enemy;
@@ -151,11 +143,11 @@ namespace Robi.Clash.DefaultSelectors.Enemy
         {
             get
             {
-                var enemiesWithoutTower = EnemiesWithoutTower;
+                var enemiesWithoutTower = EnemiesWithoutTower as Character[] ?? EnemiesWithoutTower.ToArray();
 
                 foreach (var @char in enemiesWithoutTower)
                 {
-                    bool isNewCharacter = true;
+                    var isNewCharacter = true;
 
                     foreach (var pastChar in TempLastEnemieCharacters)
                     {
@@ -166,12 +158,10 @@ namespace Robi.Clash.DefaultSelectors.Enemy
                             isNewCharacter = false;
                     }
 
-                    if (isNewCharacter)
-                    {
+                    if (!isNewCharacter) continue;
 
-                        TempLastEnemieCharacters = enemiesWithoutTower.ToList();
-                        return @char;
-                    }
+                    TempLastEnemieCharacters = enemiesWithoutTower.ToList();
+                    return @char;
                 }
                 //TempLastEnemieCharacters = enemiesWithoutTower;
                 return null;
@@ -184,16 +174,14 @@ namespace Robi.Clash.DefaultSelectors.Enemy
         {
             get
             {
-                int healthAmount = 0;
-                IEnumerable<Character> enemiesOnOurSide = Enemies.Where(
-                                                            n => PlaygroundPositionHandling.IsPositionOnPlayerSide(n.StartPosition));
+                var enemiesOnOurSideHealthSum = Enemies.Where(n => n != null
+                                                       && n.IsValid
+                                                       && n.HealthComponent != null
+                                                       && n.HealthComponent.IsValid
+                                                       && PlaygroundPositionHandling.IsPositionOnPlayerSide(n.StartPosition))
+                                              .Sum(@char => @char.HealthComponent.CurrentHealth);
 
-                foreach (var @char in enemiesOnOurSide)
-                {
-                    healthAmount += @char.HealthComponent.CurrentHealth;
-                }
-
-                return healthAmount;
+                return enemiesOnOurSideHealthSum;
             }
         }
         #endregion
@@ -203,8 +191,10 @@ namespace Robi.Clash.DefaultSelectors.Enemy
         {
             get
             {
-                return ClashEngine.Instance.Battle.SummonerTowers.Where(n =>
-                                            n.OwnerIndex != StaticValues.Player.OwnerIndex).FirstOrDefault();
+                var battle = ClashEngine.Instance.Battle;
+                if (battle == null || !battle.IsValid) return null;
+                var towers = battle.SummonerTowers;
+                return towers.FirstOrDefault(n => n.OwnerIndex != StaticValues.Player.OwnerIndex);
             }
         }
 
@@ -214,8 +204,10 @@ namespace Robi.Clash.DefaultSelectors.Enemy
             {
                 var om = ClashEngine.Instance.ObjectManager;
                 var chars = om.OfType<Character>();
-                var princessTower = chars.Where(n => n.LogicGameObjectData.Name.Value == "PrincessTower" &&
-                                                n.OwnerIndex != StaticValues.Player.OwnerIndex).OrderBy(n => n.OwnerIndex).OrderBy(n => n.StartPosition.X);
+                var princessTower = chars.Where(n => n.LogicGameObjectData.Name.Value == "PrincessTower"
+                                                  && n.OwnerIndex != StaticValues.Player.OwnerIndex)
+                                         .OrderBy(n => n.OwnerIndex)
+                                         .ThenBy(n => n.StartPosition.X);
 
                 //foreach (var s in princessTower)
                 //{
@@ -250,7 +242,7 @@ namespace Robi.Clash.DefaultSelectors.Enemy
         {
             get
             {
-                Character lastPrincessTower = EnemyPrincessTower.LastOrDefault();
+                var lastPrincessTower = EnemyPrincessTower.LastOrDefault();
 
                 if (lastPrincessTower == null)
                     return null;
@@ -269,12 +261,15 @@ namespace Robi.Clash.DefaultSelectors.Enemy
         {
             var om = ClashEngine.Instance.ObjectManager;
             var chars = om.OfType<Character>();
-            var princessTower = chars.Where(n => n.LogicGameObjectData.Name.Value == "PrincessTower" &&
-                                            n.OwnerIndex != ownerIndex).OrderBy
-                                            (n => n.HealthComponent.CurrentHealth).FirstOrDefault();
+            var princessTower = chars.Where(n => n.LogicGameObjectData.Name.Value == "PrincessTower"
+                                              && n.OwnerIndex != ownerIndex)
+                                     .OrderBy(n => n.HealthComponent.CurrentHealth)
+                                     .FirstOrDefault();
 
             //Logger.Debug("PrincessTower: Owner - {0}; Position: {1}",
             //            princessTower.OwnerIndex, princessTower.LogicGameObjectData.HealthBar.Value);
+
+            if (princessTower == null) return null;
 
             Logger.Debug("EnemyPT-WithLowestHealth {0}", princessTower.StartPosition.ToString());
             return princessTower;
@@ -287,18 +282,12 @@ namespace Robi.Clash.DefaultSelectors.Enemy
             var om = ClashEngine.Instance.ObjectManager;
             var chars = om.OfType<Character>();
 
-            foreach (var @char in chars)
-            {
-                var data = @char.LogicGameObjectData;
-                if (data != null && data.IsValid)
-                {
-                    //Logger.Debug("IsPositionOnOurSide: " + PositionHandling.IsPositionOnOurSide(@char.StartPosition));
-
-                    if (@char.OwnerIndex != StaticValues.Player.OwnerIndex && PlaygroundPositionHandling.IsPositionOnPlayerSide(@char.StartPosition))
-                        return true;
-                }
-            }
-            return false;
+            return chars.Select(c => new {c, data = c.LogicGameObjectData})
+                        .Where(@t => @t.data != null 
+                                  && @t.data.IsValid)
+                        .Select(@t => @t.c)
+                        .Any(c => c.OwnerIndex != StaticValues.Player.OwnerIndex 
+                               && PlaygroundPositionHandling.IsPositionOnPlayerSide(c.StartPosition));
         }
 
         public static bool IsFlyingEnemyOnTheField()
@@ -306,12 +295,7 @@ namespace Robi.Clash.DefaultSelectors.Enemy
             var om = ClashEngine.Instance.ObjectManager;
             var chars = om.OfType<Character>();
 
-            foreach (var @char in chars)
-            {
-                if (@char.LogicGameObjectData.FlyingHeight > 0)
-                    return true;
-            }
-            return false;
+            return chars.Any(@char => @char.LogicGameObjectData.FlyingHeight > 0);
         }
 
 
