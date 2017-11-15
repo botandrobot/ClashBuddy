@@ -79,4 +79,10 @@ namespace Robi.Clash.DefaultSelectors
         //customAngle, TODO if it is needed
     }
 
+    public enum RoutineLogLevel
+    {
+        Verbose,
+        Compact
+    }
+
 }

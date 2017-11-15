@@ -26,6 +26,8 @@ namespace Robi.Clash.DefaultSelectors
         public abstract float GetPlayfieldValue(Playfield p);
         public abstract int GetBoValue(BoardObj bo, Playfield p);
         public abstract int GetPlayCardPenalty(CardDB.Card card, Playfield p);
+		private string rName = "Routine";
+        private static BehaviorBaseSettings Settings => SettingsManager.GetSetting<BehaviorBaseSettings>("Routine");
         private readonly List<Playfield> battleLogs = new List<Playfield>();
         private List<Handcard> prevHandCards = new List<Handcard>();
         private int statNumSuccessfulEntrances = 0;
@@ -37,8 +39,7 @@ namespace Robi.Clash.DefaultSelectors
         private TimeSpan statSumTimeInsideBehavior;
         DateTime statTimerRoutine;
         private readonly Dictionary<int, double> lvlToCoef = new Dictionary<int, double>() { { 1, 1 }, { 2, 1.1 }, { 3, 1.21 }, { 4, 1.33 }, { 5, 1.46 }, { 6, 1.6 }, { 7, 1.76 }, { 8, 1.93 }, { 9, 2.12 }, { 10, 2.33 }, { 11, 2.56 }, };
-
-        private static BehaviorBaseSettings Settings { get; } = new BehaviorBaseSettings();
+	
         public static bool GameBeginning = false;
         private VectorAI ownKingsTowerPos = new VectorAI(-1, -1);
         private int friendlyOwnerIndex = -1;
@@ -129,14 +130,16 @@ namespace Robi.Clash.DefaultSelectors
 
         public override void Initialize()
         {
-            SettingsManager.RegisterSettings("Base Behavior", Settings);
+            SettingsManager.RegisterSettings(rName, new BehaviorBaseSettings());
             CardDB.Initialize();
+// #if DEBUG - it for all cases
             AIDebugCommand.Register();
+// #endif
         }
 
         public override void Deinitialize()
         {
-            SettingsManager.UnregisterSettings("Base Behavior");
+            SettingsManager.UnregisterSettings(rName);
         }
 
         public sealed override CastRequest GetNextCast()

@@ -194,7 +194,6 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 (int)lines[1].Chance <= lvlBorder)
                 return 0;
 
-
             if (lines[0].Danger >= lines[0].Chance)
             {
                 if(lines[1].Danger >= lines[1].Chance)
