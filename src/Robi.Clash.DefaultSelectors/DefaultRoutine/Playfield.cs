@@ -1012,7 +1012,7 @@ namespace Robi.Clash.DefaultSelectors
         private void LogBoardObject(BoardObj bo)
         {
             string extrainfo = (bo.frozen ? " frozen:" + bo.startFrozen : "") + (bo.LifeTime > 0 ? " LifeTime:" + bo.LifeTime : "") + (bo.extraData != "" ? " " + bo.extraData : "");
-            Logger.Debug("{type} {ownerIndex} {Name} {GId} {Position:l} {level} {Atk} {HP} {Shield}{extrainfo:l}", bo.type, bo.ownerIndex, bo.Name, bo.GId, bo.Position, bo.level, bo.Atk, bo.HP, bo.Shield, extrainfo);
+            Logger.Debug("{type} {own:l} {ownerIndex} {Name} {GId} {Position:l} {level} {Atk} {HP} {Shield}{extrainfo:l}", bo.type, bo.own ? "o" : "e", bo.ownerIndex, bo.Name, bo.GId, bo.Position, bo.level, bo.Atk, bo.HP, bo.Shield, extrainfo);
         }
 
         private void LogHandCard(Handcard hc)

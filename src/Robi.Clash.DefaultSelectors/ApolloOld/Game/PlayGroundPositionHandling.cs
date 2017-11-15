@@ -64,7 +64,7 @@ namespace Robi.Clash.DefaultSelectors.Game
                 return false;
         }
 
-        public static bool IsPositionOnPlayerSide(Vector2f position)
+        public static bool IsPositionOnPlayerSide(Vector2 position)
         {
             //Logger.Debug("PositionY: " + position.Y + " MiddleLinePositionY: " + MiddleLineY);
             // ToDo: Is not rdy for 2v2
@@ -77,7 +77,7 @@ namespace Robi.Clash.DefaultSelectors.Game
 
         }
 
-        public static Position IsPositionUpOrDown(Vector2f position)
+        public static Position IsPositionUpOrDown(Vector2 position)
         {
             if (position.Y > MiddleLineY)
                 return Position.Up;
