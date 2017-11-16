@@ -237,14 +237,8 @@
 
         public bool onMySide(bool home) //Return True if troops/buildings on My side of the board
         {
-            if (home)
-            {
-                return this.Position.Y < 16000;
-            }
-            else
-            {
-                return this.Position.Y > 16000;
-            }
+            if (home) return this.Position.Y < 16000;
+            else return this.Position.Y > 16000;
         }
 
         public bool onItsOwnSide(bool home) //Return True if troops/buildings on its own side of the board

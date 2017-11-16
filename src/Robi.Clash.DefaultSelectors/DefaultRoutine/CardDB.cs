@@ -964,17 +964,19 @@ namespace Robi.Clash.DefaultSelectors
             cardName cName = cardNamestringToEnum(spell.Name.Value, "19");
             if (cName == cardName.unknown) return;
 
-            if (!cardsAdjustmentDB.ContainsKey(cName)) return;
-
-            List<Card> list = cardsAdjustmentDB[cName];
-            if (!list[0].needUpdate) return;
-
-            Card c = collectNewCards(spell, false);
-            list.Add(c);
-            Logger.Debug("Add {0} {1}", c.name, list.Count);
-            if (list.Count >= updCardsMeasure)
+            if (cardsAdjustmentDB.ContainsKey(cName))
             {
-                //updateCardData(list);
+                List<Card> list = cardsAdjustmentDB[cName];
+                if (list[0].needUpdate)
+                {
+                    Card c = collectNewCards(spell, false);
+                    list.Add(c);
+                    Logger.Debug("Add Spell {0} {1}", c.name, list.Count);
+                    if (list.Count >= updCardsMeasure)
+                    {
+                        //updateCardData(list);
+                    }
+                }
             }
         }
 
@@ -994,7 +996,7 @@ namespace Robi.Clash.DefaultSelectors
                 {
                     Card c = collectNewCards(@char, false);
                     list.Add(c);
-                    Logger.Debug("Add {0} {1}", c.name, list.Count);
+                    Logger.Debug("Add Character {0} {1}", c.name, list.Count);
                     if (list.Count >= updCardsMeasure)
                     {
                         updateCardData(list, "char");

@@ -4,19 +4,17 @@
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
 
-    //internal class BehaviorBaseSettings : JsonSettings
-    //{
-    //    internal BehaviorBaseSettings() : base(SettingsPath, "Settings", "BehaviorBaseSettings.json")
-    //    {
+    internal class BehaviorBaseSettings : JsonSettings
+    {
+        internal BehaviorBaseSettings() : base(SettingsPath, "Settings", "Routine.json")
+        {
 
-    //    }
+        }
 
-    //    public string DatabaseFullpath => System.IO.Path.GetFullPath(DatabaseFolder);
-
-    //    [DisplayName("Routine version")]
-    //    [Description("Routine version.")]
-    //    [DefaultValue("0.8.2")]
-    //    public string DatabaseFolder { get; }
-
-    //}
+        [Category("Default")]
+        [DefaultValue(RoutineLogLevel.Verbose)]
+        [DisplayName("Routine Log Level")]
+        [Description("Change the log level of the battle logfile. Default: Verbose")]
+        public RoutineLogLevel routineLogLevel { get; set; }
+    }
 }
