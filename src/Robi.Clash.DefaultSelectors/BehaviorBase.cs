@@ -89,11 +89,11 @@ namespace Robi.Clash.DefaultSelectors
                 if (endHud == null || !endHud.IsValid) battleres = "BattleEndHud not valid";
                 else
                 {
-                    var okButton = endHud.OkButton;
+                    var okButton = endHud.LeaveButton;
                     if (okButton == null || !okButton.IsValid) battleres = "OkButton not valid";
                     else
                     {
-                        switch (endHud.Field148)
+                        switch (endHud.BattleResult)
                         {
                             case Robi.Clash.Engine.NativeObjects.Native.LOGIC_BATTLE_RESULT.LOGIC_BATTLE_RESULT_BLUE_WINS:
                                 needCrowns = true;
