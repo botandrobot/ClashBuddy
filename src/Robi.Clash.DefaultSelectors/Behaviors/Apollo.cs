@@ -21,7 +21,7 @@
 
         public override string Author => "Peros_";
 
-        public override Version Version => new Version(1, 7, 0, 0);
+        public override Version Version => new Version(1, 8, 0, 0);
         public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
 
         private static ApolloSettings Settings => SettingsManager.GetSetting<ApolloSettings>("Apollo");
@@ -50,9 +50,14 @@
             Logger.Debug("Home = {Home}", p.home);
 
             #region Apollo Magic
-            PlayfieldAnalyse.AnalyseLines(p);
-            currentSituation = GetCurrentFightState(p);
-            Handcard hc = CardChoosing.GetOppositeCard(p, currentSituation) ?? CardChoosing.GetMobInPeace(p, currentSituation);
+            // Highest priority -> Can we kill the enemy with a spell
+            BoardObj finisherTower = Decision.IsEnemyKillWithSpellPossible(p, out Handcard hc);
+            if (finisherTower != null) return new Cast(hc.name, finisherTower.Position, hc);
+            // ------------------------------------------------------
+
+            PlayfieldAnalyse.AnalyseLines(p);               // Danger- and Chancelevel
+            currentSituation = GetCurrentFightState(p);     // Attack, Defense or UnderAttack (and where it is)
+            hc = CardChoosing.GetOppositeCard(p, currentSituation) ?? CardChoosing.GetMobInPeace(p, currentSituation);
 
             if (hc == null)
             {
