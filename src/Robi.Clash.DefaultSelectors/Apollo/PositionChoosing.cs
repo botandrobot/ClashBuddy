@@ -398,9 +398,15 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             //Logger.Debug("PT Characer Position Correction: Name und Typ {0} " + cardToDeploy.Name, (cardToDeploy as CardCharacter).Type);
             if (hc.card.type == boardObjType.MOB)
             {
-                return hc.card.MaxHP >= Setting.MinHealthAsTank ? 
-                                        p.getDeployPosition(position, deployDirectionRelative.Up, 100) : 
-                                        p.getDeployPosition(position, deployDirectionRelative.Down, 2000);
+                if (hc.card.MaxHP >= Setting.MinHealthAsTank)
+                    return p.getDeployPosition(position, deployDirectionRelative.Up, 100);
+                
+                if(Classification.GetSpecificCardType(hc) == SpecificCardType.MobsAOEGround)
+                {
+                    return p.getDeployPosition(position, deployDirectionRelative.Up, 4000);
+                }
+
+                return p.getDeployPosition(position, deployDirectionRelative.Down, 2000);
             }
             else
                 Logger.Debug("Tower Correction: No Correction!!!");
