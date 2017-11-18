@@ -16,8 +16,8 @@ namespace Robi.Clash.DefaultSelectors.Enemy
         public int firstPlayedCards = 8;
 
         private static readonly ILogger Logger = LogProvider.CreateLogger<Enemy>();
-        public uint Mana { get; set; }
-        public uint ManaAsCharactersOnTheField { get; set; }
+        public int Mana { get; set; }
+        public int ManaAsCharactersOnTheField { get; set; }
         public uint OwnerIndex { get; set; }
 
         public Character KingTower { get; set; }

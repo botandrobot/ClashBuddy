@@ -107,9 +107,9 @@ namespace Robi.Clash.DefaultSelectors.Enemy
                 String spawnedCharacterName = spawnedCharacter.LogicGameObjectData.Name.Value;
                 Logger.Debug("Build-Next-Cards: spawnedCharacter = {0}", spawnedCharacter.LogicGameObjectData.Name.Value);
                 Enemy enemie = Enemies[spawnedCharacter.OwnerIndex];
-                enemie.Mana = enemie.Mana - Convert.ToUInt32(spawnedCharacter.Mana);
+                enemie.Mana = enemie.Mana - spawnedCharacter.Mana;
 
-                if ((enemie.NextCards.Where(item => item.Key == spawnedCharacterName).Count() > 0)
+                if ((enemie.NextCards.Any(item => item.Key == spawnedCharacterName))
                                                 || spawnedCharacterName.Contains("Bomb"))
                     return;
 

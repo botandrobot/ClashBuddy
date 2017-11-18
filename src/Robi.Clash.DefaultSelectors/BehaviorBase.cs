@@ -118,7 +118,7 @@ namespace Robi.Clash.DefaultSelectors
 
             if (needCrowns)
             {
-                Logger.Debug("Battle result: {res:l} {ownCrowns:l}:{enemyCrowns:l} {date}", battleres, battleModel.CombatHud.ScorePlayer.Content, battleModel.CombatHud.ScoreEnemy.Content, DateTime.Now.ToString(@"yyyy-MM-dd HH\:mm\:ss"));
+                Logger.Debug("Battle result: {res:l} {ownCrowns:l}:{enemyCrowns:l} {date}", battleres, battleModel.Hud.ScorePlayer.Content, battleModel.Hud.ScoreEnemy.Content, DateTime.Now.ToString(@"yyyy-MM-dd HH\:mm\:ss"));
             }
             else Logger.Debug("Battle result: {res:l} {date:l}", battleres, DateTime.Now.ToString(@"yyyy-MM-dd HH\:mm\:ss"));
 
@@ -397,7 +397,7 @@ namespace Robi.Clash.DefaultSelectors
                     BattleTime = battle.BattleTime,
                     suddenDeath = battle.BattleTime.TotalSeconds > 180,
                     ownerIndex = (int)lp.OwnerIndex,
-                    ownMana = (int)lp.Mana,
+                    ownMana = (int)lp.Mana - (int)lp.ReservedMana,
                     ownHandCards = ownHandCards,
                     ownAreaEffects = ownAreaEffects,
                     ownMinions = ownMinions,
