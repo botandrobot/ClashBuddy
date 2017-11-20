@@ -86,6 +86,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         ZERO,
         LOW,
         MEDIUM,
-        HIGH
+        HIGH,
+        HIGHER,
+        HIGHEST
     };
 }
