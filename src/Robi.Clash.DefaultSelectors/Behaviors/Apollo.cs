@@ -52,7 +52,7 @@
             #region Apollo Magic
             // Highest priority -> Can we kill the enemy with a spell
             BoardObj finisherTower = Decision.IsEnemyKillWithSpellPossible(p, out Handcard hc);
-            if (finisherTower != null) return new Cast(hc.name, finisherTower.Position, hc);
+            if (finisherTower != null && (hc?.manacost > p.ownMana)) return new Cast(hc.name, finisherTower.Position, hc);
             // ------------------------------------------------------
 
             PlayfieldAnalyse.AnalyseLines(p);               // Danger- and Chancelevel
@@ -68,7 +68,7 @@
                 {
                     hc = hcApollo;
 
-                    if (choosedPosition != null)
+                    if (choosedPosition != null && !(hc?.manacost > p.ownMana))
                         return new Cast(hcApollo.name, choosedPosition, hcApollo);
                 }
 
@@ -81,9 +81,9 @@
             VectorAI nextPosition = PositionChoosing.GetNextSpellPosition(currentSituation, hc, p);
             bc = new Cast(hc.name, nextPosition, hc);
             #endregion
-
             Logger.Debug("BestCast:" + bc.SpellName + " " + bc.Position.ToString());
 
+            if (bc?.hc?.manacost > p.ownMana) return null;
             return bc;
         }
 
