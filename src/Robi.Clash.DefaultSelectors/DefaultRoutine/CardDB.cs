@@ -1337,7 +1337,7 @@ namespace Robi.Clash.DefaultSelectors
             if (needLog)
             {
                 StringBuilder sb = new StringBuilder(10000);
-                sb.Append("Projectile.Field10:").Append(Projectile.Field10).Append(" ");
+                sb.Append("Projectile.Field10:").Append(Projectile.Id).Append(" ");
                 sb.Append("Projectile.Field14:").Append(Projectile.Field14).Append(" ");
                 sb.Append("Projectile.Field1C:").Append(Projectile.Field1C).Append(" ");
 
@@ -1402,7 +1402,7 @@ namespace Robi.Clash.DefaultSelectors
                 sb.Append("Field18:").Append(aoe.Field64).Append(" ");
                 sb.Append("Field18:").Append(aoe.Field68).Append(" ");
                 sb.Append("Field18:").Append(aoe.FieldC).Append(" ");
-                sb.Append("LogicDataAOE.Field10:").Append(LogicDataAOE.Field10).Append(" ");
+                sb.Append("LogicDataAOE.Field10:").Append(LogicDataAOE.Id).Append(" ");
                 sb.Append("LogicDataAOE.Field14:").Append(LogicDataAOE.Field14).Append(" ");
                 sb.Append("LogicDataAOE.Field1C:").Append(LogicDataAOE.Field1C).Append(" ");
 
