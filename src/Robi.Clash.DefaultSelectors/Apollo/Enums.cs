@@ -60,6 +60,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         MobsTank,
         MobsNoTank,
         MobsDamageDealer,
+        MobsDamageDealerAOE,
         MobsBuildingAttacker,
         MobsRanger,
         MobsAOEGround,
@@ -85,6 +86,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         ZERO,
         LOW,
         MEDIUM,
-        HIGH
+        HIGH,
+        HIGHER,
+        HIGHEST
     };
 }

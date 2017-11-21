@@ -90,27 +90,28 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             switch (hc.card.type)
             {
                 case boardObjType.BUILDING:
-                    if (IsBuildingsDefense(hc))         return SpecificCardType.BuildingsDefense;
-                    if (IsBuildingsAttack(hc))          return SpecificCardType.BuildingsAttack;
-                    if (IsBuildingsMana(hc))            return SpecificCardType.BuildingsMana;
-                    if (IsBuildingsSpawning(hc))        return SpecificCardType.BuildingsSpawning;
+                    if (IsBuildingsDefense(hc))                         return SpecificCardType.BuildingsDefense;
+                    if (IsBuildingsAttack(hc))                          return SpecificCardType.BuildingsAttack;
+                    if (IsBuildingsMana(hc))                            return SpecificCardType.BuildingsMana;
+                    if (IsBuildingsSpawning(hc))                        return SpecificCardType.BuildingsSpawning;
                     return SpecificCardType.All;
                 case boardObjType.MOB:
-                    if (IsMobsAOEAll(hc))               return SpecificCardType.MobsAOEAll;
-                    if (IsMobsAOEGround(hc))            return SpecificCardType.MobsAOEGround;
-                    if (IsMobsBuildingAttacker(hc))     return SpecificCardType.MobsBuildingAttacker;
-                    if (IsMobsDamageDealer(hc))         return SpecificCardType.MobsDamageDealer;
-                    if (IsMobsFlyingAttack(hc))         return SpecificCardType.MobsFlyingAttack;
-                    if (IsMobsRanger(hc))               return SpecificCardType.MobsRanger;
-                    if (IsMobsTank(hc))                 return SpecificCardType.MobsTank;
-                    if (IsMobsNoTank(hc))               return SpecificCardType.MobsNoTank;
+                    if (IsMobsDamageDealer(hc) && IsMobsAOEGround(hc))  return SpecificCardType.MobsDamageDealerAOE;
+                    if (IsMobsAOEAll(hc))                               return SpecificCardType.MobsAOEAll;
+                    if (IsMobsRanger(hc))                               return SpecificCardType.MobsRanger;
+                    if (IsMobsAOEGround(hc))                            return SpecificCardType.MobsAOEGround;
+                    if (IsMobsBuildingAttacker(hc))                     return SpecificCardType.MobsBuildingAttacker;
+                    if (IsMobsDamageDealer(hc))                         return SpecificCardType.MobsDamageDealer;
+                    if (IsMobsFlyingAttack(hc))                         return SpecificCardType.MobsFlyingAttack;
+                    if (IsMobsTank(hc))                                 return SpecificCardType.MobsTank;
+                    if (IsMobsNoTank(hc))                               return SpecificCardType.MobsNoTank;
                     return SpecificCardType.All;
                 case boardObjType.AOE:
                 case boardObjType.PROJECTILE:
-                    if (IsSpellBuff(hc))                return SpecificCardType.SpellsBuffs;
-                    if (IsSpellsDamaging(hc))           return SpecificCardType.SpellsDamaging;
-                    if (IsSpellsNonDamaging(hc))        return SpecificCardType.SpellsNonDamaging;
-                    if (IsSpellsTroopSpawning(hc))      return SpecificCardType.SpellsTroopSpawning;
+                    if (IsSpellBuff(hc))                                return SpecificCardType.SpellsBuffs;
+                    if (IsSpellsDamaging(hc))                           return SpecificCardType.SpellsDamaging;
+                    if (IsSpellsNonDamaging(hc))                        return SpecificCardType.SpellsNonDamaging;
+                    if (IsSpellsTroopSpawning(hc))                      return SpecificCardType.SpellsTroopSpawning;
                     return SpecificCardType.All;
                 default:
                     return SpecificCardType.All;
