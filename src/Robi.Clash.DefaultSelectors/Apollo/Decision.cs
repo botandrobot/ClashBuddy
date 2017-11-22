@@ -126,7 +126,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return FightState.APTL1;
 
                 if (p.enemyPrincessTower2.HP > 0 && p.enemyPrincessTower2.HP < p.enemyKingsTower.HP / 2)
-                    return FightState.APTL1;
+                    return FightState.APTL2;
 
                 return FightState.AKT;
             }

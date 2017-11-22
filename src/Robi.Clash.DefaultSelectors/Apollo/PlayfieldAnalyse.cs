@@ -216,7 +216,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
                 BoardObj bPT;
 
-                if (line == 1)
+                if (line == 0)
                     bPT = enemyBuildings.FirstOrDefault(n => n.IsPositionInArea(p, p.ownPrincessTower1.Position));
                 else
                     bPT = enemyBuildings.FirstOrDefault(n => n.IsPositionInArea(p, p.ownPrincessTower2.Position));

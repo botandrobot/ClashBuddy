@@ -28,14 +28,17 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 case SpecificCardType.MobsTank:
                     @delegate = IsMobsTank;
                     break;
+                case SpecificCardType.MobsRanger:
+                    @delegate = IsMobsRanger;
+                    break;
+                case SpecificCardType.MobsBigGroup:
+                    @delegate = IsMobsBigGroup;
+                    break;
                 case SpecificCardType.MobsDamageDealer:
                     @delegate = IsMobsDamageDealer;
                     break;
                 case SpecificCardType.MobsBuildingAttacker:
                     @delegate = IsMobsBuildingAttacker;
-                    break;
-                case SpecificCardType.MobsRanger:
-                    @delegate = IsMobsRanger;
                     break;
                 case SpecificCardType.MobsAOEGround:
                     @delegate = IsMobsAOEGround;
@@ -96,12 +99,13 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     if (IsBuildingsSpawning(hc))                        return SpecificCardType.BuildingsSpawning;
                     return SpecificCardType.All;
                 case boardObjType.MOB:
-                    if (IsMobsDamageDealer(hc) && IsMobsAOEGround(hc))  return SpecificCardType.MobsDamageDealerAOE;
                     if (IsMobsRanger(hc))                               return SpecificCardType.MobsRanger;
+                    if (IsMobsDamageDealer(hc) && IsMobsAOEGround(hc))  return SpecificCardType.MobsDamageDealerAOE;
                     if (IsMobsAOEAll(hc))                               return SpecificCardType.MobsAOEAll;
                     if (IsMobsAOEGround(hc))                            return SpecificCardType.MobsAOEGround;
                     if (IsMobsBuildingAttacker(hc))                     return SpecificCardType.MobsBuildingAttacker;
                     if (IsMobsDamageDealer(hc))                         return SpecificCardType.MobsDamageDealer;
+                    if (IsMobsBigGroup(hc))                             return SpecificCardType.MobsBigGroup;
                     if (IsMobsFlyingAttack(hc))                         return SpecificCardType.MobsFlyingAttack;
                     if (IsMobsTank(hc))                                 return SpecificCardType.MobsTank;
                     if (IsMobsNoTank(hc))                               return SpecificCardType.MobsNoTank;
@@ -139,6 +143,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         public static Func<Handcard, bool> IsMobsRanger = (Handcard hc) => (hc.card.MaxRange > 4500);
         public static Func<Handcard, bool> IsMobsBuildingAttacker = (Handcard hc) => (hc.card.TargetType == targetType.BUILDINGS);
         public static Func<Handcard, bool> IsMobsDamageDealer = (Handcard hc) => ((hc.card.Atk * hc.card.SummonNumber) > 100);
+        public static Func<Handcard, bool> IsMobsBigGroup = (Handcard hc) => ((hc.card.SummonNumber >= 8 ));
         public static Func<Handcard, bool> IsMobsTank = (Handcard hc) => (hc.card.MaxHP >= Setting.MinHealthAsTank);
         public static Func<BoardObj, bool> IsMobsTankCurrentHP = (BoardObj bo) => (bo.HP >= Setting.MinHealthAsTank);
         

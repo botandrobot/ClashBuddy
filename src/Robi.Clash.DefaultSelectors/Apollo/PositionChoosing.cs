@@ -216,14 +216,13 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return APTL2(p, hc);
             }
 
-            if (p.enemyPrincessTower1.HP == 0)
+            if (p.enemyPrincessTower1.HP == 0 && p.enemyPrincessTower2.HP > 0)
                 return APTL1(p, hc);
 
-            if (p.enemyPrincessTower2.HP == 0)
+            if (p.enemyPrincessTower2.HP == 0 && p.enemyPrincessTower1.HP > 0)
                 return APTL2(p, hc);
 
             VectorAI position = p.enemyKingsTower?.Position;
-            Logger.Debug("Bug: AKT but both PTs HP > 0");
 
             //if (Decision.SupportDeployment(p, 1))
             //    position = p.getDeployPosition(position, deployDirectionRelative.Down, 500);

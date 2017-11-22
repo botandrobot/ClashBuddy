@@ -533,7 +533,7 @@ namespace Robi.Clash.DefaultSelectors
                 CastRequest = null;
                 if (bc != null && bc.Position != null)
                 {
-                    if (p.ownMana + 1 >= bc.hc.manacost) CastRequest = new CastRequest(bc.SpellName, bc.Position.ToVector2f(true));
+                    if (p.ownMana + 1 >= bc.hc.manacost) CastRequest = new CastRequest(bc.SpellName, bc.Position.ToVector2f(false));
                     Logger.Debug("CastRequest {SpellName:l} {Position:l}", bc.SpellName, CastRequest == null ? bc.Position?.ToString() : CastRequest.Position.ToString());
                 }
                 else Logger.Debug("Waiting for cast, maybe next tick...");

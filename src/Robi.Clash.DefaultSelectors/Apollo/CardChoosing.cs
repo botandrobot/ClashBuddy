@@ -33,6 +33,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if (aoeCard != null)
                 return aoeCard;
 
+            Handcard bigGroupCard = BigGroupDecision(p, currentSituation);
+            if (bigGroupCard != null)
+                return bigGroupCard;
+
             if (p.enemyMinions.Any(n => n.Transport == transportType.AIR))
             {
                 Logger.Debug("AttackFlying Needed");
@@ -275,6 +279,40 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 aoeAir = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEAll).FirstOrDefault();
 
             return aoeAir ?? aoeGround;
+        }
+
+        private static Handcard BigGroupDecision(Playfield p, FightState fightState)
+        {
+            var aoe = p.enemyMinions.Where(n => n.card.aoeAir || n.card.aoeGround);
+            var tanks = p.ownMinions.Where(n => Classification.IsMobsTankCurrentHP(n));
+
+            // ToDo: Improve condition 
+            switch (fightState)
+            {
+                case FightState.UAPTL1:
+                case FightState.UAKTL1:
+                case FightState.APTL1:
+                case FightState.DPTL1:
+                    if (aoe.Any(n => n.Line == 1) || !tanks.Any(n => n.Line == 1))
+                        return null;
+                    break;
+                case FightState.UAKTL2:
+                case FightState.UAPTL2:
+                case FightState.APTL2:
+                case FightState.DPTL2:
+                    if (aoe.Any(n => n.Line == 2) || !tanks.Any(n => n.Line == 2))
+                        return null;
+                    break;
+                case FightState.AKT:
+                case FightState.DKT:
+                    if (aoe.Any(n => n.Line == 1) || !tanks.Any(n => n.Line == 1)
+                        || aoe.Any(n => n.Line == 2) || !tanks.Any(n => n.Line == 2))
+                        return null;
+                    break;
+                default:
+                    break;
+            }
+            return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsBigGroup).FirstOrDefault();
         }
 
         public static Handcard GetOppositeCard(Playfield p, FightState currentSituation)

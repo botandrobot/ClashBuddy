@@ -61,6 +61,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         MobsNoTank,
         MobsDamageDealer,
         MobsDamageDealerAOE,
+        MobsBigGroup,
         MobsBuildingAttacker,
         MobsRanger,
         MobsAOEGround,
