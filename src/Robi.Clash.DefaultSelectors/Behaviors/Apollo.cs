@@ -87,7 +87,7 @@
 
             bc = new Cast(hc.name, nextPosition, hc);
             #endregion
-            Logger.Debug("BestCast:" + bc.SpellName + " " + bc.Position.ToString() + "manacost: " + bc.hc.manacost);
+            Logger.Debug("BestCast:" + bc.SpellName + " " + bc.Position.ToString());
 
             if (bc?.hc?.manacost > p.ownMana) return null;
             return bc;
