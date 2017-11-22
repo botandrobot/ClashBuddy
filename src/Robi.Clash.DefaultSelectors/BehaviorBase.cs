@@ -246,7 +246,7 @@ namespace Robi.Clash.DefaultSelectors
 
                     if (!AvailableSpells.ContainsKey(name.Value.ToString())) continue;
 
-                    int lvl = (int)spellBtn.SpellDeckSpell.Rarity;
+                    int lvl = spellBtn.SpellDeckSpell.LevelIndex; // +1?
                     Handcard hc = new Handcard(name.Value.ToString(), lvl);
                     if (hc.card.name == CardDB.cardName.unknown) CardDB.Instance.collectNewCards(spellBtn);
                     hc.manacost = spellBtn.SpellDeckSpell.Spell.ManaCost;
@@ -533,7 +533,7 @@ namespace Robi.Clash.DefaultSelectors
                 CastRequest = null;
                 if (bc != null && bc.Position != null)
                 {
-                    if (p.ownMana + 1 >= bc.hc.manacost) CastRequest = new CastRequest(bc.SpellName, bc.Position.ToVector2f(true));
+                    if (p.ownMana + 1 >= bc.hc.manacost) CastRequest = new CastRequest(bc.SpellName, bc.Position.ToVector2f());
                     Logger.Debug("CastRequest {SpellName:l} {Position:l}", bc.SpellName, CastRequest == null ? bc.Position?.ToString() : CastRequest.Position.ToString());
                 }
                 else Logger.Debug("Waiting for cast, maybe next tick...");
