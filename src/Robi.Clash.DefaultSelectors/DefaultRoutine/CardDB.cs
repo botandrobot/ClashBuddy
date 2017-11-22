@@ -1095,7 +1095,7 @@ namespace Robi.Clash.DefaultSelectors
             Card c = new Card();
             c.stringName = spell.Name.Value;
 
-            c.stringName += " id:" + spell.Field10.ToString();//!!TEST
+            c.stringName += " id:" + spell.Id;//!!TEST
 
             c.name = cardNamestringToEnum(c.stringName, "20");
             c.cost = spell.ManaCost;
@@ -1107,7 +1107,7 @@ namespace Robi.Clash.DefaultSelectors
             c.SummonNumber = spell.SummonNumber;
             //c.Shield =
             //c.Speed =
-            c.Level = (int)spellBtn.SpellDeckSpell.Rarity;
+            c.Level = (int)spellBtn.SpellDeckSpell.LevelIndex;
 
             if (spell.Projectile.IsValid)
             {
@@ -1279,7 +1279,7 @@ namespace Robi.Clash.DefaultSelectors
                 TargetType = targetType.NONE
             };
 
-            c.stringName += " id:" + LogicDataCharacter.Field10.ToString();//!!TEST
+            c.stringName += " id:" + LogicDataCharacter.Id;//!!TEST
 
             //TODO: divide with Buildings (is not enough data)
             if (LogicDataCharacter.TargetOnlyBuildings > 0) c.TargetType = targetType.BUILDINGS;
@@ -1361,7 +1361,7 @@ namespace Robi.Clash.DefaultSelectors
             Card c = new Card();
             c.stringName = LogicDataAOE.Name.Value;
 
-            c.stringName += " id:" + LogicDataAOE.Field10.ToString();//!!TEST
+            c.stringName += " id:" + LogicDataAOE.Id;//!!TEST
 
             c.name = cardNamestringToEnum(c.stringName, "4a");
 
