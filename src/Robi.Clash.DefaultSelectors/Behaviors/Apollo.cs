@@ -2,6 +2,7 @@
 {
     using Common;
     using Robi.Clash.DefaultSelectors.Apollo;
+    using Robi.Clash.DefaultSelectors.Apollo.HotFixes;
     using Robi.Engine.Settings;
     using Serilog;
     using Settings;
@@ -58,6 +59,7 @@
             PlayfieldAnalyse.AnalyseLines(p);               // Danger- and Chancelevel
             currentSituation = GetCurrentFightState(p);     // Attack, Defense or UnderAttack (and where it is)
             hc = CardChoosing.GetOppositeCard(p, currentSituation) ?? CardChoosing.GetMobInPeace(p, currentSituation);
+            //hc = CardChoosing.GetMobInPeace(p, currentSituation);
 
             if (hc == null)
             {
@@ -78,7 +80,11 @@
                 return null;
 
             Logger.Debug("Part: GetSpellPosition");
-            VectorAI nextPosition = PositionChoosing.GetNextSpellPosition(currentSituation, hc, p);
+
+            VectorAI nextPosition = SpecialPositionHandling.GetPosition(p, hc);
+            if(nextPosition == null)
+                nextPosition = PositionChoosing.GetNextSpellPosition(currentSituation, hc, p);
+
             bc = new Cast(hc.name, nextPosition, hc);
             #endregion
             Logger.Debug("BestCast:" + bc.SpellName + " " + bc.Position.ToString());
