@@ -253,6 +253,30 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         }
 
+        public static BoardObj IsEnemyKillWithSpellPossible(Playfield p, out Handcard resultHc)
+        {
+            IEnumerable<Handcard> hcs = Classification.GetOwnHandCards(p, boardObjType.PROJECTILE, SpecificCardType.SpellsDamaging);
+            resultHc = null;
+            if (!hcs.Any()) return null;
+
+            foreach(Handcard hc in hcs)
+            {
+                resultHc = hc;
+                if (hc.card.towerDamage >= p.enemyKingsTower.HP)
+                    return p.enemyKingsTower;
+
+                if(true)
+                {
+                    if (hc.card.towerDamage >= p.enemyPrincessTower1.HP)
+                        return p.enemyPrincessTower1;
+
+                    if (hc.card.towerDamage >= p.enemyPrincessTower2.HP)
+                        return p.enemyPrincessTower2;
+                }
+            }
+            return null;
+        }
+
         #region Not used in balanced FightMode
         public static FightState EnemyHasCharsOnTheFieldDecision(Playfield p)
         {

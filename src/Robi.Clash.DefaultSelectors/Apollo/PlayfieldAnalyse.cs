@@ -162,6 +162,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             if (enemyMinionHP != 0)
             {
+                if (enemyMinionHP > (lines[line].OwnPtMaxHp / (0.5 * sensitivity)))
+                    return 5;
+                else if (enemyMinionHP > (lines[line].OwnPtMaxHp / (sensitivity)))
+                    return 4;
                 if (enemyMinionHP > (lines[line].OwnPtMaxHp / (2 * sensitivity)))
                     return 3;
                 else if (enemyMinionHP > (lines[line].OwnPtMaxHp / (3 * sensitivity)))
@@ -187,7 +191,11 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             if (enemyMinionAtk != 0)
             {
-                if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (5 * sensitivity)))
+                if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (sensitivity)))
+                    return 5;
+                if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (3 * sensitivity)))
+                    return 4;
+                else if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (5 * sensitivity)))
                     return 3;
                 else if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (10 * sensitivity)))
                     return 2;
@@ -234,7 +242,11 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             #region Minion HP
             if (ownMinionHP != 0)
             {
-                if (ownMinionHP > (lines[line].OwnPtMaxHp / (2 * sensitivity)))
+                if (ownMinionHP > (lines[line].OwnPtMaxHp / (0.5 * sensitivity)))
+                    chanceLvlHP += 5;
+                else if (ownMinionHP > (lines[line].OwnPtMaxHp / (sensitivity)))
+                    chanceLvlHP += 4;
+                else if (ownMinionHP > (lines[line].OwnPtMaxHp / (2 * sensitivity)))
                     chanceLvlHP += 3;
                 else if (ownMinionHP > (lines[line].OwnPtMaxHp / (3 * sensitivity)))
                     chanceLvlHP += 2;
@@ -247,7 +259,11 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             #region Minion Atk
             if (ownMinionAtk != 0)
             {
-                if (ownMinionAtk > (lines[line].OwnPtMaxHp / (5 * sensitivity)))
+                if (ownMinionAtk > (lines[line].OwnPtMaxHp / (sensitivity)))
+                    chanceLvlAtk += 5;
+                else if (ownMinionAtk > (lines[line].OwnPtMaxHp / (3 * sensitivity)))
+                    chanceLvlAtk += 4;
+                else if (ownMinionAtk > (lines[line].OwnPtMaxHp / (5 * sensitivity)))
                     chanceLvlAtk += 3;
                 else if (ownMinionAtk > (lines[line].OwnPtMaxHp / (10 * sensitivity)))
                     chanceLvlAtk += 2;

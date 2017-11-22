@@ -7,7 +7,7 @@ Getting started using ClashBuddy is very straight forward.
 You need an android device that allows you to run the game. The easiest way to get a device is an emulator. Follow one of our guides to get started.
 
 * [MEmu](./devices/memu.md)
-* [Bluestacks 3](./devices/bluestacks-3.md)
+* [Bluestacks 3](https://community.botandrobot.com/discussion/23/using-bluestacks-look-here)
 * [Lenovo Moto G5/G5 Plus](./devices/lenovo-moto-g5-plus.md)
 
 Once your device is ready you have multiple options to install the target game. Either you get the [APK from a mirror](http://www.apkmirror.com/apk/supercell/clash-royale-supercell/) or you install the game from the [Google Play Store](https://play.google.com/store/apps/details?id=com.supercell.clashroyale). Once the game is installed you're ready to run the bot.
