@@ -165,20 +165,20 @@ namespace Robi.Clash.DefaultSelectors
 
         private BoardObj getBOfromHeader(string[] line, int ownerIndex)
         {
-            BoardObj bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(line[2], "3"));
-            bo.ownerIndex = Convert.ToInt32(line[1]);
-            bo.own = bo.ownerIndex == ownerIndex ? true : false;
-            bo.GId = Convert.ToUInt32(line[3]);
-            bo.Position = new VectorAI(line[4]);
+            BoardObj bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(line[3], "3"));
+            bo.ownerIndex = Convert.ToInt32(line[2]);
+            bo.own = line[1] == "o" ? true : false;
+            bo.GId = Convert.ToUInt32(line[4]);
+            bo.Position = new VectorAI(line[5]);
             bo.Line = bo.Position.X > 8700 ? 2 : 1;
-            bo.level = Convert.ToInt32(line[5]);
-            bo.Atk = Convert.ToInt32(line[6]);
-            bo.HP = Convert.ToInt32(line[7]);
-            bo.Shield = Convert.ToInt32(line[8]);
+            bo.level = Convert.ToInt32(line[6]);
+            bo.Atk = Convert.ToInt32(line[7]);
+            bo.HP = Convert.ToInt32(line[8]);
+            bo.Shield = Convert.ToInt32(line[9]);
             int len = line.Length;
-            if (len > 9)
+            if (len > 10)
             {
-                for (int i = 9; i < len; i++)
+                for (int i = 10; i < len; i++)
                 {
                     string[] ss = line[i].Split(':');
                     switch (ss[0])

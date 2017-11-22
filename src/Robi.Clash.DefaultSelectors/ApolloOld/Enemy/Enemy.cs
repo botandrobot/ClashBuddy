@@ -99,7 +99,7 @@ namespace Robi.Clash.DefaultSelectors.Enemy
             #endregion
 
             KingTower = CharacterHandling.KingTowerOfOwner(ownerIndex);
-            Mana = StaticValues.Player.Mana;
+            Mana = (uint)StaticValues.Player.Mana;
         }
 
         public void AddCardsToDeck(IEnumerable<Character> characters)
