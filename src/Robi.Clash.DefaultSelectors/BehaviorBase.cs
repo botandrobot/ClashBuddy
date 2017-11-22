@@ -482,7 +482,7 @@ namespace Robi.Clash.DefaultSelectors
 
             using (new PerformanceTimer("Initialize playfield."))
             {
-                Logger.Debug("################################Routine v.0.8.3 Behavior:{Name:l} v.{Version:l}", Name, Version);
+                Logger.Debug("################################Routine v.0.8.5 Behavior:{Name:l} v.{Version:l}", Name, Version);
                 p = new Playfield
                 {
                     BattleTime = battle.BattleTime,

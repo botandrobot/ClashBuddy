@@ -147,6 +147,12 @@
                         " cost:" + this.cost + " EffectType:" + this.affectOn + " TargetType:" + this.TargetType +
                         " buffSpeed:" + this.Speed + " buffHitSpeed:" + this.HitSpeed + " Radius:" + this.Range + " Atk:" + this.Atk +
                         " SpawnInterval:" + this.SpawnInterval + " SpawnCharacterLevel:" + this.SpawnCharacterLevel;
+                case boardObjType.BUILDING:
+                    if (!printAll) return this.Name + " " + this.GId + " " + this.type + " " + this.Position + " " + this.level + " " + this.LifeTime;
+                    else return this.Name + " " + this.GId + " " + this.type + " " + this.Position + " lvl:" + this.level + " LifeTime:" + this.LifeTime +
+                        " cost:" + this.cost + " EffectType:" + this.affectOn + " TargetType:" + this.TargetType +
+                        " buffSpeed:" + this.Speed + " buffHitSpeed:" + this.HitSpeed + " Radius:" + this.Range + " Atk:" + this.Atk +
+                        " SpawnInterval:" + this.SpawnInterval + " SpawnCharacterLevel:" + this.SpawnCharacterLevel;
 
             }
             return "Type ERROR " + this.Name + " " + this.GId + " " + this.type;
@@ -212,6 +218,38 @@
                     if (e.Line != this.Line && this.Line != 3) continue;
                     attackDef ad = new attackDef(e, this);
                     if (!ad.empty) attackersList.Add(ad);
+                }
+                int count = attackersList.Count;
+                if (count > 2)
+                {
+                    int skeletons = 0;
+                    int minions = 0;
+                    for (int i = 0; i < count; i++)
+                    {
+                        switch (attackersList[i].attacker.Name)
+                        {
+                            case CardDB.cardName.skeleton:
+                                skeletons++;
+                                break;
+                            case CardDB.cardName.minion:
+                                minions++;
+                                break;
+                        }
+                    }
+                    if (skeletons > 5)
+                    {
+                        for (int i = 0; i < count; i++)
+                        {
+                            if (attackersList[i].attacker.Name == CardDB.cardName.skeleton) attackersList[i].attacker.Name = CardDB.cardName.skeletonarmy;
+                        }
+                    }
+                    if (minions > 3)
+                    {
+                        for (int i = 0; i < count; i++)
+                        {
+                            if (attackersList[i].attacker.Name == CardDB.cardName.minion) attackersList[i].attacker.Name = CardDB.cardName.minionhorde;
+                        }
+                    }
                 }
 
                 enemies = this.own ? p.enemyBuildings : p.ownBuildings;
