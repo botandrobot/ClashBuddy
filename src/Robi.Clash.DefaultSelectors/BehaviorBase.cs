@@ -37,7 +37,11 @@ namespace Robi.Clash.DefaultSelectors
         private TimeSpan statSumTimeInitPlayfield;
         private TimeSpan statTimeInsideBehavior;
         private TimeSpan statSumTimeInsideBehavior;
-        DateTime statTimerRoutine;
+        private DateTime statTimerRoutine;
+        private uint nextGId = 0;
+        private CastRequest CastRequest;
+        private Dictionary<string, CastRequest> CastRequestDB = new Dictionary<string, CastRequest>();
+        private Dictionary<string, int> CastRequestDBtmp = new Dictionary<string, int>();
         private readonly Dictionary<int, double> lvlToCoef = new Dictionary<int, double>() { { 1, 1 }, { 2, 1.1 }, { 3, 1.21 }, { 4, 1.33 }, { 5, 1.46 }, { 6, 1.6 }, { 7, 1.76 }, { 8, 1.93 }, { 9, 2.12 }, { 10, 2.33 }, { 11, 2.56 }, };
 	
         public static bool GameBeginning = false;
@@ -66,6 +70,7 @@ namespace Robi.Clash.DefaultSelectors
             friendlyOwnerIndex = -1;
             battleLogs.Clear();
             prevHandCards.Clear();
+            nextGId = 0;
 
             statNumSuccessfulEntrances = 0;
             statTimeOutsideRoutine = TimeSpan.Zero;
@@ -118,7 +123,7 @@ namespace Robi.Clash.DefaultSelectors
 
             if (needCrowns)
             {
-                Logger.Debug("Battle result: {res:l} {ownCrowns:l}:{enemyCrowns:l} {date}", battleres, battleModel.Hud.ScorePlayer.Content, battleModel.Hud.ScoreEnemy.Content, DateTime.Now.ToString(@"yyyy-MM-dd HH\:mm\:ss"));
+                Logger.Debug("Battle result: {res:l} {ownCrowns:l}:{enemyCrowns:l} {date}", battleres, battleModel.CombatHud.ScorePlayer.Content, battleModel.CombatHud.ScoreEnemy.Content, DateTime.Now.ToString(@"yyyy-MM-dd HH\:mm\:ss"));
             }
             else Logger.Debug("Battle result: {res:l} {date:l}", battleres, DateTime.Now.ToString(@"yyyy-MM-dd HH\:mm\:ss"));
 
@@ -175,6 +180,8 @@ namespace Robi.Clash.DefaultSelectors
             if (om == null) return null;
             var lp = ClashEngine.Instance.LocalPlayer;
             if (lp == null || !lp.IsValid) return null;
+            var spellButtons = ClashEngine.Instance.AvailableSpellButtons;
+            if (spellButtons == null) return null;
             var spells = ClashEngine.Instance.AvailableSpells;
             if (spells == null) return null;
 
@@ -220,19 +227,32 @@ namespace Robi.Clash.DefaultSelectors
             using (new PerformanceTimer("GetNextCast entrance"))
             {
                 Handcard Mirror = null;
+                Dictionary<string, int> AvailableSpells = new Dictionary<string, int>();
                 foreach (var spell in spells)
                 {
                     if (spell == null || !spell.IsValid) continue;
                     var name = spell.Name;
-                    if((MemPtr)name == MemPtr.Zero) continue;
-                    
-                    int lvl = 1; //TODO: wrong data in spell.SummonCharacterLevelIndex
-                    Handcard hc = new Handcard(name.Value.ToString(), lvl); //hc.lvl = ??? TODO
-                    if (hc.card.name == CardDB.cardName.unknown) CardDB.Instance.collectNewCards(spell);
-                    hc.manacost = spell.ManaCost;
+                    if ((MemPtr)name == MemPtr.Zero) continue;
+                    AvailableSpells.Add(name.Value.ToString(), 0);
+                }
+                foreach (var spellBtn in spellButtons)
+                {
+                    if (spellBtn == null || !spellBtn.IsValid) continue;
+                    if (spellBtn.SpellDeckSpell == null || !spellBtn.SpellDeckSpell.IsValid) continue;
+                    if (spellBtn.SpellDeckSpell.Spell == null || !spellBtn.SpellDeckSpell.Spell.IsValid) continue;
+
+                    var name = spellBtn.SpellDeckSpell.Spell.Name;
+                    if ((MemPtr)name == MemPtr.Zero) continue;
+
+                    if (!AvailableSpells.ContainsKey(name.Value.ToString())) continue;
+
+                    int lvl = (int)spellBtn.SpellDeckSpell.Rarity;
+                    Handcard hc = new Handcard(name.Value.ToString(), lvl);
+                    if (hc.card.name == CardDB.cardName.unknown) CardDB.Instance.collectNewCards(spellBtn);
+                    hc.manacost = spellBtn.SpellDeckSpell.Spell.ManaCost;
                     if (hc.card.name == CardDB.cardName.mirror) Mirror = hc;
                     //if (hc.card.needUpdate) CardDB.Instance.cardsAdjustment(spell);
-                    //hc.position = ??? TODO
+
                     ownHandCards.Add(hc);
                 }
                 if (ownHandCards.Count == 4)
@@ -254,7 +274,73 @@ namespace Robi.Clash.DefaultSelectors
                         }
                     }
                 }
-
+                
+                var qSpells = ClashEngine.Instance.QueuedSpells;
+                if (qSpells != null)
+                {
+                    if (qSpells.Count() == 0)
+                    {
+                        if (CastRequestDB.Count != 0) CastRequestDB.Clear();
+                    }
+                    else
+                    {
+                        if (CastRequest != null && !CastRequestDB.ContainsKey(CastRequest.SpellName)) CastRequestDB.Add(CastRequest.SpellName, CastRequest);
+                        
+                        if (CastRequestDBtmp.Count != 0) CastRequestDBtmp.Clear();
+                        foreach (var qs in qSpells)
+                        {
+                            if (qs == null || !qs.IsValid) continue;
+                            string name = qs.Name.Value.ToString();
+                            if (!CastRequestDBtmp.ContainsKey(name)) CastRequestDBtmp.Add(name, 0);
+                            if (CastRequestDB.ContainsKey(name))
+                            {
+                                //add to pf //TODO: real lvl
+                                BoardObj bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(name, "21"), 6);
+                                bo.Position = new VectorAI(CastRequestDB[name].Position);
+                                bo.ownerIndex = (int)lp.OwnerIndex;
+                                bo.frozen = true;
+                                bo.GId = getNextGId();
+                                switch (bo.type)
+                                {
+                                    case boardObjType.MOB:
+                                        int nums = bo.card.SummonNumber;
+                                        if (nums == 0) nums = 1;
+                                        else
+                                        {
+                                            if (bo.card.SpawnCharacter != "")
+                                            {
+                                                bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(bo.card.SpawnCharacter, "22"), 6);
+                                                bo.Position = new VectorAI(CastRequestDB[name].Position);
+                                                bo.ownerIndex = (int)lp.OwnerIndex;
+                                                bo.frozen = true;
+                                                bo.GId = getNextGId();
+                                            }
+                                        }
+                                        for (int i = 0; i < nums; i++)
+                                        {
+                                            ownMinions.Add(bo);
+                                            if (nums > 1)
+                                            {
+                                                bo = new BoardObj(bo);
+                                                bo.GId = getNextGId();
+                                            }
+                                        }
+                                        break;
+                                    case boardObjType.BUILDING:
+                                        ownBuildings.Add(bo);
+                                        break;
+                                    case boardObjType.AOE:
+                                        break;
+                                }
+                            }
+                        }
+                        foreach (var kvp in CastRequestDB.ToArray())
+                        {
+                            if (!CastRequestDBtmp.ContainsKey(kvp.Key)) CastRequestDB.Remove(kvp.Key);
+                        }
+                    }
+                }
+                
                 //var projs = om.OfType<Clash.Engine.NativeObjects.Logic.GameObjects.Projectile>();
                 //foreach (var proj in projs)
                 //{
@@ -286,6 +372,8 @@ namespace Robi.Clash.DefaultSelectors
                     //bo.Atk = TODO real value
                     bo.LifeTime = aoe.HealthComponent.RemainingTime;
 
+                    //bo.extraData = data.Field10.ToString();//!!TEST
+
                     bo.ownerIndex = (int)aoe.OwnerIndex;
                     bool own = bo.ownerIndex == lp.OwnerIndex ? true : (bo.ownerIndex == friendlyOwnerIndex ? true : false);
                     bo.own = own;
@@ -307,6 +395,8 @@ namespace Robi.Clash.DefaultSelectors
                     bo.ownerIndex = (int)@char.OwnerIndex;
                     bool own = bo.ownerIndex == lp.OwnerIndex ? true : (bo.ownerIndex == friendlyOwnerIndex ? true : false);
                     bo.own = own;
+
+                    //bo.extraData = data.Field10.ToString();//!!TEST
 
                     if (bo.card.name == CardDB.cardName.unknown) CardDB.Instance.collectNewCards(@char);
                     else if (bo.ownerIndex == lp.OwnerIndex && bo.card.needUpdate) CardDB.Instance.cardsAdjustment(@char);
@@ -344,6 +434,7 @@ namespace Robi.Clash.DefaultSelectors
                                 if (ownKingsTower.HP == 0) ownKingsTower = bo;
                                 else if (bo.HP < ownKingsTower.HP) ownKingsTower = bo;
                                 if (ownKingsTowerPos.X != -1) ownKingsTower.Position.X = ownKingsTowerPos.X;
+                                ownKingsTower.ownerIndex = (int)lp.OwnerIndex;
                             }
                             else
                             {
@@ -397,7 +488,7 @@ namespace Robi.Clash.DefaultSelectors
                     BattleTime = battle.BattleTime,
                     suddenDeath = battle.BattleTime.TotalSeconds > 180,
                     ownerIndex = (int)lp.OwnerIndex,
-                    ownMana = (int)lp.Mana - (int)lp.ReservedMana,
+                    ownMana = (int)(lp.Mana - lp.ReservedMana),
                     ownHandCards = ownHandCards,
                     ownAreaEffects = ownAreaEffects,
                     ownMinions = ownMinions,
@@ -439,11 +530,11 @@ namespace Robi.Clash.DefaultSelectors
                 //DateTime statBehaviorCalcStart = DateTime.Now;
                 bc = this.GetBestCast(p);
 
-                CastRequest retval = null;
+                CastRequest = null;
                 if (bc != null && bc.Position != null)
                 {
-                    Logger.Debug("CastRequest {bc:l}", bc.ToString());
-                    retval = new CastRequest(bc.SpellName, bc.Position.ToVector2());
+                    if (p.ownMana + 1 >= bc.hc.manacost) CastRequest = new CastRequest(bc.SpellName, bc.Position.ToVector2f(true));
+                    Logger.Debug("CastRequest {SpellName:l} {Position:l}", bc.SpellName, CastRequest == null ? bc.Position?.ToString() : CastRequest.Position.ToString());
                 }
                 else Logger.Debug("Waiting for cast, maybe next tick...");
                 statTimeInsideBehavior = DateTime.Now - statTimerRoutine;
@@ -464,9 +555,14 @@ namespace Robi.Clash.DefaultSelectors
                      statTimeOutsideRoutine.TotalSeconds, (statSumTimeOutsideRoutine / (statNumSuccessfulEntrances > 1 ? statNumSuccessfulEntrances - 1 : 1)).TotalSeconds, (statTimeOutsideRoutine / objsCount).TotalSeconds);
                 
                 statTimerRoutine = DateTime.Now;
-
-                return retval;
+                
+                return CastRequest;
             }
+        }
+
+        private uint getNextGId()
+        {
+            return nextGId++;
         }
     }
 }

@@ -193,7 +193,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             {
                 if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (sensitivity)))
                     return 5;
-                if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (3 * sensitivity)))
+                if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (4 * sensitivity)))
                     return 4;
                 else if (enemyMinionAtk > (lines[line].OwnPtMaxHp / (5 * sensitivity)))
                     return 3;

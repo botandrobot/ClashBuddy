@@ -11,6 +11,7 @@
         public int missingMana = 100;
         public int val = int.MinValue;
         public double extraVal = 0;
+        public string extraData = "";
 
         public Handcard()
         {

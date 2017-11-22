@@ -50,10 +50,10 @@ namespace Robi.Clash.DefaultSelectors
             y = copy.Y;
         }
 
-        public VectorAI(Engine.NativeObjects.Native.Vector2 pos)
+        public VectorAI(Engine.NativeObjects.Native.Vector2f pos)
         {
-            x = pos.X;
-            y = pos.Y;
+            x = (int)pos.X;
+            y = (int)pos.Y;
         }
 
         public VectorAI(string s) //{3500/25500}
@@ -64,9 +64,22 @@ namespace Robi.Clash.DefaultSelectors
             y = Convert.ToInt32(ss[1]);
         }
 
-        public Engine.NativeObjects.Native.Vector2 ToVector2()
+        public Engine.NativeObjects.Native.Vector2f ToVector2f(bool needRandom)
         {
-            return new Engine.NativeObjects.Native.Vector2(x, y);
+            int xPos = x;
+            int yPos = y;
+            if (needRandom)
+            {
+                Random rnd = new Random();
+                int dX = xPos % 1000;
+                if (dX > 500) dX = dX - 1000;
+                xPos += rnd.Next(dX);
+
+                int dY = yPos % 1000;
+                if (dY > 500) dY = dY - 1000;
+                yPos += rnd.Next(dY);
+            }
+            return new Engine.NativeObjects.Native.Vector2f(xPos, yPos);
         }
 
         //If ever will be is available real direction, speed, acceleration, then maybe all this can be changed to a Vector form
