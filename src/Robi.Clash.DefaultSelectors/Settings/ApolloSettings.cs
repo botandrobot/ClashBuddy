@@ -35,13 +35,6 @@ namespace Robi.Clash.DefaultSelectors.Settings
         [DefaultValue(2)]
         public int SpellCorrectionConditionCharCount { get; set; }
 
-        [Category("Default")]
-        [DisplayName("Spell deployment decision (minimum anzahl Characters)")]
-        [Description("How many enemy characters should be at least in the area for an deploy")]
-        [Range(0, 50)]
-        [DefaultValue(5)]
-        public int SpellDeployConditionCharCount { get; set; }
-
         [Category("Game Start")]
         [DisplayName("Mana-Load")]
         [Description("How much Mana till first attack")]
