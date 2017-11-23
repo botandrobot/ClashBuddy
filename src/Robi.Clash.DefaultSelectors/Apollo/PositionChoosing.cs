@@ -399,7 +399,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 if (hc.card.MaxHP >= Setting.MinHealthAsTank)
                     return p.getDeployPosition(position, deployDirectionRelative.Up, 100);
                 
-                if(Classification.GetSpecificCardType(hc) == SpecificCardType.MobsAOEGround)
+                // ToDo: Maybe if there is already a tank, place it behind him
+
+                if(Classification.GetMoreSpecificCardType(hc, SpecificCardType.MobsAOE) == MoreSpecificMobCardType.AOEAll)
                 {
                     return p.getDeployPosition(position, deployDirectionRelative.Up, 4000);
                 }

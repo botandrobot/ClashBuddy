@@ -85,8 +85,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if (damageDealerCard != null && damageDealerCard.manacost <= p.ownMana)
                 return damageDealerCard;
 
-            if((int)currentSituation >= 3 && (int)currentSituation <= 6)
-                return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsNoTank).FirstOrDefault();
+            //if((int)currentSituation >= 3 && (int)currentSituation <= 6)
+            //    return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.Mobs).FirstOrDefault();
 
             Logger.Debug("Wait - No card selected...");
             return null;
@@ -272,11 +272,11 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             var objGround = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out int biggestEnemieGroupCount, transportType.GROUND);
             if (biggestEnemieGroupCount > 3)
-                aoeGround = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEGround).FirstOrDefault();
+                aoeGround = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOE, MoreSpecificMobCardType.AOEGround).FirstOrDefault();
 
             var objAir = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out biggestEnemieGroupCount, transportType.AIR);
             if (biggestEnemieGroupCount > 3)
-                aoeAir = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEAll).FirstOrDefault();
+                aoeAir = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOE, MoreSpecificMobCardType.AOEAll).FirstOrDefault();
 
             return aoeAir ?? aoeGround;
         }
