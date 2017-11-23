@@ -216,14 +216,13 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return APTL2(p, hc);
             }
 
-            if (p.enemyPrincessTower1.HP == 0)
+            if (p.enemyPrincessTower1.HP == 0 && p.enemyPrincessTower2.HP > 0)
                 return APTL1(p, hc);
 
-            if (p.enemyPrincessTower2.HP == 0)
+            if (p.enemyPrincessTower2.HP == 0 && p.enemyPrincessTower1.HP > 0)
                 return APTL2(p, hc);
 
             VectorAI position = p.enemyKingsTower?.Position;
-            Logger.Debug("Bug: AKT but both PTs HP > 0");
 
             //if (Decision.SupportDeployment(p, 1))
             //    position = p.getDeployPosition(position, deployDirectionRelative.Down, 500);
@@ -400,7 +399,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 if (hc.card.MaxHP >= Setting.MinHealthAsTank)
                     return p.getDeployPosition(position, deployDirectionRelative.Up, 100);
                 
-                if(Classification.GetSpecificCardType(hc) == SpecificCardType.MobsAOEGround)
+                // ToDo: Maybe if there is already a tank, place it behind him
+
+                if(Classification.GetMoreSpecificCardType(hc, SpecificCardType.MobsAOE) == MoreSpecificMobCardType.AOEAll)
                 {
                     return p.getDeployPosition(position, deployDirectionRelative.Up, 4000);
                 }

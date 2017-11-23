@@ -55,18 +55,15 @@ namespace Robi.Clash.DefaultSelectors.Apollo
     {
         All,
 
-
         // Mobs
         MobsTank,
-        MobsNoTank,
         MobsDamageDealer,
-        MobsDamageDealerAOE,
-        MobsBuildingAttacker,
+        MobsBigGroup,
+        MobsAOE,
+        MobsFlying,
         MobsRanger,
-        MobsAOEGround,
-        MobsAOEAll,
+        MobsBuildingAttacker,
         MobsFlyingAttack,
-        MobsUnderAttack,
 
         // Buildings
         BuildingsDefense,
@@ -80,6 +77,20 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         SpellsTroopSpawning,
         SpellsBuffs
     };
+
+    enum MoreSpecificMobCardType
+    {
+        None,
+        ShortDistance,
+        LongDistance,
+        BuildingAttacker,
+        AOEGround,
+        AOEAll,
+        FlyingAttack,
+        Flying,
+        NotFlying,
+        DamageDealer
+    }
 
     public enum Level
     {

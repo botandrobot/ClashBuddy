@@ -8,12 +8,13 @@ namespace Robi.Clash.DefaultSelectors.Apollo
     {
         public static bool IsPositionInArea(this BoardObj bo, Playfield p, VectorAI position)
         {
-            bool isInArea = position.X >= bo.Position.X - bo.Range &&
-                            position.X <= bo.Position.X + bo.Range &&
-                            position.Y >= bo.Position.Y - bo.Range &&
-                            position.Y <= bo.Position.Y + bo.Range;
+            int buildingSizeAddition = 1000;
 
-            return isInArea;
+            long a = ((bo.Position.X + buildingSizeAddition - position.X) * (bo.Position.X + buildingSizeAddition - position.X));
+            long b = ((bo.Position.Y + buildingSizeAddition - position.Y) * (bo.Position.Y + buildingSizeAddition - position.Y));
+            long c = (bo.Range * bo.Range);
+
+            return ((a + b) < c);
         }
     }
 }

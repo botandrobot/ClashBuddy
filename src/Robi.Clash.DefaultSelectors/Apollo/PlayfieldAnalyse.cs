@@ -29,8 +29,12 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         private static void Tower(Playfield p)
         {
             // TODO: Level must be fixed, is everytime 0
-            lines[0].OwnPtMaxHp = (int)Helper.LevelMultiplicator(p.ownPrincessTower1.MaxHP, p.ownPrincessTower1.level);
-            lines[1].OwnPtMaxHp = (int)Helper.LevelMultiplicator(p.ownPrincessTower2.MaxHP, p.ownPrincessTower2.level);
+
+            // p.ownPrincessTower1.MaxHP = 0 if tower is destroyed -.-
+            //lines[0].OwnPtMaxHp = (int)Helper.LevelMultiplicator(p.ownPrincessTower1.MaxHP, p.ownPrincessTower1.level);
+            //lines[1].OwnPtMaxHp = (int)Helper.LevelMultiplicator(p.ownPrincessTower2.MaxHP, p.ownPrincessTower2.level);
+            lines[0].OwnPtMaxHp = (int)Helper.LevelMultiplicator(p.ownKingsTower.MaxHP, p.ownKingsTower.level);
+            lines[1].OwnPtMaxHp = (int)Helper.LevelMultiplicator(p.ownKingsTower.MaxHP, p.ownKingsTower.level);
 
             // ToDo: Calc with lvl
             lines[0].OwnPtAtk = p.ownPrincessTower1.Atk;
@@ -216,7 +220,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
                 BoardObj bPT;
 
-                if (line == 1)
+                if (line == 0)
                     bPT = enemyBuildings.FirstOrDefault(n => n.IsPositionInArea(p, p.ownPrincessTower1.Position));
                 else
                     bPT = enemyBuildings.FirstOrDefault(n => n.IsPositionInArea(p, p.ownPrincessTower2.Position));
