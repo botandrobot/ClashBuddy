@@ -22,7 +22,7 @@
 
         public override string Author => "Peros_";
 
-        public override Version Version => new Version(1, 8, 0, 0);
+        public override Version Version => new Version(1, 8, 1, 0);
         public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
 
         private static ApolloSettings Settings => SettingsManager.GetSetting<ApolloSettings>("Apollo");
