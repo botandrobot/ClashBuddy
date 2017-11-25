@@ -189,10 +189,9 @@ namespace Robi.Clash.DefaultSelectors
             {
                 List<Tuple<int, int>> towersIndY = new List<Tuple<int, int>>();
                 bool needFriendlyIndex = false;
-                var chars = om.OfType<Clash.Engine.NativeObjects.Logic.GameObjects.Character>();
+                var chars = om.OfType<Clash.Engine.NativeObjects.Logic.GameObjects.Character>().Where(c => c.IsValid).ToArray();
                 foreach (var @char in chars)
                 {
-                    if (!@char.IsValid) continue;
                     var data = @char.LogicGameObjectData;
                     if (data == null || !data.IsValid) continue;
                     var name = data.Name;
