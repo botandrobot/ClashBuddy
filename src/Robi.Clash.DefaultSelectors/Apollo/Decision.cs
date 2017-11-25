@@ -265,7 +265,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 if (hc.card.towerDamage >= p.enemyKingsTower.HP)
                     return p.enemyKingsTower;
 
-                if(true)
+                if(p.suddenDeath)
                 {
                     if (hc.card.towerDamage >= p.enemyPrincessTower1.HP)
                         return p.enemyPrincessTower1;

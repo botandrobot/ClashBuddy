@@ -42,8 +42,9 @@ namespace Robi.Clash.DefaultSelectors
         private CastRequest CastRequest;
         private Dictionary<string, CastRequest> CastRequestDB = new Dictionary<string, CastRequest>();
         private Dictionary<string, int> CastRequestDBtmp = new Dictionary<string, int>();
-        private readonly Dictionary<int, double> lvlToCoef = new Dictionary<int, double>() { { 1, 1 }, { 2, 1.1 }, { 3, 1.21 }, { 4, 1.33 }, { 5, 1.46 }, { 6, 1.6 }, { 7, 1.76 }, { 8, 1.93 }, { 9, 2.12 }, { 10, 2.33 }, { 11, 2.56 }, };
-	
+        private readonly Dictionary<int, double> lvlToCoef = new Dictionary<int, double>() { { 1, 1 }, { 2, 1.1 }, { 3, 1.21 }, { 4, 1.33 }, { 5, 1.46 }, { 6, 1.6 }, { 7, 1.76 }, { 8, 1.93 }, { 9, 2.12 }, { 10, 2.33 }, { 11, 2.56 } };
+
+
         public static bool GameBeginning = false;
         private VectorAI ownKingsTowerPos = new VectorAI(-1, -1);
         private int friendlyOwnerIndex = -1;
@@ -246,7 +247,7 @@ namespace Robi.Clash.DefaultSelectors
 
                     if (!AvailableSpells.ContainsKey(name.Value.ToString())) continue;
 
-                    int lvl = (int)spellBtn.SpellDeckSpell.Rarity;
+                    int lvl = spellBtn.SpellDeckSpell.LevelIndex;
                     Handcard hc = new Handcard(name.Value.ToString(), lvl);
                     if (hc.card.name == CardDB.cardName.unknown) CardDB.Instance.collectNewCards(spellBtn);
                     hc.manacost = spellBtn.SpellDeckSpell.Spell.ManaCost;
@@ -391,12 +392,10 @@ namespace Robi.Clash.DefaultSelectors
                     var name = data.Name;
                     if ((MemPtr) name == MemPtr.Zero) continue; 
 
-                    BoardObj bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(name.Value.ToString(), "2"));
+                    BoardObj bo = new BoardObj(CardDB.Instance.cardNamestringToEnum(name.Value.ToString(), "2"), (int)@char.TowerLevel);
                     bo.ownerIndex = (int)@char.OwnerIndex;
                     bool own = bo.ownerIndex == lp.OwnerIndex ? true : (bo.ownerIndex == friendlyOwnerIndex ? true : false);
                     bo.own = own;
-
-                    //bo.extraData = data.Field10.ToString();//!!TEST
 
                     if (bo.card.name == CardDB.cardName.unknown) CardDB.Instance.collectNewCards(@char);
                     else if (bo.ownerIndex == lp.OwnerIndex && bo.card.needUpdate) CardDB.Instance.cardsAdjustment(@char);
@@ -404,7 +403,6 @@ namespace Robi.Clash.DefaultSelectors
                     bo.Position = new VectorAI(@char.StartPosition);
                     bo.Line = bo.Position.X > 8700 ? 2 : 1;
                     bo.level = 1 + (int)@char.TowerLevel;
-                    bo.Atk = (int)(bo.card.Atk * lvlToCoef[bo.level]); //TODO: need real value
                     //this.frozen = TODO
                     //this.startFrozen = TODO
                     bo.HP = @char.HealthComponent.CurrentHealth;
@@ -415,6 +413,7 @@ namespace Robi.Clash.DefaultSelectors
                     switch (bo.Name)
                     {
                         case CardDB.cardName.princesstower:
+                            CardDB.Instance.setPrincessTowerMaxHP(bo);
                             tower = bo.Line;
                             if (bo.own)
                             {
@@ -428,6 +427,7 @@ namespace Robi.Clash.DefaultSelectors
                             }
                             break;
                         case CardDB.cardName.kingtower:
+                            CardDB.Instance.setKingsTowerMaxHP(bo);
                             tower = 10 + bo.Line;
                             if (bo.own)
                             {
@@ -447,6 +447,7 @@ namespace Robi.Clash.DefaultSelectors
                             tower = 100;
                             break;
                         default:
+                            bo.Atk = (int)(bo.card.Atk * lvlToCoef[bo.level]); //TODO: need value from core
                             if (own)
                             {
                                 switch (bo.type)
@@ -482,7 +483,7 @@ namespace Robi.Clash.DefaultSelectors
 
             using (new PerformanceTimer("Initialize playfield."))
             {
-                Logger.Debug("################################Routine v.0.8.5 Behavior:{Name:l} v.{Version:l}", Name, Version);
+                Logger.Debug("################################Routine v.0.8.6 Behavior:{Name:l} v.{Version:l}", Name, Version);
                 p = new Playfield
                 {
                     BattleTime = battle.BattleTime,

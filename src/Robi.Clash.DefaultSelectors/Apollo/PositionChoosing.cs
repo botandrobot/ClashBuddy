@@ -115,7 +115,6 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
                 if (hc.card.Transport == transportType.AIR)
                 {
-                    // TODO: Analyse which is the most dangerous line
                     return p.getDeployPosition(line == 2 ? deployDirectionAbsolute.ownPrincessTowerLine2 : deployDirectionAbsolute.ownPrincessTowerLine1);
                 }
                 else
@@ -406,7 +405,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return p.getDeployPosition(position, deployDirectionRelative.Up, 4000);
                 }
 
-                return p.getDeployPosition(position, deployDirectionRelative.Down, 2000);
+                if (Classification.GetSpecificCardType(hc) == SpecificCardType.MobsRanger)
+                    return p.getDeployPosition(position, deployDirectionRelative.Down, 2000);
+
+                return p.getDeployPosition(position, deployDirectionRelative.Up, 100);
             }
             else
                 Logger.Debug("Tower Correction: No Correction!!!");

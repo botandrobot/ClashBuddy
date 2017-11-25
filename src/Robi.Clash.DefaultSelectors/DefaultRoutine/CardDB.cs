@@ -356,7 +356,43 @@ namespace Robi.Clash.DefaultSelectors
                     default: return int.MinValue;
                 }
             }
+
+            public void setParamByNameInt(cardParamInt param, int value)
+            {
+                switch (param)
+                {
+                    case cardParamInt.cost: this.cost = value; break;
+                    case cardParamInt.DeployTime: this.DeployTime = value; break;
+                    case cardParamInt.DeployDelay: this.DeployDelay = value; break;
+                    case cardParamInt.MaxHP: this.MaxHP = value; break;
+                    case cardParamInt.Atk: this.Atk = value; break;
+                    case cardParamInt.Shield: this.Shield = value; break;
+                    case cardParamInt.SpawnDamage: this.SpawnDamage = value; break;
+                    case cardParamInt.Speed: this.Speed = value; break;
+                    case cardParamInt.HitSpeed: this.HitSpeed = value; break;
+                    case cardParamInt.MinRange: this.MinRange = value; break;
+                    case cardParamInt.MaxRange: this.MaxRange = value; break;
+                    case cardParamInt.SightRange: this.SightRange = value; break;
+                    case cardParamInt.SightClip: this.SightClip = value; break;
+                    case cardParamInt.MultipleTargets: this.MultipleTargets = value; break;
+                    case cardParamInt.MultipleProjectiles: this.MultipleProjectiles = value; break;
+                    case cardParamInt.Level: this.Level = value; break;
+                    case cardParamInt.DamageRadius: this.DamageRadius = value; break;
+                    case cardParamInt.CollisionRadius: this.CollisionRadius = value; break;
+                    case cardParamInt.towerDamage: this.towerDamage = value; break;
+                    case cardParamInt.LifeTime: this.LifeTime = value; break;
+                    case cardParamInt.SummonNumber: this.SummonNumber = value; break;
+                    case cardParamInt.SpawnNumber: this.SpawnNumber = value; break;
+                    case cardParamInt.SpawnPause: this.SpawnPause = value; break;
+                    case cardParamInt.SpawnInterval: this.SpawnInterval = value; break;
+                    case cardParamInt.SpawnCharacterLevel: this.SpawnCharacterLevel = value; break;
+                }
+            }
         }
+
+
+        private readonly Dictionary<int, int> lvlToKT = new Dictionary<int, int>() { { 1, 50 }, { 2, 53 }, { 3, 57 }, { 4, 60 }, { 5, 64 }, { 6, 69 }, { 7, 73 }, { 8, 78 }, { 9, 83 }, { 10, 91 }, { 11, 100 }, { 12, 110 }, { 13, 121 } };
+        private readonly Dictionary<int, int> lvlToPT = new Dictionary<int, int>() { { 1, 50 }, { 2, 54 }, { 3, 58 }, { 4, 62 }, { 5, 67 }, { 6, 72 }, { 7, 78 }, { 8, 84 }, { 9, 90 }, { 10, 99 }, { 11, 109 }, { 12, 119 }, { 13, 131 } };
 
         Dictionary<int, Card> forTestBase = new Dictionary<int, Card>();
         readonly Dictionary<cardName, Card> cardNameToCardList = new Dictionary<cardName, Card>();
@@ -366,11 +402,7 @@ namespace Robi.Clash.DefaultSelectors
         List<string> allCardIDS = new List<string>();
         public Card unknownCard = new Card();
         public bool installedWrong = false;
-
-        public Card teacherminion;
-        public Card illidanminion;
-        public Card lepergnome;
-        public Card burlyrockjaw;
+        
         private static CardDB instance;
 
         public static CardDB Instance => instance;
@@ -1073,7 +1105,8 @@ namespace Robi.Clash.DefaultSelectors
                 Logger.Debug("adj: {0} moda:{1} sampling:{2} baseVal:{3}", pair.Key, moda, maxNum, baseVal);
                 if (moda != int.MinValue)
                 {
-                    Logger.Debug("adj:!!!!!! New value:{0}", moda);
+                    baseCard.setParamByNameInt(pair.Key, moda);
+                    Logger.Debug("adj:!!!!!! {0} Old value:{1} New value:{2}", pair.Key, baseVal, baseCard.getParamByNameInt(pair.Key));
                 }
             }
         }
@@ -1082,6 +1115,18 @@ namespace Robi.Clash.DefaultSelectors
         {
             if (cardsAdjustmentContainerInt[param].ContainsKey(val)) cardsAdjustmentContainerInt[param][val]++;
             else cardsAdjustmentContainerInt[param].Add(val, 1);
+        }
+
+        public void setPrincessTowerMaxHP(BoardObj bo)
+        {
+            bo.Atk = lvlToPT[bo.level]; //TODO: need value from core
+            bo.MaxHP = 28 * bo.Atk; //TODO: need value from core
+        }
+
+        public void setKingsTowerMaxHP(BoardObj bo)
+        {
+            bo.Atk = lvlToKT[bo.level]; //TODO: need value from core
+            bo.MaxHP = 48 * bo.Atk; //TODO: need value from core
         }
 
         public Card collectNewCards(Robi.Clash.Engine.NativeObjects.Logic.Client.UI.SpellBattleButton spellBtn, bool needLog = true)
@@ -1095,7 +1140,7 @@ namespace Robi.Clash.DefaultSelectors
             Card c = new Card();
             c.stringName = spell.Name.Value;
 
-            c.stringName += " id:" + spell.Field10.ToString();//!!TEST
+            c.stringName += " id:" + spell.Id;
 
             c.name = cardNamestringToEnum(c.stringName, "20");
             c.cost = spell.ManaCost;
@@ -1107,7 +1152,7 @@ namespace Robi.Clash.DefaultSelectors
             c.SummonNumber = spell.SummonNumber;
             //c.Shield =
             //c.Speed =
-            c.Level = (int)spellBtn.SpellDeckSpell.Rarity;
+            c.Level = (int)spellBtn.SpellDeckSpell.LevelIndex; //-?????
 
             if (spell.Projectile.IsValid)
             {
@@ -1279,7 +1324,7 @@ namespace Robi.Clash.DefaultSelectors
                 TargetType = targetType.NONE
             };
 
-            c.stringName += " id:" + LogicDataCharacter.Field10.ToString();//!!TEST
+            c.stringName += " id:" + LogicDataCharacter.Id;
 
             //TODO: divide with Buildings (is not enough data)
             if (LogicDataCharacter.TargetOnlyBuildings > 0) c.TargetType = targetType.BUILDINGS;
@@ -1335,7 +1380,7 @@ namespace Robi.Clash.DefaultSelectors
             if (needLog)
             {
                 StringBuilder sb = new StringBuilder(10000);
-                sb.Append("Projectile.Field10:").Append(Projectile.Field10).Append(" ");
+                sb.Append("Projectile.Field10:").Append(Projectile.Id).Append(" ");
                 sb.Append("Projectile.Field14:").Append(Projectile.Field14).Append(" ");
                 sb.Append("Projectile.Field1C:").Append(Projectile.Field1C).Append(" ");
 
@@ -1361,7 +1406,7 @@ namespace Robi.Clash.DefaultSelectors
             Card c = new Card();
             c.stringName = LogicDataAOE.Name.Value;
 
-            c.stringName += " id:" + LogicDataAOE.Field10.ToString();//!!TEST
+            c.stringName += " id:" + LogicDataAOE.Id;
 
             c.name = cardNamestringToEnum(c.stringName, "4a");
 
@@ -1403,7 +1448,7 @@ namespace Robi.Clash.DefaultSelectors
                 sb.Append("Field18:").Append(aoe.Field64).Append(" ");
                 sb.Append("Field18:").Append(aoe.Field68).Append(" ");
                 sb.Append("Field18:").Append(aoe.FieldC).Append(" ");
-                sb.Append("LogicDataAOE.Field10:").Append(LogicDataAOE.Field10).Append(" ");
+                sb.Append("LogicDataAOE.Field10:").Append(LogicDataAOE.Id).Append(" ");
                 sb.Append("LogicDataAOE.Field14:").Append(LogicDataAOE.Field14).Append(" ");
                 sb.Append("LogicDataAOE.Field1C:").Append(LogicDataAOE.Field1C).Append(" ");
 

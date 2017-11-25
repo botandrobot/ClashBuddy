@@ -97,8 +97,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return SpecificCardType.All;
                 case boardObjType.MOB:
                     if (IsMobsDamageDealer(hc) && IsMobsAOEGround(hc))  return SpecificCardType.MobsDamageDealerAOE;
-                    if (IsMobsAOEAll(hc))                               return SpecificCardType.MobsAOEAll;
                     if (IsMobsRanger(hc))                               return SpecificCardType.MobsRanger;
+                    if (IsMobsAOEAll(hc))                               return SpecificCardType.MobsAOEAll;
                     if (IsMobsAOEGround(hc))                            return SpecificCardType.MobsAOEGround;
                     if (IsMobsBuildingAttacker(hc))                     return SpecificCardType.MobsBuildingAttacker;
                     if (IsMobsDamageDealer(hc))                         return SpecificCardType.MobsDamageDealer;

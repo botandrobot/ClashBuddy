@@ -128,6 +128,7 @@
             this.SpawnTime = c.SpawnPause;
             this.SpawnCharacterLevel = c.SpawnCharacterLevel;
             this.DeathEffect = c.DeathEffect;
+            this.level = lvl;
             //this.Tower = c.Tower;
         }
 
