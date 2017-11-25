@@ -67,6 +67,7 @@ namespace Robi.Clash.DefaultSelectors
                         switch (bo.Name)
                         {
                             case CardDB.cardName.princesstower:
+                                CardDB.Instance.setPrincessTowerMaxHP(bo);
                                 tower = bo.Line;
                                 if (bo.own)
                                 {
@@ -80,6 +81,7 @@ namespace Robi.Clash.DefaultSelectors
                                 }
                                 break;
                             case CardDB.cardName.kingtower:
+                                CardDB.Instance.setKingsTowerMaxHP(bo);
                                 tower = 10 + bo.Line;
                                 if (bo.own)
                                 {
