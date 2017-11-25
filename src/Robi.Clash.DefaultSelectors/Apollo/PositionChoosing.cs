@@ -366,24 +366,24 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             // ToDo: Find the best position
             VectorAI betweenBridges = p.getDeployPosition(deployDirectionAbsolute.betweenBridges);
 
-            switch (currentSituation)
-            {
-                case FightState.UAPTL1:
-                case FightState.DPTL1:
-                    return p.getDeployPosition(p.ownPrincessTower1.Position, deployDirectionRelative.RightDown);
-                case FightState.UAPTL2:
-                case FightState.DPTL2:
-                    return p.getDeployPosition(p.ownPrincessTower2.Position, deployDirectionRelative.LeftDown);
-                case FightState.UAKTL1:
-                case FightState.UAKTL2:
-                    return p.getDeployPosition(p.ownKingsTower.Position, deployDirectionRelative.Down);
-                case FightState.APTL1:
-                    return p.getDeployPosition(betweenBridges, deployDirectionRelative.Left, 1000);
-                case FightState.APTL2:
-                    return p.getDeployPosition(betweenBridges, deployDirectionRelative.Right, 1000);
-                case FightState.AKT:
-                    return p.getDeployPosition(p.enemyKingsTower, deployDirectionRelative.Down, 500);
-            }
+            //switch (currentSituation)
+            //{
+            //    case FightState.UAPTL1:
+            //    case FightState.DPTL1:
+            //        return p.getDeployPosition(p.ownPrincessTower1.Position, deployDirectionRelative.RightDown);
+            //    case FightState.UAPTL2:
+            //    case FightState.DPTL2:
+            //        return p.getDeployPosition(p.ownPrincessTower2.Position, deployDirectionRelative.LeftDown);
+            //    case FightState.UAKTL1:
+            //    case FightState.UAKTL2:
+            //        return p.getDeployPosition(p.ownKingsTower.Position, deployDirectionRelative.Down);
+            //    case FightState.APTL1:
+            //        return p.getDeployPosition(betweenBridges, deployDirectionRelative.Left, 1000);
+            //    case FightState.APTL2:
+            //        return p.getDeployPosition(betweenBridges, deployDirectionRelative.Right, 1000);
+            //    case FightState.AKT:
+            //        return p.getDeployPosition(p.enemyKingsTower, deployDirectionRelative.Down, 500);
+            //}
 
             return p.getDeployPosition(betweenBridges, deployDirectionRelative.Down, 4000);
         }
@@ -401,10 +401,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 
                 // ToDo: Maybe if there is already a tank, place it behind him
 
-                if(Classification.GetMoreSpecificCardType(hc, SpecificCardType.MobsAOE) == MoreSpecificMobCardType.AOEAll)
-                {
-                    return p.getDeployPosition(position, deployDirectionRelative.Up, 4000);
-                }
+                //if(Classification.GetMoreSpecificCardType(hc, SpecificCardType.MobsAOE) == MoreSpecificMobCardType.AOEGround)
+                //{
+                //    return p.getDeployPosition(position, deployDirectionRelative.Up, 100);
+                //}
 
                 if (Classification.GetSpecificCardType(hc) == SpecificCardType.MobsRanger)
                     return p.getDeployPosition(position, deployDirectionRelative.Down, 2000);

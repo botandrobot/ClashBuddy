@@ -108,6 +108,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 case MoreSpecificMobCardType.DamageDealer:
                     @msDelegate = IsMobsDamageDealer;
                     break;
+                case MoreSpecificMobCardType.NoBigGroup:
+                    @msDelegate = IsNoBigGroup;
+                    break;
             }
 
             if (@msDelegate == null)
@@ -192,12 +195,13 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         //public static Func<Handcard, bool> IsMobsNoTank = (Handcard hc) => (hc.card.TargetType != targetType.BUILDINGS && hc.card.MaxHP < Setting.MinHealthAsTank);
         public static Func<Handcard, bool> IsMobsFlyingAttack = (Handcard hc) => (hc.card.TargetType == targetType.ALL);
         public static Func<Handcard, bool> IsMobsAOE = (Handcard hc) => (hc.card.aoeGround);
-        public static Func<Handcard, bool> IsMobsRanger = (Handcard hc) => (hc.card.MaxRange > 1);
+        public static Func<Handcard, bool> IsMobsRanger = (Handcard hc) => (hc.card.MaxRange >= 1000);
         public static Func<Handcard, bool> IsMobsBuildingAttacker = (Handcard hc) => (hc.card.TargetType == targetType.BUILDINGS);
         public static Func<Handcard, bool> IsMobsDamageDealer = (Handcard hc) => ((hc.card.Atk * hc.card.SummonNumber) > 100);
         public static Func<Handcard, bool> IsMobsBigGroup = (Handcard hc) => ((hc.card.SummonNumber >= 8 ));
+        public static Func<Handcard, bool> IsMobsMinTank = (Handcard hc) => (hc.card.MaxHP >= Setting.MinHealthAsTank / 3);
         public static Func<Handcard, bool> IsMobsTank = (Handcard hc) => (hc.card.MaxHP >= Setting.MinHealthAsTank);
-        
+
         public static Func<Handcard, bool> IsCycleCard = (Handcard hc) => (hc.manacost <= 2);
         public static Func<Handcard, bool> IsPowerCard = (Handcard hc) => (hc.manacost >= 5);
 
@@ -208,6 +212,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         public static Func<Handcard, bool> IsAOEGround = (Handcard hc) => (hc.card.aoeGround);
         public static Func<Handcard, bool> IsFlying = (Handcard hc) => (hc.card.Transport == transportType.AIR);
         public static Func<Handcard, bool> IsNotFlying = (Handcard hc) => (hc.card.Transport == transportType.GROUND);
+        public static Func<Handcard, bool> IsNoBigGroup = (Handcard hc) => ((hc.card.SummonNumber < 8));
 
 
         // With BoardObj, no Handcard

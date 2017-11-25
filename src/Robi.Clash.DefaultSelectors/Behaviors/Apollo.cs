@@ -22,7 +22,7 @@
 
         public override string Author => "Peros_";
 
-        public override Version Version => new Version(1, 8, 0, 0);
+        public override Version Version => new Version(1, 8, 1, 0);
         public override Guid Identifier => new Guid("{669f976f-23ce-4b97-9105-a21595a394bf}");
 
         private static ApolloSettings Settings => SettingsManager.GetSetting<ApolloSettings>("Apollo");
@@ -229,7 +229,7 @@
 
         public static void FillSettings()
         {
-            #if TEST
+            #if RELEASE
                 Setting.FightStyle = Settings.FightStyle;
                 Setting.KingTowerSpellDamagingHealth = Settings.KingTowerSpellDamagingHealth;
                 Setting.ManaTillDeploy = Settings.ManaTillDeploy;
@@ -245,8 +245,8 @@
                 Setting.ManaTillFirstAttack = 10;
                 Setting.MinHealthAsTank = 1200;
                 Setting.SpellCorrectionConditionCharCount = 5;
-                Setting.DangerSensitivity = Level.MEDIUM;
-                Setting.ChanceSensitivity = Level.MEDIUM;
+                Setting.DangerSensitivity = 2;
+                Setting.ChanceSensitivity = 2;
             #endif
         }
 

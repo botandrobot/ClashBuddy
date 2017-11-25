@@ -19,7 +19,7 @@ namespace Robi.Clash.DefaultSelectors.Settings
         [DefaultValue((int)Player.FightStyle.Balanced)]
         [DisplayName("Fight Style")]
         [Description("Choose Apollos fight style. Smart balanced, concentrated on the Defense or as an angry rusher?")]
-        public Player.FightStyle FightStyle { get; set; }
+        public Apollo.FightStyle FightStyle { get; set; }
 
         [Category("Default")]
         [DisplayName("Enemys KingTower spell damaging mode")]
@@ -55,6 +55,20 @@ namespace Robi.Clash.DefaultSelectors.Settings
         [Range(0, 10000)]
         [DefaultValue(1200)]
         public int MinHealthAsTank { get; set; }
+
+        [Category("Analysis")]
+        [DisplayName("Danger Analysis Sensitivity")]
+        [Description("How sensitiv should the danger analysis be")]
+        [Range(0, 5)]
+        [DefaultValue(2)]
+        public int DangerSensitivity { get; set; }
+
+        [Category("Analysis")]
+        [DisplayName("Chance Analysis Sensitivity")]
+        [Description("How sensitiv should the chance analysis be")]
+        [Range(0, 5)]
+        [DefaultValue(2)]
+        public int ChanceSensitivity { get; set; }
 
         //[SettingsGroup(" Deployment Faktor")]
         //[FloatRangeSettings(100, 0, 10000)]

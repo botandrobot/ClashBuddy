@@ -18,9 +18,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
         public static int MinHealthAsTank { get; set; }
 
-        public static Level DangerSensitivity { get; set; }
+        public static int DangerSensitivity { get; set; }
 
-        public static Level ChanceSensitivity { get; set; }
+        public static int ChanceSensitivity { get; set; }
 
         //[SettingsGroup(" Deployment Faktor")]
         //[FloatRangeSettings(100, 0, 10000)]
