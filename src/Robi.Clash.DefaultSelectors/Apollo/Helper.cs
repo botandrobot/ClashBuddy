@@ -94,9 +94,12 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             return false;
         }
 
-        public static double LevelMultiplicator(int value, int level)
+        public static double LevelMultiplicator(int value, int level, int type)
         {
-            return value *  Math.Pow((1 + 1.1d / 100), level);
+            // 1.1 = mobs
+            // 1.07 = KT
+            // ToDo: Calculate the value without round errors
+            return type == 1 ? value * Math.Pow((1.1d), level) : value * Math.Pow((1.07d), level);
         }
 
         public static double Quotient(int a, double b)

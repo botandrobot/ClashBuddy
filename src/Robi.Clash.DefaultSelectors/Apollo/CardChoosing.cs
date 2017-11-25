@@ -81,7 +81,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if (rangerCard != null && rangerCard.manacost <= p.ownMana)
                 return rangerCard;
 
-            var damageDealerCard = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsDamageDealer).FirstOrDefault();
+            var damageDealerCard = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsDamageDealer, MoreSpecificMobCardType.NoBigGroup).FirstOrDefault();
             if (damageDealerCard != null && damageDealerCard.manacost <= p.ownMana)
                 return damageDealerCard;
 

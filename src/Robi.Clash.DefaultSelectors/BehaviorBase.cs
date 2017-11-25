@@ -246,7 +246,7 @@ namespace Robi.Clash.DefaultSelectors
 
                     if (!AvailableSpells.ContainsKey(name.Value.ToString())) continue;
 
-                    int lvl = spellBtn.SpellDeckSpell.LevelIndex; // +1?
+                    int lvl = (int)spellBtn.SpellDeckSpell.LevelIndex; // +1?
                     Handcard hc = new Handcard(name.Value.ToString(), lvl);
                     if (hc.card.name == CardDB.cardName.unknown) CardDB.Instance.collectNewCards(spellBtn);
                     hc.manacost = spellBtn.SpellDeckSpell.Spell.ManaCost;

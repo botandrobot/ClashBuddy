@@ -89,7 +89,8 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         FlyingAttack,
         Flying,
         NotFlying,
-        DamageDealer
+        DamageDealer,
+        NoBigGroup
     }
 
     public enum Level

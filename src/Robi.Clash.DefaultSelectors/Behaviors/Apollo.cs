@@ -229,7 +229,7 @@
 
         public static void FillSettings()
         {
-            #if TEST
+            #if RELEASE
                 Setting.FightStyle = Settings.FightStyle;
                 Setting.KingTowerSpellDamagingHealth = Settings.KingTowerSpellDamagingHealth;
                 Setting.ManaTillDeploy = Settings.ManaTillDeploy;
@@ -245,8 +245,8 @@
                 Setting.ManaTillFirstAttack = 10;
                 Setting.MinHealthAsTank = 1200;
                 Setting.SpellCorrectionConditionCharCount = 5;
-                Setting.DangerSensitivity = Level.MEDIUM;
-                Setting.ChanceSensitivity = Level.MEDIUM;
+                Setting.DangerSensitivity = 2;
+                Setting.ChanceSensitivity = 2;
             #endif
         }
 

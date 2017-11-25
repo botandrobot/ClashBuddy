@@ -33,12 +33,12 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             // p.ownPrincessTower1.MaxHP = 0 if tower is destroyed -.-
             //lines[0].OwnPtMaxHp = (int)Helper.LevelMultiplicator(p.ownPrincessTower1.MaxHP, p.ownPrincessTower1.level);
             //lines[1].OwnPtMaxHp = (int)Helper.LevelMultiplicator(p.ownPrincessTower2.MaxHP, p.ownPrincessTower2.level);
-            lines[0].OwnPtMaxHp = (int)Helper.LevelMultiplicator(p.ownKingsTower.MaxHP, p.ownKingsTower.level);
-            lines[1].OwnPtMaxHp = (int)Helper.LevelMultiplicator(p.ownKingsTower.MaxHP, p.ownKingsTower.level);
+            lines[0].OwnPtMaxHp = (int)Helper.LevelMultiplicator(p.ownKingsTower.MaxHP, p.ownKingsTower.level, 2);
+            lines[1].OwnPtMaxHp = (int)Helper.LevelMultiplicator(p.ownKingsTower.MaxHP, p.ownKingsTower.level, 2);
 
             // ToDo: Calc with lvl
-            lines[0].OwnPtAtk = p.ownPrincessTower1.Atk;
-            lines[1].OwnPtAtk = p.ownPrincessTower2.Atk;
+            lines[0].OwnPtAtk = (int)Helper.LevelMultiplicator(50, p.ownKingsTower.level, 2); // ToDo: Change to p.ownKingsTower.Atk <= is currently a wrong value
+            lines[1].OwnPtAtk = (int)Helper.LevelMultiplicator(50, p.ownKingsTower.level, 2);
 
             #region TowerAnalyses
             double oPtHpL1 = Helper.Quotient(p.ownPrincessTower1.HP, lines[0].OwnPtMaxHp) * 100;
@@ -115,7 +115,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         private static Level GetDangerLevel(Playfield p, int line)
         {
             int dangerLevel, dangerLvlHP, dangerLvlAtk, dangerLvlBuilding, dangerLvlTower = 0;
-            float sensitivity = (int)Setting.DangerSensitivity;
+            float sensitivity = Setting.DangerSensitivity;
 
             if (sensitivity == 0)
                 sensitivity = 0.5f;
@@ -172,9 +172,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return 4;
                 if (enemyMinionHP > (lines[line].OwnPtMaxHp / (2 * sensitivity)))
                     return 3;
-                else if (enemyMinionHP > (lines[line].OwnPtMaxHp / (3 * sensitivity)))
-                    return 2;
                 else if (enemyMinionHP > (lines[line].OwnPtMaxHp / (4 * sensitivity)))
+                    return 2;
+                else if (enemyMinionHP > (lines[line].OwnPtMaxHp / (6 * sensitivity)))
                     return 1;
 
                 // ToDo: Use this, but Atk is zero at the moment
@@ -235,7 +235,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         private static Level GetChanceLevel(int line)
         {
             int chanceLevel = 0, chanceLvlHP = 0, chanceLvlAtk = 0, chanceLvlTower = 0;
-            float sensitivity = (int)Setting.ChanceSensitivity;
+            float sensitivity = Setting.ChanceSensitivity;
 
             if (sensitivity == 0)
                 sensitivity = 0.5f;
@@ -252,9 +252,9 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     chanceLvlHP += 4;
                 else if (ownMinionHP > (lines[line].OwnPtMaxHp / (2 * sensitivity)))
                     chanceLvlHP += 3;
-                else if (ownMinionHP > (lines[line].OwnPtMaxHp / (3 * sensitivity)))
-                    chanceLvlHP += 2;
                 else if (ownMinionHP > (lines[line].OwnPtMaxHp / (4 * sensitivity)))
+                    chanceLvlHP += 2;
+                else if (ownMinionHP > (lines[line].OwnPtMaxHp / (6 * sensitivity)))
                     chanceLvlHP += 1;
 
             }
