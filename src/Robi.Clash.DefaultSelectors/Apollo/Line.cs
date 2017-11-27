@@ -35,12 +35,6 @@ namespace Robi.Clash.DefaultSelectors.Apollo
         private Level ownPtHp;
         public Level OwnPtHp { get => ownPtHp; set => ownPtHp = value; }
 
-        private int ownPtMaxHp;
-        public int OwnPtMaxHp { get => ownPtMaxHp; set => ownPtMaxHp = value; }
-
-        private int ownPtAtk;
-        public int OwnPtAtk { get => ownPtAtk; set => ownPtAtk = value; }
-
         private Level enemyPtHp;
         public Level EnemyPtHp { get => enemyPtHp; set => enemyPtHp = value; }
 

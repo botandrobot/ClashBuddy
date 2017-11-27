@@ -229,80 +229,58 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             return position;
         }
+        
+
         private static VectorAI APTL1(Playfield p, Handcard hc)
         {
-            Logger.Debug("ALPT");
-
-            if (hc.card.MaxHP >= Setting.MinHealthAsTank)
-            {
-                VectorAI tankInFront = Helper.DeployTankInFront(p, 1);
-
-                if (tankInFront != null)
-                    return tankInFront;
-            }
-            else
-            {
-                VectorAI behindTank = Helper.DeployBehindTank(p, 1);
-
-                if (behindTank != null)
-                    return behindTank;
-            }
-
-            VectorAI lPT;
-
-            if (PlayfieldAnalyse.lines[0].OwnMobSide)
-            {
-                lPT = p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine1);
-
-                if (Decision.SupportDeployment(p, 1, true))
-                    lPT = p.getDeployPosition(lPT, deployDirectionRelative.Down);
-            }
-            else
-            {
-                lPT = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
-
-                if (Decision.SupportDeployment(p, 1, false))
-                    lPT = p.getDeployPosition(lPT, deployDirectionRelative.Down);
-            }
-
-            return lPT;
+            return APT(p, hc, 1);
         }
         private static VectorAI APTL2(Playfield p, Handcard hc)
         {
-            Logger.Debug("ARPT");
+            return APT(p, hc, 2);
+        }
+
+        private static VectorAI APT(Playfield p, Handcard hc, int line)
+        {
+            Logger.Debug("ALPT");
+
+            if (hc.card.type == boardObjType.BUILDING)
+                return line == 1 ? GetPositionOfTheBestBuildingDeploy(p, hc, FightState.APTL1) 
+                                    : GetPositionOfTheBestBuildingDeploy(p, hc, FightState.APTL2);
 
             if (hc.card.MaxHP >= Setting.MinHealthAsTank)
             {
-                VectorAI tankInFront = Helper.DeployTankInFront(p, 2);
+                VectorAI tankInFront = Helper.DeployTankInFront(p, line);
 
                 if (tankInFront != null)
                     return tankInFront;
             }
             else
             {
-                VectorAI behindTank = Helper.DeployBehindTank(p, 2);
+                VectorAI behindTank = Helper.DeployBehindTank(p, line);
 
                 if (behindTank != null)
                     return behindTank;
             }
 
-            VectorAI rPT;
+            VectorAI PT;
 
-            if (PlayfieldAnalyse.lines[1].OwnMobSide)
+            if (PlayfieldAnalyse.lines[line - 1].OwnMobSide)
             {
-                rPT = p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine2);
+                PT = p.getDeployPosition(deployDirectionAbsolute.ownPrincessTowerLine1);
 
-                if (Decision.SupportDeployment(p, 2, true))
-                    rPT = p.getDeployPosition(rPT, deployDirectionRelative.Down);
+                if (Decision.SupportDeployment(p, line, true))
+                    PT = p.getDeployPosition(PT, deployDirectionRelative.Down);
             }
             else
             {
-                rPT = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine2);
+                PT = p.getDeployPosition(deployDirectionAbsolute.enemyPrincessTowerLine1);
 
-                if (Decision.SupportDeployment(p, 2, false))
-                    rPT = p.getDeployPosition(rPT, deployDirectionRelative.Down);
+                if (Decision.SupportDeployment(p, line, false))
+                    PT = p.getDeployPosition(PT, deployDirectionRelative.Down);
             }
-            return rPT;
+
+            return PT;
         }
         #endregion
 
