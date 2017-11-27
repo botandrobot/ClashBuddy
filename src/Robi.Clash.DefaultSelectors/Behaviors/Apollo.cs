@@ -27,6 +27,8 @@
 
         private static ApolloSettings Settings => SettingsManager.GetSetting<ApolloSettings>("Apollo");
 
+        public static Playfield playfield;
+
         public override void Initialize()
         {
             base.Initialize();
@@ -47,6 +49,7 @@
         public override Cast GetBestCast(Playfield p)
         {
             //DebugThings(p);
+            playfield = p;
             Cast bc = null;
             Logger.Debug("Home = {Home}", p.home);
 
