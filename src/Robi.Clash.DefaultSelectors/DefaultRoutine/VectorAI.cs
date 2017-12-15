@@ -63,8 +63,8 @@ namespace Robi.Clash.DefaultSelectors
             x = Convert.ToInt32(ss[0]);
             y = Convert.ToInt32(ss[1]);
         }
-
-        public Engine.NativeObjects.Native.Vector2f ToVector2f(bool needRandom)
+        
+        public Engine.NativeObjects.Native.Vector2f ToVector2f(bool needRandom = false)
         {
             int xPos = x;
             int yPos = y;

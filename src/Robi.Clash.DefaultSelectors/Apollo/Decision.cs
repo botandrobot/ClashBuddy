@@ -126,7 +126,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                     return FightState.APTL1;
 
                 if (p.enemyPrincessTower2.HP > 0 && p.enemyPrincessTower2.HP < p.enemyKingsTower.HP / 2)
-                    return FightState.APTL1;
+                    return FightState.APTL2;
 
                 return FightState.AKT;
             }
@@ -142,6 +142,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             bool StartFirstAttack = true;
             gameBeginning = true;
 
+
             StartFirstAttack = (p.ownMana < Setting.ManaTillFirstAttack);
 
             if (StartFirstAttack)
@@ -156,7 +157,7 @@ namespace Robi.Clash.DefaultSelectors.Apollo
                 gameBeginning = false;
                 BoardObj obj = Helper.GetNearestEnemy(p);
 
-                if (obj.Line == 2)
+                if (obj?.Line == 2)
                     return FightState.DPTL2;
                 else
                     return FightState.DPTL1;

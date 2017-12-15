@@ -33,6 +33,10 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if (aoeCard != null)
                 return aoeCard;
 
+            Handcard bigGroupCard = BigGroupDecision(p, currentSituation);
+            if (bigGroupCard != null)
+                return bigGroupCard;
+
             if (p.enemyMinions.Any(n => n.Transport == transportType.AIR))
             {
                 Logger.Debug("AttackFlying Needed");
@@ -77,12 +81,12 @@ namespace Robi.Clash.DefaultSelectors.Apollo
             if (rangerCard != null && rangerCard.manacost <= p.ownMana)
                 return rangerCard;
 
-            var damageDealerCard = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsDamageDealer).FirstOrDefault();
+            var damageDealerCard = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsDamageDealer, MoreSpecificMobCardType.NoBigGroup).FirstOrDefault();
             if (damageDealerCard != null && damageDealerCard.manacost <= p.ownMana)
                 return damageDealerCard;
 
-            if((int)currentSituation >= 3 && (int)currentSituation <= 6)
-                return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsNoTank).FirstOrDefault();
+            //if((int)currentSituation >= 3 && (int)currentSituation <= 6)
+            //    return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.Mobs).FirstOrDefault();
 
             Logger.Debug("Wait - No card selected...");
             return null;
@@ -268,13 +272,47 @@ namespace Robi.Clash.DefaultSelectors.Apollo
 
             var objGround = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out int biggestEnemieGroupCount, transportType.GROUND);
             if (biggestEnemieGroupCount > 3)
-                aoeGround = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEGround).FirstOrDefault();
+                aoeGround = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOE, MoreSpecificMobCardType.AOEGround).FirstOrDefault();
 
             var objAir = Helper.EnemyCharacterWithTheMostEnemiesAround(p, out biggestEnemieGroupCount, transportType.AIR);
             if (biggestEnemieGroupCount > 3)
-                aoeAir = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOEAll).FirstOrDefault();
+                aoeAir = Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsAOE, MoreSpecificMobCardType.AOEAll).FirstOrDefault();
 
             return aoeAir ?? aoeGround;
+        }
+
+        private static Handcard BigGroupDecision(Playfield p, FightState fightState)
+        {
+            var aoe = p.enemyMinions.Where(n => n.card.aoeAir || n.card.aoeGround);
+            var tanks = p.ownMinions.Where(n => Classification.IsMobsTankCurrentHP(n));
+
+            // ToDo: Improve condition 
+            switch (fightState)
+            {
+                case FightState.UAPTL1:
+                case FightState.UAKTL1:
+                case FightState.APTL1:
+                case FightState.DPTL1:
+                    if (aoe.Any(n => n.Line == 1) || !tanks.Any(n => n.Line == 1))
+                        return null;
+                    break;
+                case FightState.UAKTL2:
+                case FightState.UAPTL2:
+                case FightState.APTL2:
+                case FightState.DPTL2:
+                    if (aoe.Any(n => n.Line == 2) || !tanks.Any(n => n.Line == 2))
+                        return null;
+                    break;
+                case FightState.AKT:
+                case FightState.DKT:
+                    if (aoe.Any(n => n.Line == 1) || !tanks.Any(n => n.Line == 1)
+                        || aoe.Any(n => n.Line == 2) || !tanks.Any(n => n.Line == 2))
+                        return null;
+                    break;
+                default:
+                    break;
+            }
+            return Classification.GetOwnHandCards(p, boardObjType.MOB, SpecificCardType.MobsBigGroup).FirstOrDefault();
         }
 
         public static Handcard GetOppositeCard(Playfield p, FightState currentSituation)

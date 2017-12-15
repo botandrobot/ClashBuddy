@@ -51,7 +51,7 @@
 		<PackageReference Include="Robi.Common" Version="$(EngineVersion)" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
 		<PackageReference Include="Robi.Engine" Version="$(EngineVersion)" Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true'" />
 		<PackageReference Include="Robi.Clash.Engine" Version="$(PackageVersion)" Condition="'$(PackageVersion)' != '1.0.0' AND ('$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true')" />
-		<PackageReference Include="Robi.Clash.Engine" Version="1.0.207-develop-414" Condition="'$(PackageVersion)' == '1.0.0' AND ('$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true')" />
+		<PackageReference Include="Robi.Clash.Engine" Version="*" Condition="'$(PackageVersion)' == '1.0.0' AND ('$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release' OR '$(BuildingInsideVisualStudio)' != 'true')" />
 		<PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0" />
 	</ItemGroup>
 	<ItemGroup>
